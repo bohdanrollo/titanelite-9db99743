@@ -27,10 +27,10 @@ function Services() {
       <SiteHeader />
       <section className="container-edge py-20">
         <div className="text-eyebrow">Services</div>
-        <h1 className="mt-4 text-6xl lg:text-8xl">What I do.</h1>
+        <h1 className="mt-4 text-6xl lg:text-8xl">What we do.</h1>
         <p className="mt-6 max-w-2xl text-muted-foreground">
-          One coach. One system. Built for serious lifters who want their physique and
-          programming to be designed, not borrowed.
+          A dedicated coaching team. One system. Built for serious lifters who want their
+          physique and programming to be designed, not borrowed.
         </p>
       </section>
       <section className="container-edge pb-24">
