@@ -138,7 +138,7 @@ function Intake() {
           {step === 0 && (
             <>
               <Row><Field label="Age" value={form.age} onChange={(v) => set("age", v)} type="number" /><Field label="Gender" value={form.gender} onChange={(v) => set("gender", v)} /></Row>
-              <Row><Field label="Height (e.g. 5'10\")" value={form.height} onChange={(v) => set("height", v)} /><Field label="Weight (lbs or kg)" value={form.weight} onChange={(v) => set("weight", v)} /></Row>
+              <Row><Field label={`Height (e.g. 5'10")`} value={form.height} onChange={(v) => set("height", v)} /><Field label="Weight (lbs or kg)" value={form.weight} onChange={(v) => set("weight", v)} /></Row>
             </>
           )}
           {step === 1 && (
