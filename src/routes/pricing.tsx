@@ -17,9 +17,9 @@ export const Route = createFileRoute("/pricing")({
 
 function Pricing() {
   const tiers = [
-    { n: "Foundation", p: "$295", per: "/ month", d: "For lifters establishing a base.", b: ["4-week training block", "Educational peptide notes", "Email support", "Monthly programming refresh"] },
-    { n: "Elite", p: "$595", per: "/ month", d: "Most clients start here.", h: true, b: ["Full custom programming", "Custom peptide protocol", "Weekly check-ins", "Direct messaging", "Progress tracking dashboard"] },
-    { n: "Apex", p: "$1,495", per: "/ quarter", d: "For competitors and committed long-cycle clients.", b: ["Quarterly programming reset", "Bloodwork review (educational)", "Bi-weekly video call", "Priority access & messaging", "Custom recovery & nutrition guidance"] },
+    { n: "Foundation", p: "$199", per: "one-time", d: "For lifters establishing a base.", b: ["4-week training block", "Educational peptide notes", "Email support", "One-time program delivery"] },
+    { n: "Elite", p: "$399", per: "/ month", d: "Most clients start here.", h: true, b: ["Full custom programming", "Custom peptide protocol", "Weekly check-ins", "Direct messaging", "Progress tracking dashboard"] },
+    { n: "Apex", p: "$899", per: "/ quarter", d: "For competitors and committed long-cycle clients.", b: ["Quarterly programming reset", "Bloodwork review (educational)", "Bi-weekly video call", "Priority access & messaging", "Custom recovery & nutrition guidance"] },
   ];
   return (
     <div className="min-h-dvh bg-background">
