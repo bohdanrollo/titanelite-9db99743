@@ -31,8 +31,8 @@ function About() {
               around your training history, your goals, and your physiology.
             </p>
             <p>
-              I've coached lifters and physique competitors for over a decade, and I've
-              spent the last several years studying the educational landscape around
+              Our team has coached lifters and physique competitors for over a decade, and
+              we've spent the last several years studying the educational landscape around
               peptide protocols — what's evidence-informed, what's hype, and how to
               think about it responsibly.
             </p>
