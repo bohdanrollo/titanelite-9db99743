@@ -14,16 +14,253 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      intakes: {
+        Row: {
+          age: number | null
+          consent_disclaimer: boolean
+          consent_health: boolean
+          current_medications: string | null
+          current_program: string | null
+          current_supplements: string | null
+          fat_loss_goals: string | null
+          fitness_experience: string | null
+          gender: string | null
+          health_conditions: string | null
+          height: string | null
+          id: string
+          injury_history: string | null
+          lab_work_urls: string[] | null
+          lifestyle: string | null
+          muscle_gain_goals: string | null
+          nutrition_habits: string | null
+          peptide_experience: string | null
+          peptides_of_interest: string | null
+          progress_photo_urls: string[] | null
+          sleep_habits: string | null
+          status: string
+          strength_goals: string | null
+          submitted_at: string
+          user_id: string
+          weight: string | null
+          weightlifting_goals: string | null
+        }
+        Insert: {
+          age?: number | null
+          consent_disclaimer?: boolean
+          consent_health?: boolean
+          current_medications?: string | null
+          current_program?: string | null
+          current_supplements?: string | null
+          fat_loss_goals?: string | null
+          fitness_experience?: string | null
+          gender?: string | null
+          health_conditions?: string | null
+          height?: string | null
+          id?: string
+          injury_history?: string | null
+          lab_work_urls?: string[] | null
+          lifestyle?: string | null
+          muscle_gain_goals?: string | null
+          nutrition_habits?: string | null
+          peptide_experience?: string | null
+          peptides_of_interest?: string | null
+          progress_photo_urls?: string[] | null
+          sleep_habits?: string | null
+          status?: string
+          strength_goals?: string | null
+          submitted_at?: string
+          user_id: string
+          weight?: string | null
+          weightlifting_goals?: string | null
+        }
+        Update: {
+          age?: number | null
+          consent_disclaimer?: boolean
+          consent_health?: boolean
+          current_medications?: string | null
+          current_program?: string | null
+          current_supplements?: string | null
+          fat_loss_goals?: string | null
+          fitness_experience?: string | null
+          gender?: string | null
+          health_conditions?: string | null
+          height?: string | null
+          id?: string
+          injury_history?: string | null
+          lab_work_urls?: string[] | null
+          lifestyle?: string | null
+          muscle_gain_goals?: string | null
+          nutrition_habits?: string | null
+          peptide_experience?: string | null
+          peptides_of_interest?: string | null
+          progress_photo_urls?: string[] | null
+          sleep_habits?: string | null
+          status?: string
+          strength_goals?: string | null
+          submitted_at?: string
+          user_id?: string
+          weight?: string | null
+          weightlifting_goals?: string | null
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          read_at: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          recipient_id?: string
+          sender_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      progress_updates: {
+        Row: {
+          body_fat: number | null
+          created_at: string
+          id: string
+          notes: string | null
+          photo_url: string | null
+          user_id: string
+          weight: number | null
+        }
+        Insert: {
+          body_fat?: number | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          photo_url?: string | null
+          user_id: string
+          weight?: number | null
+        }
+        Update: {
+          body_fat?: number | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          photo_url?: string | null
+          user_id?: string
+          weight?: number | null
+        }
+        Relationships: []
+      }
+      protocols: {
+        Row: {
+          coach_notes: string | null
+          content: string | null
+          created_at: string
+          file_url: string | null
+          id: string
+          title: string
+          type: Database["public"]["Enums"]["protocol_type"]
+          user_id: string
+          viewed_at: string | null
+        }
+        Insert: {
+          coach_notes?: string | null
+          content?: string | null
+          created_at?: string
+          file_url?: string | null
+          id?: string
+          title: string
+          type: Database["public"]["Enums"]["protocol_type"]
+          user_id: string
+          viewed_at?: string | null
+        }
+        Update: {
+          coach_notes?: string | null
+          content?: string | null
+          created_at?: string
+          file_url?: string | null
+          id?: string
+          title?: string
+          type?: Database["public"]["Enums"]["protocol_type"]
+          user_id?: string
+          viewed_at?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "client"
+      protocol_type: "weightlifting" | "peptide" | "nutrition" | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +387,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "client"],
+      protocol_type: ["weightlifting", "peptide", "nutrition", "other"],
+    },
   },
 } as const
