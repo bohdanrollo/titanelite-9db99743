@@ -51,37 +51,11 @@ function Intake() {
   const [photos, setPhotos] = useState<File[]>([]);
   const [labs, setLabs] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
-  const [hasPurchase, setHasPurchase] = useState<boolean | null>(null);
-  const [checkingPurchase, setCheckingPurchase] = useState(true);
+  const [selectedPlan, setSelectedPlan] = useState<string>("");
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setForm((f) => ({ ...f, [k]: v }));
 
-  useEffect(() => {
-    if (!user) {
-      setCheckingPurchase(false);
-      return;
-    }
-    const uid = user.id;
-    async function checkPurchase() {
-      try {
-        const { data } = await supabase
-          .from("purchases")
-          .select("id")
-          .eq("user_id", uid)
-          .eq("status", "paid")
-          .limit(1)
-          .single();
-        setHasPurchase(!!data);
-      } catch {
-        setHasPurchase(false);
-      } finally {
-        setCheckingPurchase(false);
-      }
-    }
-    checkPurchase();
-  }, [user]);
-
-  const steps = ["Basics", "Training", "Health", "Goals", "Peptides", "Lifestyle", "Upload & Consent"];
+  const steps = ["Basics", "Training", "Health", "Goals", "Peptides", "Lifestyle", "Plan & Consent"];
 
   if (!user) {
     return (
@@ -98,39 +72,6 @@ function Intake() {
     );
   }
 
-  if (checkingPurchase) {
-    return (
-      <div className="min-h-dvh bg-background">
-        <SiteHeader />
-        <section className="container-edge py-20 text-center max-w-xl mx-auto">
-          <div className="text-eyebrow">Intake</div>
-          <h1 className="mt-4 text-5xl">Checking your account…</h1>
-        </section>
-        <SiteFooter />
-      </div>
-    );
-  }
-
-  if (!hasPurchase) {
-    return (
-      <div className="min-h-dvh bg-background">
-        <SiteHeader />
-        <section className="container-edge py-20 text-center max-w-xl mx-auto">
-          <Lock className="mx-auto text-blood" size={40} />
-          <div className="text-eyebrow mt-6">Intake</div>
-          <h1 className="mt-4 text-5xl">Purchase required.</h1>
-          <p className="mt-4 text-muted-foreground">
-            To submit your intake and receive a custom protocol, you must first purchase a coaching package.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-4 justify-center">
-            <Link to="/pricing" className="btn-blood hover:btn-blood-hover">View Pricing</Link>
-            <Link to="/checkout" className="btn-ghost">Go to Checkout</Link>
-          </div>
-        </section>
-        <SiteFooter />
-      </div>
-    );
-  }
 
   async function uploadFiles(files: File[], folder: string): Promise<string[]> {
     const out: string[] = [];
