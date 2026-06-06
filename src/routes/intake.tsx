@@ -55,12 +55,13 @@ function Intake() {
       setCheckingPurchase(false);
       return;
     }
+    const uid = user.id;
     async function checkPurchase() {
       try {
         const { data } = await supabase
           .from("purchases")
           .select("id")
-          .eq("user_id", user.id)
+          .eq("user_id", uid)
           .eq("status", "paid")
           .limit(1)
           .single();
