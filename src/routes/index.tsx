@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Check, Dumbbell, FlaskConical, FileText, Activity, ChevronDown } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import heroImg from "@/assets/hero-lift.jpg";
+import heroImg from "@/assets/titan-logo.jpg.asset.json";
 import handsImg from "@/assets/hands-bar.jpg";
 import physiqueImg from "@/assets/physique.jpg";
 import protocolImg from "@/assets/protocol.jpg";
