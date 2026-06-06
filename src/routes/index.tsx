@@ -6,6 +6,9 @@ import heroImg from "@/assets/hero-lift.jpg";
 import handsImg from "@/assets/hands-bar.jpg";
 import physiqueImg from "@/assets/physique.jpg";
 import protocolImg from "@/assets/protocol.jpg";
+import transform1 from "@/assets/transform-1.jpg.asset.json";
+import transform2 from "@/assets/transform-2.jpg.asset.json";
+import transform3 from "@/assets/transform-3.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
