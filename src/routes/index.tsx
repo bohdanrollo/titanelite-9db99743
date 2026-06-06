@@ -110,7 +110,7 @@ function Marquee() {
 function Process() {
   const steps = [
     { n: "01", t: "Apply", d: "Submit your detailed intake — training, health, goals, and peptide interests." },
-    { n: "02", t: "Review", d: "I personally analyze every form. We confirm fit and select your package." },
+    { n: "02", t: "Review", d: "Our team personally analyzes every form. We confirm fit and select your package." },
     { n: "03", t: "Build", d: "You receive a custom weightlifting protocol and educational peptide protocol." },
     { n: "04", t: "Train", d: "Weekly check-ins, programming adjustments, and direct messaging access." },
   ];
@@ -195,7 +195,7 @@ function Showcase() {
 
 function Testimonials() {
   const t = [
-    { q: "I've worked with three coaches before Titan. This is the first program that actually accounted for my injury history.", a: "Marcus R.", s: "Hypertrophy block, 16 weeks" },
+    { q: "We've worked with three coaches before Titan. This is the first program that actually accounted for my injury history.", a: "Marcus R.", s: "Hypertrophy block, 16 weeks" },
     { q: "The peptide education alone was worth the price. I finally understand what I'm putting in my body and why.", a: "Daniel K.", s: "Education + programming" },
     { q: "Dropped 18 lb and added 40 lb to my squat. The check-ins keep you honest.", a: "Jess T.", s: "Recomp protocol, 20 weeks" },
   ];

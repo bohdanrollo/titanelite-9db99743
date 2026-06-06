@@ -21,7 +21,7 @@ const faqs = [
   { q: "Do I need a gym?", a: "Yes. Full barbell access is strongly recommended. Commercial gym or well-equipped home setup works." },
   { q: "How long is the commitment?", a: "Most clients commit to a minimum 12-week block. Monthly billing, cancel anytime after the initial block." },
   { q: "How do I receive my protocol?", a: "After intake review and payment, your custom protocol is delivered as a downloadable PDF inside your client dashboard." },
-  { q: "Can I message you directly?", a: "Elite and Apex clients get direct messaging inside the dashboard. Replies within 24 hours on business days." },
+  { q: "Can I message the team directly?", a: "Elite and Apex clients get direct messaging inside the dashboard. Replies within 24 hours on business days." },
   { q: "Do you offer refunds?", a: "Programming is intellectual property delivered upon completion of intake review. Refunds are not provided after delivery. See Terms of Service." },
   { q: "Is my health data secure?", a: "Yes. Your data is encrypted at rest and in transit. Access is restricted to you and your coach. See Privacy Policy." },
   { q: "Can I cancel my subscription?", a: "Yes, at any time after your initial commitment block via your dashboard. Access continues through the end of the paid period." },

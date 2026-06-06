@@ -224,6 +224,39 @@ export type Database = {
         }
         Relationships: []
       }
+      purchases: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          id: string
+          status: Database["public"]["Enums"]["purchase_status"]
+          stripe_checkout_session_id: string | null
+          tier: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["purchase_status"]
+          stripe_checkout_session_id?: string | null
+          tier: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["purchase_status"]
+          stripe_checkout_session_id?: string | null
+          tier?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -261,6 +294,7 @@ export type Database = {
     Enums: {
       app_role: "admin" | "client"
       protocol_type: "weightlifting" | "peptide" | "nutrition" | "other"
+      purchase_status: "pending" | "paid" | "cancelled" | "refunded"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -390,6 +424,7 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "client"],
       protocol_type: ["weightlifting", "peptide", "nutrition", "other"],
+      purchase_status: ["pending", "paid", "cancelled", "refunded"],
     },
   },
 } as const

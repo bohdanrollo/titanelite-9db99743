@@ -48,7 +48,7 @@ function Pricing() {
                   <li key={x} className="flex gap-2"><Check size={16} className="text-blood shrink-0 mt-0.5" /><span>{x}</span></li>
                 ))}
               </ul>
-              <Link to="/intake" className={`mt-10 inline-flex ${t.h ? "btn-blood hover:btn-blood-hover" : "btn-ghost hover:bg-foreground hover:text-background"}`}>Apply</Link>
+              <Link to="/checkout" className={`mt-10 inline-flex ${t.h ? "btn-blood hover:btn-blood-hover" : "btn-ghost hover:bg-foreground hover:text-background"}`}>Select</Link>
             </div>
           ))}
         </div>
