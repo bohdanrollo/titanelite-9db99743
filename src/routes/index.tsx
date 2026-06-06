@@ -78,7 +78,7 @@ function Hero() {
         </div>
         <div className="lg:col-span-5 relative">
           <div className="relative aspect-[4/5] overflow-hidden">
-            <img src={heroImg} alt="Athlete performing a heavy deadlift" className="size-full object-cover" width={1600} height={1200} />
+            <img src={heroImg.url} alt="Titan Elite logo" className="size-full object-contain bg-background" width={1600} height={1200} />
             <div className="absolute inset-0 bg-gradient-to-tr from-ink/70 via-transparent to-transparent" />
             <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
               <div className="text-bone font-mono text-[10px] uppercase tracking-[0.2em]">File 037 / Deadlift, 4×3 @ 90%</div>
