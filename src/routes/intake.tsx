@@ -1,11 +1,17 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { ArrowLeft, ArrowRight, Check, Upload, Lock } from "lucide-react";
+import { ArrowLeft, ArrowRight, Upload } from "lucide-react";
+
+const PLANS = [
+  { id: "Foundation", label: "Foundation — $59 one-time" },
+  { id: "Elite", label: "Elite — $199 / month" },
+  { id: "Apex", label: "Apex — $399 / month" },
+];
 
 export const Route = createFileRoute("/intake")({
   head: () => ({
@@ -45,37 +51,11 @@ function Intake() {
   const [photos, setPhotos] = useState<File[]>([]);
   const [labs, setLabs] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
-  const [hasPurchase, setHasPurchase] = useState<boolean | null>(null);
-  const [checkingPurchase, setCheckingPurchase] = useState(true);
+  const [selectedPlan, setSelectedPlan] = useState<string>("");
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setForm((f) => ({ ...f, [k]: v }));
 
-  useEffect(() => {
-    if (!user) {
-      setCheckingPurchase(false);
-      return;
-    }
-    const uid = user.id;
-    async function checkPurchase() {
-      try {
-        const { data } = await supabase
-          .from("purchases")
-          .select("id")
-          .eq("user_id", uid)
-          .eq("status", "paid")
-          .limit(1)
-          .single();
-        setHasPurchase(!!data);
-      } catch {
-        setHasPurchase(false);
-      } finally {
-        setCheckingPurchase(false);
-      }
-    }
-    checkPurchase();
-  }, [user]);
-
-  const steps = ["Basics", "Training", "Health", "Goals", "Peptides", "Lifestyle", "Upload & Consent"];
+  const steps = ["Basics", "Training", "Health", "Goals", "Peptides", "Lifestyle", "Plan & Consent"];
 
   if (!user) {
     return (
@@ -92,39 +72,6 @@ function Intake() {
     );
   }
 
-  if (checkingPurchase) {
-    return (
-      <div className="min-h-dvh bg-background">
-        <SiteHeader />
-        <section className="container-edge py-20 text-center max-w-xl mx-auto">
-          <div className="text-eyebrow">Intake</div>
-          <h1 className="mt-4 text-5xl">Checking your account…</h1>
-        </section>
-        <SiteFooter />
-      </div>
-    );
-  }
-
-  if (!hasPurchase) {
-    return (
-      <div className="min-h-dvh bg-background">
-        <SiteHeader />
-        <section className="container-edge py-20 text-center max-w-xl mx-auto">
-          <Lock className="mx-auto text-blood" size={40} />
-          <div className="text-eyebrow mt-6">Intake</div>
-          <h1 className="mt-4 text-5xl">Purchase required.</h1>
-          <p className="mt-4 text-muted-foreground">
-            To submit your intake and receive a custom protocol, you must first purchase a coaching package.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-4 justify-center">
-            <Link to="/pricing" className="btn-blood hover:btn-blood-hover">View Pricing</Link>
-            <Link to="/checkout" className="btn-ghost">Go to Checkout</Link>
-          </div>
-        </section>
-        <SiteFooter />
-      </div>
-    );
-  }
 
   async function uploadFiles(files: File[], folder: string): Promise<string[]> {
     const out: string[] = [];
@@ -138,6 +85,10 @@ function Intake() {
   }
 
   async function submit() {
+    if (!selectedPlan) {
+      toast.error("Please select a coaching plan before continuing to payment.");
+      return;
+    }
     if (!form.consent_health || !form.consent_disclaimer) {
       toast.error("You must accept the health consent and disclaimer to submit.");
       return;
@@ -171,16 +122,19 @@ function Intake() {
         lab_work_urls: lab_urls,
         consent_health: form.consent_health,
         consent_disclaimer: form.consent_disclaimer,
+        selected_plan: selectedPlan,
+        status: "pending_payment",
       });
       if (error) throw error;
-      toast.success("Intake submitted. Heading to your dashboard.");
-      nav({ to: "/dashboard" });
+      toast.success("Intake saved. Complete payment to finalize.");
+      nav({ to: "/checkout", search: { plan: selectedPlan } });
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Submission failed");
     } finally {
       setSubmitting(false);
     }
   }
+
 
   return (
     <div className="min-h-dvh bg-background">
@@ -245,6 +199,20 @@ function Intake() {
             <>
               <FileBlock label="Progress Photos (front / side / back recommended)" files={photos} onChange={setPhotos} accept="image/*" />
               <FileBlock label="Lab Work (optional, PDF or image)" files={labs} onChange={setLabs} accept="image/*,application/pdf" />
+              <div>
+                <label className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground block mb-2">Select Coaching Plan</label>
+                <select
+                  value={selectedPlan}
+                  onChange={(e) => setSelectedPlan(e.target.value)}
+                  className="w-full bg-background border border-foreground/20 px-4 py-3 focus:outline-none focus:border-blood"
+                >
+                  <option value="">— Choose a plan —</option>
+                  {PLANS.map((p) => (
+                    <option key={p.id} value={p.id}>{p.label}</option>
+                  ))}
+                </select>
+                <p className="mt-2 text-xs text-muted-foreground">You'll complete payment on the next step. Your intake will only be finalized after payment.</p>
+              </div>
               <label className="flex items-start gap-3 cursor-pointer">
                 <input type="checkbox" checked={form.consent_health} onChange={(e) => set("consent_health", e.target.checked)} className="mt-1 accent-blood" />
                 <span className="text-sm">I consent to Titan Elite collecting and storing the health information I've shared for the purpose of building my custom coaching protocols, and I confirm I'm at least 18 years old.</span>
@@ -255,6 +223,7 @@ function Intake() {
               </label>
             </>
           )}
+
         </div>
 
         <div className="mt-12 flex items-center justify-between border-t border-foreground/10 pt-6">
@@ -272,8 +241,9 @@ function Intake() {
             </button>
           ) : (
             <button onClick={submit} disabled={submitting} className="btn-blood hover:btn-blood-hover">
-              {submitting ? "Submitting…" : <>Submit Intake <Check size={14} /></>}
+              {submitting ? "Saving…" : <>Continue to Payment <ArrowRight size={14} /></>}
             </button>
+
           )}
         </div>
       </section>

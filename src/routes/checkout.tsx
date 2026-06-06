@@ -3,6 +3,8 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Check, ArrowRight } from "lucide-react";
 
+type CheckoutSearch = { plan?: string };
+
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
@@ -10,10 +12,16 @@ export const Route = createFileRoute("/checkout")({
       { name: "description", content: "Select your Titan Elite coaching package and proceed to payment." },
     ],
   }),
+  validateSearch: (s: Record<string, unknown>): CheckoutSearch => ({
+    plan: typeof s.plan === "string" ? s.plan : undefined,
+  }),
   component: Checkout,
 });
 
 function Checkout() {
+  const { plan } = Route.useSearch();
+  const fromIntake = !!plan;
+
   const tiers = [
     {
       n: "Foundation",
@@ -44,11 +52,16 @@ function Checkout() {
       <SiteHeader />
       <section className="container-edge py-20">
         <div className="text-eyebrow">Checkout</div>
-        <h1 className="mt-4 text-6xl lg:text-8xl">Select your tier.</h1>
+        <h1 className="mt-4 text-6xl lg:text-8xl">
+          {fromIntake ? "Complete payment." : "Select your tier."}
+        </h1>
         <p className="mt-6 max-w-2xl text-muted-foreground">
-          Payment secures your coaching slot and unlocks the intake form. All transactions are processed securely via Stripe.
+          {fromIntake
+            ? `Your intake is saved. Pay for the ${plan} plan below to finalize your submission.`
+            : "All transactions are processed securely via Stripe."}
         </p>
       </section>
+
       <section className="container-edge pb-24">
         <div className="grid md:grid-cols-3 gap-px bg-foreground/15">
           {tiers.map((t) => (

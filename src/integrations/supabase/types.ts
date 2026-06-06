@@ -36,6 +36,7 @@ export type Database = {
           peptide_experience: string | null
           peptides_of_interest: string | null
           progress_photo_urls: string[] | null
+          selected_plan: string | null
           sleep_habits: string | null
           status: string
           strength_goals: string | null
@@ -65,6 +66,7 @@ export type Database = {
           peptide_experience?: string | null
           peptides_of_interest?: string | null
           progress_photo_urls?: string[] | null
+          selected_plan?: string | null
           sleep_habits?: string | null
           status?: string
           strength_goals?: string | null
@@ -94,6 +96,7 @@ export type Database = {
           peptide_experience?: string | null
           peptides_of_interest?: string | null
           progress_photo_urls?: string[] | null
+          selected_plan?: string | null
           sleep_habits?: string | null
           status?: string
           strength_goals?: string | null
