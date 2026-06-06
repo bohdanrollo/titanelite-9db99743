@@ -241,8 +241,9 @@ function Intake() {
             </button>
           ) : (
             <button onClick={submit} disabled={submitting} className="btn-blood hover:btn-blood-hover">
-              {submitting ? "Submitting…" : <>Submit Intake <Check size={14} /></>}
+              {submitting ? "Saving…" : <>Continue to Payment <ArrowRight size={14} /></>}
             </button>
+
           )}
         </div>
       </section>
