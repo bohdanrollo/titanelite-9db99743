@@ -85,6 +85,10 @@ function Intake() {
   }
 
   async function submit() {
+    if (!selectedPlan) {
+      toast.error("Please select a coaching plan before continuing to payment.");
+      return;
+    }
     if (!form.consent_health || !form.consent_disclaimer) {
       toast.error("You must accept the health consent and disclaimer to submit.");
       return;
@@ -118,16 +122,19 @@ function Intake() {
         lab_work_urls: lab_urls,
         consent_health: form.consent_health,
         consent_disclaimer: form.consent_disclaimer,
+        selected_plan: selectedPlan,
+        status: "pending_payment",
       });
       if (error) throw error;
-      toast.success("Intake submitted. Heading to your dashboard.");
-      nav({ to: "/dashboard" });
+      toast.success("Intake saved. Complete payment to finalize.");
+      nav({ to: "/checkout", search: { plan: selectedPlan } });
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Submission failed");
     } finally {
       setSubmitting(false);
     }
   }
+
 
   return (
     <div className="min-h-dvh bg-background">
