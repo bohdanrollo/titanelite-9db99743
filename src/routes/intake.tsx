@@ -199,6 +199,20 @@ function Intake() {
             <>
               <FileBlock label="Progress Photos (front / side / back recommended)" files={photos} onChange={setPhotos} accept="image/*" />
               <FileBlock label="Lab Work (optional, PDF or image)" files={labs} onChange={setLabs} accept="image/*,application/pdf" />
+              <div>
+                <label className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground block mb-2">Select Coaching Plan</label>
+                <select
+                  value={selectedPlan}
+                  onChange={(e) => setSelectedPlan(e.target.value)}
+                  className="w-full bg-background border border-foreground/20 px-4 py-3 focus:outline-none focus:border-blood"
+                >
+                  <option value="">— Choose a plan —</option>
+                  {PLANS.map((p) => (
+                    <option key={p.id} value={p.id}>{p.label}</option>
+                  ))}
+                </select>
+                <p className="mt-2 text-xs text-muted-foreground">You'll complete payment on the next step. Your intake will only be finalized after payment.</p>
+              </div>
               <label className="flex items-start gap-3 cursor-pointer">
                 <input type="checkbox" checked={form.consent_health} onChange={(e) => set("consent_health", e.target.checked)} className="mt-1 accent-blood" />
                 <span className="text-sm">I consent to Titan Elite collecting and storing the health information I've shared for the purpose of building my custom coaching protocols, and I confirm I'm at least 18 years old.</span>
@@ -209,6 +223,7 @@ function Intake() {
               </label>
             </>
           )}
+
         </div>
 
         <div className="mt-12 flex items-center justify-between border-t border-foreground/10 pt-6">
