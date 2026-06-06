@@ -1,11 +1,17 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { ArrowLeft, ArrowRight, Check, Upload, Lock } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Upload } from "lucide-react";
+
+const PLANS = [
+  { id: "Foundation", label: "Foundation — $59 one-time" },
+  { id: "Elite", label: "Elite — $199 / month" },
+  { id: "Apex", label: "Apex — $399 / month" },
+];
 
 export const Route = createFileRoute("/intake")({
   head: () => ({
