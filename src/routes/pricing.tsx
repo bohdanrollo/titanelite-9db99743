@@ -7,7 +7,7 @@ export const Route = createFileRoute("/pricing")({
   head: () => ({
     meta: [
       { title: "Pricing — Titan Elite Coaching" },
-      { name: "description", content: "Coaching packages from $295/month to $1,495/quarter. Apply via intake." },
+      { name: "description", content: "Coaching packages from $59 to $399/month. Apply via intake." },
       { property: "og:title", content: "Pricing — Titan Elite" },
       { property: "og:description", content: "Foundation, Elite, Apex coaching tiers." },
     ],
@@ -17,9 +17,9 @@ export const Route = createFileRoute("/pricing")({
 
 function Pricing() {
   const tiers = [
-    { n: "Foundation", p: "$199", per: "one-time", d: "For lifters establishing a base.", b: ["4-week training block", "Educational peptide notes", "Email support", "One-time program delivery"] },
-    { n: "Elite", p: "$399", per: "/ month", d: "Most clients start here.", h: true, b: ["Full custom programming", "Custom peptide protocol", "Weekly check-ins", "Direct messaging", "Progress tracking dashboard"] },
-    { n: "Apex", p: "$899", per: "/ quarter", d: "For competitors and committed long-cycle clients.", b: ["Quarterly programming reset", "Bloodwork review (educational)", "Bi-weekly video call", "Priority access & messaging", "Custom recovery & nutrition guidance"] },
+    { n: "Foundation", p: "$59", per: "one-time", d: "For lifters establishing a base.", b: ["4-week training block", "Educational peptide notes", "Email support", "One-time program delivery"] },
+    { n: "Elite", p: "$199", per: "/ month", d: "Most clients start here.", h: true, b: ["Full custom programming", "Custom peptide protocol", "Weekly check-ins", "Direct messaging", "Progress tracking dashboard"] },
+    { n: "Apex", p: "$399", per: "/ month", d: "For competitors and committed long-cycle clients.", b: ["Monthly programming reset", "Bloodwork review (educational)", "Bi-weekly video call", "Priority access & messaging", "Custom recovery & nutrition guidance"] },
   ];
   return (
     <div className="min-h-dvh bg-background">

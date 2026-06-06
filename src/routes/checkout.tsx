@@ -17,14 +17,14 @@ function Checkout() {
   const tiers = [
     {
       n: "Foundation",
-      p: "$199",
+      p: "$59",
       per: "one-time",
       d: "For lifters establishing a base.",
       b: ["4-week training block", "Educational peptide notes", "Email support", "One-time program delivery"],
     },
     {
       n: "Elite",
-      p: "$399",
+      p: "$199",
       per: "/ month",
       d: "Most clients start here.",
       h: true,
@@ -32,10 +32,10 @@ function Checkout() {
     },
     {
       n: "Apex",
-      p: "$899",
-      per: "/ quarter",
+      p: "$399",
+      per: "/ month",
       d: "For competitors and committed long-cycle clients.",
-      b: ["Quarterly programming reset", "Bloodwork review (educational)", "Bi-weekly video call", "Priority access & messaging", "Custom recovery & nutrition guidance"],
+      b: ["Monthly programming reset", "Bloodwork review (educational)", "Bi-weekly video call", "Priority access & messaging", "Custom recovery & nutrition guidance"],
     },
   ];
 
