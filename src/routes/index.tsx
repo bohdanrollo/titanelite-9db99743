@@ -295,7 +295,7 @@ function FinalCta() {
   return (
     <section className="bg-blood text-primary-foreground">
       <div className="container-edge py-24 lg:py-32 text-center">
-        <div className="text-bone/80 font-mono text-[11px] uppercase tracking-[0.18em]">Roster opens monthly</div>
+        <div className="text-bone/80 font-mono text-[11px] uppercase tracking-[0.18em]">Now accepting new clients</div>
         <h2 className="mt-6 text-6xl lg:text-8xl leading-[0.85]">
           Stop training.<br />Start engineering.
         </h2>
