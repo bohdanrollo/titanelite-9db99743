@@ -223,9 +223,9 @@ function Testimonials() {
 
 function PricingPreview() {
   const tiers = [
-    { n: "Foundation", p: "$295", per: "/ month", b: ["Custom training block (4 weeks)", "Educational peptide notes", "Email support"] },
-    { n: "Elite", p: "$595", per: "/ month", h: true, b: ["Full custom training programming", "Custom peptide protocol", "Weekly check-ins", "Direct messaging"] },
-    { n: "Apex", p: "$1,495", per: "/ quarter", b: ["Quarterly programming reset", "Bloodwork review", "Bi-weekly video call", "Priority access"] },
+    { n: "Foundation", p: "$199", per: "one-time", b: ["Custom training block (4 weeks)", "Educational peptide notes", "Email support"] },
+    { n: "Elite", p: "$399", per: "/ month", h: true, b: ["Full custom training programming", "Custom peptide protocol", "Weekly check-ins", "Direct messaging"] },
+    { n: "Apex", p: "$899", per: "/ quarter", b: ["Quarterly programming reset", "Bloodwork review", "Bi-weekly video call", "Priority access"] },
   ];
   return (
     <section className="container-edge py-24 lg:py-32">
