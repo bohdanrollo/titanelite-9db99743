@@ -85,9 +85,6 @@ function Hero() {
               <div className="h-px w-12 bg-blood" />
             </div>
           </div>
-          <div className="absolute -top-4 -right-4 hidden lg:block bg-blood text-primary-foreground p-4 font-mono text-[10px] uppercase tracking-[0.18em] max-w-[180px]">
-            Apply now — limited roster of 20 active clients per quarter.
-          </div>
         </div>
       </div>
     </section>
