@@ -1,0 +1,1 @@
+ALTER TABLE public.intakes ADD COLUMN IF NOT EXISTS selected_plan text;
