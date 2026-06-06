@@ -3,12 +3,17 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Check, ArrowRight } from "lucide-react";
 
+type CheckoutSearch = { plan?: string };
+
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
       { title: "Checkout — Titan Elite Coaching" },
       { name: "description", content: "Select your Titan Elite coaching package and proceed to payment." },
     ],
+  }),
+  validateSearch: (s: Record<string, unknown>): CheckoutSearch => ({
+    plan: typeof s.plan === "string" ? s.plan : undefined,
   }),
   component: Checkout,
 });
