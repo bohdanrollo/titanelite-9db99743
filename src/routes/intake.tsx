@@ -55,21 +55,23 @@ function Intake() {
       setCheckingPurchase(false);
       return;
     }
-    supabase
-      .from("purchases")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("status", "paid")
-      .limit(1)
-      .single()
-      .then(({ data }) => {
+    async function checkPurchase() {
+      try {
+        const { data } = await supabase
+          .from("purchases")
+          .select("id")
+          .eq("user_id", user.id)
+          .eq("status", "paid")
+          .limit(1)
+          .single();
         setHasPurchase(!!data);
-        setCheckingPurchase(false);
-      })
-      .catch(() => {
+      } catch {
         setHasPurchase(false);
+      } finally {
         setCheckingPurchase(false);
-      });
+      }
+    }
+    checkPurchase();
   }, [user]);
 
   const steps = ["Basics", "Training", "Health", "Goals", "Peptides", "Lifestyle", "Upload & Consent"];
