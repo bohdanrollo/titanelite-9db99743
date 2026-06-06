@@ -85,9 +85,6 @@ function Hero() {
               <div className="h-px w-12 bg-blood" />
             </div>
           </div>
-          <div className="absolute -top-4 -right-4 hidden lg:block bg-blood text-primary-foreground p-4 font-mono text-[10px] uppercase tracking-[0.18em] max-w-[180px]">
-            Apply now — limited roster of 20 active clients per quarter.
-          </div>
         </div>
       </div>
     </section>
@@ -298,7 +295,7 @@ function FinalCta() {
   return (
     <section className="bg-blood text-primary-foreground">
       <div className="container-edge py-24 lg:py-32 text-center">
-        <div className="text-bone/80 font-mono text-[11px] uppercase tracking-[0.18em]">Roster opens monthly</div>
+        <div className="text-bone/80 font-mono text-[11px] uppercase tracking-[0.18em]">Now accepting new clients</div>
         <h2 className="mt-6 text-6xl lg:text-8xl leading-[0.85]">
           Stop training.<br />Start engineering.
         </h2>
