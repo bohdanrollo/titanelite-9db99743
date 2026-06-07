@@ -97,7 +97,7 @@ function Intake() {
     try {
       const photo_urls = await uploadFiles(photos, "photos");
       const lab_urls = await uploadFiles(labs, "labs");
-      const { error } = await supabase.from("intakes").insert({
+      const { data: inserted, error } = await supabase.from("intakes").insert({
         user_id: user!.id,
         age: form.age ? parseInt(form.age) : null,
         height: form.height,
@@ -124,10 +124,10 @@ function Intake() {
         consent_disclaimer: form.consent_disclaimer,
         selected_plan: selectedPlan,
         status: "pending_payment",
-      });
+      }).select("id").single();
       if (error) throw error;
       toast.success("Intake saved. Complete payment to finalize.");
-      nav({ to: "/checkout", search: { plan: selectedPlan } });
+      nav({ to: "/checkout", search: { plan: selectedPlan, intake: inserted.id } });
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Submission failed");
     } finally {
