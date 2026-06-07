@@ -32,8 +32,10 @@ const DraftSchema = z.object({
 
 type ProtocolDraft = z.infer<typeof DraftSchema>;
 
-async function assertAdmin(supabase: { from: (t: string) => { select: (c: string) => { eq: (a: string, b: string) => { eq: (a: string, b: string) => { maybeSingle: () => Promise<{ data: unknown }> } } } } }, userId: string) {
-  const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
+async function assertAdmin(supabase: { from: (t: string) => unknown }, userId: string) {
+  const q = (supabase.from("user_roles") as { select: (c: string) => { eq: (a: string, b: string) => { eq: (a: string, b: string) => { maybeSingle: () => Promise<{ data: unknown }> } } } })
+    .select("role").eq("user_id", userId).eq("role", "admin");
+  const { data } = await q.maybeSingle();
   if (!data) throw new Error("Admin role required");
 }
 
