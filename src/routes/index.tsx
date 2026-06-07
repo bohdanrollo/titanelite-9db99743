@@ -47,7 +47,7 @@ function Hero() {
     <section className="relative overflow-hidden border-b border-foreground/10">
       <div className="container-edge grid lg:grid-cols-12 gap-10 pt-16 pb-20 lg:pt-24 lg:pb-32">
         <div className="lg:col-span-7 flex flex-col justify-center">
-          <div className="text-eyebrow">EST. Programme № 001</div>
+          <div className="text-eyebrow">DO IT FOR YOURSELF</div>
           <h1 className="mt-6 text-6xl sm:text-7xl lg:text-[8.5rem] leading-[0.85]">
             Engineer<br />
             <span className="text-blood">the body</span><br />
