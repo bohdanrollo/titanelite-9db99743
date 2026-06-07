@@ -30,29 +30,19 @@ const DraftSchema = z.object({
   recovery_notes: z.string().optional(),
 });
 
-async function assertAdmin(supabase: SupabaseLike, userId: string) {
+type ProtocolDraft = z.infer<typeof DraftSchema>;
+
+async function assertAdmin(supabase: { from: (t: string) => { select: (c: string) => { eq: (a: string, b: string) => { eq: (a: string, b: string) => { maybeSingle: () => Promise<{ data: unknown }> } } } } }, userId: string) {
   const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
   if (!data) throw new Error("Admin role required");
 }
-
-type SupabaseLike = {
-  from: (t: string) => {
-    select: (cols: string) => {
-      eq: (c: string, v: string) => {
-        eq?: (c: string, v: string) => { maybeSingle: () => Promise<{ data: unknown }> };
-        maybeSingle: () => Promise<{ data: unknown }>;
-        single?: () => Promise<{ data: unknown; error: { message: string } | null }>;
-      };
-    };
-  };
-};
 
 export const generateProtocolDraft = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ intakeId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    await assertAdmin(supabase as unknown as SupabaseLike, userId);
+    await assertAdmin(supabase, userId);
 
     const { data: intake, error } = await supabase.from("intakes").select("*").eq("id", data.intakeId).single();
     if (error || !intake) throw new Error("Intake not found");
@@ -98,12 +88,11 @@ Be concrete with sets/reps/% in key lifts. Account for injuries.`;
       prompt,
     });
 
-    const draft = {
+    const draft: ProtocolDraft = {
       ...object,
       client_name: object.client_name || profile?.full_name || profile?.email || "Client",
     };
 
-    // Upsert/insert a draft protocol
     const { data: existing } = await supabase
       .from("protocols")
       .select("id")
@@ -114,7 +103,7 @@ Be concrete with sets/reps/% in key lifts. Account for injuries.`;
     if (existing) {
       const { error: uErr } = await supabase
         .from("protocols")
-        .update({ draft_content: draft, title: `${tier} Protocol — ${draft.client_name}` })
+        .update({ draft_content: draft as never, title: `${tier} Protocol — ${draft.client_name}` })
         .eq("id", existing.id);
       if (uErr) throw new Error(uErr.message);
       return { protocolId: existing.id, draft };
@@ -126,7 +115,7 @@ Be concrete with sets/reps/% in key lifts. Account for injuries.`;
         user_id: intake.user_id,
         type: "weightlifting",
         title: `${tier} Protocol — ${draft.client_name}`,
-        draft_content: draft,
+        draft_content: draft as never,
         status: "draft",
         source_intake_id: data.intakeId,
       })
@@ -145,10 +134,10 @@ export const saveProtocolDraft = createServerFn({ method: "POST" })
   }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    await assertAdmin(supabase as unknown as SupabaseLike, userId);
-    const update: Record<string, unknown> = { draft_content: data.draft };
+    await assertAdmin(supabase, userId);
+    const update: { draft_content: ProtocolDraft; title?: string } = { draft_content: data.draft };
     if (data.title) update.title = data.title;
-    const { error } = await supabase.from("protocols").update(update).eq("id", data.protocolId);
+    const { error } = await supabase.from("protocols").update(update as never).eq("id", data.protocolId);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
@@ -158,7 +147,7 @@ export const sendProtocol = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ protocolId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    await assertAdmin(supabase as unknown as SupabaseLike, userId);
+    await assertAdmin(supabase, userId);
 
     const { data: protocol, error } = await supabase
       .from("protocols")
@@ -171,7 +160,7 @@ export const sendProtocol = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { renderProtocolPdf } = await import("./pdf.server");
 
-    const pdfBytes = await renderProtocolPdf(protocol.draft_content, { title: protocol.title });
+    const pdfBytes = await renderProtocolPdf(protocol.draft_content as ProtocolDraft, { title: protocol.title });
     const path = `${protocol.user_id}/protocols/${protocol.id}.pdf`;
 
     const { error: uErr } = await supabaseAdmin.storage
@@ -186,7 +175,6 @@ export const sendProtocol = createServerFn({ method: "POST" })
       .eq("id", protocol.id);
     if (pErr) throw new Error(pErr.message);
 
-    // Fire email (non-blocking failure)
     try {
       const { data: profile } = await supabaseAdmin.from("profiles").select("email, full_name").eq("id", protocol.user_id).maybeSingle();
       if (profile?.email) {
@@ -216,7 +204,6 @@ export const getProtocolDownloadUrl = createServerFn({ method: "POST" })
       .eq("id", data.protocolId)
       .single();
     if (error || !p) throw new Error("Not found");
-    // RLS already enforced; double-check ownership or admin
     if (p.user_id !== userId) {
       const { data: role } = await supabase.from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
       if (!role) throw new Error("Forbidden");
@@ -227,7 +214,6 @@ export const getProtocolDownloadUrl = createServerFn({ method: "POST" })
       .from("client-uploads")
       .createSignedUrl(p.pdf_storage_path, 60 * 60);
     if (sErr || !signed) throw new Error("Could not sign URL");
-    // Mark viewed
     if (p.user_id === userId) {
       await supabase.from("protocols").update({ viewed_at: new Date().toISOString() }).eq("id", p.id);
     }
