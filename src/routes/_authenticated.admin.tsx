@@ -1,9 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { LogOut, Users, Inbox, FileText, ArrowLeft, Search } from "lucide-react";
+import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2 } from "lucide-react";
+import { generateProtocolDraft, saveProtocolDraft, sendProtocol, getProtocolDownloadUrl } from "@/lib/protocols.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Titan Elite" }] }),
@@ -213,59 +215,215 @@ function Stat({ l, v }: { l: string; v: string | null | undefined }) {
   );
 }
 
-function AssignProtocol({ userId, onDone }: { userId: string; onDone: () => void }) {
-  const [type, setType] = useState<"weightlifting" | "peptide" | "nutrition" | "other">("weightlifting");
-  const [title, setTitle] = useState(""); const [content, setContent] = useState(""); const [notes, setNotes] = useState("");
-  const [busy, setBusy] = useState(false);
-  async function save() {
-    setBusy(true);
-    const { error } = await supabase.from("protocols").insert({ user_id: userId, type, title, content, coach_notes: notes });
-    setBusy(false);
-    if (error) return toast.error(error.message);
-    toast.success("Protocol assigned.");
-    onDone();
+type Draft = {
+  client_name?: string;
+  overview?: string;
+  training_block?: {
+    weeks?: number;
+    split?: string;
+    key_lifts?: string[];
+    progression?: string;
+    weekly_schedule?: { day: string; focus: string; sessions: string[] }[];
+  };
+  peptide_protocol?: {
+    overview?: string;
+    items?: { name: string; dose?: string; timing?: string; notes?: string }[];
+    educational_disclaimer?: string;
+  };
+  nutrition_notes?: string;
+  recovery_notes?: string;
+};
+
+function AssignProtocol({ userId, intakeId, onDone }: { userId: string; intakeId: string; onDone: () => void }) {
+  const generateFn = useServerFn(generateProtocolDraft);
+  const saveFn = useServerFn(saveProtocolDraft);
+  const sendFn = useServerFn(sendProtocol);
+  const [protocolId, setProtocolId] = useState<string | null>(null);
+  const [title, setTitle] = useState("");
+  const [draft, setDraft] = useState<Draft | null>(null);
+  const [generating, setGenerating] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    // Load existing draft for this intake if present
+    supabase.from("protocols").select("id, title, draft_content, status").eq("source_intake_id", intakeId).maybeSingle().then(({ data }) => {
+      if (data) {
+        setProtocolId(data.id);
+        setTitle(data.title);
+        setDraft((data.draft_content as Draft) ?? null);
+      }
+    });
+  }, [intakeId]);
+
+  async function generate() {
+    setGenerating(true);
+    try {
+      const res = await generateFn({ data: { intakeId } });
+      setProtocolId(res.protocolId);
+      setDraft(res.draft as Draft);
+      setTitle((prev) => prev || `Protocol — ${(res.draft as Draft).client_name ?? "Client"}`);
+      toast.success("AI draft generated. Review and edit before sending.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Generation failed");
+    } finally {
+      setGenerating(false);
+    }
   }
+
+  async function save() {
+    if (!protocolId || !draft) return;
+    setSaving(true);
+    try {
+      await saveFn({ data: { protocolId, draft, title: title || undefined } });
+      toast.success("Draft saved.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Save failed");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function send() {
+    if (!protocolId) return;
+    if (!confirm("Render PDF and send to client? They'll receive an email with the protocol.")) return;
+    setSending(true);
+    try {
+      await save();
+      await sendFn({ data: { protocolId } });
+      toast.success("Protocol delivered and emailed.");
+      onDone();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Send failed");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  function updateDraft<K extends keyof Draft>(k: K, v: Draft[K]) {
+    setDraft((d) => ({ ...(d ?? {}), [k]: v }));
+  }
+  function updateTraining<K extends keyof NonNullable<Draft["training_block"]>>(k: K, v: NonNullable<Draft["training_block"]>[K]) {
+    setDraft((d) => ({ ...(d ?? {}), training_block: { ...(d?.training_block ?? {}), [k]: v } }));
+  }
+  function updatePeptides<K extends keyof NonNullable<Draft["peptide_protocol"]>>(k: K, v: NonNullable<Draft["peptide_protocol"]>[K]) {
+    setDraft((d) => ({ ...(d ?? {}), peptide_protocol: { ...(d?.peptide_protocol ?? {}), [k]: v } }));
+  }
+
   return (
-    <div className="space-y-4">
-      <div className="font-display text-2xl">Assign Protocol</div>
-      <div className="grid sm:grid-cols-2 gap-3">
-        <select value={type} onChange={(e) => setType(e.target.value as "weightlifting" | "peptide" | "nutrition" | "other")} className="bg-background border border-foreground/20 px-3 py-2 focus:outline-none focus:border-blood">
-          <option value="weightlifting">Weightlifting</option>
-          <option value="peptide">Peptide</option>
-          <option value="nutrition">Nutrition</option>
-          <option value="other">Other</option>
-        </select>
-        <input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} className="bg-background border border-foreground/20 px-3 py-2 focus:outline-none focus:border-blood" />
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <div className="font-display text-2xl">Protocol Draft</div>
+        <button
+          onClick={generate}
+          disabled={generating}
+          className="btn-blood hover:btn-blood-hover disabled:opacity-50"
+        >
+          {generating ? <><Loader2 size={14} className="animate-spin" /> Generating…</> : <><Sparkles size={14} /> {draft ? "Regenerate with AI" : "Generate draft with AI"}</>}
+        </button>
       </div>
-      <textarea rows={5} placeholder="Protocol content (sets, reps, dosing windows, etc.)" value={content} onChange={(e) => setContent(e.target.value)} className="w-full bg-background border border-foreground/20 px-3 py-2 focus:outline-none focus:border-blood" />
-      <textarea rows={2} placeholder="Coach notes" value={notes} onChange={(e) => setNotes(e.target.value)} className="w-full bg-background border border-foreground/20 px-3 py-2 focus:outline-none focus:border-blood" />
-      <button onClick={save} disabled={busy || !title} className="btn-blood hover:btn-blood-hover disabled:opacity-40">{busy ? "Saving…" : "Assign Protocol"}</button>
+
+      {!draft && !generating && (
+        <div className="border border-dashed border-foreground/20 p-8 text-center text-sm text-muted-foreground">
+          Click "Generate draft with AI" to create a starting protocol from this intake.
+        </div>
+      )}
+
+      {draft && (
+        <div className="space-y-4 text-sm">
+          <Mini label="Title" value={title} onChange={setTitle} />
+          <Mini label="Client Name" value={draft.client_name ?? ""} onChange={(v) => updateDraft("client_name", v)} />
+          <Area label="Overview" value={draft.overview ?? ""} onChange={(v) => updateDraft("overview", v)} />
+
+          <div className="border border-foreground/10 p-4 space-y-3">
+            <div className="text-eyebrow">Training Block</div>
+            <div className="grid sm:grid-cols-2 gap-3">
+              <Mini label="Weeks" type="number" value={String(draft.training_block?.weeks ?? "")} onChange={(v) => updateTraining("weeks", v ? parseInt(v) : undefined)} />
+              <Mini label="Split" value={draft.training_block?.split ?? ""} onChange={(v) => updateTraining("split", v)} />
+            </div>
+            <Area label="Progression" value={draft.training_block?.progression ?? ""} onChange={(v) => updateTraining("progression", v)} />
+            <Area label="Key Lifts (one per line)" value={(draft.training_block?.key_lifts ?? []).join("\n")} onChange={(v) => updateTraining("key_lifts", v.split("\n").filter(Boolean))} />
+            <Area label="Weekly Schedule (JSON)" value={JSON.stringify(draft.training_block?.weekly_schedule ?? [], null, 2)} onChange={(v) => { try { updateTraining("weekly_schedule", JSON.parse(v)); } catch { /* ignore until valid */ } }} mono />
+          </div>
+
+          <div className="border border-foreground/10 p-4 space-y-3">
+            <div className="text-eyebrow">Peptide Protocol (Educational)</div>
+            <Area label="Overview" value={draft.peptide_protocol?.overview ?? ""} onChange={(v) => updatePeptides("overview", v)} />
+            <Area label="Items (JSON: [{name, dose, timing, notes}])" value={JSON.stringify(draft.peptide_protocol?.items ?? [], null, 2)} onChange={(v) => { try { updatePeptides("items", JSON.parse(v)); } catch { /* ignore */ } }} mono />
+            <Area label="Educational Disclaimer" value={draft.peptide_protocol?.educational_disclaimer ?? ""} onChange={(v) => updatePeptides("educational_disclaimer", v)} />
+          </div>
+
+          <Area label="Nutrition Notes" value={draft.nutrition_notes ?? ""} onChange={(v) => updateDraft("nutrition_notes", v)} />
+          <Area label="Recovery Notes" value={draft.recovery_notes ?? ""} onChange={(v) => updateDraft("recovery_notes", v)} />
+
+          <div className="flex flex-wrap gap-3 pt-2">
+            <button onClick={save} disabled={saving || !protocolId} className="btn-ghost hover:bg-foreground hover:text-background disabled:opacity-50">
+              {saving ? <><Loader2 size={14} className="animate-spin" /> Saving…</> : <><Save size={14} /> Save draft</>}
+            </button>
+            <button onClick={send} disabled={sending || !protocolId} className="btn-blood hover:btn-blood-hover disabled:opacity-50">
+              {sending ? <><Loader2 size={14} className="animate-spin" /> Sending…</> : <><Send size={14} /> Approve & send to client</>}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Mini({ label, value, onChange, type = "text" }: { label: string; value: string; onChange: (v: string) => void; type?: string }) {
+  return (
+    <div>
+      <label className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground block mb-2">{label}</label>
+      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} className="w-full bg-background border border-foreground/20 px-3 py-2 focus:outline-none focus:border-blood" />
+    </div>
+  );
+}
+function Area({ label, value, onChange, mono }: { label: string; value: string; onChange: (v: string) => void; mono?: boolean }) {
+  return (
+    <div>
+      <label className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground block mb-2">{label}</label>
+      <textarea rows={mono ? 6 : 3} value={value} onChange={(e) => onChange(e.target.value)} className={`w-full bg-background border border-foreground/20 px-3 py-2 focus:outline-none focus:border-blood ${mono ? "font-mono text-xs" : ""}`} />
     </div>
   );
 }
 
 function ProtocolsAdmin() {
-  const [rows, setRows] = useState<{ id: string; user_id: string; type: string; title: string; created_at: string; viewed_at: string | null }[]>([]);
+  const downloadFn = useServerFn(getProtocolDownloadUrl);
+  const [rows, setRows] = useState<{ id: string; user_id: string; type: string; title: string; status: string; created_at: string; viewed_at: string | null; delivered_at: string | null; pdf_storage_path: string | null }[]>([]);
   useEffect(() => {
-    supabase.from("protocols").select("id, user_id, type, title, created_at, viewed_at").order("created_at", { ascending: false }).then(({ data }) => setRows(data ?? []));
+    supabase.from("protocols").select("id, user_id, type, title, status, created_at, viewed_at, delivered_at, pdf_storage_path").order("created_at", { ascending: false }).then(({ data }) => setRows(data ?? []));
   }, []);
+  async function download(id: string) {
+    try {
+      const { url } = await downloadFn({ data: { protocolId: id } });
+      window.open(url, "_blank");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Download failed");
+    }
+  }
   return (
     <div className="border border-foreground/10">
       <table className="w-full text-sm">
         <thead className="bg-muted text-left text-eyebrow">
-          <tr><th className="p-3">Created</th><th className="p-3">Client</th><th className="p-3">Type</th><th className="p-3">Title</th><th className="p-3">Viewed</th></tr>
+          <tr><th className="p-3">Created</th><th className="p-3">Client</th><th className="p-3">Title</th><th className="p-3">Status</th><th className="p-3">Delivered</th><th className="p-3">Viewed</th><th className="p-3"></th></tr>
         </thead>
         <tbody>
           {rows.map((r) => (
             <tr key={r.id} className="border-t border-foreground/10">
               <td className="p-3 font-mono text-xs">{new Date(r.created_at).toLocaleDateString()}</td>
               <td className="p-3 font-mono text-xs">{r.user_id.slice(0, 8)}…</td>
-              <td className="p-3"><span className="text-eyebrow">{r.type}</span></td>
               <td className="p-3 font-medium">{r.title}</td>
-              <td className="p-3 text-xs">{r.viewed_at ? new Date(r.viewed_at).toLocaleDateString() : <span className="text-muted-foreground">Not yet</span>}</td>
+              <td className="p-3"><span className="text-eyebrow">{r.status}</span></td>
+              <td className="p-3 text-xs">{r.delivered_at ? new Date(r.delivered_at).toLocaleDateString() : <span className="text-muted-foreground">—</span>}</td>
+              <td className="p-3 text-xs">{r.viewed_at ? new Date(r.viewed_at).toLocaleDateString() : <span className="text-muted-foreground">—</span>}</td>
+              <td className="p-3 text-right">
+                {r.pdf_storage_path && (
+                  <button onClick={() => download(r.id)} className="text-blood font-mono text-xs uppercase tracking-[0.14em] inline-flex items-center gap-1"><Download size={12} /> PDF</button>
+                )}
+              </td>
             </tr>
           ))}
-          {!rows.length && <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">No protocols assigned yet.</td></tr>}
+          {!rows.length && <tr><td colSpan={7} className="p-8 text-center text-muted-foreground">No protocols yet.</td></tr>}
         </tbody>
       </table>
     </div>
