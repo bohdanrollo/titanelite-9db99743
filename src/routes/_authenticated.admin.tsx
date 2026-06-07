@@ -197,7 +197,7 @@ function Intakes() {
               ))}
             </div>
             <div className="border-t border-foreground/10 p-6">
-              <AssignProtocol userId={open.user_id} onDone={() => setOpen(null)} />
+              <AssignProtocol userId={open.user_id} intakeId={open.id} onDone={() => setOpen(null)} />
             </div>
           </div>
         </div>
