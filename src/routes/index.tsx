@@ -11,6 +11,7 @@ import transform2 from "@/assets/transform-2.jpg.asset.json";
 import transform3 from "@/assets/transform-3.jpg.asset.json";
 import transform4 from "@/assets/transform-4.jpg.asset.json";
 import transform5 from "@/assets/transform-5.jpg.asset.json";
+import transform6 from "@/assets/transform-6.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -181,7 +182,7 @@ function Showcase() {
           <Link to="/intake" className="mt-8 btn-blood hover:btn-blood-hover inline-flex">Apply now</Link>
         </div>
         <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {[transform1.url, transform2.url, transform3.url, transform4.url, transform5.url].map((src, i) => (
+          {[transform1.url, transform2.url, transform3.url, transform4.url, transform5.url, transform6.url].map((src, i) => (
             <div key={i} className="relative overflow-hidden aspect-[4/5]">
               <img src={src} alt={`Client transformation ${i + 1}`} loading="lazy" className="size-full object-cover hover:scale-105 transition duration-700" />
               <div className="absolute bottom-2 left-2 text-bone font-mono text-[9px] uppercase tracking-[0.2em] bg-ink/70 px-2 py-1">
