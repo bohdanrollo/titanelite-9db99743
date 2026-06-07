@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { SiteHeader } from "@/components/SiteHeader";
 import { FileText, MessageSquare, Activity, LogOut, Upload, Download } from "lucide-react";
+import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Client Dashboard — Titan Elite" }] }),
@@ -82,44 +83,60 @@ function Dashboard() {
 
 function Protocols() {
   const { user } = useAuth();
-  const [items, setItems] = useState<{ id: string; type: string; title: string; content: string | null; file_url: string | null; coach_notes: string | null; created_at: string }[]>([]);
+  const downloadFn = useServerFn(getProtocolDownloadUrl);
+  const [items, setItems] = useState<{ id: string; type: string; title: string; status: string; draft_content: unknown; pdf_storage_path: string | null; coach_notes: string | null; created_at: string; delivered_at: string | null }[]>([]);
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("protocols").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).then(({ data }) => setItems(data ?? []));
+    supabase.from("protocols")
+      .select("id, type, title, status, draft_content, pdf_storage_path, coach_notes, created_at, delivered_at")
+      .eq("user_id", user.id)
+      .eq("status", "delivered")
+      .order("delivered_at", { ascending: false })
+      .then(({ data }) => setItems(data ?? []));
   }, [user]);
 
-  async function markViewed(id: string) {
-    await supabase.from("protocols").update({ viewed_at: new Date().toISOString() }).eq("id", id);
+  async function download(id: string) {
+    try {
+      const { url } = await downloadFn({ data: { protocolId: id } });
+      window.open(url, "_blank");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Download failed");
+    }
   }
 
-  if (!items.length) return <Empty title="No protocols yet" body="Once your coach uploads your custom protocols, they'll appear here." />;
+  if (!items.length) return <Empty title="No protocols yet" body="Once your coach delivers your custom protocol, it'll appear here with a downloadable PDF." />;
 
   return (
     <div className="space-y-4">
-      {items.map((p) => (
-        <article key={p.id} className="border border-foreground/10 p-6 hover:border-blood transition">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="text-eyebrow">{p.type}</div>
-              <h3 className="font-display text-2xl mt-1">{p.title}</h3>
-              <p className="text-xs text-muted-foreground font-mono uppercase tracking-[0.14em] mt-1">{new Date(p.created_at).toLocaleDateString()}</p>
+      {items.map((p) => {
+        const draft = p.draft_content as { overview?: string } | null;
+        return (
+          <article key={p.id} className="border border-foreground/10 p-6 hover:border-blood transition">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <div className="text-eyebrow">{p.type}</div>
+                <h3 className="font-display text-2xl mt-1">{p.title}</h3>
+                <p className="text-xs text-muted-foreground font-mono uppercase tracking-[0.14em] mt-1">
+                  Delivered {p.delivered_at ? new Date(p.delivered_at).toLocaleDateString() : "—"}
+                </p>
+              </div>
+              {p.pdf_storage_path && (
+                <button onClick={() => download(p.id)} className="btn-blood hover:btn-blood-hover">
+                  <Download size={14} /> Download PDF
+                </button>
+              )}
             </div>
-            {p.file_url && (
-              <a href={p.file_url} target="_blank" rel="noreferrer" onClick={() => markViewed(p.id)} className="btn-blood hover:btn-blood-hover">
-                <Download size={14} /> Download
-              </a>
+            {draft?.overview && <div className="mt-4 text-sm text-muted-foreground whitespace-pre-wrap">{draft.overview}</div>}
+            {p.coach_notes && (
+              <div className="mt-4 border-l-2 border-blood pl-4 text-sm bg-muted p-3">
+                <div className="text-eyebrow mb-1">Coach Notes</div>
+                {p.coach_notes}
+              </div>
             )}
-          </div>
-          {p.content && <div className="mt-4 text-sm whitespace-pre-wrap text-muted-foreground">{p.content}</div>}
-          {p.coach_notes && (
-            <div className="mt-4 border-l-2 border-blood pl-4 text-sm bg-muted p-3">
-              <div className="text-eyebrow mb-1">Coach Notes</div>
-              {p.coach_notes}
-            </div>
-          )}
-        </article>
-      ))}
+          </article>
+        );
+      })}
     </div>
   );
 }
