@@ -65,10 +65,10 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
               break;
             }
             case "invoice.payment_succeeded": {
-              const inv = event.data.object;
-              // Skip the first invoice (already covered by checkout welcome email)
+              const inv = event.data.object as typeof event.data.object & { subscription?: string | { id: string } | null };
               if (inv.billing_reason === "subscription_create") break;
-              const subId = typeof inv.subscription === "string" ? inv.subscription : null;
+              const subRef = inv.subscription;
+              const subId = typeof subRef === "string" ? subRef : subRef?.id ?? null;
               if (!subId) break;
               const { data: purchase } = await supabaseAdmin
                 .from("purchases").select("id, user_id, tier, last_invoice_id")
@@ -95,7 +95,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
             case "customer.subscription.deleted": {
               const sub = event.data.object;
               await supabaseAdmin.from("purchases").update({
-                status: "canceled",
+                status: "cancelled",
                 canceled_at: new Date().toISOString(),
               }).eq("stripe_subscription_id", sub.id);
               break;
