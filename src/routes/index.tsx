@@ -68,8 +68,8 @@ function Hero() {
           </div>
           <div className="mt-12 grid grid-cols-3 gap-6 max-w-md">
             {[
-              { n: "12+", l: "Years coaching" },
-              { n: "400+", l: "Clients served" },
+              { n: "10+", l: "Years coaching" },
+              { n: "150+", l: "Clients served" },
               { n: "100%", l: "Custom protocols" },
             ].map((s) => (
               <div key={s.l}>
