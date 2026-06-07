@@ -17,9 +17,15 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Titan Elite — Engineered Physique Coaching" },
-      { name: "description", content: "Premium 1:1 weightlifting programming and educational peptide protocols. Apply for coaching." },
+      { name: "description", content: "Premium 1:1 weightlifting programming and peptide education. No templates. Invest in yourself and engineer the body you train for." },
       { property: "og:title", content: "Titan Elite — Engineered Physique Coaching" },
-      { property: "og:description", content: "Premium 1:1 weightlifting programming and educational peptide protocols." },
+      { property: "og:description", content: "Premium 1:1 weightlifting programming and peptide education. No templates. Invest in yourself and engineer the body you train for." },
+      { property: "og:url", content: "/" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+    links: [
+      { rel: "canonical", href: "/" },
     ],
   }),
   component: Home,
