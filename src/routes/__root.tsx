@@ -60,11 +60,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Titan Elite — Engineered Physique Coaching" },
-      { name: "description", content: "Customized weightlifting programming and educational peptide protocols for serious clients." },
       { name: "author", content: "Titan Elite" },
-      { property: "og:title", content: "Titan Elite — Engineered Physique Coaching" },
-      { property: "og:description", content: "Customized weightlifting programming and educational peptide protocols for serious clients." },
+      { property: "og:site_name", content: "Titan Elite" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
