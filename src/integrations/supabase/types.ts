@@ -36,6 +36,7 @@ export type Database = {
           peptide_experience: string | null
           peptides_of_interest: string | null
           progress_photo_urls: string[] | null
+          purchase_id: string | null
           selected_plan: string | null
           sleep_habits: string | null
           status: string
@@ -66,6 +67,7 @@ export type Database = {
           peptide_experience?: string | null
           peptides_of_interest?: string | null
           progress_photo_urls?: string[] | null
+          purchase_id?: string | null
           selected_plan?: string | null
           sleep_habits?: string | null
           status?: string
@@ -96,6 +98,7 @@ export type Database = {
           peptide_experience?: string | null
           peptides_of_interest?: string | null
           progress_photo_urls?: string[] | null
+          purchase_id?: string | null
           selected_plan?: string | null
           sleep_habits?: string | null
           status?: string
@@ -105,7 +108,15 @@ export type Database = {
           weight?: string | null
           weightlifting_goals?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "intakes_purchase_fk"
+            columns: ["purchase_id"]
+            isOneToOne: false
+            referencedRelation: "purchases"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       messages: {
         Row: {
@@ -196,8 +207,13 @@ export type Database = {
           coach_notes: string | null
           content: string | null
           created_at: string
+          delivered_at: string | null
+          draft_content: Json | null
           file_url: string | null
           id: string
+          pdf_storage_path: string | null
+          source_intake_id: string | null
+          status: string
           title: string
           type: Database["public"]["Enums"]["protocol_type"]
           user_id: string
@@ -207,8 +223,13 @@ export type Database = {
           coach_notes?: string | null
           content?: string | null
           created_at?: string
+          delivered_at?: string | null
+          draft_content?: Json | null
           file_url?: string | null
           id?: string
+          pdf_storage_path?: string | null
+          source_intake_id?: string | null
+          status?: string
           title: string
           type: Database["public"]["Enums"]["protocol_type"]
           user_id: string
@@ -218,42 +239,73 @@ export type Database = {
           coach_notes?: string | null
           content?: string | null
           created_at?: string
+          delivered_at?: string | null
+          draft_content?: Json | null
           file_url?: string | null
           id?: string
+          pdf_storage_path?: string | null
+          source_intake_id?: string | null
+          status?: string
           title?: string
           type?: Database["public"]["Enums"]["protocol_type"]
           user_id?: string
           viewed_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "protocols_source_intake_fk"
+            columns: ["source_intake_id"]
+            isOneToOne: false
+            referencedRelation: "intakes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       purchases: {
         Row: {
           amount_cents: number
+          canceled_at: string | null
           created_at: string
+          currency: string | null
           id: string
+          last_invoice_id: string | null
           status: Database["public"]["Enums"]["purchase_status"]
           stripe_checkout_session_id: string | null
+          stripe_customer_id: string | null
+          stripe_price_id: string | null
+          stripe_subscription_id: string | null
           tier: string
           updated_at: string
           user_id: string
         }
         Insert: {
           amount_cents: number
+          canceled_at?: string | null
           created_at?: string
+          currency?: string | null
           id?: string
+          last_invoice_id?: string | null
           status?: Database["public"]["Enums"]["purchase_status"]
           stripe_checkout_session_id?: string | null
+          stripe_customer_id?: string | null
+          stripe_price_id?: string | null
+          stripe_subscription_id?: string | null
           tier: string
           updated_at?: string
           user_id: string
         }
         Update: {
           amount_cents?: number
+          canceled_at?: string | null
           created_at?: string
+          currency?: string | null
           id?: string
+          last_invoice_id?: string | null
           status?: Database["public"]["Enums"]["purchase_status"]
           stripe_checkout_session_id?: string | null
+          stripe_customer_id?: string | null
+          stripe_price_id?: string | null
+          stripe_subscription_id?: string | null
           tier?: string
           updated_at?: string
           user_id?: string
