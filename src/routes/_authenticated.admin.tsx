@@ -31,9 +31,8 @@ function Admin() {
           <div className="text-eyebrow">Restricted</div>
           <h1 className="mt-4 text-4xl">Admin access required.</h1>
           <p className="mt-3 text-sm text-muted-foreground">
-            Your account isn't assigned the admin role. To enable yourself as admin, run this in the Cloud SQL editor with your user id:
+            Your account isn't assigned the admin role. Contact your administrator to have the admin role assigned.
           </p>
-          <pre className="mt-4 text-left text-xs bg-muted p-3 overflow-x-auto"><code>INSERT INTO public.user_roles (user_id, role) VALUES ('{user.id}', 'admin');</code></pre>
           <Link to="/dashboard" className="mt-6 inline-flex btn-ghost"><ArrowLeft size={14} /> Back to dashboard</Link>
         </div>
       </div>
