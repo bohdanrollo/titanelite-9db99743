@@ -8,14 +8,22 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
         if (!signature) return new Response("Missing signature", { status: 400 });
         const body = await request.text();
 
-        const { getStripe, getWebhookSecret } = await import("@/lib/stripe.server");
+        const { getStripe, getWebhookSecrets } = await import("@/lib/stripe.server");
         const stripe = getStripe();
 
         let event;
-        try {
-          event = await stripe.webhooks.constructEventAsync(body, signature, getWebhookSecret());
-        } catch (err) {
-          console.error("[stripe-webhook] signature verification failed", err);
+        let lastErr: unknown;
+        for (const secret of getWebhookSecrets()) {
+          try {
+            event = await stripe.webhooks.constructEventAsync(body, signature, secret);
+            lastErr = null;
+            break;
+          } catch (err) {
+            lastErr = err;
+          }
+        }
+        if (!event) {
+          console.error("[stripe-webhook] signature verification failed", lastErr);
           return new Response("Invalid signature", { status: 401 });
         }
 
