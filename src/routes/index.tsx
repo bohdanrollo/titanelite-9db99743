@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Check, Dumbbell, FlaskConical, FileText, Activity, ChevronDown } from "lucide-react";
+import { ArrowRight, Dumbbell, FlaskConical, FileText, Activity, ChevronDown } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import heroImg from "@/assets/titan-logo.jpg.asset.json";
@@ -41,7 +41,7 @@ function Home() {
       <Benefits />
       <Showcase />
       <Testimonials />
-      <PricingPreview />
+      
       <FAQPreview />
       <FinalCta />
       <SiteFooter />
@@ -230,51 +230,13 @@ function Testimonials() {
   );
 }
 
-function PricingPreview() {
-  const tiers = [
-    { n: "Foundation", p: "$59", per: "one-time", b: ["Custom training block (4 weeks)", "Educational peptide notes", "Email support"] },
-    { n: "Elite", p: "$199", per: "/ month", h: true, b: ["Full custom training programming", "Custom peptide protocol", "Weekly check-ins", "Direct messaging"] },
-    { n: "Apex", p: "$399", per: "/ month", b: ["Monthly programming reset", "Bloodwork review", "Bi-weekly video call", "Priority access"] },
-  ];
-  return (
-    <section className="container-edge py-24 lg:py-32">
-      <div className="flex items-end justify-between flex-wrap gap-4 mb-12">
-        <div>
-          <div className="text-eyebrow">Investment</div>
-          <h2 className="mt-4 text-5xl lg:text-6xl">Pick your tier.</h2>
-        </div>
-        <Link to="/pricing" className="btn-ghost hover:bg-foreground hover:text-background">Full pricing →</Link>
-      </div>
-      <div className="grid md:grid-cols-3 gap-px bg-foreground/15">
-        {tiers.map((t) => (
-          <div key={t.n} className={`p-8 ${t.h ? "bg-ink text-bone" : "bg-background"}`}>
-            {t.h && <div className="text-blood font-mono text-[10px] uppercase tracking-[0.18em] mb-4">Most Selected</div>}
-            <div className="font-display text-3xl">{t.n}</div>
-            <div className="mt-4 flex items-baseline gap-2">
-              <span className="font-display text-5xl">{t.p}</span>
-              <span className="font-mono text-xs uppercase tracking-wider opacity-60">{t.per}</span>
-            </div>
-            <ul className="mt-8 space-y-3 text-sm">
-              {t.b.map((x) => (
-                <li key={x} className="flex gap-2"><Check size={16} className="text-blood shrink-0 mt-0.5" /><span>{x}</span></li>
-              ))}
-            </ul>
-            <Link to="/intake" className={`mt-8 inline-flex ${t.h ? "btn-blood hover:btn-blood-hover" : "btn-ghost hover:bg-foreground hover:text-background"}`}>
-              Apply
-            </Link>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
 
 function FAQPreview() {
   const qa = [
     { q: "Do you prescribe peptides?", a: "No. Titan Elite provides educational protocol templates only. We do not diagnose, treat, prescribe, or sell peptides. Always consult a licensed medical provider." },
     { q: "How custom is the programming?", a: "Every protocol is built from scratch around your intake — no recycled templates. Updates roll out as you progress." },
     { q: "Do I need gym access?", a: "Yes. A full barbell setup is strongly recommended. We can adapt to commercial gyms or well-equipped home setups." },
-    { q: "How long is the commitment?", a: "Most clients commit to a minimum 12-week block to see meaningful change. Monthly billing, cancel anytime after the initial block." },
+    { q: "How long is the commitment?", a: "Most clients commit to a minimum 12-week block to see meaningful change." },
   ];
   return (
     <section className="bg-background border-t border-foreground/10 py-24">

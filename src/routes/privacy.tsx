@@ -30,8 +30,8 @@ function Privacy() {
             usage data (sign-in times, dashboard activity).
           </P>
           <P t="How We Use It">
-            To build your custom protocols, communicate with you about coaching, process
-            payments, and improve our services. We do not sell your data.
+            To build your custom protocols, communicate with you about coaching, and
+            improve our services. We do not sell your data.
           </P>
           <P t="Health Information">
             We apply HIPAA-inspired safeguards to sensitive health data even where not
@@ -45,8 +45,8 @@ function Privacy() {
             breaches will be disclosed promptly per applicable law.
           </P>
           <P t="Third Parties">
-            We use Stripe (payments), our hosting provider, and email services. Each is
-            bound by their own privacy practices and a data processing agreement.
+            We use our hosting provider and email services. Each is bound by their own
+            privacy practices and a data processing agreement.
           </P>
           <P t="Your Rights">
             You may request access, correction, or deletion of your data by emailing

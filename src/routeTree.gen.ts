@@ -13,20 +13,16 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as IntakeRouteImport } from './routes/intake'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DisclaimerRouteImport } from './routes/disclaimer'
 import { Route as ContactRouteImport } from './routes/contact'
-import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
-import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 
 const TermsRoute = TermsRouteImport.update({
@@ -49,11 +45,6 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PricingRoute = PricingRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IntakeRoute = IntakeRouteImport.update({
   id: '/intake',
   path: '/intake',
@@ -72,11 +63,6 @@ const DisclaimerRoute = DisclaimerRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CheckoutRoute = CheckoutRouteImport.update({
-  id: '/checkout',
-  path: '/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -98,11 +84,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CheckoutSuccessRoute = CheckoutSuccessRouteImport.update({
-  id: '/success',
-  path: '/success',
-  getParentRoute: () => CheckoutRoute,
-} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -112,11 +93,6 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => AuthenticatedRoute,
-} as any)
-const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
-  id: '/api/public/stripe-webhook',
-  path: '/api/public/stripe-webhook',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const LovableEmailQueueProcessRoute =
   LovableEmailQueueProcessRouteImport.update({
@@ -129,40 +105,32 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
-  '/checkout': typeof CheckoutRouteWithChildren
   '/contact': typeof ContactRoute
   '/disclaimer': typeof DisclaimerRoute
   '/faq': typeof FaqRoute
   '/intake': typeof IntakeRoute
-  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/checkout/success': typeof CheckoutSuccessRoute
-  '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
-  '/checkout': typeof CheckoutRouteWithChildren
   '/contact': typeof ContactRoute
   '/disclaimer': typeof DisclaimerRoute
   '/faq': typeof FaqRoute
   '/intake': typeof IntakeRoute
-  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/checkout/success': typeof CheckoutSuccessRoute
-  '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesById {
@@ -171,20 +139,16 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
-  '/checkout': typeof CheckoutRouteWithChildren
   '/contact': typeof ContactRoute
   '/disclaimer': typeof DisclaimerRoute
   '/faq': typeof FaqRoute
   '/intake': typeof IntakeRoute
-  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/checkout/success': typeof CheckoutSuccessRoute
-  '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRouteTypes {
@@ -193,40 +157,32 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
-    | '/checkout'
     | '/contact'
     | '/disclaimer'
     | '/faq'
     | '/intake'
-    | '/pricing'
     | '/privacy'
     | '/services'
     | '/sitemap.xml'
     | '/terms'
     | '/admin'
     | '/dashboard'
-    | '/checkout/success'
-    | '/api/public/stripe-webhook'
     | '/lovable/email/queue/process'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/auth'
-    | '/checkout'
     | '/contact'
     | '/disclaimer'
     | '/faq'
     | '/intake'
-    | '/pricing'
     | '/privacy'
     | '/services'
     | '/sitemap.xml'
     | '/terms'
     | '/admin'
     | '/dashboard'
-    | '/checkout/success'
-    | '/api/public/stripe-webhook'
     | '/lovable/email/queue/process'
   id:
     | '__root__'
@@ -234,20 +190,16 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/about'
     | '/auth'
-    | '/checkout'
     | '/contact'
     | '/disclaimer'
     | '/faq'
     | '/intake'
-    | '/pricing'
     | '/privacy'
     | '/services'
     | '/sitemap.xml'
     | '/terms'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
-    | '/checkout/success'
-    | '/api/public/stripe-webhook'
     | '/lovable/email/queue/process'
   fileRoutesById: FileRoutesById
 }
@@ -256,17 +208,14 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
-  CheckoutRoute: typeof CheckoutRouteWithChildren
   ContactRoute: typeof ContactRoute
   DisclaimerRoute: typeof DisclaimerRoute
   FaqRoute: typeof FaqRoute
   IntakeRoute: typeof IntakeRoute
-  PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
-  ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
 }
 
@@ -300,13 +249,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/pricing': {
-      id: '/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PricingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/intake': {
       id: '/intake'
       path: '/intake'
@@ -333,13 +275,6 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/checkout': {
-      id: '/checkout'
-      path: '/checkout'
-      fullPath: '/checkout'
-      preLoaderRoute: typeof CheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -370,13 +305,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/checkout/success': {
-      id: '/checkout/success'
-      path: '/success'
-      fullPath: '/checkout/success'
-      preLoaderRoute: typeof CheckoutSuccessRouteImport
-      parentRoute: typeof CheckoutRoute
-    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -390,13 +318,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRoute
-    }
-    '/api/public/stripe-webhook': {
-      id: '/api/public/stripe-webhook'
-      path: '/api/public/stripe-webhook'
-      fullPath: '/api/public/stripe-webhook'
-      preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/lovable/email/queue/process': {
       id: '/lovable/email/queue/process'
@@ -422,46 +343,21 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
-interface CheckoutRouteChildren {
-  CheckoutSuccessRoute: typeof CheckoutSuccessRoute
-}
-
-const CheckoutRouteChildren: CheckoutRouteChildren = {
-  CheckoutSuccessRoute: CheckoutSuccessRoute,
-}
-
-const CheckoutRouteWithChildren = CheckoutRoute._addFileChildren(
-  CheckoutRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
-  CheckoutRoute: CheckoutRouteWithChildren,
   ContactRoute: ContactRoute,
   DisclaimerRoute: DisclaimerRoute,
   FaqRoute: FaqRoute,
   IntakeRoute: IntakeRoute,
-  PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
-  ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
