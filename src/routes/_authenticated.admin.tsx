@@ -233,6 +233,55 @@ type Draft = {
   recovery_notes?: string;
 };
 
+function coerceToText(v: unknown): string | undefined {
+  if (v == null) return undefined;
+  if (typeof v === "string") return v;
+  if (Array.isArray(v)) {
+    return v.map((item) => {
+      if (typeof item === "string") return item;
+      if (item && typeof item === "object") {
+        const o = item as Record<string, unknown>;
+        if ("day" in o || "focus" in o || "sessions" in o) {
+          const sessions = Array.isArray(o.sessions) ? (o.sessions as unknown[]).join("\n   ") : "";
+          return `${o.day ?? ""} — ${o.focus ?? ""}\n   ${sessions}`.trim();
+        }
+        if ("name" in o) {
+          const meta = [o.dose, o.timing].filter(Boolean).join(" · ");
+          return [o.name, meta, o.notes].filter(Boolean).join("\n");
+        }
+        return JSON.stringify(item, null, 2);
+      }
+      return String(item);
+    }).join("\n\n");
+  }
+  return String(v);
+}
+
+function normalizeDraft(input: unknown): Draft | null {
+  if (!input || typeof input !== "object") return null;
+  const d = input as Record<string, unknown>;
+  const tb = (d.training_block ?? {}) as Record<string, unknown>;
+  const pp = (d.peptide_protocol ?? {}) as Record<string, unknown>;
+  return {
+    client_name: d.client_name as string | undefined,
+    overview: d.overview as string | undefined,
+    training_block: {
+      weeks: tb.weeks as number | undefined,
+      split: tb.split as string | undefined,
+      key_lifts: (tb.key_lifts as string[] | undefined) ?? undefined,
+      progression: tb.progression as string | undefined,
+      weekly_schedule: coerceToText(tb.weekly_schedule),
+    },
+    peptide_protocol: {
+      overview: pp.overview as string | undefined,
+      items: coerceToText(pp.items),
+      educational_disclaimer: pp.educational_disclaimer as string | undefined,
+    },
+    nutrition_notes: d.nutrition_notes as string | undefined,
+    recovery_notes: d.recovery_notes as string | undefined,
+  };
+}
+
 function AssignProtocol({ userId, intakeId, onDone }: { userId: string; intakeId: string; onDone: () => void }) {
   const generateFn = useServerFn(generateProtocolDraft);
   const saveFn = useServerFn(saveProtocolDraft);
