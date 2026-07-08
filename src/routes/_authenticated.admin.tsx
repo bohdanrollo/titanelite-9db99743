@@ -342,7 +342,7 @@ function AssignProtocol({ userId, intakeId, onDone }: { userId: string; intakeId
             </div>
             <Area label="Progression" value={draft.training_block?.progression ?? ""} onChange={(v) => updateTraining("progression", v)} />
             <Area label="Key Lifts (one per line)" value={(draft.training_block?.key_lifts ?? []).join("\n")} onChange={(v) => updateTraining("key_lifts", v.split("\n").filter(Boolean))} />
-            <Area label="Weekly Schedule (JSON)" value={JSON.stringify(draft.training_block?.weekly_schedule ?? [], null, 2)} onChange={(v) => { try { updateTraining("weekly_schedule", JSON.parse(v)); } catch { /* ignore until valid */ } }} mono />
+            <Area label="Weekly Schedule" value={draft.training_block?.weekly_schedule ?? ""} onChange={(v) => updateTraining("weekly_schedule", v)} />
           </div>
 
           <div className="border border-foreground/10 p-4 space-y-3">
