@@ -222,11 +222,11 @@ type Draft = {
     split?: string;
     key_lifts?: string[];
     progression?: string;
-    weekly_schedule?: { day: string; focus: string; sessions: string[] }[];
+    weekly_schedule?: string;
   };
   peptide_protocol?: {
     overview?: string;
-    items?: { name: string; dose?: string; timing?: string; notes?: string }[];
+    items?: string;
     educational_disclaimer?: string;
   };
   nutrition_notes?: string;
@@ -342,13 +342,13 @@ function AssignProtocol({ userId, intakeId, onDone }: { userId: string; intakeId
             </div>
             <Area label="Progression" value={draft.training_block?.progression ?? ""} onChange={(v) => updateTraining("progression", v)} />
             <Area label="Key Lifts (one per line)" value={(draft.training_block?.key_lifts ?? []).join("\n")} onChange={(v) => updateTraining("key_lifts", v.split("\n").filter(Boolean))} />
-            <Area label="Weekly Schedule (JSON)" value={JSON.stringify(draft.training_block?.weekly_schedule ?? [], null, 2)} onChange={(v) => { try { updateTraining("weekly_schedule", JSON.parse(v)); } catch { /* ignore until valid */ } }} mono />
+            <Area label="Weekly Schedule" value={draft.training_block?.weekly_schedule ?? ""} onChange={(v) => updateTraining("weekly_schedule", v)} />
           </div>
 
           <div className="border border-foreground/10 p-4 space-y-3">
             <div className="text-eyebrow">Peptide Protocol (Educational)</div>
             <Area label="Overview" value={draft.peptide_protocol?.overview ?? ""} onChange={(v) => updatePeptides("overview", v)} />
-            <Area label="Items (JSON: [{name, dose, timing, notes}])" value={JSON.stringify(draft.peptide_protocol?.items ?? [], null, 2)} onChange={(v) => { try { updatePeptides("items", JSON.parse(v)); } catch { /* ignore */ } }} mono />
+            <Area label="Items" value={draft.peptide_protocol?.items ?? ""} onChange={(v) => updatePeptides("items", v)} />
             <Area label="Educational Disclaimer" value={draft.peptide_protocol?.educational_disclaimer ?? ""} onChange={(v) => updatePeptides("educational_disclaimer", v)} />
           </div>
 
