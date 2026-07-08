@@ -7,12 +7,6 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ArrowLeft, ArrowRight, Upload } from "lucide-react";
 
-const PLANS = [
-  { id: "Foundation", label: "Foundation — $59 one-time" },
-  { id: "Elite", label: "Elite — $199 / month" },
-  { id: "Apex", label: "Apex — $399 / month" },
-];
-
 export const Route = createFileRoute("/intake")({
   head: () => ({
     meta: [
@@ -51,11 +45,10 @@ function Intake() {
   const [photos, setPhotos] = useState<File[]>([]);
   const [labs, setLabs] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<string>("");
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setForm((f) => ({ ...f, [k]: v }));
 
-  const steps = ["Basics", "Training", "Health", "Goals", "Peptides", "Lifestyle", "Plan & Consent"];
+  const steps = ["Basics", "Training", "Health", "Goals", "Peptides", "Lifestyle", "Review & Consent"];
 
   if (!user) {
     return (
@@ -85,10 +78,6 @@ function Intake() {
   }
 
   async function submit() {
-    if (!selectedPlan) {
-      toast.error("Please select a coaching plan before continuing to payment.");
-      return;
-    }
     if (!form.consent_health || !form.consent_disclaimer) {
       toast.error("You must accept the health consent and disclaimer to submit.");
       return;
@@ -97,7 +86,7 @@ function Intake() {
     try {
       const photo_urls = await uploadFiles(photos, "photos");
       const lab_urls = await uploadFiles(labs, "labs");
-      const { data: inserted, error } = await supabase.from("intakes").insert({
+      const { error } = await supabase.from("intakes").insert({
         user_id: user!.id,
         age: form.age ? parseInt(form.age) : null,
         height: form.height,
@@ -122,12 +111,10 @@ function Intake() {
         lab_work_urls: lab_urls,
         consent_health: form.consent_health,
         consent_disclaimer: form.consent_disclaimer,
-        selected_plan: selectedPlan,
-        status: "pending_payment",
       }).select("id").single();
       if (error) throw error;
-      toast.success("Intake saved. Complete payment to finalize.");
-      nav({ to: "/checkout", search: { plan: selectedPlan, intake: inserted.id } });
+      toast.success("Intake submitted. Your coach will review shortly.");
+      nav({ to: "/dashboard" });
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Submission failed");
     } finally {
