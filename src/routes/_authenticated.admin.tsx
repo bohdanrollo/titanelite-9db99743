@@ -250,7 +250,7 @@ function AssignProtocol({ userId, intakeId, onDone }: { userId: string; intakeId
       if (data) {
         setProtocolId(data.id);
         setTitle(data.title);
-        setDraft((data.draft_content as Draft) ?? null);
+        setDraft(normalizeDraft(data.draft_content));
       }
     });
   }, [intakeId]);
