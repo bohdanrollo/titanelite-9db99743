@@ -110,13 +110,9 @@ export async function renderProtocolPdf(draft: ProtocolDraft, meta: { title: str
       drawEyebrow("Key Lifts");
       drawText(t.key_lifts.map((l) => `• ${l}`).join("\n"), { gap: 8 });
     }
-    if (t.weekly_schedule?.length) {
+    if (t.weekly_schedule) {
       drawEyebrow("Weekly Schedule");
-      for (const day of t.weekly_schedule) {
-        drawText(`${day.day} — ${day.focus}`, { font: helvBold, size: 11, gap: 2 });
-        for (const s of day.sessions) drawText(`   ${s}`, { size: 10, gap: 2 });
-        y -= 4;
-      }
+      drawText(t.weekly_schedule, { gap: 8 });
     }
     drawDivider();
   }
@@ -126,14 +122,7 @@ export async function renderProtocolPdf(draft: ProtocolDraft, meta: { title: str
     const p = draft.peptide_protocol;
     drawEyebrow("Peptide Protocol (Educational)");
     if (p.overview) drawText(p.overview, { gap: 8 });
-    if (p.items?.length) {
-      for (const it of p.items) {
-        drawText(it.name, { font: helvBold, size: 11, gap: 2 });
-        const meta = [it.dose, it.timing].filter(Boolean).join(" · ");
-        if (meta) drawText(meta, { color: MUTED, size: 9, gap: 2 });
-        if (it.notes) drawText(it.notes, { size: 10, gap: 6 });
-      }
-    }
+    if (p.items) drawText(p.items, { gap: 8 });
     if (p.educational_disclaimer) {
       y -= 4;
       drawText(p.educational_disclaimer, { color: MUTED, size: 9, gap: 8 });
