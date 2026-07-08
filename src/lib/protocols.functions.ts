@@ -10,20 +10,11 @@ const DraftSchema = z.object({
     split: z.string().optional(),
     key_lifts: z.array(z.string()).optional(),
     progression: z.string().optional(),
-    weekly_schedule: z.array(z.object({
-      day: z.string(),
-      focus: z.string(),
-      sessions: z.array(z.string()),
-    })).optional(),
+    weekly_schedule: z.string().optional(),
   }).optional(),
   peptide_protocol: z.object({
     overview: z.string().optional(),
-    items: z.array(z.object({
-      name: z.string(),
-      dose: z.string().optional(),
-      timing: z.string().optional(),
-      notes: z.string().optional(),
-    })).optional(),
+    items: z.string().optional(),
     educational_disclaimer: z.string().optional(),
   }).optional(),
   nutrition_notes: z.string().optional(),
