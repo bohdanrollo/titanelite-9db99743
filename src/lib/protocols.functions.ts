@@ -71,8 +71,8 @@ Client profile:
 - Peptides of interest: ${intake.peptides_of_interest ?? "—"}
 - Lifestyle: ${intake.lifestyle ?? "—"} · Sleep: ${intake.sleep_habits ?? "—"} · Nutrition: ${intake.nutrition_habits ?? "—"}
 
-Draft a specific, periodized training block with weekly schedule (give 4-5 training days).
-For peptides, give EDUCATIONAL information only — never prescribe. Include an educational disclaimer.
+Draft a specific, periodized training block. Write the weekly_schedule as a plain-text schedule (e.g. "Monday — Upper: ...\nTuesday — Lower: ...") — NOT JSON.
+For peptides, give EDUCATIONAL information only — never prescribe. Write the items field as plain readable text (one peptide per section with dose/timing/notes) — NOT JSON. Include an educational disclaimer.
 Be concrete with sets/reps/% in key lifts. Account for injuries.`;
 
     const { object } = await generateObject({
