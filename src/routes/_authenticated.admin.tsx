@@ -348,7 +348,7 @@ function AssignProtocol({ userId, intakeId, onDone }: { userId: string; intakeId
           <div className="border border-foreground/10 p-4 space-y-3">
             <div className="text-eyebrow">Peptide Protocol (Educational)</div>
             <Area label="Overview" value={draft.peptide_protocol?.overview ?? ""} onChange={(v) => updatePeptides("overview", v)} />
-            <Area label="Items (JSON: [{name, dose, timing, notes}])" value={JSON.stringify(draft.peptide_protocol?.items ?? [], null, 2)} onChange={(v) => { try { updatePeptides("items", JSON.parse(v)); } catch { /* ignore */ } }} mono />
+            <Area label="Items" value={draft.peptide_protocol?.items ?? ""} onChange={(v) => updatePeptides("items", v)} />
             <Area label="Educational Disclaimer" value={draft.peptide_protocol?.educational_disclaimer ?? ""} onChange={(v) => updatePeptides("educational_disclaimer", v)} />
           </div>
 
