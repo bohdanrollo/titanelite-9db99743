@@ -2,6 +2,31 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+const toText = z.preprocess((v) => {
+  if (v == null) return undefined;
+  if (typeof v === "string") return v;
+  if (Array.isArray(v)) {
+    return v.map((item) => {
+      if (typeof item === "string") return item;
+      if (item && typeof item === "object") {
+        // Render legacy structured entries as readable text
+        const obj = item as Record<string, unknown>;
+        if ("day" in obj || "focus" in obj || "sessions" in obj) {
+          const sessions = Array.isArray(obj.sessions) ? (obj.sessions as unknown[]).join("\n   ") : "";
+          return `${obj.day ?? ""} — ${obj.focus ?? ""}\n   ${sessions}`.trim();
+        }
+        if ("name" in obj) {
+          const meta = [obj.dose, obj.timing].filter(Boolean).join(" · ");
+          return [obj.name, meta, obj.notes].filter(Boolean).join("\n");
+        }
+        return JSON.stringify(item, null, 2);
+      }
+      return String(item);
+    }).join("\n\n");
+  }
+  return String(v);
+}, z.string().optional());
+
 const DraftSchema = z.object({
   client_name: z.string().optional(),
   overview: z.string().optional(),
@@ -10,11 +35,11 @@ const DraftSchema = z.object({
     split: z.string().optional(),
     key_lifts: z.array(z.string()).optional(),
     progression: z.string().optional(),
-    weekly_schedule: z.string().optional(),
+    weekly_schedule: toText,
   }).optional(),
   peptide_protocol: z.object({
     overview: z.string().optional(),
-    items: z.string().optional(),
+    items: toText,
     educational_disclaimer: z.string().optional(),
   }).optional(),
   nutrition_notes: z.string().optional(),
