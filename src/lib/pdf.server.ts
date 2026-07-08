@@ -8,11 +8,11 @@ export type ProtocolDraft = {
     split?: string;
     key_lifts?: string[];
     progression?: string;
-    weekly_schedule?: { day: string; focus: string; sessions: string[] }[];
+    weekly_schedule?: string;
   };
   peptide_protocol?: {
     overview?: string;
-    items?: { name: string; dose?: string; timing?: string; notes?: string }[];
+    items?: string;
     educational_disclaimer?: string;
   };
   nutrition_notes?: string;
