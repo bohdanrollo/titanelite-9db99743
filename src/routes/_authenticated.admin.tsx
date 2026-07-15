@@ -479,3 +479,148 @@ function ProtocolsAdmin() {
     </div>
   );
 }
+
+type ClientRow = { id: string; full_name: string | null; email: string | null };
+type Msg = { id: string; sender_id: string; recipient_id: string; body: string; created_at: string; read_at: string | null };
+
+function MessagesAdmin() {
+  const { user } = useAuth();
+  const [clients, setClients] = useState<ClientRow[]>([]);
+  const [unread, setUnread] = useState<Record<string, number>>({});
+  const [selected, setSelected] = useState<ClientRow | null>(null);
+  const [msgs, setMsgs] = useState<Msg[]>([]);
+  const [body, setBody] = useState("");
+  const [q, setQ] = useState("");
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Load clients + unread counts
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    async function load() {
+      const [{ data: profs }, { data: incoming }] = await Promise.all([
+        supabase.from("profiles").select("id, full_name, email").order("created_at", { ascending: false }),
+        supabase.from("messages").select("sender_id").eq("recipient_id", user!.id).is("read_at", null),
+      ]);
+      if (cancelled) return;
+      setClients((profs ?? []).filter((p) => p.id !== user!.id));
+      const counts: Record<string, number> = {};
+      (incoming ?? []).forEach((m: { sender_id: string }) => { counts[m.sender_id] = (counts[m.sender_id] ?? 0) + 1; });
+      setUnread(counts);
+    }
+    load();
+    const t = setInterval(load, 10000);
+    return () => { cancelled = true; clearInterval(t); };
+  }, [user]);
+
+  // Load conversation with selected client
+  useEffect(() => {
+    if (!user || !selected) return;
+    let cancelled = false;
+    async function load() {
+      const { data } = await supabase
+        .from("messages")
+        .select("*")
+        .or(`and(sender_id.eq.${user!.id},recipient_id.eq.${selected!.id}),and(sender_id.eq.${selected!.id},recipient_id.eq.${user!.id})`)
+        .order("created_at", { ascending: true });
+      if (cancelled) return;
+      setMsgs((data as Msg[]) ?? []);
+      // Mark incoming as read
+      const unreadIds = (data ?? []).filter((m: Msg) => m.recipient_id === user!.id && !m.read_at).map((m: Msg) => m.id);
+      if (unreadIds.length) {
+        await supabase.from("messages").update({ read_at: new Date().toISOString() }).in("id", unreadIds);
+        setUnread((u) => ({ ...u, [selected!.id]: 0 }));
+      }
+    }
+    load();
+    const t = setInterval(load, 6000);
+    return () => { cancelled = true; clearInterval(t); };
+  }, [user, selected]);
+
+  useEffect(() => { scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight }); }, [msgs]);
+
+  async function send() {
+    if (!body.trim() || !selected || !user) return;
+    const text = body;
+    setBody("");
+    const { error } = await supabase.from("messages").insert({ sender_id: user.id, recipient_id: selected.id, body: text });
+    if (error) { toast.error(error.message); setBody(text); return; }
+    const { data } = await supabase
+      .from("messages")
+      .select("*")
+      .or(`and(sender_id.eq.${user.id},recipient_id.eq.${selected.id}),and(sender_id.eq.${selected.id},recipient_id.eq.${user.id})`)
+      .order("created_at", { ascending: true });
+    setMsgs((data as Msg[]) ?? []);
+  }
+
+  const filtered = clients.filter((c) => !q || `${c.full_name ?? ""} ${c.email ?? ""}`.toLowerCase().includes(q.toLowerCase()));
+
+  return (
+    <div className="grid md:grid-cols-3 gap-6">
+      <div className="border border-foreground/10 h-[600px] flex flex-col">
+        <div className="p-3 border-b border-foreground/10">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search clients…" className="w-full pl-9 pr-3 py-2 bg-background border border-foreground/20 text-sm focus:outline-none focus:border-blood" />
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-auto">
+          {filtered.map((c) => {
+            const active = selected?.id === c.id;
+            const n = unread[c.id] ?? 0;
+            return (
+              <button
+                key={c.id}
+                onClick={() => setSelected(c)}
+                className={`w-full text-left px-4 py-3 border-b border-foreground/10 flex items-center justify-between gap-2 transition ${active ? "bg-muted" : "hover:bg-muted/50"}`}
+              >
+                <div className="min-w-0">
+                  <div className="text-sm font-medium truncate">{c.full_name || "—"}</div>
+                  <div className="text-xs text-muted-foreground truncate">{c.email}</div>
+                </div>
+                {n > 0 && <span className="bg-blood text-primary-foreground text-[10px] font-mono px-2 py-0.5 rounded-full">{n}</span>}
+              </button>
+            );
+          })}
+          {!filtered.length && <div className="p-6 text-center text-sm text-muted-foreground">No clients.</div>}
+        </div>
+      </div>
+
+      <div className="md:col-span-2 border border-foreground/10 h-[600px] flex flex-col">
+        {!selected ? (
+          <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">Select a client to start messaging.</div>
+        ) : (
+          <>
+            <div className="p-4 border-b border-foreground/10">
+              <div className="text-eyebrow">Conversation</div>
+              <div className="font-display text-xl">{selected.full_name || selected.email}</div>
+            </div>
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
+              {msgs.length === 0 && <div className="text-sm text-muted-foreground text-center mt-12">No messages yet.</div>}
+              {msgs.map((m) => {
+                const mine = m.sender_id === user?.id;
+                return (
+                  <div key={m.id} className={`max-w-[80%] ${mine ? "ml-auto bg-blood text-primary-foreground" : "bg-muted"} p-3`}>
+                    <div className="text-sm whitespace-pre-wrap">{m.body}</div>
+                    <div className={`text-[10px] font-mono uppercase tracking-wider mt-1 ${mine ? "opacity-70" : "text-muted-foreground"}`}>{new Date(m.created_at).toLocaleString()}</div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="border-t border-foreground/10 p-3 flex gap-2">
+              <input
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
+                placeholder="Type a message…"
+                className="flex-1 bg-background border border-foreground/20 px-3 py-2 focus:outline-none focus:border-blood"
+              />
+              <button onClick={send} className="btn-blood hover:btn-blood-hover"><Send size={14} /> Send</button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
