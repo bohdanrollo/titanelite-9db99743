@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2 } from "lucide-react";
+import { LogOut, Users, Inbox, FileText, MessageSquare, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2 } from "lucide-react";
 import { generateProtocolDraft, saveProtocolDraft, sendProtocol, getProtocolDownloadUrl } from "@/lib/protocols.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
