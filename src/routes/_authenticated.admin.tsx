@@ -61,6 +61,7 @@ function Admin() {
             { k: "clients", l: "Clients", i: Users },
             { k: "intakes", l: "Intakes", i: Inbox },
             { k: "protocols", l: "Protocols", i: FileText },
+            { k: "messages", l: "Messages", i: MessageSquare },
           ] as const).map((t) => (
             <button
               key={t.k}
@@ -76,6 +77,7 @@ function Admin() {
           {tab === "clients" && <Clients />}
           {tab === "intakes" && <Intakes />}
           {tab === "protocols" && <ProtocolsAdmin />}
+          {tab === "messages" && <MessagesAdmin />}
         </div>
       </section>
     </div>
