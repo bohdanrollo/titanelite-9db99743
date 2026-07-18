@@ -1,34 +1,41 @@
-// Placeholder app-email sender. Replaced by Lovable Emails once the
-// sender domain is set up via the email setup dialog. The interface
-// stays the same so callers (webhook, sendProtocol) don't need changes.
+// Server-side helper to enqueue a transactional email via the internal
+// /lovable/email/transactional/send route. Forwards the caller's Supabase
+// bearer token so the route can authenticate the request.
 
 type SendArgs = {
   templateName: string;
   recipientEmail: string;
   idempotencyKey: string;
   templateData?: Record<string, unknown>;
+  authHeader?: string | null;
 };
 
+function resolveBaseUrl(): string {
+  const explicit = process.env.APP_BASE_URL;
+  if (explicit) return explicit.replace(/\/$/, "");
+  // Prefer the stable published URL on production; fall back to the local dev server.
+  return "https://titanelite.lovable.app";
+}
+
 export async function sendAppEmail(args: SendArgs): Promise<{ queued: boolean }> {
-  // When the Lovable Emails route is provisioned, this will POST to
-  // /lovable/email/transactional/send. Until then, log so the wiring is
-  // testable in dev without throwing.
   try {
-    const url = process.env.APP_BASE_URL ?? process.env.SUPABASE_URL?.replace(".supabase.co", ".lovable.app") ?? "";
-    if (!url) {
-      console.info("[email] queued (no base url)", args.templateName, args.recipientEmail, args.idempotencyKey);
-      return { queued: true };
-    }
-    const res = await fetch(`${url}/lovable/email/transactional/send`, {
+    const base = resolveBaseUrl();
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (args.authHeader) headers.Authorization = args.authHeader;
+
+    const res = await fetch(`${base}/lovable/email/transactional/send`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(process.env.LOVABLE_API_KEY ? { Authorization: `Bearer ${process.env.LOVABLE_API_KEY}` } : {}),
-      },
-      body: JSON.stringify(args),
+      headers,
+      body: JSON.stringify({
+        templateName: args.templateName,
+        recipientEmail: args.recipientEmail,
+        idempotencyKey: args.idempotencyKey,
+        templateData: args.templateData ?? {},
+      }),
     });
     if (!res.ok) {
-      console.warn(`[email] send route returned ${res.status}`, args.templateName);
+      const body = await res.text().catch(() => "");
+      console.warn(`[email] send route ${res.status}`, args.templateName, body.slice(0, 300));
       return { queued: false };
     }
     return { queued: true };
