@@ -43,7 +43,9 @@ const ProtocolReadyEmail = ({ name, title, dashboardUrl }: Props) => {
               and delivered to your dashboard. Read every line before you touch a weight.
             </Text>
             <Text style={paragraph}>
-              Log in to view the full breakdown, download the PDF, and start executing.
+              This is your blueprint for becoming the best version of yourself — stronger,
+              sharper, and more disciplined than the person you were yesterday. Log in,
+              lock in, and get to work.
             </Text>
           </Section>
 
