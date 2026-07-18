@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
 
 const toText = z.preprocess((v) => {
   if (v == null) return undefined;
@@ -197,11 +199,13 @@ export const sendProtocol = createServerFn({ method: "POST" })
       const { data: profile } = await supabaseAdmin.from("profiles").select("email, full_name").eq("id", protocol.user_id).maybeSingle();
       if (profile?.email) {
         const { sendAppEmail } = await import("./email/send.server");
+        const authHeader = getRequest()?.headers.get("authorization") ?? null;
         await sendAppEmail({
           templateName: "protocol-ready",
           recipientEmail: profile.email,
           idempotencyKey: `protocol-${protocol.id}-delivered`,
           templateData: { name: profile.full_name ?? "", title: protocol.title },
+          authHeader,
         });
       }
     } catch (err) {
