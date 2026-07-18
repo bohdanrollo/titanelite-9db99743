@@ -40,6 +40,13 @@ function Dashboard() {
       <section className="container-edge py-12">
         <div className="text-eyebrow">Client Dashboard</div>
         <h1 className="mt-4 text-5xl lg:text-6xl">Welcome back.</h1>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Need peptides? Order through{" "}
+          <a href="https://powerbuiltlabs.com/?ref=bjr" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">
+            Powerbuilt Labs
+          </a>{" "}
+          and use code <span className="text-blood font-medium">BJR</span> to save.
+        </p>
 
         {!intake && (
           <div className="mt-8 border border-blood/40 bg-blood/5 p-6">
