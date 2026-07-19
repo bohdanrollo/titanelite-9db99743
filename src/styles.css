@@ -183,6 +183,6 @@
   outline: none;
   transition: border-color 0.15s ease;
 }
-@utility stack-input:focus {
-  border-color: var(--color-blood, oklch(0.55 0.22 25));
+.stack-input:focus {
+  border-color: oklch(0.55 0.22 25);
 }
