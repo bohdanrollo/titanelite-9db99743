@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Dumbbell, FlaskConical, FileText, Activity, ChevronDown, MessageCircle, Beaker, ListChecks, Droplets, Syringe, Calculator } from "lucide-react";
+import { ArrowRight, Dumbbell, FlaskConical, FileText, ChevronDown, MessageCircle, Beaker, ListChecks, Droplets, Syringe, Calculator } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import heroImg from "@/assets/titan-logo.jpg.asset.json";
