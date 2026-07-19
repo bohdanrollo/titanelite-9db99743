@@ -12,7 +12,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 
-type Tab = "protocols" | "messages" | "progress";
+type Tab = "protocols" | "peptides" | "progress";
 
 function Dashboard() {
   const { user, signOut } = useAuth();
@@ -65,7 +65,7 @@ function Dashboard() {
         <nav className="mt-10 flex gap-1 border-b border-foreground/15">
           {([
             { k: "protocols", l: "Protocols", i: FileText },
-            { k: "messages", l: "Messages", i: MessageSquare },
+            { k: "peptides", l: "Peptides", i: Activity },
             { k: "progress", l: "Progress", i: Activity },
           ] as const).map((t) => (
             <button
@@ -80,7 +80,7 @@ function Dashboard() {
 
         <div className="mt-8">
           {tab === "protocols" && <Protocols />}
-          {tab === "messages" && <Messages />}
+          {tab === "peptides" && <Peptides />}
           {tab === "progress" && <Progress />}
         </div>
       </section>
