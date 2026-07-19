@@ -148,61 +148,50 @@ function Protocols() {
   );
 }
 
-function Messages() {
-  const { user } = useAuth();
-  const [msgs, setMsgs] = useState<{ id: string; sender_id: string; body: string; created_at: string }[]>([]);
-  const [admin, setAdmin] = useState<string | null>(null);
-  const [body, setBody] = useState("");
+const PEPTIDES: { name: string; researched: string }[] = [
+  { name: "BPC-157", researched: "Researched for gut lining repair, tendon/ligament healing, and systemic anti-inflammatory effects." },
+  { name: "TB-500 (Thymosin Beta-4)", researched: "Researched for soft-tissue recovery, muscle repair, and improved cellular migration." },
+  { name: "CJC-1295 (with DAC)", researched: "Researched as a long-acting GHRH analog to elevate baseline growth hormone and IGF-1." },
+  { name: "Ipamorelin", researched: "Researched as a selective GH secretagogue that boosts growth hormone without spiking cortisol or prolactin." },
+  { name: "Sermorelin", researched: "Researched for stimulating natural GH release, sleep quality, and recovery." },
+  { name: "Tesamorelin", researched: "Researched for reducing visceral adipose tissue and improving lipid metabolism." },
+  { name: "MOTS-c", researched: "Researched for mitochondrial function, insulin sensitivity, and metabolic efficiency." },
+  { name: "5-Amino-1MQ", researched: "Researched for NNMT inhibition, fat loss, and preservation of lean tissue." },
+  { name: "GHK-Cu", researched: "Researched for skin regeneration, collagen synthesis, and hair follicle health." },
+  { name: "Epithalon", researched: "Researched for telomerase activation, sleep-cycle regulation, and longevity markers." },
+  { name: "Semaglutide", researched: "Researched as a GLP-1 agonist for appetite regulation, glucose control, and fat loss." },
+  { name: "Tirzepatide", researched: "Researched as a dual GIP/GLP-1 agonist for weight management and metabolic health." },
+  { name: "PT-141 (Bremelanotide)", researched: "Researched for libido and sexual response via melanocortin receptor activation." },
+  { name: "Melanotan II", researched: "Researched for melanogenesis, UV protection, and appetite suppression." },
+  { name: "Selank", researched: "Researched for anxiolytic effects, cognitive focus, and stress resilience." },
+];
 
-  useEffect(() => {
-    if (!user) return;
-    supabase.from("user_roles").select("user_id").eq("role", "admin").limit(1).maybeSingle().then(({ data }) => setAdmin(data?.user_id ?? null));
-    load();
-    const t = setInterval(load, 8000);
-    return () => clearInterval(t);
-    function load() {
-      supabase.from("messages").select("*").or(`sender_id.eq.${user!.id},recipient_id.eq.${user!.id}`).order("created_at", { ascending: true }).then(({ data }) => setMsgs(data ?? []));
-    }
-  }, [user]);
-
-  async function send() {
-    if (!body.trim() || !admin || !user) return;
-    const { error } = await supabase.from("messages").insert({ sender_id: user.id, recipient_id: admin, body });
-    if (error) return toast.error(error.message);
-    setBody("");
-    const { data } = await supabase.from("messages").select("*").or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`).order("created_at", { ascending: true });
-    setMsgs(data ?? []);
-  }
-
-  if (!admin) return <Empty title="Messaging unavailable" body="No coach is assigned to your account yet." />;
-
+function Peptides() {
   return (
-    <div className="grid md:grid-cols-3 gap-6">
-      <div className="md:col-span-2 border border-foreground/10 h-[500px] flex flex-col">
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
-          {msgs.length === 0 && <div className="text-sm text-muted-foreground text-center mt-12">Start the conversation with your coach.</div>}
-          {msgs.map((m) => {
-            const mine = m.sender_id === user?.id;
-            return (
-              <div key={m.id} className={`max-w-[80%] ${mine ? "ml-auto bg-blood text-primary-foreground" : "bg-muted"} p-3`}>
-                <div className="text-sm whitespace-pre-wrap">{m.body}</div>
-                <div className={`text-[10px] font-mono uppercase tracking-wider mt-1 ${mine ? "opacity-70" : "text-muted-foreground"}`}>{new Date(m.created_at).toLocaleString()}</div>
-              </div>
-            );
-          })}
-        </div>
-        <div className="border-t border-foreground/10 p-3 flex gap-2">
-          <input value={body} onChange={(e) => setBody(e.target.value)} placeholder="Type a message…" className="flex-1 bg-background border border-foreground/20 px-3 py-2 focus:outline-none focus:border-blood" />
-          <button onClick={send} className="btn-blood hover:btn-blood-hover">Send</button>
-        </div>
+    <div>
+      <div className="mb-6">
+        <h3 className="font-display text-3xl">Top 15 Research Peptides</h3>
+        <p className="text-sm text-muted-foreground mt-2">
+          Educational reference only. Compounds listed for research purposes — not medical advice. Order through{" "}
+          <a href="https://powerbuiltlabs.com/?ref=bjr" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">Powerbuilt Labs</a>{" "}
+          with code <span className="text-blood font-medium">BJR</span>.
+        </p>
       </div>
-      <div className="border border-foreground/10 p-5 text-sm">
-        <div className="text-eyebrow">About Messaging</div>
-        <p className="mt-3 text-muted-foreground">Replies within 24 hours on business days. For urgent medical concerns, contact a licensed provider.</p>
+      <div className="grid md:grid-cols-2 gap-3">
+        {PEPTIDES.map((p, i) => (
+          <article key={p.name} className="border border-foreground/10 p-5 hover:border-blood transition">
+            <div className="flex items-baseline gap-3">
+              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
+              <h4 className="font-display text-xl">{p.name}</h4>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">{p.researched}</p>
+          </article>
+        ))}
       </div>
     </div>
   );
 }
+
 
 function Progress() {
   const { user } = useAuth();
