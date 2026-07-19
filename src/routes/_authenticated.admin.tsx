@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { LogOut, Users, Inbox, FileText, MessageSquare, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2 } from "lucide-react";
+import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2 } from "lucide-react";
 import { generateProtocolDraft, saveProtocolDraft, sendProtocol, getProtocolDownloadUrl } from "@/lib/protocols.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -12,7 +12,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: Admin,
 });
 
-type Tab = "clients" | "intakes" | "protocols" | "messages";
+type Tab = "clients" | "intakes" | "protocols";
 
 function Admin() {
   const { user, role, loading, signOut } = useAuth();
@@ -61,7 +61,6 @@ function Admin() {
             { k: "clients", l: "Clients", i: Users },
             { k: "intakes", l: "Intakes", i: Inbox },
             { k: "protocols", l: "Protocols", i: FileText },
-            { k: "messages", l: "Messages", i: MessageSquare },
           ] as const).map((t) => (
             <button
               key={t.k}
@@ -77,7 +76,6 @@ function Admin() {
           {tab === "clients" && <Clients />}
           {tab === "intakes" && <Intakes />}
           {tab === "protocols" && <ProtocolsAdmin />}
-          {tab === "messages" && <MessagesAdmin />}
         </div>
       </section>
     </div>
@@ -132,30 +130,62 @@ type IntakeRow = {
 
 function Intakes() {
   const [rows, setRows] = useState<IntakeRow[]>([]);
+  const [protoMap, setProtoMap] = useState<Record<string, string>>({});
   const [open, setOpen] = useState<IntakeRow | null>(null);
   useEffect(() => {
-    supabase.from("intakes").select("*").order("submitted_at", { ascending: false }).then(({ data }) => setRows((data as IntakeRow[]) ?? []));
+    (async () => {
+      const [{ data: intakeData }, { data: protoData }] = await Promise.all([
+        supabase.from("intakes").select("*").order("submitted_at", { ascending: false }),
+        supabase.from("protocols").select("source_intake_id, status").not("source_intake_id", "is", null),
+      ]);
+      setRows((intakeData as IntakeRow[]) ?? []);
+      const map: Record<string, string> = {};
+      (protoData ?? []).forEach((p: { source_intake_id: string | null; status: string }) => {
+        if (p.source_intake_id) map[p.source_intake_id] = p.status;
+      });
+      setProtoMap(map);
+    })();
   }, []);
   return (
     <div>
       <div className="border border-foreground/10">
         <table className="w-full text-sm">
           <thead className="bg-muted text-left text-eyebrow">
-            <tr><th className="p-3">Submitted</th><th className="p-3">Client ID</th><th className="p-3">Status</th><th className="p-3"></th></tr>
+            <tr><th className="p-3">Submitted</th><th className="p-3">Client ID</th><th className="p-3">Protocol</th><th className="p-3"></th></tr>
           </thead>
           <tbody>
-            {rows.map((r) => (
-              <tr key={r.id} className="border-t border-foreground/10 hover:bg-muted/40">
-                <td className="p-3 font-mono text-xs">{new Date(r.submitted_at).toLocaleString()}</td>
-                <td className="p-3 font-mono text-xs">{r.user_id.slice(0, 8)}…</td>
-                <td className="p-3"><span className="text-eyebrow">{r.status}</span></td>
-                <td className="p-3 text-right"><button onClick={() => setOpen(r)} className="text-blood font-mono text-xs uppercase tracking-[0.14em]">Review →</button></td>
-              </tr>
-            ))}
+            {rows.map((r) => {
+              const pStatus = protoMap[r.id];
+              const sent = pStatus === "delivered" || pStatus === "sent" || pStatus === "viewed";
+              const inProgress = pStatus && !sent;
+              return (
+                <tr key={r.id} className="border-t border-foreground/10 hover:bg-muted/40">
+                  <td className="p-3 font-mono text-xs">{new Date(r.submitted_at).toLocaleString()}</td>
+                  <td className="p-3 font-mono text-xs">{r.user_id.slice(0, 8)}…</td>
+                  <td className="p-3">
+                    {sent ? (
+                      <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-emerald-600">
+                        <span className="h-2 w-2 rounded-full bg-emerald-500" /> Sent
+                      </span>
+                    ) : inProgress ? (
+                      <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-600">
+                        <span className="h-2 w-2 rounded-full bg-amber-500" /> Draft
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-blood">
+                        <span className="h-2 w-2 rounded-full bg-blood" /> Needs protocol
+                      </span>
+                    )}
+                  </td>
+                  <td className="p-3 text-right"><button onClick={() => setOpen(r)} className="text-blood font-mono text-xs uppercase tracking-[0.14em]">Review →</button></td>
+                </tr>
+              );
+            })}
             {!rows.length && <tr><td colSpan={4} className="p-8 text-center text-muted-foreground">No intakes submitted yet.</td></tr>}
           </tbody>
         </table>
       </div>
+
 
       {open && (
         <div className="fixed inset-0 z-50 bg-ink/80 backdrop-blur flex items-start justify-center overflow-y-auto p-4">
@@ -480,147 +510,4 @@ function ProtocolsAdmin() {
   );
 }
 
-type ClientRow = { id: string; full_name: string | null; email: string | null };
-type Msg = { id: string; sender_id: string; recipient_id: string; body: string; created_at: string; read_at: string | null };
-
-function MessagesAdmin() {
-  const { user } = useAuth();
-  const [clients, setClients] = useState<ClientRow[]>([]);
-  const [unread, setUnread] = useState<Record<string, number>>({});
-  const [selected, setSelected] = useState<ClientRow | null>(null);
-  const [msgs, setMsgs] = useState<Msg[]>([]);
-  const [body, setBody] = useState("");
-  const [q, setQ] = useState("");
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  // Load clients + unread counts
-  useEffect(() => {
-    if (!user) return;
-    let cancelled = false;
-    async function load() {
-      const [{ data: profs }, { data: incoming }] = await Promise.all([
-        supabase.from("profiles").select("id, full_name, email").order("created_at", { ascending: false }),
-        supabase.from("messages").select("sender_id").eq("recipient_id", user!.id).is("read_at", null),
-      ]);
-      if (cancelled) return;
-      setClients((profs ?? []).filter((p) => p.id !== user!.id));
-      const counts: Record<string, number> = {};
-      (incoming ?? []).forEach((m: { sender_id: string }) => { counts[m.sender_id] = (counts[m.sender_id] ?? 0) + 1; });
-      setUnread(counts);
-    }
-    load();
-    const t = setInterval(load, 10000);
-    return () => { cancelled = true; clearInterval(t); };
-  }, [user]);
-
-  // Load conversation with selected client
-  useEffect(() => {
-    if (!user || !selected) return;
-    let cancelled = false;
-    async function load() {
-      const { data } = await supabase
-        .from("messages")
-        .select("*")
-        .or(`and(sender_id.eq.${user!.id},recipient_id.eq.${selected!.id}),and(sender_id.eq.${selected!.id},recipient_id.eq.${user!.id})`)
-        .order("created_at", { ascending: true });
-      if (cancelled) return;
-      setMsgs((data as Msg[]) ?? []);
-      // Mark incoming as read
-      const unreadIds = (data ?? []).filter((m: Msg) => m.recipient_id === user!.id && !m.read_at).map((m: Msg) => m.id);
-      if (unreadIds.length) {
-        await supabase.from("messages").update({ read_at: new Date().toISOString() }).in("id", unreadIds);
-        setUnread((u) => ({ ...u, [selected!.id]: 0 }));
-      }
-    }
-    load();
-    const t = setInterval(load, 6000);
-    return () => { cancelled = true; clearInterval(t); };
-  }, [user, selected]);
-
-  useEffect(() => { scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight }); }, [msgs]);
-
-  async function send() {
-    if (!body.trim() || !selected || !user) return;
-    const text = body;
-    setBody("");
-    const { error } = await supabase.from("messages").insert({ sender_id: user.id, recipient_id: selected.id, body: text });
-    if (error) { toast.error(error.message); setBody(text); return; }
-    const { data } = await supabase
-      .from("messages")
-      .select("*")
-      .or(`and(sender_id.eq.${user.id},recipient_id.eq.${selected.id}),and(sender_id.eq.${selected.id},recipient_id.eq.${user.id})`)
-      .order("created_at", { ascending: true });
-    setMsgs((data as Msg[]) ?? []);
-  }
-
-  const filtered = clients.filter((c) => !q || `${c.full_name ?? ""} ${c.email ?? ""}`.toLowerCase().includes(q.toLowerCase()));
-
-  return (
-    <div className="grid md:grid-cols-3 gap-6">
-      <div className="border border-foreground/10 h-[600px] flex flex-col">
-        <div className="p-3 border-b border-foreground/10">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search clients…" className="w-full pl-9 pr-3 py-2 bg-background border border-foreground/20 text-sm focus:outline-none focus:border-blood" />
-          </div>
-        </div>
-        <div className="flex-1 overflow-y-auto">
-          {filtered.map((c) => {
-            const active = selected?.id === c.id;
-            const n = unread[c.id] ?? 0;
-            return (
-              <button
-                key={c.id}
-                onClick={() => setSelected(c)}
-                className={`w-full text-left px-4 py-3 border-b border-foreground/10 flex items-center justify-between gap-2 transition ${active ? "bg-muted" : "hover:bg-muted/50"}`}
-              >
-                <div className="min-w-0">
-                  <div className="text-sm font-medium truncate">{c.full_name || "—"}</div>
-                  <div className="text-xs text-muted-foreground truncate">{c.email}</div>
-                </div>
-                {n > 0 && <span className="bg-blood text-primary-foreground text-[10px] font-mono px-2 py-0.5 rounded-full">{n}</span>}
-              </button>
-            );
-          })}
-          {!filtered.length && <div className="p-6 text-center text-sm text-muted-foreground">No clients.</div>}
-        </div>
-      </div>
-
-      <div className="md:col-span-2 border border-foreground/10 h-[600px] flex flex-col">
-        {!selected ? (
-          <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">Select a client to start messaging.</div>
-        ) : (
-          <>
-            <div className="p-4 border-b border-foreground/10">
-              <div className="text-eyebrow">Conversation</div>
-              <div className="font-display text-xl">{selected.full_name || selected.email}</div>
-            </div>
-            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
-              {msgs.length === 0 && <div className="text-sm text-muted-foreground text-center mt-12">No messages yet.</div>}
-              {msgs.map((m) => {
-                const mine = m.sender_id === user?.id;
-                return (
-                  <div key={m.id} className={`max-w-[80%] ${mine ? "ml-auto bg-blood text-primary-foreground" : "bg-muted"} p-3`}>
-                    <div className="text-sm whitespace-pre-wrap">{m.body}</div>
-                    <div className={`text-[10px] font-mono uppercase tracking-wider mt-1 ${mine ? "opacity-70" : "text-muted-foreground"}`}>{new Date(m.created_at).toLocaleString()}</div>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="border-t border-foreground/10 p-3 flex gap-2">
-              <input
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
-                placeholder="Type a message…"
-                className="flex-1 bg-background border border-foreground/20 px-3 py-2 focus:outline-none focus:border-blood"
-              />
-              <button onClick={send} className="btn-blood hover:btn-blood-hover"><Send size={14} /> Send</button>
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
 
