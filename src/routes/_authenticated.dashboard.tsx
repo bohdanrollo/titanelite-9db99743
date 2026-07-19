@@ -4,16 +4,17 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, Send, Loader2 } from "lucide-react";
 import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
+import ReactMarkdown from "react-markdown";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Client Dashboard — Titan Elite" }] }),
   component: Dashboard,
 });
 
-type Tab = "protocols" | "peptides" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting";
+type Tab = "protocols" | "peptalk" | "peptides" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting";
 
 function Dashboard() {
   const { user, signOut } = useAuth();
@@ -66,6 +67,7 @@ function Dashboard() {
         <nav className="mt-8 sm:mt-10 -mx-4 sm:mx-0 flex gap-1 overflow-x-auto border-b border-foreground/15 px-4 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {([
             { k: "protocols", l: "Protocols", i: FileText },
+            { k: "peptalk", l: "Pep Talk", i: MessageCircle },
             { k: "peptides", l: "Peptides", i: Beaker },
             { k: "supplies", l: "Supplies", i: Droplets },
             { k: "reconstitution", l: "Reconstitution", i: FlaskConical },
@@ -85,6 +87,7 @@ function Dashboard() {
 
         <div className="mt-8">
           {tab === "protocols" && <Protocols />}
+          {tab === "peptalk" && <PepTalk />}
           {tab === "peptides" && <Peptides />}
           {tab === "supplies" && <Supplies />}
           {tab === "reconstitution" && <Reconstitution />}
@@ -211,6 +214,164 @@ const PEPTIDES: { name: string; researched: string }[] = [
   { name: "T3 / Liothyronine (research context)", researched: "Researched for thyroid hormone metabolism, energy expenditure, and fat oxidation." },
   { name: "T4 / Levothyroxine (research context)", researched: "Researched for thyroid replacement, metabolic rate, and hormone balance." },
 ];
+
+type ChatMsg = { id: string; role: "user" | "assistant"; content: string };
+
+function PepTalk() {
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState<ChatMsg[]>([]);
+  const [status, setStatus] = useState<"idle" | "submitted" | "streaming" | "error">("idle");
+  const [error, setError] = useState<string | null>(null);
+  const isLoading = status === "submitted" || status === "streaming";
+
+  const suggestions = [
+    "What does BPC-157 do and how is it typically dosed?",
+    "Explain TB-500 stacking with BPC-157.",
+    "How should I store peptides after reconstitution?",
+    "Best time of day to inject CJC-1295/Ipamorelin?",
+  ];
+
+  const submit = async (text: string) => {
+    const t = text.trim();
+    if (!t || isLoading) return;
+    setError(null);
+    setInput("");
+
+    const userMsg: ChatMsg = { id: crypto.randomUUID(), role: "user", content: t };
+    const assistantId = crypto.randomUUID();
+    const next = [...messages, userMsg];
+    setMessages([...next, { id: assistantId, role: "assistant", content: "" }]);
+    setStatus("submitted");
+
+    try {
+      const res = await fetch("/api/pep-talk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: next.map((m) => ({ role: m.role, content: m.content })) }),
+      });
+      if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
+
+      setStatus("streaming");
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let acc = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        acc += decoder.decode(value, { stream: true });
+        setMessages((prev) =>
+          prev.map((m) => (m.id === assistantId ? { ...m, content: acc } : m))
+        );
+      }
+      setStatus("idle");
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong. Please try again.");
+      setStatus("error");
+      setMessages((prev) => prev.filter((m) => m.id !== assistantId));
+    }
+  };
+
+  return (
+    <div className="border border-foreground/15 bg-card">
+      <div className="border-b border-foreground/10 p-5 sm:p-6 flex items-center gap-3">
+        <span className="inline-flex items-center justify-center h-8 w-8 bg-blood/10 text-blood">
+          <MessageCircle size={16} />
+        </span>
+        <div>
+          <div className="text-eyebrow">AI Assistant</div>
+          <h3 className="font-display text-xl sm:text-2xl leading-tight">Pep Talk</h3>
+        </div>
+      </div>
+
+      <div className="p-4 sm:p-6 min-h-[400px] max-h-[600px] overflow-y-auto space-y-4">
+        {messages.length === 0 && (
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Ask anything about peptides — effects, dosing, timing, reconstitution, or stacking.
+              Answers are for research and educational purposes only.
+            </p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {suggestions.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => submit(s)}
+                  className="text-left text-xs border border-foreground/15 p-3 hover:border-blood hover:text-blood transition"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {messages.map((m) => {
+          const isUser = m.role === "user";
+          return (
+            <div key={m.id} className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+              <div
+                className={`max-w-[85%] px-4 py-3 text-sm ${
+                  isUser
+                    ? "bg-blood text-white"
+                    : "border border-foreground/15 bg-background"
+                }`}
+              >
+                {isUser ? (
+                  <p className="whitespace-pre-wrap">{m.content}</p>
+                ) : (
+                  <div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-2 prose-headings:font-display prose-headings:mt-3 prose-headings:mb-1 prose-ul:my-2 prose-strong:text-foreground">
+                    <ReactMarkdown>{m.content || "…"}</ReactMarkdown>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+
+        {status === "submitted" && (
+          <div className="flex justify-start">
+            <div className="border border-foreground/15 bg-background px-4 py-3 text-sm text-muted-foreground flex items-center gap-2">
+              <Loader2 size={14} className="animate-spin" /> Thinking…
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="border border-blood/40 bg-blood/5 text-sm p-3 text-blood">
+            {error}
+          </div>
+        )}
+      </div>
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          submit(input);
+        }}
+        className="border-t border-foreground/10 p-3 sm:p-4 flex gap-2"
+      >
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Ask about a peptide, dose, or stack…"
+          className="flex-1 bg-background border border-foreground/15 px-3 py-2 text-sm focus:outline-none focus:border-blood"
+          disabled={isLoading}
+        />
+        <button
+          type="submit"
+          disabled={isLoading || !input.trim()}
+          className="btn-blood hover:btn-blood-hover disabled:opacity-50 flex items-center gap-2 px-4"
+        >
+          <Send size={14} /> <span className="hidden sm:inline">Send</span>
+        </button>
+      </form>
+
+      <p className="px-4 sm:px-6 pb-4 text-[10px] text-muted-foreground">
+        Pep Talk is an AI research assistant, not medical advice. Always consult a qualified physician before use.
+      </p>
+    </div>
+  );
+}
 
 function Peptides() {
   return (
