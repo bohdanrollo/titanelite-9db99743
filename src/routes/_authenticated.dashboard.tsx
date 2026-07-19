@@ -27,13 +27,13 @@ function Dashboard() {
   return (
     <div className="min-h-dvh bg-background">
       <header className="border-b border-foreground/10">
-        <div className="container-edge h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <span className="inline-block h-3 w-3 bg-blood" />
-            <span className="font-display text-xl tracking-wider">TITAN ELITE</span>
+        <div className="container-edge h-16 flex items-center justify-between gap-3">
+          <Link to="/" className="flex min-w-0 items-center gap-2">
+            <span className="inline-block h-3 w-3 shrink-0 bg-blood" />
+            <span className="font-display text-base sm:text-xl tracking-wider truncate">TITAN ELITE</span>
           </Link>
-          <button onClick={signOut} className="font-mono text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood">
-            <LogOut size={14} /> Sign out
+          <button onClick={signOut} className="shrink-0 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood">
+            <LogOut size={14} /> <span className="hidden sm:inline">Sign out</span>
           </button>
         </div>
       </header>
