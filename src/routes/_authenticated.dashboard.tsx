@@ -69,6 +69,7 @@ function Dashboard() {
             { k: "protocols", l: "Protocols", i: FileText },
             { k: "peptalk", l: "Pep Talk", i: MessageCircle },
             { k: "peptides", l: "Peptides", i: Beaker },
+            { k: "mystack", l: "My Stack", i: ListChecks },
             { k: "supplies", l: "Supplies", i: Droplets },
             { k: "reconstitution", l: "Reconstitution", i: FlaskConical },
             { k: "injection", l: "Injection Guide", i: Syringe },
