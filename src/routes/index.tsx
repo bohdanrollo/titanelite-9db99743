@@ -61,8 +61,10 @@ function Hero() {
             you train for.
           </h1>
           <p className="mt-8 max-w-xl text-base text-muted-foreground leading-relaxed">
-            1:1 weightlifting programming and educational peptide protocols, built around
-            your goals, your training history, and your physiology. No templates. No filler.
+            1:1 weightlifting programming and educational peptide protocols, delivered through a
+            client dashboard that puts every tool you need in one place — from AI peptide guidance
+            and dosing calculators to injection guides, lifting splits, and macro targets.
+            No templates. No filler. Just the science and the work.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <Link to="/intake" className="btn-blood hover:btn-blood-hover">
