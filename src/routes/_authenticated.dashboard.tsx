@@ -4,7 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe } from "lucide-react";
+import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
