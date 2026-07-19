@@ -172,3 +172,17 @@
   cursor: pointer;
   transition: background 0.18s ease, color 0.18s ease;
 }
+@utility stack-input {
+  width: 100%;
+  background: transparent;
+  border: 1px solid color-mix(in oklch, var(--color-foreground) 20%, transparent);
+  color: var(--color-foreground);
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.stack-input:focus {
+  border-color: oklch(0.55 0.22 25);
+}

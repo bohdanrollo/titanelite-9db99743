@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, Send, Loader2 } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X } from "lucide-react";
 import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import ReactMarkdown from "react-markdown";
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 
-type Tab = "protocols" | "peptalk" | "peptides" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting";
+type Tab = "protocols" | "peptalk" | "peptides" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting";
 
 function Dashboard() {
   const { user, signOut } = useAuth();
@@ -69,6 +69,7 @@ function Dashboard() {
             { k: "protocols", l: "Protocols", i: FileText },
             { k: "peptalk", l: "Pep Talk", i: MessageCircle },
             { k: "peptides", l: "Peptides", i: Beaker },
+            { k: "mystack", l: "My Stack", i: ListChecks },
             { k: "supplies", l: "Supplies", i: Droplets },
             { k: "reconstitution", l: "Reconstitution", i: FlaskConical },
             { k: "injection", l: "Injection Guide", i: Syringe },
@@ -89,6 +90,7 @@ function Dashboard() {
           {tab === "protocols" && <Protocols />}
           {tab === "peptalk" && <PepTalk />}
           {tab === "peptides" && <Peptides />}
+          {tab === "mystack" && <MyStack />}
           {tab === "supplies" && <Supplies />}
           {tab === "reconstitution" && <Reconstitution />}
           {tab === "injection" && <Injection />}
@@ -936,3 +938,228 @@ function Stat({ label, value, accent }: { label: string; value: string; accent?:
     </div>
   );
 }
+
+type StackItem = {
+  id: string;
+  name: string;
+  dose: string | null;
+  unit: string | null;
+  frequency: string | null;
+  schedule: string | null;
+  notes: string | null;
+  active: boolean;
+  created_at: string;
+};
+
+type StackFormState = {
+  name: string;
+  dose: string;
+  unit: string;
+  frequency: string;
+  schedule: string;
+  notes: string;
+  active: boolean;
+};
+
+const EMPTY_STACK_FORM: StackFormState = { name: "", dose: "", unit: "mcg", frequency: "", schedule: "", notes: "", active: true };
+
+function MyStack() {
+  const { user } = useAuth();
+  const [items, setItems] = useState<StackItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<StackItem | null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState<StackFormState>(EMPTY_STACK_FORM);
+  const [saving, setSaving] = useState(false);
+
+  async function load() {
+    if (!user) return;
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("peptide_stacks")
+      .select("id, name, dose, unit, frequency, schedule, notes, active, created_at")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+    if (error) toast.error(error.message);
+    setItems((data as StackItem[]) ?? []);
+    setLoading(false);
+  }
+
+  useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [user]);
+
+  function openNew() {
+    setEditing(null);
+    setForm(EMPTY_STACK_FORM);
+    setShowForm(true);
+  }
+
+  function openEdit(item: StackItem) {
+    setEditing(item);
+    setForm({
+      name: item.name,
+      dose: item.dose ?? "",
+      unit: item.unit ?? "",
+      frequency: item.frequency ?? "",
+      schedule: item.schedule ?? "",
+      notes: item.notes ?? "",
+      active: item.active,
+    });
+    setShowForm(true);
+  }
+
+  async function save(e: React.FormEvent) {
+    e.preventDefault();
+    if (!user) return;
+    if (!form.name.trim()) { toast.error("Peptide name is required"); return; }
+    setSaving(true);
+    const payload = {
+      user_id: user.id,
+      name: form.name.trim(),
+      dose: form.dose.trim() || null,
+      unit: form.unit.trim() || null,
+      frequency: form.frequency.trim() || null,
+      schedule: form.schedule.trim() || null,
+      notes: form.notes.trim() || null,
+      active: form.active,
+    };
+    const { error } = editing
+      ? await supabase.from("peptide_stacks").update(payload).eq("id", editing.id)
+      : await supabase.from("peptide_stacks").insert(payload);
+    setSaving(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success(editing ? "Updated" : "Added to your stack");
+    setShowForm(false);
+    setEditing(null);
+    setForm(EMPTY_STACK_FORM);
+    load();
+  }
+
+  async function remove(id: string) {
+    if (!confirm("Remove this peptide from your stack?")) return;
+    const { error } = await supabase.from("peptide_stacks").delete().eq("id", id);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Removed");
+    setItems((prev) => prev.filter((i) => i.id !== id));
+  }
+
+  async function toggleActive(item: StackItem) {
+    const { error } = await supabase.from("peptide_stacks").update({ active: !item.active }).eq("id", item.id);
+    if (error) { toast.error(error.message); return; }
+    setItems((prev) => prev.map((i) => (i.id === item.id ? { ...i, active: !i.active } : i)));
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <div className="text-eyebrow">Dosing & Stacks</div>
+          <h2 className="mt-2 font-display text-2xl sm:text-3xl">My Stack</h2>
+          <p className="mt-2 text-sm text-muted-foreground max-w-xl">
+            Track the peptides you're running, your doses, and your schedule. Everything saves to your account — edit or add anytime.
+          </p>
+        </div>
+        {!showForm && (
+          <button onClick={openNew} className="btn-blood hover:btn-blood-hover inline-flex items-center gap-2">
+            <Plus size={16} /> Add Peptide
+          </button>
+        )}
+      </div>
+
+      {showForm && (
+        <form onSubmit={save} className="border border-foreground/15 bg-foreground/[0.02] p-4 sm:p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="font-display text-lg sm:text-xl">{editing ? "Edit peptide" : "New peptide"}</div>
+            <button type="button" onClick={() => { setShowForm(false); setEditing(null); }} className="text-muted-foreground hover:text-foreground">
+              <X size={18} />
+            </button>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Peptide *">
+              <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. BPC-157" className="stack-input" />
+            </Field>
+            <div className="grid grid-cols-[1fr_auto] gap-2">
+              <Field label="Dose">
+                <input value={form.dose} onChange={(e) => setForm({ ...form, dose: e.target.value })} placeholder="e.g. 250" className="stack-input" />
+              </Field>
+              <Field label="Unit">
+                <select value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })} className="stack-input">
+                  <option value="mcg">mcg</option>
+                  <option value="mg">mg</option>
+                  <option value="iu">IU</option>
+                  <option value="units">units</option>
+                </select>
+              </Field>
+            </div>
+            <Field label="Frequency">
+              <input value={form.frequency} onChange={(e) => setForm({ ...form, frequency: e.target.value })} placeholder="e.g. 2x daily" className="stack-input" />
+            </Field>
+            <Field label="When / Schedule">
+              <input value={form.schedule} onChange={(e) => setForm({ ...form, schedule: e.target.value })} placeholder="e.g. AM & PM, Mon–Fri" className="stack-input" />
+            </Field>
+          </div>
+          <Field label="Notes">
+            <textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={3} placeholder="Cycle length, stack context, how you're feeling…" className="stack-input" />
+          </Field>
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={form.active} onChange={(e) => setForm({ ...form, active: e.target.checked })} />
+            Currently running
+          </label>
+          <div className="flex gap-3">
+            <button type="submit" disabled={saving} className="btn-blood hover:btn-blood-hover inline-flex items-center gap-2 disabled:opacity-60">
+              {saving && <Loader2 size={14} className="animate-spin" />} {editing ? "Save changes" : "Add to stack"}
+            </button>
+            <button type="button" onClick={() => { setShowForm(false); setEditing(null); }} className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground">
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
+
+      {loading ? (
+        <div className="text-sm text-muted-foreground">Loading your stack…</div>
+      ) : items.length === 0 ? (
+        <div className="border border-dashed border-foreground/20 p-8 text-center text-sm text-muted-foreground">
+          Nothing here yet. Add your first peptide to start tracking your dosing and stacks.
+        </div>
+      ) : (
+        <div className="grid gap-3 sm:grid-cols-2">
+          {items.map((item) => (
+            <div key={item.id} className={`border p-4 ${item.active ? "border-blood/40" : "border-foreground/10 opacity-70"}`}>
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="font-display text-lg sm:text-xl truncate">{item.name}</div>
+                  <div className="mt-1 text-sm text-blood font-medium">
+                    {item.dose ? `${item.dose} ${item.unit ?? ""}`.trim() : "No dose set"}
+                    {item.frequency ? ` · ${item.frequency}` : ""}
+                  </div>
+                  {item.schedule && <div className="mt-1 text-xs text-muted-foreground">{item.schedule}</div>}
+                </div>
+                <div className="flex shrink-0 gap-1">
+                  <button onClick={() => openEdit(item)} title="Edit" className="p-1.5 text-muted-foreground hover:text-foreground"><Pencil size={14} /></button>
+                  <button onClick={() => remove(item.id)} title="Delete" className="p-1.5 text-muted-foreground hover:text-blood"><Trash2 size={14} /></button>
+                </div>
+              </div>
+              {item.notes && <p className="mt-3 text-xs text-muted-foreground whitespace-pre-wrap">{item.notes}</p>}
+              <button
+                onClick={() => toggleActive(item)}
+                className={`mt-3 font-mono text-[10px] uppercase tracking-[0.18em] ${item.active ? "text-blood" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                {item.active ? "● Active" : "○ Paused"}
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="text-eyebrow block mb-1.5">{label}</span>
+      {children}
+    </label>
+  );
+}
+
