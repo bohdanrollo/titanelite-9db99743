@@ -742,7 +742,7 @@ function PeptideCalculator() {
                     fill="var(--color-foreground)"
                     fontFamily="monospace"
                   >
-                    {i * 10}
+                    {(10 - i) * 10}
                   </text>
                 )}
               </g>
@@ -753,9 +753,9 @@ function PeptideCalculator() {
             <rect x={30 + barrelWidth + 14} y="43" width="60" height="4" fill="var(--color-foreground)" />
           </svg>
           <div className="mt-2 flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-            <span>0 U</span>
-            <span className="text-blood">Fill to {valid ? units.toFixed(1) : "—"} U</span>
             <span>100 U</span>
+            <span className="text-blood">Fill to {valid ? units.toFixed(1) : "—"} U</span>
+            <span>0 U</span>
           </div>
         </div>
 
