@@ -150,23 +150,34 @@ function Process() {
   );
 }
 
-function Benefits() {
+function DashboardFeatures() {
   const items = [
-    { i: Dumbbell, t: "Custom Programming", d: "Periodized blocks built around your lifts, recovery and schedule." },
-    { i: FlaskConical, t: "Peptide Education", d: "Evidence-informed peptide protocol templates — strictly educational." },
-    { i: FileText, t: "Delivered as PDF", d: "Clean, printable documents you can take to the gym or your provider." },
-    { i: Activity, t: "Real Accountability", d: "Direct messaging, weekly check-ins, and progress tracking inside your dashboard." },
+    { i: FileText, t: "Custom Protocols", d: "Your coach delivers personalized weightlifting and peptide protocols as downloadable PDFs." },
+    { i: MessageCircle, t: "Pep Talk AI", d: "Ask anything about peptide effects, dosing, timing, stacking, and safety — instant research answers." },
+    { i: Beaker, t: "Top 50 Peptides", d: "A searchable research library covering the most popular compounds and what each is studied for." },
+    { i: ListChecks, t: "My Stack", d: "Track every peptide, dose, unit, frequency, schedule, and notes in your personal dosing log." },
+    { i: Droplets, t: "Supplies Guide", d: "BAC water, insulin syringes, alcohol wipes, plus storage techniques before and after reconstitution." },
+    { i: FlaskConical, t: "Reconstitution", d: "Step-by-step mixing instructions: roll the vial gently in your hands until the powder dissolves — never shake." },
+    { i: Syringe, t: "Injection Guide", d: "Subcutaneous injection site diagrams, rotation advice, and sterile technique walkthroughs." },
+    { i: Calculator, t: "Dose Calculator", d: "Input vial strength, desired dose, and BAC water to see the exact draw volume on a 1 mL syringe." },
+    { i: Dumbbell, t: "Lifting & Nutrition", d: "Training splits, popular lifts, and caloric / macro targets tailored to bulking, cutting, or maintenance." },
   ];
   return (
     <section className="bg-ink text-bone py-24 lg:py-32 border-y border-foreground/15">
       <div className="container-edge">
-        <div className="text-eyebrow">Why Titan Elite</div>
-        <h2 className="mt-4 text-5xl lg:text-7xl max-w-3xl">Built for clients who are done <span className="text-blood">winging it.</span></h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-16">
+        <div className="text-eyebrow">Client Dashboard</div>
+        <h2 className="mt-4 text-5xl lg:text-7xl max-w-4xl">
+          Everything you need. <span className="text-blood">One dashboard.</span>
+        </h2>
+        <p className="mt-6 max-w-2xl text-bone/70 leading-relaxed">
+          Whether you are researching peptides or dialing in your training, the Titan Elite dashboard
+          is built to hold every answer, calculator, and reference you will use — no guesswork, no app switching.
+        </p>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
           {items.map((b) => (
-            <div key={b.t} className="border-t border-bone/20 pt-6">
-              <b.i className="text-blood" size={28} strokeWidth={1.2} />
-              <div className="font-display text-2xl mt-6">{b.t}</div>
+            <div key={b.t} className="border border-bone/15 bg-ink/50 p-6 hover:border-blood/60 transition">
+              <b.i className="text-blood" size={26} strokeWidth={1.2} />
+              <div className="font-display text-2xl mt-5">{b.t}</div>
               <p className="text-bone/70 text-sm mt-2 leading-relaxed">{b.d}</p>
             </div>
           ))}
