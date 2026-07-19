@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { FileText, Droplets, LogOut, Download, Beaker, Package } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical } from "lucide-react";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -12,7 +12,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 
-type Tab = "protocols" | "peptides" | "supplies";
+type Tab = "protocols" | "peptides" | "supplies" | "reconstitution";
 
 function Dashboard() {
   const { user, signOut } = useAuth();
@@ -67,6 +67,7 @@ function Dashboard() {
             { k: "protocols", l: "Protocols", i: FileText },
             { k: "peptides", l: "Peptides", i: Beaker },
             { k: "supplies", l: "Supplies", i: Droplets },
+            { k: "reconstitution", l: "Reconstitution", i: FlaskConical },
           ] as const).map((t) => (
             <button
               key={t.k}
@@ -82,6 +83,7 @@ function Dashboard() {
           {tab === "protocols" && <Protocols />}
           {tab === "peptides" && <Peptides />}
           {tab === "supplies" && <Supplies />}
+          {tab === "reconstitution" && <Reconstitution />}
         </div>
       </section>
     </div>
@@ -301,6 +303,89 @@ function Supplies() {
     </div>
   );
 }
+function Reconstitution() {
+  return (
+    <div className="grid lg:grid-cols-2 gap-8">
+      <div className="space-y-4">
+        <div className="mb-2">
+          <h3 className="font-display text-3xl">Reconstitution</h3>
+          <p className="text-sm text-muted-foreground mt-2">
+            How to mix lyophilized peptide powder with bacteriostatic (BAC) water for research use.
+          </p>
+        </div>
+        <article className="border border-foreground/10 p-5">
+          <div className="text-eyebrow mb-2">Step 1 — Prepare</div>
+          <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
+            <li>Wash your hands thoroughly.</li>
+            <li>Clean the work surface and lay out the vial, BAC water, syringe, and alcohol wipes.</li>
+            <li>Let the peptide vial reach room temperature before reconstituting.</li>
+          </ul>
+        </article>
+        <article className="border border-foreground/10 p-5">
+          <div className="text-eyebrow mb-2">Step 2 — Add BAC Water</div>
+          <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
+            <li>Wipe the rubber stopper of the peptide vial with an alcohol wipe.</li>
+            <li>Draw the desired amount of BAC water into the syringe.</li>
+            <li>Slowly inject the BAC water down the inside wall of the vial — not directly onto the powder.</li>
+          </ul>
+        </article>
+        <article className="border border-foreground/10 p-5">
+          <div className="text-eyebrow mb-2">Step 3 — Dissolve Gently</div>
+          <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
+            <li>Roll the vial slowly between your hands until the powder is completely dissolved.</li>
+            <li className="text-blood font-medium">DO NOT SHAKE the vials — shaking can damage the peptide structure.</li>
+            <li>Do not stir or agitate the solution.</li>
+          </ul>
+        </article>
+        <article className="border border-foreground/10 p-5">
+          <div className="text-eyebrow mb-2">Step 4 — Store</div>
+          <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
+            <li>Refrigerate immediately after reconstitution at 2–8°C (36–46°F).</li>
+            <li>Use within 30 days for best research stability.</li>
+            <li>Keep away from light, heat, and freezing temperatures.</li>
+          </ul>
+        </article>
+      </div>
+
+      <div className="space-y-4">
+        <div className="mb-2">
+          <h3 className="font-display text-3xl">Important Tips</h3>
+          <p className="text-sm text-muted-foreground mt-2">
+            Small habits make a big difference in peptide stability and accuracy.
+          </p>
+        </div>
+        <article className="border border-foreground/10 p-5 hover:border-blood transition">
+          <div className="flex items-center gap-3">
+            <FlaskConical size={18} className="text-blood" />
+            <h4 className="font-display text-xl">Be Patient</h4>
+          </div>
+          <p className="text-sm text-muted-foreground mt-2">
+            Some peptides dissolve slowly. Gentle rolling over a few minutes is better than any forceful mixing.
+          </p>
+        </article>
+        <article className="border border-foreground/10 p-5 hover:border-blood transition">
+          <div className="flex items-center gap-3">
+            <FlaskConical size={18} className="text-blood" />
+            <h4 className="font-display text-xl">Use the Right Water</h4>
+          </div>
+          <p className="text-sm text-muted-foreground mt-2">
+            Only use bacteriostatic water for reconstitution. Standard sterile water lacks the preservative needed for multi-use research vials.
+          </p>
+        </article>
+        <article className="border border-foreground/10 p-5 hover:border-blood transition">
+          <div className="flex items-center gap-3">
+            <FlaskConical size={18} className="text-blood" />
+            <h4 className="font-display text-xl">Don't Freeze After Mixing</h4>
+          </div>
+          <p className="text-sm text-muted-foreground mt-2">
+            Freezing a reconstituted solution can degrade the peptide. Keep it refrigerated and stable until use.
+          </p>
+        </article>
+      </div>
+    </div>
+  );
+}
+
 function Empty({ title, body }: { title: string; body: string }) {
   return (
     <div className="border border-dashed border-foreground/20 p-12 text-center">
