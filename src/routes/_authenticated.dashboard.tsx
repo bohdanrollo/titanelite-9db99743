@@ -209,14 +209,14 @@ function Peptides() {
   return (
     <div>
       <div className="mb-6">
-        <h3 className="font-display text-3xl">Top 50 Research Peptides</h3>
+        <h3 className="font-display text-2xl sm:text-3xl">Top 50 Research Peptides</h3>
         <p className="text-sm text-muted-foreground mt-2">
           Educational reference only. Compounds listed for research purposes — not medical advice. Order through{" "}
           <a href="https://powerbuiltlabs.com/?ref=bjr" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">Powerbuilt Labs</a>{" "}
           with code <span className="text-blood font-medium">BJR</span>.
         </p>
       </div>
-      <div className="grid md:grid-cols-2 gap-3">
+      <div className="grid sm:grid-cols-2 gap-3">
         {PEPTIDES.map((p, i) => (
           <article key={p.name} className="border border-foreground/10 p-5 hover:border-blood transition">
             <div className="flex items-baseline gap-3">
@@ -237,7 +237,7 @@ function Supplies() {
     <div className="grid lg:grid-cols-2 gap-8">
       <div className="space-y-4">
         <div className="mb-2">
-          <h3 className="font-display text-3xl">Research Supplies</h3>
+          <h3 className="font-display text-2xl sm:text-3xl">Research Supplies</h3>
           <p className="text-sm text-muted-foreground mt-2">
             The basics you need to handle peptides safely and accurately in a research setting.
           </p>
@@ -273,7 +273,7 @@ function Supplies() {
 
       <div className="space-y-4">
         <div className="mb-2">
-          <h3 className="font-display text-3xl">Storage Guide</h3>
+          <h3 className="font-display text-2xl sm:text-3xl">Storage Guide</h3>
           <p className="text-sm text-muted-foreground mt-2">
             Proper storage preserves peptide potency and protects your research supply.
           </p>
@@ -308,7 +308,7 @@ function Reconstitution() {
     <div className="grid lg:grid-cols-2 gap-8">
       <div className="space-y-4">
         <div className="mb-2">
-          <h3 className="font-display text-3xl">Reconstitution</h3>
+          <h3 className="font-display text-2xl sm:text-3xl">Reconstitution</h3>
           <p className="text-sm text-muted-foreground mt-2">
             How to mix lyophilized peptide powder with bacteriostatic (BAC) water for research use.
           </p>
@@ -349,7 +349,7 @@ function Reconstitution() {
 
       <div className="space-y-4">
         <div className="mb-2">
-          <h3 className="font-display text-3xl">Important Tips</h3>
+          <h3 className="font-display text-2xl sm:text-3xl">Important Tips</h3>
           <p className="text-sm text-muted-foreground mt-2">
             Small habits make a big difference in peptide stability and accuracy.
           </p>
@@ -389,7 +389,7 @@ function Reconstitution() {
 function Empty({ title, body }: { title: string; body: string }) {
   return (
     <div className="border border-dashed border-foreground/20 p-12 text-center">
-      <div className="font-display text-3xl">{title}</div>
+      <div className="font-display text-2xl sm:text-3xl">{title}</div>
       <p className="text-sm text-muted-foreground mt-2">{body}</p>
     </div>
   );
