@@ -215,11 +215,13 @@ const PEPTIDES: { name: string; researched: string }[] = [
   { name: "T4 / Levothyroxine (research context)", researched: "Researched for thyroid replacement, metabolic rate, and hormone balance." },
 ];
 
+type ChatMsg = { id: string; role: "user" | "assistant"; content: string };
+
 function PepTalk() {
   const [input, setInput] = useState("");
-  const { messages, sendMessage, status, error } = useChat({
-    transport: new DefaultChatTransport({ api: "/api/pep-talk" }),
-  });
+  const [messages, setMessages] = useState<ChatMsg[]>([]);
+  const [status, setStatus] = useState<"idle" | "submitted" | "streaming" | "error">("idle");
+  const [error, setError] = useState<string | null>(null);
   const isLoading = status === "submitted" || status === "streaming";
 
   const suggestions = [
@@ -229,11 +231,45 @@ function PepTalk() {
     "Best time of day to inject CJC-1295/Ipamorelin?",
   ];
 
-  const submit = (text: string) => {
+  const submit = async (text: string) => {
     const t = text.trim();
     if (!t || isLoading) return;
-    sendMessage({ text: t });
+    setError(null);
     setInput("");
+
+    const userMsg: ChatMsg = { id: crypto.randomUUID(), role: "user", content: t };
+    const assistantId = crypto.randomUUID();
+    const next = [...messages, userMsg];
+    setMessages([...next, { id: assistantId, role: "assistant", content: "" }]);
+    setStatus("submitted");
+
+    try {
+      const res = await fetch("/api/pep-talk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: next.map((m) => ({ role: m.role, content: m.content })) }),
+      });
+      if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
+
+      setStatus("streaming");
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let acc = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        acc += decoder.decode(value, { stream: true });
+        setMessages((prev) =>
+          prev.map((m) => (m.id === assistantId ? { ...m, content: acc } : m))
+        );
+      }
+      setStatus("idle");
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong. Please try again.");
+      setStatus("error");
+      setMessages((prev) => prev.filter((m) => m.id !== assistantId));
+    }
   };
 
   return (
@@ -270,7 +306,6 @@ function PepTalk() {
         )}
 
         {messages.map((m) => {
-          const text = m.parts.map((p) => (p.type === "text" ? p.text : "")).join("");
           const isUser = m.role === "user";
           return (
             <div key={m.id} className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
@@ -282,10 +317,10 @@ function PepTalk() {
                 }`}
               >
                 {isUser ? (
-                  <p className="whitespace-pre-wrap">{text}</p>
+                  <p className="whitespace-pre-wrap">{m.content}</p>
                 ) : (
                   <div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-2 prose-headings:font-display prose-headings:mt-3 prose-headings:mb-1 prose-ul:my-2 prose-strong:text-foreground">
-                    <ReactMarkdown>{text || "…"}</ReactMarkdown>
+                    <ReactMarkdown>{m.content || "…"}</ReactMarkdown>
                   </div>
                 )}
               </div>
@@ -303,7 +338,7 @@ function PepTalk() {
 
         {error && (
           <div className="border border-blood/40 bg-blood/5 text-sm p-3 text-blood">
-            Something went wrong. Please try again.
+            {error}
           </div>
         )}
       </div>
