@@ -217,6 +217,129 @@ const PEPTIDES: { name: string; researched: string }[] = [
   { name: "T4 / Levothyroxine (research context)", researched: "Researched for thyroid replacement, metabolic rate, and hormone balance." },
 ];
 
+function PepTalk() {
+  const [input, setInput] = useState("");
+  const { messages, sendMessage, status, error } = useChat({
+    transport: new DefaultChatTransport({ api: "/api/pep-talk" }),
+  });
+  const isLoading = status === "submitted" || status === "streaming";
+
+  const suggestions = [
+    "What does BPC-157 do and how is it typically dosed?",
+    "Explain TB-500 stacking with BPC-157.",
+    "How should I store peptides after reconstitution?",
+    "Best time of day to inject CJC-1295/Ipamorelin?",
+  ];
+
+  const submit = (text: string) => {
+    const t = text.trim();
+    if (!t || isLoading) return;
+    sendMessage({ text: t });
+    setInput("");
+  };
+
+  return (
+    <div className="border border-foreground/15 bg-card">
+      <div className="border-b border-foreground/10 p-5 sm:p-6 flex items-center gap-3">
+        <span className="inline-flex items-center justify-center h-8 w-8 bg-blood/10 text-blood">
+          <MessageCircle size={16} />
+        </span>
+        <div>
+          <div className="text-eyebrow">AI Assistant</div>
+          <h3 className="font-display text-xl sm:text-2xl leading-tight">Pep Talk</h3>
+        </div>
+      </div>
+
+      <div className="p-4 sm:p-6 min-h-[400px] max-h-[600px] overflow-y-auto space-y-4">
+        {messages.length === 0 && (
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Ask anything about peptides — effects, dosing, timing, reconstitution, or stacking.
+              Answers are for research and educational purposes only.
+            </p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {suggestions.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => submit(s)}
+                  className="text-left text-xs border border-foreground/15 p-3 hover:border-blood hover:text-blood transition"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {messages.map((m) => {
+          const text = m.parts.map((p) => (p.type === "text" ? p.text : "")).join("");
+          const isUser = m.role === "user";
+          return (
+            <div key={m.id} className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+              <div
+                className={`max-w-[85%] px-4 py-3 text-sm ${
+                  isUser
+                    ? "bg-blood text-white"
+                    : "border border-foreground/15 bg-background"
+                }`}
+              >
+                {isUser ? (
+                  <p className="whitespace-pre-wrap">{text}</p>
+                ) : (
+                  <div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-2 prose-headings:font-display prose-headings:mt-3 prose-headings:mb-1 prose-ul:my-2 prose-strong:text-foreground">
+                    <ReactMarkdown>{text || "…"}</ReactMarkdown>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+
+        {status === "submitted" && (
+          <div className="flex justify-start">
+            <div className="border border-foreground/15 bg-background px-4 py-3 text-sm text-muted-foreground flex items-center gap-2">
+              <Loader2 size={14} className="animate-spin" /> Thinking…
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="border border-blood/40 bg-blood/5 text-sm p-3 text-blood">
+            Something went wrong. Please try again.
+          </div>
+        )}
+      </div>
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          submit(input);
+        }}
+        className="border-t border-foreground/10 p-3 sm:p-4 flex gap-2"
+      >
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Ask about a peptide, dose, or stack…"
+          className="flex-1 bg-background border border-foreground/15 px-3 py-2 text-sm focus:outline-none focus:border-blood"
+          disabled={isLoading}
+        />
+        <button
+          type="submit"
+          disabled={isLoading || !input.trim()}
+          className="btn-blood hover:btn-blood-hover disabled:opacity-50 flex items-center gap-2 px-4"
+        >
+          <Send size={14} /> <span className="hidden sm:inline">Send</span>
+        </button>
+      </form>
+
+      <p className="px-4 sm:px-6 pb-4 text-[10px] text-muted-foreground">
+        Pep Talk is an AI research assistant, not medical advice. Always consult a qualified physician before use.
+      </p>
+    </div>
+  );
+}
+
 function Peptides() {
   return (
     <div>
