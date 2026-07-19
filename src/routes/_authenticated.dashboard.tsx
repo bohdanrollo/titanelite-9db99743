@@ -69,6 +69,7 @@ function Dashboard() {
         <nav className="mt-8 sm:mt-10 -mx-4 sm:mx-0 flex gap-1 overflow-x-auto border-b border-foreground/15 px-4 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {([
             { k: "protocols", l: "Protocols", i: FileText },
+            { k: "peptalk", l: "Pep Talk", i: MessageCircle },
             { k: "peptides", l: "Peptides", i: Beaker },
             { k: "supplies", l: "Supplies", i: Droplets },
             { k: "reconstitution", l: "Reconstitution", i: FlaskConical },
@@ -88,6 +89,7 @@ function Dashboard() {
 
         <div className="mt-8">
           {tab === "protocols" && <Protocols />}
+          {tab === "peptalk" && <PepTalk />}
           {tab === "peptides" && <Peptides />}
           {tab === "supplies" && <Supplies />}
           {tab === "reconstitution" && <Reconstitution />}
