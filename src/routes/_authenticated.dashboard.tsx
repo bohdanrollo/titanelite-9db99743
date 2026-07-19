@@ -207,7 +207,7 @@ function Peptides() {
   return (
     <div>
       <div className="mb-6">
-        <h3 className="font-display text-3xl">Top 15 Research Peptides</h3>
+        <h3 className="font-display text-3xl">Top 50 Research Peptides</h3>
         <p className="text-sm text-muted-foreground mt-2">
           Educational reference only. Compounds listed for research purposes — not medical advice. Order through{" "}
           <a href="https://powerbuiltlabs.com/?ref=bjr" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">Powerbuilt Labs</a>{" "}
