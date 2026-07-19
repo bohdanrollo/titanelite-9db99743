@@ -4,7 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe } from "lucide-react";
+import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -12,7 +13,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 
-type Tab = "protocols" | "peptides" | "supplies" | "reconstitution";
+type Tab = "protocols" | "peptides" | "supplies" | "reconstitution" | "injection";
 
 function Dashboard() {
   const { user, signOut } = useAuth();
@@ -68,6 +69,7 @@ function Dashboard() {
             { k: "peptides", l: "Peptides", i: Beaker },
             { k: "supplies", l: "Supplies", i: Droplets },
             { k: "reconstitution", l: "Reconstitution", i: FlaskConical },
+            { k: "injection", l: "Injection Guide", i: Syringe },
           ] as const).map((t) => (
             <button
               key={t.k}
@@ -84,6 +86,7 @@ function Dashboard() {
           {tab === "peptides" && <Peptides />}
           {tab === "supplies" && <Supplies />}
           {tab === "reconstitution" && <Reconstitution />}
+          {tab === "injection" && <Injection />}
         </div>
       </section>
     </div>
@@ -391,6 +394,80 @@ function Empty({ title, body }: { title: string; body: string }) {
     <div className="border border-dashed border-foreground/20 p-12 text-center">
       <div className="font-display text-2xl sm:text-3xl">{title}</div>
       <p className="text-sm text-muted-foreground mt-2">{body}</p>
+    </div>
+  );
+}
+
+function Injection() {
+  return (
+    <div className="grid lg:grid-cols-2 gap-8">
+      <div className="space-y-4">
+        <div className="mb-2">
+          <h3 className="font-display text-2xl sm:text-3xl">Injection Guide</h3>
+          <p className="text-sm text-muted-foreground mt-2">
+            Most research peptides are delivered subcutaneously (into the fat layer just under the skin) using a 1mL insulin syringe.
+          </p>
+        </div>
+        <figure className="border border-foreground/10 p-3 bg-foreground/5">
+          <img
+            src={injectionSitesAsset.url}
+            alt="Diagram of recommended subcutaneous injection sites on the body"
+            className="w-full h-auto"
+            loading="lazy"
+          />
+          <figcaption className="text-eyebrow mt-3 text-center">Common Subcutaneous Injection Sites</figcaption>
+        </figure>
+        <article className="border border-foreground/10 p-5">
+          <div className="text-eyebrow mb-2">Recommended Sites</div>
+          <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
+            <li>Abdomen — at least 2 inches away from the navel.</li>
+            <li>Love handles / flanks — easy to pinch, minimal discomfort.</li>
+            <li>Outer thighs — front and side, avoiding muscle.</li>
+            <li>Back of upper arm (with assistance).</li>
+          </ul>
+        </article>
+      </div>
+
+      <div className="space-y-4">
+        <div className="mb-2">
+          <h3 className="font-display text-2xl sm:text-3xl">Injection Best Practices</h3>
+          <p className="text-sm text-muted-foreground mt-2">
+            Consistency, cleanliness, and rotation are the foundation of safe subcutaneous injections.
+          </p>
+        </div>
+        <article className="border border-foreground/10 p-5">
+          <div className="text-eyebrow mb-2">Step-by-Step</div>
+          <ul className="text-sm text-muted-foreground space-y-2 list-decimal list-inside">
+            <li>Wash your hands and wipe the injection site with an alcohol swab.</li>
+            <li>Wipe the vial's rubber stopper and draw your dose slowly into the insulin syringe.</li>
+            <li>Tap out air bubbles and push the plunger until a small bead forms at the tip.</li>
+            <li>Pinch a fold of skin, insert the needle at a 45–90° angle in one quick motion.</li>
+            <li>Depress the plunger slowly and steadily.</li>
+            <li>Withdraw the needle at the same angle and apply light pressure with a clean wipe.</li>
+            <li>Safely dispose of the needle in a sharps container — never re-use.</li>
+          </ul>
+        </article>
+        <article className="border border-foreground/10 p-5">
+          <div className="text-eyebrow mb-2">Rotate Sites</div>
+          <p className="text-sm text-muted-foreground">
+            Rotate injection sites daily to prevent scar tissue, lipohypertrophy (fatty lumps), and bruising. Keep at least a 1-inch gap between injections.
+          </p>
+        </article>
+        <article className="border border-foreground/10 p-5">
+          <div className="text-eyebrow mb-2">Avoid</div>
+          <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
+            <li>Veins, moles, scars, stretch marks, and bruised or irritated skin.</li>
+            <li>Injecting into muscle — subcutaneous means the fat layer only.</li>
+            <li>Re-using needles — they dull quickly and increase infection risk.</li>
+          </ul>
+        </article>
+        <article className="border border-blood/40 bg-blood/5 p-5">
+          <div className="text-eyebrow mb-2 text-blood">When to Stop</div>
+          <p className="text-sm text-muted-foreground">
+            Persistent redness, swelling, warmth, fever, or an unusual reaction at the site warrants stopping and seeking medical guidance.
+          </p>
+        </article>
+      </div>
     </div>
   );
 }
