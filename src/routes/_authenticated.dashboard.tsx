@@ -37,9 +37,9 @@ function Dashboard() {
           </button>
         </div>
       </header>
-      <section className="container-edge py-12">
+      <section className="container-edge py-8 sm:py-12">
         <div className="text-eyebrow">Client Dashboard</div>
-        <h1 className="mt-4 text-5xl lg:text-6xl">Welcome back.</h1>
+        <h1 className="mt-4 text-3xl sm:text-5xl lg:text-6xl">Welcome back.</h1>
         <p className="mt-3 text-sm text-muted-foreground">
           Need peptides? Order through{" "}
           <a href="https://powerbuiltlabs.com/?ref=bjr" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">
@@ -49,20 +49,20 @@ function Dashboard() {
         </p>
 
         {!intake && (
-          <div className="mt-8 border border-blood/40 bg-blood/5 p-6">
-            <div className="font-display text-2xl">Your intake isn't submitted yet.</div>
+          <div className="mt-8 border border-blood/40 bg-blood/5 p-5 sm:p-6">
+            <div className="font-display text-xl sm:text-2xl">Your intake isn't submitted yet.</div>
             <p className="text-sm text-muted-foreground mt-2">Submit your intake to begin protocol review.</p>
             <Link to="/intake" className="mt-4 inline-flex btn-blood hover:btn-blood-hover">Begin Intake</Link>
           </div>
         )}
         {intake && (
-          <div className="mt-8 flex flex-wrap items-center gap-6 border-y border-foreground/10 py-4 text-sm">
-            <div><span className="text-eyebrow block">Status</span><span className="font-display text-xl">{intake.status}</span></div>
-            <div><span className="text-eyebrow block">Submitted</span><span className="font-display text-xl">{new Date(intake.submitted_at).toLocaleDateString()}</span></div>
+          <div className="mt-8 flex flex-wrap items-center gap-4 sm:gap-6 border-y border-foreground/10 py-4 text-sm">
+            <div><span className="text-eyebrow block">Status</span><span className="font-display text-lg sm:text-xl">{intake.status}</span></div>
+            <div><span className="text-eyebrow block">Submitted</span><span className="font-display text-lg sm:text-xl">{new Date(intake.submitted_at).toLocaleDateString()}</span></div>
           </div>
         )}
 
-        <nav className="mt-10 flex gap-1 border-b border-foreground/15">
+        <nav className="mt-8 sm:mt-10 -mx-4 sm:mx-0 flex gap-1 overflow-x-auto border-b border-foreground/15 px-4 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {([
             { k: "protocols", l: "Protocols", i: FileText },
             { k: "peptides", l: "Peptides", i: Beaker },
@@ -72,7 +72,7 @@ function Dashboard() {
             <button
               key={t.k}
               onClick={() => setTab(t.k)}
-              className={`px-5 py-3 font-mono text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 border-b-2 transition ${tab === t.k ? "border-blood text-blood" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+              className={`shrink-0 px-3 sm:px-5 py-3 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 border-b-2 transition ${tab === t.k ? "border-blood text-blood" : "border-transparent text-muted-foreground hover:text-foreground"}`}
             >
               <t.i size={14} /> {t.l}
             </button>
