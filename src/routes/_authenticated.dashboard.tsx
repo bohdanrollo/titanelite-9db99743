@@ -742,7 +742,7 @@ function PeptideCalculator() {
                     fill="var(--color-foreground)"
                     fontFamily="monospace"
                   >
-                    {i * 10}
+                    {(10 - i) * 10}
                   </text>
                 )}
               </g>
