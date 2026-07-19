@@ -130,30 +130,62 @@ type IntakeRow = {
 
 function Intakes() {
   const [rows, setRows] = useState<IntakeRow[]>([]);
+  const [protoMap, setProtoMap] = useState<Record<string, string>>({});
   const [open, setOpen] = useState<IntakeRow | null>(null);
   useEffect(() => {
-    supabase.from("intakes").select("*").order("submitted_at", { ascending: false }).then(({ data }) => setRows((data as IntakeRow[]) ?? []));
+    (async () => {
+      const [{ data: intakeData }, { data: protoData }] = await Promise.all([
+        supabase.from("intakes").select("*").order("submitted_at", { ascending: false }),
+        supabase.from("protocols").select("source_intake_id, status").not("source_intake_id", "is", null),
+      ]);
+      setRows((intakeData as IntakeRow[]) ?? []);
+      const map: Record<string, string> = {};
+      (protoData ?? []).forEach((p: { source_intake_id: string | null; status: string }) => {
+        if (p.source_intake_id) map[p.source_intake_id] = p.status;
+      });
+      setProtoMap(map);
+    })();
   }, []);
   return (
     <div>
       <div className="border border-foreground/10">
         <table className="w-full text-sm">
           <thead className="bg-muted text-left text-eyebrow">
-            <tr><th className="p-3">Submitted</th><th className="p-3">Client ID</th><th className="p-3">Status</th><th className="p-3"></th></tr>
+            <tr><th className="p-3">Submitted</th><th className="p-3">Client ID</th><th className="p-3">Protocol</th><th className="p-3"></th></tr>
           </thead>
           <tbody>
-            {rows.map((r) => (
-              <tr key={r.id} className="border-t border-foreground/10 hover:bg-muted/40">
-                <td className="p-3 font-mono text-xs">{new Date(r.submitted_at).toLocaleString()}</td>
-                <td className="p-3 font-mono text-xs">{r.user_id.slice(0, 8)}…</td>
-                <td className="p-3"><span className="text-eyebrow">{r.status}</span></td>
-                <td className="p-3 text-right"><button onClick={() => setOpen(r)} className="text-blood font-mono text-xs uppercase tracking-[0.14em]">Review →</button></td>
-              </tr>
-            ))}
+            {rows.map((r) => {
+              const pStatus = protoMap[r.id];
+              const sent = pStatus === "delivered" || pStatus === "sent" || pStatus === "viewed";
+              const inProgress = pStatus && !sent;
+              return (
+                <tr key={r.id} className="border-t border-foreground/10 hover:bg-muted/40">
+                  <td className="p-3 font-mono text-xs">{new Date(r.submitted_at).toLocaleString()}</td>
+                  <td className="p-3 font-mono text-xs">{r.user_id.slice(0, 8)}…</td>
+                  <td className="p-3">
+                    {sent ? (
+                      <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-emerald-600">
+                        <span className="h-2 w-2 rounded-full bg-emerald-500" /> Sent
+                      </span>
+                    ) : inProgress ? (
+                      <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-600">
+                        <span className="h-2 w-2 rounded-full bg-amber-500" /> Draft
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-blood">
+                        <span className="h-2 w-2 rounded-full bg-blood" /> Needs protocol
+                      </span>
+                    )}
+                  </td>
+                  <td className="p-3 text-right"><button onClick={() => setOpen(r)} className="text-blood font-mono text-xs uppercase tracking-[0.14em]">Review →</button></td>
+                </tr>
+              );
+            })}
             {!rows.length && <tr><td colSpan={4} className="p-8 text-center text-muted-foreground">No intakes submitted yet.</td></tr>}
           </tbody>
         </table>
       </div>
+
 
       {open && (
         <div className="fixed inset-0 z-50 bg-ink/80 backdrop-blur flex items-start justify-center overflow-y-auto p-4">
