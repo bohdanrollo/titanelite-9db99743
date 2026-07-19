@@ -121,9 +121,9 @@ function Marquee() {
 function Process() {
   const steps = [
     { n: "01", t: "Apply", d: "Submit your detailed intake — training, health, goals, and peptide interests." },
-    { n: "02", t: "Review", d: "Our team personally analyzes every form. We confirm fit and select your package." },
-    { n: "03", t: "Build", d: "You receive a custom weightlifting protocol and educational peptide protocol." },
-    { n: "04", t: "Train", d: "Weekly check-ins, programming adjustments, and direct messaging access." },
+    { n: "02", t: "Review", d: "Our team personally analyzes every form and drafts your custom protocol plan." },
+    { n: "03", t: "Build", d: "You receive a custom weightlifting protocol and educational peptide protocol as a PDF." },
+    { n: "04", t: "Train", d: "Weekly check-ins, programming adjustments, and unlimited access to the dashboard tools." },
   ];
   return (
     <section id="process" className="container-edge py-24 lg:py-32">
