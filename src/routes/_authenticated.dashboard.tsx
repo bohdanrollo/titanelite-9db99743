@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { FileText, Activity, LogOut, Upload, Download, Beaker } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package } from "lucide-react";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -12,7 +12,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 
-type Tab = "protocols" | "peptides" | "progress";
+type Tab = "protocols" | "peptides" | "supplies";
 
 function Dashboard() {
   const { user, signOut } = useAuth();
@@ -66,7 +66,7 @@ function Dashboard() {
           {([
             { k: "protocols", l: "Protocols", i: FileText },
             { k: "peptides", l: "Peptides", i: Beaker },
-            { k: "progress", l: "Progress", i: Activity },
+            { k: "supplies", l: "Supplies", i: Droplets },
           ] as const).map((t) => (
             <button
               key={t.k}
@@ -81,7 +81,7 @@ function Dashboard() {
         <div className="mt-8">
           {tab === "protocols" && <Protocols />}
           {tab === "peptides" && <Peptides />}
-          {tab === "progress" && <Progress />}
+          {tab === "supplies" && <Supplies />}
         </div>
       </section>
     </div>
@@ -230,76 +230,74 @@ function Peptides() {
 }
 
 
-function Progress() {
-  const { user } = useAuth();
-  const [updates, setUpdates] = useState<{ id: string; weight: number | null; body_fat: number | null; notes: string | null; photo_url: string | null; created_at: string }[]>([]);
-  const [weight, setWeight] = useState(""); const [bf, setBf] = useState(""); const [notes, setNotes] = useState(""); const [photo, setPhoto] = useState<File | null>(null);
-
-  useEffect(() => { if (user) load(); }, [user]);
-  async function load() {
-    const { data } = await supabase.from("progress_updates").select("*").eq("user_id", user!.id).order("created_at", { ascending: false });
-    setUpdates(data ?? []);
-  }
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    let url: string | null = null;
-    if (photo) {
-      const path = `${user!.id}/progress/${Date.now()}-${photo.name}`;
-      const { error } = await supabase.storage.from("client-uploads").upload(path, photo);
-      if (error) return toast.error(error.message);
-      url = path;
-    }
-    const { error } = await supabase.from("progress_updates").insert({
-      user_id: user!.id,
-      weight: weight ? parseFloat(weight) : null,
-      body_fat: bf ? parseFloat(bf) : null,
-      notes: notes || null,
-      photo_url: url,
-    });
-    if (error) return toast.error(error.message);
-    toast.success("Progress logged.");
-    setWeight(""); setBf(""); setNotes(""); setPhoto(null);
-    load();
-  }
+function Supplies() {
   return (
-    <div className="grid lg:grid-cols-3 gap-8">
-      <form onSubmit={submit} className="space-y-4 border border-foreground/10 p-6 h-fit">
-        <h3 className="font-display text-2xl">Log Update</h3>
-        <Mini label="Weight (lbs)" value={weight} onChange={setWeight} type="number" />
-        <Mini label="Body Fat %" value={bf} onChange={setBf} type="number" />
-        <div>
-          <label className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground block mb-2">Notes</label>
-          <textarea rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} className="w-full bg-background border border-foreground/20 px-3 py-2 focus:outline-none focus:border-blood" />
+    <div className="grid lg:grid-cols-2 gap-8">
+      <div className="space-y-4">
+        <div className="mb-2">
+          <h3 className="font-display text-3xl">Research Supplies</h3>
+          <p className="text-sm text-muted-foreground mt-2">
+            The basics you need to handle peptides safely and accurately in a research setting.
+          </p>
         </div>
-        <div>
-          <label className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground block mb-2">Photo (optional)</label>
-          <label className="border-2 border-dashed border-foreground/20 p-3 flex items-center justify-center gap-2 cursor-pointer hover:border-blood text-sm">
-            <Upload size={14} /> {photo ? photo.name : "Choose file"}
-            <input type="file" accept="image/*" className="hidden" onChange={(e) => setPhoto(e.target.files?.[0] ?? null)} />
-          </label>
-        </div>
-        <button className="btn-blood hover:btn-blood-hover w-full">Save</button>
-      </form>
-      <div className="lg:col-span-2 space-y-3">
-        {updates.length === 0 && <Empty title="No updates yet" body="Log weight, body fat, notes and photos over time to track progress." />}
-        {updates.map((u) => (
-          <div key={u.id} className="border border-foreground/10 p-4 grid sm:grid-cols-4 gap-3 text-sm">
-            <div><div className="text-eyebrow">Date</div><div>{new Date(u.created_at).toLocaleDateString()}</div></div>
-            <div><div className="text-eyebrow">Weight</div><div>{u.weight ?? "—"}</div></div>
-            <div><div className="text-eyebrow">Body Fat</div><div>{u.body_fat ?? "—"}</div></div>
-            <div><div className="text-eyebrow">Notes</div><div className="text-muted-foreground">{u.notes ?? "—"}</div></div>
+        <article className="border border-foreground/10 p-5 hover:border-blood transition">
+          <div className="flex items-center gap-3">
+            <Droplets size={18} className="text-blood" />
+            <h4 className="font-display text-xl">BAC Water</h4>
           </div>
-        ))}
+          <p className="text-sm text-muted-foreground mt-2">
+            Bacteriostatic water is the standard diluent used to reconstitute lyophilized peptide powders. It contains 0.9% benzyl alcohol to inhibit bacterial growth and keep reconstituted solutions stable for research use.
+          </p>
+        </article>
+        <article className="border border-foreground/10 p-5 hover:border-blood transition">
+          <div className="flex items-center gap-3">
+            <Package size={18} className="text-blood" />
+            <h4 className="font-display text-xl">1mL Insulin Syringes</h4>
+          </div>
+          <p className="text-sm text-muted-foreground mt-2">
+            U-100 1mL insulin syringes let you measure small doses precisely. The fine needle minimizes tissue trauma and is suitable for research administration protocols requiring accuracy down to the unit mark.
+          </p>
+        </article>
+        <article className="border border-foreground/10 p-5 hover:border-blood transition">
+          <div className="flex items-center gap-3">
+            <Package size={18} className="text-blood" />
+            <h4 className="font-display text-xl">Alcohol Wipes</h4>
+          </div>
+          <p className="text-sm text-muted-foreground mt-2">
+            Use alcohol prep pads to sterilize the rubber stopper of every vial before drawing and to clean the research site before administration. This is the simplest way to reduce contamination risk.
+          </p>
+        </article>
       </div>
-    </div>
-  );
-}
 
-function Mini({ label, value, onChange, type = "text" }: { label: string; value: string; onChange: (v: string) => void; type?: string }) {
-  return (
-    <div>
-      <label className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground block mb-2">{label}</label>
-      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} className="w-full bg-background border border-foreground/20 px-3 py-2 focus:outline-none focus:border-blood" />
+      <div className="space-y-4">
+        <div className="mb-2">
+          <h3 className="font-display text-3xl">Storage Guide</h3>
+          <p className="text-sm text-muted-foreground mt-2">
+            Proper storage preserves peptide potency and protects your research supply.
+          </p>
+        </div>
+        <article className="border border-foreground/10 p-5">
+          <div className="text-eyebrow mb-2">Before Reconstitution</div>
+          <h4 className="font-display text-xl mb-2">Lyophilized (Powder) Form</h4>
+          <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
+            <li>Keep vials sealed in their original packaging until use.</li>
+            <li>Store in a refrigerator at 2–8°C (36–46°F).</li>
+            <li>Protect from direct light, heat, and moisture.</li>
+            <li>Avoid repeated temperature swings; a stable cold environment extends shelf life.</li>
+          </ul>
+        </article>
+        <article className="border border-foreground/10 p-5">
+          <div className="text-eyebrow mb-2">After Reconstitution</div>
+          <h4 className="font-display text-xl mb-2">Reconstituted Solution</h4>
+          <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
+            <li>Reconstitute with BAC water and refrigerate immediately at 2–8°C (36–46°F).</li>
+            <li>Use within 30 days for best stability in research conditions.</li>
+            <li>Do not freeze reconstituted peptides; ice crystals can degrade the compound.</li>
+            <li>Keep vials away from direct light and heat sources.</li>
+            <li>Swab the vial stopper with an alcohol wipe before each draw.</li>
+          </ul>
+        </article>
+      </div>
     </div>
   );
 }
