@@ -241,3 +241,29 @@ export const getProtocolDownloadUrl = createServerFn({ method: "POST" })
     }
     return { url: signed.signedUrl };
   });
+
+export const resendProtocolReadyEmail = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ protocolId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: role } = await supabase.from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
+    if (!role) throw new Error("Forbidden");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: protocol, error } = await supabaseAdmin
+      .from("protocols")
+      .select("id, user_id, title")
+      .eq("id", data.protocolId)
+      .single();
+    if (error || !protocol) throw new Error("Not found");
+    const { data: profile } = await supabaseAdmin.from("profiles").select("email, full_name").eq("id", protocol.user_id).maybeSingle();
+    if (!profile?.email) throw new Error("No recipient email");
+    const { sendAppEmail } = await import("./email/send.server");
+    const result = await sendAppEmail({
+      templateName: "protocol-ready",
+      recipientEmail: profile.email,
+      idempotencyKey: `protocol-${protocol.id}-delivered-${Date.now()}`,
+      templateData: { name: profile.full_name ?? "", title: protocol.title },
+    });
+    return { ok: true, ...result, to: profile.email };
+  });
