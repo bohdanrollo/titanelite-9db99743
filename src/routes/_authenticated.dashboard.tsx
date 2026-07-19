@@ -70,6 +70,7 @@ function Dashboard() {
             { k: "supplies", l: "Supplies", i: Droplets },
             { k: "reconstitution", l: "Reconstitution", i: FlaskConical },
             { k: "injection", l: "Injection Guide", i: Syringe },
+            { k: "calculator", l: "Calculator", i: CalculatorIcon },
             { k: "lifting", l: "Lifting", i: Dumbbell },
           ] as const).map((t) => (
             <button
