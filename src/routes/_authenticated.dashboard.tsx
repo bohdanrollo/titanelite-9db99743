@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 
-type Tab = "protocols" | "peptides" | "supplies" | "reconstitution" | "injection" | "lifting";
+type Tab = "protocols" | "peptides" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting";
 
 function Dashboard() {
   const { user, signOut } = useAuth();
