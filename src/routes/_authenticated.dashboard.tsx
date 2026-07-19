@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell } from "lucide-react";
 import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 
-type Tab = "protocols" | "peptides" | "supplies" | "reconstitution" | "injection";
+type Tab = "protocols" | "peptides" | "supplies" | "reconstitution" | "injection" | "lifting";
 
 function Dashboard() {
   const { user, signOut } = useAuth();
@@ -70,6 +70,7 @@ function Dashboard() {
             { k: "supplies", l: "Supplies", i: Droplets },
             { k: "reconstitution", l: "Reconstitution", i: FlaskConical },
             { k: "injection", l: "Injection Guide", i: Syringe },
+            { k: "lifting", l: "Lifting", i: Dumbbell },
           ] as const).map((t) => (
             <button
               key={t.k}
@@ -87,6 +88,7 @@ function Dashboard() {
           {tab === "supplies" && <Supplies />}
           {tab === "reconstitution" && <Reconstitution />}
           {tab === "injection" && <Injection />}
+          {tab === "lifting" && <Lifting />}
         </div>
       </section>
     </div>
@@ -466,6 +468,126 @@ function Injection() {
           <p className="text-sm text-muted-foreground">
             Persistent redness, swelling, warmth, fever, or an unusual reaction at the site warrants stopping and seeking medical guidance.
           </p>
+        </article>
+      </div>
+    </div>
+  );
+}
+
+function Lifting() {
+  return (
+    <div className="space-y-8">
+      <div>
+        <h3 className="font-display text-2xl sm:text-3xl">Weight Lifting Tips</h3>
+        <p className="text-sm text-muted-foreground mt-2">
+          Training splits, compound lifts, and nutrition targets to maximize strength and body composition.
+        </p>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-8">
+        <div className="space-y-4">
+          <div className="mb-2">
+            <h4 className="font-display text-xl sm:text-2xl">Best Training Splits</h4>
+            <p className="text-sm text-muted-foreground mt-2">Pick a split that matches your schedule, recovery, and experience level.</p>
+          </div>
+          <article className="border border-foreground/10 p-5 hover:border-blood transition">
+            <div className="text-eyebrow mb-1">Push / Pull / Legs</div>
+            <p className="text-sm text-muted-foreground">Push (chest, shoulders, triceps), Pull (back, biceps), Legs. Run 3 or 6 days per week. Great for volume and recovery.</p>
+          </article>
+          <article className="border border-foreground/10 p-5 hover:border-blood transition">
+            <div className="text-eyebrow mb-1">Upper / Lower</div>
+            <p className="text-sm text-muted-foreground">Upper body one day, lower body the next. Repeat 4 days per week. Balanced frequency for strength and hypertrophy.</p>
+          </article>
+          <article className="border border-foreground/10 p-5 hover:border-blood transition">
+            <div className="text-eyebrow mb-1">Full Body</div>
+            <p className="text-sm text-muted-foreground">Compound movements every session. Ideal for beginners or limited schedules — 3 days per week is enough.</p>
+          </article>
+          <article className="border border-foreground/10 p-5 hover:border-blood transition">
+            <div className="text-eyebrow mb-1">Bro Split</div>
+            <p className="text-sm text-muted-foreground">One muscle group per day (chest day, back day, etc.). Lower frequency but high volume per session. Better for advanced lifters.</p>
+          </article>
+        </div>
+
+        <div className="space-y-4">
+          <div className="mb-2">
+            <h4 className="font-display text-xl sm:text-2xl">Popular Lifts</h4>
+            <p className="text-sm text-muted-foreground mt-2">Master these compound movements to build strength and size.</p>
+          </div>
+          <article className="border border-foreground/10 p-5 hover:border-blood transition">
+            <div className="flex items-center gap-3">
+              <Dumbbell size={18} className="text-blood" />
+              <h4 className="font-display text-xl">Squat</h4>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">The king of lower-body strength. Hits quads, glutes, hamstrings, and core.</p>
+          </article>
+          <article className="border border-foreground/10 p-5 hover:border-blood transition">
+            <div className="flex items-center gap-3">
+              <Dumbbell size={18} className="text-blood" />
+              <h4 className="font-display text-xl">Deadlift</h4>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">Develops total-body power, grip, posterior chain, and back thickness.</p>
+          </article>
+          <article className="border border-foreground/10 p-5 hover:border-blood transition">
+            <div className="flex items-center gap-3">
+              <Dumbbell size={18} className="text-blood" />
+              <h4 className="font-display text-xl">Bench Press</h4>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">Primary pressing strength for chest, anterior delts, and triceps.</p>
+          </article>
+          <article className="border border-foreground/10 p-5 hover:border-blood transition">
+            <div className="flex items-center gap-3">
+              <Dumbbell size={18} className="text-blood" />
+              <h4 className="font-display text-xl">Overhead Press</h4>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">Builds shoulder size, triceps, and upper-body stability.</p>
+          </article>
+          <article className="border border-foreground/10 p-5 hover:border-blood transition">
+            <div className="flex items-center gap-3">
+              <Dumbbell size={18} className="text-blood" />
+              <h4 className="font-display text-xl">Barbell Row</h4>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">Adds back thickness, grip strength, and pulling power.</p>
+          </article>
+          <article className="border border-foreground/10 p-5 hover:border-blood transition">
+            <div className="flex items-center gap-3">
+              <Dumbbell size={18} className="text-blood" />
+              <h4 className="font-display text-xl">Pull-Up</h4>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">Bodyweight back and biceps builder that scales with added weight.</p>
+          </article>
+        </div>
+      </div>
+
+      <div className="grid lg:grid-cols-3 gap-6">
+        <article className="border border-foreground/10 p-5">
+          <div className="text-eyebrow mb-2">Bulking</div>
+          <h4 className="font-display text-xl mb-2">Caloric Surplus</h4>
+          <p className="text-sm text-muted-foreground">Eat 10–20% above maintenance calories. Prioritize protein and carbs to fuel training and muscle growth.</p>
+          <ul className="text-sm text-muted-foreground mt-3 space-y-1 list-disc list-inside">
+            <li>Protein: 0.7–1g per lb bodyweight</li>
+            <li>Carbs: 2–4g per lb bodyweight</li>
+            <li>Fats: 0.3–0.5g per lb bodyweight</li>
+          </ul>
+        </article>
+        <article className="border border-foreground/10 p-5">
+          <div className="text-eyebrow mb-2">Cutting</div>
+          <h4 className="font-display text-xl mb-2">Caloric Deficit</h4>
+          <p className="text-sm text-muted-foreground">Eat 10–25% below maintenance. Keep protein high to preserve muscle while losing fat.</p>
+          <ul className="text-sm text-muted-foreground mt-3 space-y-1 list-disc list-inside">
+            <li>Protein: 1–1.2g per lb bodyweight</li>
+            <li>Carbs: 1–2g per lb bodyweight</li>
+            <li>Fats: 0.25–0.4g per lb bodyweight</li>
+          </ul>
+        </article>
+        <article className="border border-foreground/10 p-5">
+          <div className="text-eyebrow mb-2">Maintenance</div>
+          <h4 className="font-display text-xl mb-2">Body Recomposition</h4>
+          <p className="text-sm text-muted-foreground">Eat at estimated maintenance. Progress comes from training quality and recovery.</p>
+          <ul className="text-sm text-muted-foreground mt-3 space-y-1 list-disc list-inside">
+            <li>Protein: 0.8–1g per lb bodyweight</li>
+            <li>Carbs: 2–3g per lb bodyweight</li>
+            <li>Fats: 0.3–0.5g per lb bodyweight</li>
+          </ul>
         </article>
       </div>
     </div>
