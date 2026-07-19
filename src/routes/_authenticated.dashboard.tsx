@@ -90,6 +90,7 @@ function Dashboard() {
           {tab === "protocols" && <Protocols />}
           {tab === "peptalk" && <PepTalk />}
           {tab === "peptides" && <Peptides />}
+          {tab === "mystack" && <MyStack />}
           {tab === "supplies" && <Supplies />}
           {tab === "reconstitution" && <Reconstitution />}
           {tab === "injection" && <Injection />}
