@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { FileText, Droplets, LogOut, Download, Beaker, Package } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical } from "lucide-react";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -12,7 +12,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 
-type Tab = "protocols" | "peptides" | "supplies";
+type Tab = "protocols" | "peptides" | "supplies" | "reconstitution";
 
 function Dashboard() {
   const { user, signOut } = useAuth();
@@ -67,6 +67,7 @@ function Dashboard() {
             { k: "protocols", l: "Protocols", i: FileText },
             { k: "peptides", l: "Peptides", i: Beaker },
             { k: "supplies", l: "Supplies", i: Droplets },
+            { k: "reconstitution", l: "Reconstitution", i: FlaskConical },
           ] as const).map((t) => (
             <button
               key={t.k}
@@ -82,6 +83,7 @@ function Dashboard() {
           {tab === "protocols" && <Protocols />}
           {tab === "peptides" && <Peptides />}
           {tab === "supplies" && <Supplies />}
+          {tab === "reconstitution" && <Reconstitution />}
         </div>
       </section>
     </div>
