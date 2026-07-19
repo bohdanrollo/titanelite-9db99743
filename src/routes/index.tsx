@@ -38,10 +38,10 @@ function Home() {
       <Hero />
       <Marquee />
       <Process />
-      <Benefits />
+      <DashboardFeatures />
       <Showcase />
       <Testimonials />
-      
+
       <FAQPreview />
       <FinalCta />
       <SiteFooter />
