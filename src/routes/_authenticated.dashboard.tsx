@@ -121,17 +121,17 @@ function Protocols() {
       {items.map((p) => {
         const draft = p.draft_content as { overview?: string } | null;
         return (
-          <article key={p.id} className="border border-foreground/10 p-6 hover:border-blood transition">
-            <div className="flex items-start justify-between gap-4">
-              <div>
+          <article key={p.id} className="border border-foreground/10 p-5 sm:p-6 hover:border-blood transition">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+              <div className="min-w-0">
                 <div className="text-eyebrow">{p.type}</div>
-                <h3 className="font-display text-2xl mt-1">{p.title}</h3>
+                <h3 className="font-display text-xl sm:text-2xl mt-1 break-words">{p.title}</h3>
                 <p className="text-xs text-muted-foreground font-mono uppercase tracking-[0.14em] mt-1">
                   Delivered {p.delivered_at ? new Date(p.delivered_at).toLocaleDateString() : "—"}
                 </p>
               </div>
               {p.pdf_storage_path && (
-                <button onClick={() => download(p.id)} className="btn-blood hover:btn-blood-hover">
+                <button onClick={() => download(p.id)} className="btn-blood hover:btn-blood-hover self-start shrink-0">
                   <Download size={14} /> Download PDF
                 </button>
               )}
