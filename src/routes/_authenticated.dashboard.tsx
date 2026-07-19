@@ -69,6 +69,7 @@ function Dashboard() {
             { k: "peptides", l: "Peptides", i: Beaker },
             { k: "supplies", l: "Supplies", i: Droplets },
             { k: "reconstitution", l: "Reconstitution", i: FlaskConical },
+            { k: "injection", l: "Injection Guide", i: Syringe },
           ] as const).map((t) => (
             <button
               key={t.k}
