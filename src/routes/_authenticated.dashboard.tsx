@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { FileText, Activity, LogOut, Upload, Download } from "lucide-react";
+import { FileText, Activity, LogOut, Upload, Download, Beaker } from "lucide-react";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -65,7 +65,7 @@ function Dashboard() {
         <nav className="mt-10 flex gap-1 border-b border-foreground/15">
           {([
             { k: "protocols", l: "Protocols", i: FileText },
-            { k: "peptides", l: "Peptides", i: Activity },
+            { k: "peptides", l: "Peptides", i: Beaker },
             { k: "progress", l: "Progress", i: Activity },
           ] as const).map((t) => (
             <button
