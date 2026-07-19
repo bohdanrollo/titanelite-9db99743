@@ -86,6 +86,7 @@ function Dashboard() {
           {tab === "peptides" && <Peptides />}
           {tab === "supplies" && <Supplies />}
           {tab === "reconstitution" && <Reconstitution />}
+          {tab === "injection" && <Injection />}
         </div>
       </section>
     </div>
