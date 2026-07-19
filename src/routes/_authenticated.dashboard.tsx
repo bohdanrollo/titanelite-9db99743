@@ -27,19 +27,19 @@ function Dashboard() {
   return (
     <div className="min-h-dvh bg-background">
       <header className="border-b border-foreground/10">
-        <div className="container-edge h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <span className="inline-block h-3 w-3 bg-blood" />
-            <span className="font-display text-xl tracking-wider">TITAN ELITE</span>
+        <div className="container-edge h-16 flex items-center justify-between gap-3">
+          <Link to="/" className="flex min-w-0 items-center gap-2">
+            <span className="inline-block h-3 w-3 shrink-0 bg-blood" />
+            <span className="font-display text-base sm:text-xl tracking-wider truncate">TITAN ELITE</span>
           </Link>
-          <button onClick={signOut} className="font-mono text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood">
-            <LogOut size={14} /> Sign out
+          <button onClick={signOut} className="shrink-0 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood">
+            <LogOut size={14} /> <span className="hidden sm:inline">Sign out</span>
           </button>
         </div>
       </header>
-      <section className="container-edge py-12">
+      <section className="container-edge py-8 sm:py-12">
         <div className="text-eyebrow">Client Dashboard</div>
-        <h1 className="mt-4 text-5xl lg:text-6xl">Welcome back.</h1>
+        <h1 className="mt-4 text-3xl sm:text-5xl lg:text-6xl">Welcome back.</h1>
         <p className="mt-3 text-sm text-muted-foreground">
           Need peptides? Order through{" "}
           <a href="https://powerbuiltlabs.com/?ref=bjr" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">
@@ -49,20 +49,20 @@ function Dashboard() {
         </p>
 
         {!intake && (
-          <div className="mt-8 border border-blood/40 bg-blood/5 p-6">
-            <div className="font-display text-2xl">Your intake isn't submitted yet.</div>
+          <div className="mt-8 border border-blood/40 bg-blood/5 p-5 sm:p-6">
+            <div className="font-display text-xl sm:text-2xl">Your intake isn't submitted yet.</div>
             <p className="text-sm text-muted-foreground mt-2">Submit your intake to begin protocol review.</p>
             <Link to="/intake" className="mt-4 inline-flex btn-blood hover:btn-blood-hover">Begin Intake</Link>
           </div>
         )}
         {intake && (
-          <div className="mt-8 flex flex-wrap items-center gap-6 border-y border-foreground/10 py-4 text-sm">
-            <div><span className="text-eyebrow block">Status</span><span className="font-display text-xl">{intake.status}</span></div>
-            <div><span className="text-eyebrow block">Submitted</span><span className="font-display text-xl">{new Date(intake.submitted_at).toLocaleDateString()}</span></div>
+          <div className="mt-8 flex flex-wrap items-center gap-4 sm:gap-6 border-y border-foreground/10 py-4 text-sm">
+            <div><span className="text-eyebrow block">Status</span><span className="font-display text-lg sm:text-xl">{intake.status}</span></div>
+            <div><span className="text-eyebrow block">Submitted</span><span className="font-display text-lg sm:text-xl">{new Date(intake.submitted_at).toLocaleDateString()}</span></div>
           </div>
         )}
 
-        <nav className="mt-10 flex gap-1 border-b border-foreground/15">
+        <nav className="mt-8 sm:mt-10 -mx-4 sm:mx-0 flex gap-1 overflow-x-auto border-b border-foreground/15 px-4 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {([
             { k: "protocols", l: "Protocols", i: FileText },
             { k: "peptides", l: "Peptides", i: Beaker },
@@ -72,7 +72,7 @@ function Dashboard() {
             <button
               key={t.k}
               onClick={() => setTab(t.k)}
-              className={`px-5 py-3 font-mono text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 border-b-2 transition ${tab === t.k ? "border-blood text-blood" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+              className={`shrink-0 px-3 sm:px-5 py-3 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 border-b-2 transition ${tab === t.k ? "border-blood text-blood" : "border-transparent text-muted-foreground hover:text-foreground"}`}
             >
               <t.i size={14} /> {t.l}
             </button>
@@ -121,17 +121,17 @@ function Protocols() {
       {items.map((p) => {
         const draft = p.draft_content as { overview?: string } | null;
         return (
-          <article key={p.id} className="border border-foreground/10 p-6 hover:border-blood transition">
-            <div className="flex items-start justify-between gap-4">
-              <div>
+          <article key={p.id} className="border border-foreground/10 p-5 sm:p-6 hover:border-blood transition">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+              <div className="min-w-0">
                 <div className="text-eyebrow">{p.type}</div>
-                <h3 className="font-display text-2xl mt-1">{p.title}</h3>
+                <h3 className="font-display text-xl sm:text-2xl mt-1 break-words">{p.title}</h3>
                 <p className="text-xs text-muted-foreground font-mono uppercase tracking-[0.14em] mt-1">
                   Delivered {p.delivered_at ? new Date(p.delivered_at).toLocaleDateString() : "—"}
                 </p>
               </div>
               {p.pdf_storage_path && (
-                <button onClick={() => download(p.id)} className="btn-blood hover:btn-blood-hover">
+                <button onClick={() => download(p.id)} className="btn-blood hover:btn-blood-hover self-start shrink-0">
                   <Download size={14} /> Download PDF
                 </button>
               )}
@@ -209,14 +209,14 @@ function Peptides() {
   return (
     <div>
       <div className="mb-6">
-        <h3 className="font-display text-3xl">Top 50 Research Peptides</h3>
+        <h3 className="font-display text-2xl sm:text-3xl">Top 50 Research Peptides</h3>
         <p className="text-sm text-muted-foreground mt-2">
           Educational reference only. Compounds listed for research purposes — not medical advice. Order through{" "}
           <a href="https://powerbuiltlabs.com/?ref=bjr" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">Powerbuilt Labs</a>{" "}
           with code <span className="text-blood font-medium">BJR</span>.
         </p>
       </div>
-      <div className="grid md:grid-cols-2 gap-3">
+      <div className="grid sm:grid-cols-2 gap-3">
         {PEPTIDES.map((p, i) => (
           <article key={p.name} className="border border-foreground/10 p-5 hover:border-blood transition">
             <div className="flex items-baseline gap-3">
@@ -237,7 +237,7 @@ function Supplies() {
     <div className="grid lg:grid-cols-2 gap-8">
       <div className="space-y-4">
         <div className="mb-2">
-          <h3 className="font-display text-3xl">Research Supplies</h3>
+          <h3 className="font-display text-2xl sm:text-3xl">Research Supplies</h3>
           <p className="text-sm text-muted-foreground mt-2">
             The basics you need to handle peptides safely and accurately in a research setting.
           </p>
@@ -273,7 +273,7 @@ function Supplies() {
 
       <div className="space-y-4">
         <div className="mb-2">
-          <h3 className="font-display text-3xl">Storage Guide</h3>
+          <h3 className="font-display text-2xl sm:text-3xl">Storage Guide</h3>
           <p className="text-sm text-muted-foreground mt-2">
             Proper storage preserves peptide potency and protects your research supply.
           </p>
@@ -308,7 +308,7 @@ function Reconstitution() {
     <div className="grid lg:grid-cols-2 gap-8">
       <div className="space-y-4">
         <div className="mb-2">
-          <h3 className="font-display text-3xl">Reconstitution</h3>
+          <h3 className="font-display text-2xl sm:text-3xl">Reconstitution</h3>
           <p className="text-sm text-muted-foreground mt-2">
             How to mix lyophilized peptide powder with bacteriostatic (BAC) water for research use.
           </p>
@@ -349,7 +349,7 @@ function Reconstitution() {
 
       <div className="space-y-4">
         <div className="mb-2">
-          <h3 className="font-display text-3xl">Important Tips</h3>
+          <h3 className="font-display text-2xl sm:text-3xl">Important Tips</h3>
           <p className="text-sm text-muted-foreground mt-2">
             Small habits make a big difference in peptide stability and accuracy.
           </p>
@@ -389,7 +389,7 @@ function Reconstitution() {
 function Empty({ title, body }: { title: string; body: string }) {
   return (
     <div className="border border-dashed border-foreground/20 p-12 text-center">
-      <div className="font-display text-3xl">{title}</div>
+      <div className="font-display text-2xl sm:text-3xl">{title}</div>
       <p className="text-sm text-muted-foreground mt-2">{body}</p>
     </div>
   );
