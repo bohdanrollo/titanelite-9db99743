@@ -232,6 +232,48 @@ export type Database = {
         }
         Relationships: []
       }
+      peptide_stacks: {
+        Row: {
+          active: boolean
+          created_at: string
+          dose: string | null
+          frequency: string | null
+          id: string
+          name: string
+          notes: string | null
+          schedule: string | null
+          unit: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          dose?: string | null
+          frequency?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          schedule?: string | null
+          unit?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          dose?: string | null
+          frequency?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          schedule?: string | null
+          unit?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
