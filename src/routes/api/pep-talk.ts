@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { convertToModelMessages, streamText, type UIMessage } from "ai";
+import { streamText, type ModelMessage } from "ai";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 
 const SYSTEM_PROMPT = `You are "Pep Talk," Titan Elite's peptide research assistant.
 
-You answer questions about research peptides — mechanisms, researched effects, typical research dosing ranges, reconstitution, timing, stacking considerations, storage, and injection technique. Be direct, specific, and practical. Cite typical protocols found in peer-reviewed research and community references.
+You answer questions about research peptides — mechanisms, researched effects, typical research dosing ranges, reconstitution, timing, stacking considerations, storage, and injection technique. Be direct, specific, and practical.
 
 IMPORTANT SAFETY FRAMING:
 - Peptides discussed here are for research and educational purposes.
@@ -14,24 +14,32 @@ IMPORTANT SAFETY FRAMING:
 
 Style: concise, confident, no fluff. Use short sections and bullet lists when helpful. Format in markdown.`;
 
+type ChatMessage = { role: "user" | "assistant"; content: string };
+
 export const Route = createFileRoute("/api/pep-talk")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const { messages } = (await request.json()) as { messages?: UIMessage[] };
-        if (!Array.isArray(messages)) return new Response("Messages required", { status: 400 });
+        const { messages } = (await request.json()) as { messages?: ChatMessage[] };
+        if (!Array.isArray(messages) || messages.length === 0) {
+          return new Response("Messages required", { status: 400 });
+        }
 
         const key = process.env.LOVABLE_API_KEY;
         if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
 
+        const modelMessages: ModelMessage[] = [
+          { role: "system", content: SYSTEM_PROMPT },
+          ...messages.map((m) => ({ role: m.role, content: m.content })),
+        ];
+
         const gateway = createLovableAiGatewayProvider(key);
         const result = streamText({
           model: gateway("google/gemini-3.5-flash"),
-          system: SYSTEM_PROMPT,
-          messages: await convertToModelMessages(messages),
+          messages: modelMessages,
         });
 
-        return result.toUIMessageStreamResponse({ originalMessages: messages });
+        return result.toTextStreamResponse();
       },
     },
   },
