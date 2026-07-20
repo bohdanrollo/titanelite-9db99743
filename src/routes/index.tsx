@@ -3,9 +3,6 @@ import { ArrowRight, Dumbbell, FlaskConical, FileText, ChevronDown, MessageCircl
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import heroImg from "@/assets/titan-logo.jpg.asset.json";
-import handsImg from "@/assets/hands-bar.jpg";
-import physiqueImg from "@/assets/physique.jpg";
-import protocolImg from "@/assets/protocol.jpg";
 import transform1 from "@/assets/transform-1.jpg.asset.json";
 import transform2 from "@/assets/transform-2.jpg.asset.json";
 import transform3 from "@/assets/transform-3.jpg.asset.json";
