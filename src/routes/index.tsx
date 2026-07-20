@@ -14,9 +14,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Titan Elite — Peptide & Training Dashboard" },
-      { name: "description", content: "All-in-one client dashboard for peptide research and weightlifting: AI peptide answers, 50-compound library, dose calculator, stack tracker, injection guides, and custom protocols." },
+      { name: "description", content: "All-in-one client dashboard for peptide research and weightlifting: AI peptide answers, 50-compound library, dose calculator, stack tracker, injection guides, and a 100% custom educational peptide protocol with weight programming." },
       { property: "og:title", content: "Titan Elite — Peptide & Training Dashboard" },
-      { property: "og:description", content: "All-in-one client dashboard for peptide research and weightlifting: AI peptide answers, 50-compound library, dose calculator, stack tracker, injection guides, and custom protocols." },
+      { property: "og:description", content: "All-in-one client dashboard for peptide research and weightlifting: AI peptide answers, 50-compound library, dose calculator, stack tracker, injection guides, and a 100% custom educational peptide protocol with weight programming." },
       { property: "og:url", content: "/" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -60,6 +60,7 @@ function Hero() {
           <p className="mt-8 max-w-xl text-base text-muted-foreground leading-relaxed">
             Track your stack, calculate doses, ask AI peptide questions, browse the 50-compound research library,
             and get step-by-step injection, reconstitution, and lifting guidance — all inside one client dashboard.
+            Plus, every client receives a 100% custom educational peptide protocol and weight-programming plan built around their goals.
             No guesswork. No scattered tabs. Just the tools you need to research and train with precision.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
@@ -117,8 +118,8 @@ function Marquee() {
 function Process() {
   const steps = [
     { n: "01", t: "Apply", d: "Share your goals, training history, health background, and peptide interests to unlock dashboard access." },
-    { n: "02", t: "Review", d: "We analyze your intake and build a personalized weightlifting and peptide research protocol." },
-    { n: "03", t: "Deliver", d: "Your custom protocol is delivered as a PDF and attached to your account dashboard." },
+    { n: "02", t: "Review", d: "We analyze your intake and build a 100% custom educational peptide protocol and weight-programming plan around your goals." },
+    { n: "03", t: "Deliver", d: "Your custom protocol and weight program are delivered as a PDF and attached to your account dashboard." },
     { n: "04", t: "Use", d: "Log in to track your stack, ask AI peptide questions, calculate doses, and reference every guide." },
   ];
   return (
@@ -129,7 +130,7 @@ function Process() {
           <h2 className="mt-4 text-5xl lg:text-7xl">Four steps. <br />One dashboard.</h2>
         </div>
         <p className="lg:col-span-5 text-muted-foreground">
-          The dashboard is the product. Apply, get reviewed, receive your protocol, and use the tools every day.
+          The dashboard is the product. Apply, get reviewed, receive your 100% custom educational peptide protocol and weight programming, and use the tools every day.
         </p>
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-foreground/15">
@@ -147,7 +148,7 @@ function Process() {
 
 function DashboardFeatures() {
   const items = [
-    { i: FileText, t: "Custom Protocols", d: "Access personalized weightlifting and peptide research protocols as downloadable PDFs in your account." },
+    { i: FileText, t: "Custom Protocols", d: "Receive a 100% custom educational peptide protocol and weight-programming plan built from your intake, delivered as a PDF." },
     { i: MessageCircle, t: "Pep Talk AI", d: "Ask anything about peptide effects, dosing, timing, stacking, and safety — instant research answers." },
     { i: Beaker, t: "Top 50 Peptides", d: "A searchable research library covering the most popular compounds and what each is studied for." },
     { i: ListChecks, t: "My Stack", d: "Track every peptide, dose, unit, frequency, schedule, and notes in your personal dosing log." },
@@ -189,7 +190,7 @@ function Showcase() {
           <div className="text-eyebrow">Results</div>
           <h2 className="mt-4 text-5xl lg:text-6xl">Track the work.</h2>
           <p className="mt-6 text-muted-foreground">
-            Your protocol, stack, and progress live in the dashboard. Consistency + the right tools = results.
+            Your 100% custom educational peptide protocol and weight-programming plan, stack, and progress live in the dashboard. Consistency + the right tools = results.
           </p>
           <Link to="/intake" className="mt-8 btn-blood hover:btn-blood-hover inline-flex">Get dashboard access</Link>
         </div>
@@ -241,7 +242,7 @@ function FAQPreview() {
   const qa = [
     { q: "What tools are inside the dashboard?", a: "The dashboard includes Pep Talk AI, a Top 50 Peptides research library, a dose calculator, My Stack tracker, reconstitution and injection guides, a supplies guide, lifting splits, and your custom protocols." },
     { q: "Do you prescribe peptides?", a: "No. Titan Elite provides educational protocol templates only. We do not diagnose, treat, prescribe, or sell peptides. Always consult a licensed medical provider." },
-    { q: "How custom is the programming?", a: "Every protocol is built from scratch around your intake — no recycled templates. Updates roll out as you progress." },
+    { q: "How custom is the programming?", a: "Every protocol is a 100% custom educational peptide protocol and weight-programming plan built from scratch around your intake — no recycled templates. Updates roll out as you progress." },
     { q: "Do I need gym access?", a: "Yes. A full barbell setup is strongly recommended. We can adapt to commercial gyms or well-equipped home setups." },
   ];
   return (
@@ -274,7 +275,7 @@ function FinalCta() {
       <div className="container-edge py-24 lg:py-32 text-center">
         <div className="text-bone/80 font-mono text-[11px] uppercase tracking-[0.18em]">Dashboard access now open</div>
         <h2 className="mt-6 text-6xl lg:text-8xl leading-[0.85]">
-          Your tools.<br />Your protocol.<br />One place.
+          Your tools.<br />Your custom protocol.<br />One place.
         </h2>
         <Link to="/intake" className="mt-10 inline-flex items-center gap-2 bg-ink text-bone font-mono uppercase tracking-[0.14em] text-xs font-bold px-8 py-4 hover:bg-bone hover:text-ink transition">
           Get Dashboard Access <ArrowRight size={14} />
