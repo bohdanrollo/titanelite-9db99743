@@ -190,7 +190,7 @@ function Showcase() {
           <div className="text-eyebrow">Results</div>
           <h2 className="mt-4 text-5xl lg:text-6xl">Track the work.</h2>
           <p className="mt-6 text-muted-foreground">
-            Your protocol, stack, and progress live in the dashboard. Consistency + the right tools = results.
+            Your 100% custom educational peptide protocol and weight-programming plan, stack, and progress live in the dashboard. Consistency + the right tools = results.
           </p>
           <Link to="/intake" className="mt-8 btn-blood hover:btn-blood-hover inline-flex">Get dashboard access</Link>
         </div>
