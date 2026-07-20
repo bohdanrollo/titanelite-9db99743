@@ -3,9 +3,6 @@ import { ArrowRight, Dumbbell, FlaskConical, FileText, ChevronDown, MessageCircl
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import heroImg from "@/assets/titan-logo.jpg.asset.json";
-import handsImg from "@/assets/hands-bar.jpg";
-import physiqueImg from "@/assets/physique.jpg";
-import protocolImg from "@/assets/protocol.jpg";
 import transform1 from "@/assets/transform-1.jpg.asset.json";
 import transform2 from "@/assets/transform-2.jpg.asset.json";
 import transform3 from "@/assets/transform-3.jpg.asset.json";
@@ -16,10 +13,10 @@ import transform6 from "@/assets/transform-6.jpg.asset.json";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Titan Elite — Engineered Physique Coaching" },
-      { name: "description", content: "Premium 1:1 weightlifting programming and peptide education. No templates. Invest in yourself and engineer the body you train for." },
-      { property: "og:title", content: "Titan Elite — Engineered Physique Coaching" },
-      { property: "og:description", content: "Premium 1:1 weightlifting programming and peptide education. No templates. Invest in yourself and engineer the body you train for." },
+      { title: "Titan Elite — Peptide & Training Dashboard" },
+      { name: "description", content: "All-in-one client dashboard for peptide research and weightlifting: AI peptide answers, 50-compound library, dose calculator, stack tracker, injection guides, and custom protocols." },
+      { property: "og:title", content: "Titan Elite — Peptide & Training Dashboard" },
+      { property: "og:description", content: "All-in-one client dashboard for peptide research and weightlifting: AI peptide answers, 50-compound library, dose calculator, stack tracker, injection guides, and custom protocols." },
       { property: "og:url", content: "/" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -54,31 +51,30 @@ function Hero() {
     <section className="relative overflow-hidden border-b border-foreground/10">
       <div className="container-edge grid lg:grid-cols-12 gap-10 pt-16 pb-20 lg:pt-24 lg:pb-32">
         <div className="lg:col-span-7 flex flex-col justify-center">
-          <div className="text-eyebrow">INVEST IN YOURSELF</div>
+          <div className="text-eyebrow">YOUR COMPLETE RESEARCH DASHBOARD</div>
           <h1 className="mt-6 text-6xl sm:text-7xl lg:text-[8.5rem] leading-[0.85]">
-            Engineer<br />
-            <span className="text-blood">the body</span><br />
-            you train for.
+            Everything<br />
+            <span className="text-blood">for peptides</span><br />
+            & training.
           </h1>
           <p className="mt-8 max-w-xl text-base text-muted-foreground leading-relaxed">
-            1:1 weightlifting programming and educational peptide protocols, delivered through a
-            client dashboard that puts every tool you need in one place — from AI peptide guidance
-            and dosing calculators to injection guides, lifting splits, and macro targets.
-            No templates. No filler. Just the science and the work.
+            Track your stack, calculate doses, ask AI peptide questions, browse the 50-compound research library,
+            and get step-by-step injection, reconstitution, and lifting guidance — all inside one client dashboard.
+            No guesswork. No scattered tabs. Just the tools you need to research and train with precision.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <Link to="/intake" className="btn-blood hover:btn-blood-hover">
-              Begin Intake <ArrowRight size={14} />
+              Get Dashboard Access <ArrowRight size={14} />
             </Link>
             <Link to="/services" className="btn-ghost hover:bg-foreground hover:text-background">
-              See Services
+              See Dashboard Tools
             </Link>
           </div>
           <div className="mt-12 grid grid-cols-3 gap-6 max-w-md">
             {[
-              { n: "10+", l: "Years coaching" },
-              { n: "150+", l: "Clients served" },
-              { n: "100%", l: "Custom protocols" },
+              { n: "50+", l: "Peptides catalogued" },
+              { n: "AI", l: "Pep Talk assistant" },
+              { n: "9", l: "Dashboard tools" },
             ].map((s) => (
               <div key={s.l}>
                 <div className="font-display text-3xl">{s.n}</div>
@@ -103,7 +99,7 @@ function Hero() {
 }
 
 function Marquee() {
-  const items = ["Hypertrophy", "Strength", "Recomposition", "Peptide Education", "Bloodwork Review", "Programming", "Accountability"];
+  const items = ["Pep Talk AI", "Dose Calculator", "Top 50 Peptides", "My Stack", "Injection Guide", "Reconstitution", "Lifting & Nutrition"];
   return (
     <div className="bg-ink text-bone overflow-hidden border-y border-foreground/20">
       <div className="flex gap-12 py-5 animate-[scroll_30s_linear_infinite] whitespace-nowrap">
@@ -120,21 +116,20 @@ function Marquee() {
 
 function Process() {
   const steps = [
-    { n: "01", t: "Apply", d: "Submit your detailed intake — training, health, goals, and peptide interests." },
-    { n: "02", t: "Review", d: "Our team personally analyzes every form and drafts your custom protocol plan." },
-    { n: "03", t: "Build", d: "You receive a custom weightlifting protocol and educational peptide protocol as a PDF." },
-    { n: "04", t: "Train", d: "Weekly check-ins, programming adjustments, and unlimited access to the dashboard tools." },
+    { n: "01", t: "Apply", d: "Share your goals, training history, health background, and peptide interests to unlock dashboard access." },
+    { n: "02", t: "Review", d: "We analyze your intake and build a personalized weightlifting and peptide research protocol." },
+    { n: "03", t: "Deliver", d: "Your custom protocol is delivered as a PDF and attached to your account dashboard." },
+    { n: "04", t: "Use", d: "Log in to track your stack, ask AI peptide questions, calculate doses, and reference every guide." },
   ];
   return (
     <section id="process" className="container-edge py-24 lg:py-32">
       <div className="grid lg:grid-cols-12 gap-12 items-end mb-16">
         <div className="lg:col-span-7">
-          <div className="text-eyebrow">The Process</div>
-          <h2 className="mt-4 text-5xl lg:text-7xl">Four steps. <br />No guesswork.</h2>
+          <div className="text-eyebrow">How It Works</div>
+          <h2 className="mt-4 text-5xl lg:text-7xl">Four steps. <br />One dashboard.</h2>
         </div>
         <p className="lg:col-span-5 text-muted-foreground">
-          Coaching is a system, not a vibe. Every client moves through the same disciplined
-          intake, review, and delivery flow — the protocol is what's custom.
+          The dashboard is the product. Apply, get reviewed, receive your protocol, and use the tools every day.
         </p>
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-foreground/15">
@@ -152,7 +147,7 @@ function Process() {
 
 function DashboardFeatures() {
   const items = [
-    { i: FileText, t: "Custom Protocols", d: "Your coach delivers personalized weightlifting and peptide protocols as downloadable PDFs." },
+    { i: FileText, t: "Custom Protocols", d: "Access personalized weightlifting and peptide research protocols as downloadable PDFs in your account." },
     { i: MessageCircle, t: "Pep Talk AI", d: "Ask anything about peptide effects, dosing, timing, stacking, and safety — instant research answers." },
     { i: Beaker, t: "Top 50 Peptides", d: "A searchable research library covering the most popular compounds and what each is studied for." },
     { i: ListChecks, t: "My Stack", d: "Track every peptide, dose, unit, frequency, schedule, and notes in your personal dosing log." },
@@ -165,13 +160,12 @@ function DashboardFeatures() {
   return (
     <section className="bg-ink text-bone py-24 lg:py-32 border-y border-foreground/15">
       <div className="container-edge">
-        <div className="text-eyebrow">Client Dashboard</div>
+        <div className="text-eyebrow">Built-In Tools</div>
         <h2 className="mt-4 text-5xl lg:text-7xl max-w-4xl">
-          Everything you need. <span className="text-blood">One dashboard.</span>
+          Nine tools. <span className="text-blood">One dashboard.</span>
         </h2>
         <p className="mt-6 max-w-2xl text-bone/70 leading-relaxed">
-          Whether you are researching peptides or dialing in your training, the Titan Elite dashboard
-          is built to hold every answer, calculator, and reference you will use — no guesswork, no app switching.
+          No more scattered notes, calculators, or search tabs. The Titan Elite dashboard puts peptides, dosing, and training guidance in one place.
         </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
           {items.map((b) => (
@@ -192,13 +186,12 @@ function Showcase() {
     <section className="container-edge py-24 lg:py-32">
       <div className="grid lg:grid-cols-12 gap-8">
         <div className="lg:col-span-5 lg:sticky lg:top-24 self-start">
-          <div className="text-eyebrow">Results / Documentation</div>
-          <h2 className="mt-4 text-5xl lg:text-6xl">Document the work.</h2>
+          <div className="text-eyebrow">Results</div>
+          <h2 className="mt-4 text-5xl lg:text-6xl">Track the work.</h2>
           <p className="mt-6 text-muted-foreground">
-            Real before/after photos from past clients (representative imagery — your results
-            will vary based on consistency, genetics, and adherence).
+            Your protocol, stack, and progress live in the dashboard. Consistency + the right tools = results.
           </p>
-          <Link to="/intake" className="mt-8 btn-blood hover:btn-blood-hover inline-flex">Apply now</Link>
+          <Link to="/intake" className="mt-8 btn-blood hover:btn-blood-hover inline-flex">Get dashboard access</Link>
         </div>
         <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[transform1.url, transform2.url, transform3.url, transform4.url, transform5.url, transform6.url].map((src, i) => (
@@ -217,15 +210,15 @@ function Showcase() {
 
 function Testimonials() {
   const t = [
-    { q: "I've worked with three coaches before Titan. This is the first program that actually accounted for my injury history.", a: "Marcus R.", s: "Hypertrophy block, 16 weeks" },
-    { q: "The peptide education alone was worth the price. I finally understand what I'm putting in my body and why.", a: "Daniel K.", s: "Education + programming" },
-    { q: "Dropped 18 lb and added 40 lb to my squat. The check-ins keep you honest.", a: "Jess T.", s: "Recomp protocol, 12 weeks" },
+    { q: "The dose calculator finally made peptide math click. I know exactly how much to draw every time.", a: "Marcus R.", s: "Uses Dose Calculator + My Stack" },
+    { q: "I used to have 12 tabs open to research compounds. Now I just search the library in the dashboard.", a: "Daniel K.", s: "Uses Top 50 Peptides daily" },
+    { q: "Pep Talk AI answers questions at 10 PM when I’m planning my next dose. It’s like having a research assistant.", a: "Jess T.", s: "Uses Pep Talk AI + Injection Guide" },
   ];
   return (
     <section className="bg-background border-y border-foreground/10 py-24">
       <div className="container-edge">
-        <div className="text-eyebrow">Field Reports</div>
-        <h2 className="mt-4 text-5xl lg:text-6xl mb-12">From the roster.</h2>
+        <div className="text-eyebrow">Dashboard Reports</div>
+        <h2 className="mt-4 text-5xl lg:text-6xl mb-12">From the tools.</h2>
         <div className="grid lg:grid-cols-3 gap-px bg-foreground/15">
           {t.map((x) => (
             <figure key={x.a} className="bg-background p-8">
@@ -246,10 +239,10 @@ function Testimonials() {
 
 function FAQPreview() {
   const qa = [
+    { q: "What tools are inside the dashboard?", a: "The dashboard includes Pep Talk AI, a Top 50 Peptides research library, a dose calculator, My Stack tracker, reconstitution and injection guides, a supplies guide, lifting splits, and your custom protocols." },
     { q: "Do you prescribe peptides?", a: "No. Titan Elite provides educational protocol templates only. We do not diagnose, treat, prescribe, or sell peptides. Always consult a licensed medical provider." },
     { q: "How custom is the programming?", a: "Every protocol is built from scratch around your intake — no recycled templates. Updates roll out as you progress." },
     { q: "Do I need gym access?", a: "Yes. A full barbell setup is strongly recommended. We can adapt to commercial gyms or well-equipped home setups." },
-    { q: "How long is the commitment?", a: "Most clients commit to a minimum 12-week block to see meaningful change." },
   ];
   return (
     <section className="bg-background border-t border-foreground/10 py-24">
@@ -279,12 +272,12 @@ function FinalCta() {
   return (
     <section className="bg-blood text-primary-foreground">
       <div className="container-edge py-24 lg:py-32 text-center">
-        <div className="text-bone/80 font-mono text-[11px] uppercase tracking-[0.18em]">Now accepting new clients</div>
+        <div className="text-bone/80 font-mono text-[11px] uppercase tracking-[0.18em]">Dashboard access now open</div>
         <h2 className="mt-6 text-6xl lg:text-8xl leading-[0.85]">
-          Stop training.<br />Start engineering.
+          Your tools.<br />Your protocol.<br />One place.
         </h2>
         <Link to="/intake" className="mt-10 inline-flex items-center gap-2 bg-ink text-bone font-mono uppercase tracking-[0.14em] text-xs font-bold px-8 py-4 hover:bg-bone hover:text-ink transition">
-          Submit Intake <ArrowRight size={14} />
+          Get Dashboard Access <ArrowRight size={14} />
         </Link>
       </div>
     </section>
