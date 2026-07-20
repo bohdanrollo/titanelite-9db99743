@@ -18,7 +18,9 @@ export interface TemplateEntry {
  *   // then add to TEMPLATES: 'welcome': welcomeTemplate
  */
 import { template as protocolReadyTemplate } from './protocol-ready'
+import { template as affiliateApprovedTemplate } from './affiliate-approved'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'protocol-ready': protocolReadyTemplate,
+  'affiliate-approved': affiliateApprovedTemplate,
 }
