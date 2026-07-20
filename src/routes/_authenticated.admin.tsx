@@ -515,3 +515,158 @@ function ProtocolsAdmin() {
 }
 
 
+
+// ---------------- Affiliates Admin ----------------
+type AffiliateRow = {
+  id: string;
+  status: "pending" | "approved" | "rejected";
+  full_name: string | null;
+  email: string;
+  phone: string;
+  desired_code: string;
+  code: string | null;
+  instagram: string | null;
+  tiktok: string | null;
+  youtube: string | null;
+  twitter: string | null;
+  other_social: string | null;
+  referral_count: number;
+  earnings_cents: number;
+  created_at: string;
+};
+
+function AffiliatesAdmin() {
+  const [rows, setRows] = useState<AffiliateRow[]>([]);
+  const [filter, setFilter] = useState<"pending" | "approved" | "rejected" | "all">("pending");
+  const [loading, setLoading] = useState(true);
+  const approveFn = useServerFn(approveAffiliate);
+  const rejectFn = useServerFn(rejectAffiliate);
+  const deleteFn = useServerFn(deleteAffiliate);
+  const paidFn = useServerFn(markAffiliatePaid);
+
+  async function load() {
+    setLoading(true);
+    const { data } = await supabase
+      .from("affiliates")
+      .select("id, status, full_name, email, phone, desired_code, code, instagram, tiktok, youtube, twitter, other_social, referral_count, earnings_cents, created_at")
+      .order("created_at", { ascending: false });
+    setRows((data as AffiliateRow[] | null) ?? []);
+    setLoading(false);
+  }
+  useEffect(() => { void load(); }, []);
+
+  const filtered = filter === "all" ? rows : rows.filter((r) => r.status === filter);
+  const totalPending = rows.filter((r) => r.status === "pending").length;
+  const totalOwed = rows.reduce((s, r) => s + (r.status === "approved" ? r.earnings_cents : 0), 0);
+
+  async function onApprove(r: AffiliateRow) {
+    const code = prompt("Assign affiliate code:", r.code ?? r.desired_code);
+    if (!code) return;
+    try {
+      await approveFn({ data: { id: r.id, code } });
+      toast.success("Approved");
+      void load();
+    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
+  }
+  async function onReject(r: AffiliateRow) {
+    if (!confirm(`Reject application from ${r.email}?`)) return;
+    try { await rejectFn({ data: { id: r.id } }); toast.success("Rejected"); void load(); }
+    catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
+  }
+  async function onDelete(r: AffiliateRow) {
+    if (!confirm(`Delete affiliate ${r.email}? This removes all referral records.`)) return;
+    try { await deleteFn({ data: { id: r.id } }); toast.success("Deleted"); void load(); }
+    catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
+  }
+  async function onMarkPaid(r: AffiliateRow) {
+    if (!confirm(`Mark $${(r.earnings_cents / 100).toFixed(2)} as paid to ${r.email}? This resets their earnings balance.`)) return;
+    try { await paidFn({ data: { id: r.id } }); toast.success("Marked as paid"); void load(); }
+    catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
+  }
+
+  return (
+    <div>
+      <div className="grid sm:grid-cols-3 gap-4 mb-6">
+        <div className="border border-foreground/15 p-4">
+          <div className="text-eyebrow">Pending review</div>
+          <div className="mt-2 font-display text-3xl">{totalPending}</div>
+        </div>
+        <div className="border border-foreground/15 p-4">
+          <div className="text-eyebrow">Total affiliates</div>
+          <div className="mt-2 font-display text-3xl">{rows.filter((r) => r.status === "approved").length}</div>
+        </div>
+        <div className="border border-foreground/15 p-4">
+          <div className="text-eyebrow">Owed to affiliates</div>
+          <div className="mt-2 font-display text-3xl text-blood">${(totalOwed / 100).toFixed(2)}</div>
+        </div>
+      </div>
+
+      <div className="flex gap-2 mb-4">
+        {(["pending", "approved", "rejected", "all"] as const).map((f) => (
+          <button key={f} onClick={() => setFilter(f)}
+            className={`px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] border ${filter === f ? "border-blood text-blood" : "border-foreground/20 text-muted-foreground hover:text-foreground"}`}>
+            {f}
+          </button>
+        ))}
+      </div>
+
+      {loading ? (
+        <div className="text-eyebrow">Loading…</div>
+      ) : filtered.length === 0 ? (
+        <div className="text-muted-foreground text-sm">No affiliates in this view.</div>
+      ) : (
+        <div className="space-y-3">
+          {filtered.map((r) => (
+            <div key={r.id} className="border border-foreground/15 p-5">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <div className="font-display text-xl">{r.full_name || r.email}</div>
+                    <StatusBadge status={r.status} />
+                    {r.code && <span className="font-mono text-xs text-blood tracking-wider">CODE: {r.code}</span>}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground font-mono">{r.email} · {r.phone}</div>
+                  <div className="mt-3 text-xs text-muted-foreground grid sm:grid-cols-2 gap-x-6 gap-y-1">
+                    {r.instagram && <div>IG: <span className="text-foreground">{r.instagram}</span></div>}
+                    {r.tiktok && <div>TikTok: <span className="text-foreground">{r.tiktok}</span></div>}
+                    {r.youtube && <div>YouTube: <span className="text-foreground">{r.youtube}</span></div>}
+                    {r.twitter && <div>X: <span className="text-foreground">{r.twitter}</span></div>}
+                    {r.other_social && <div className="sm:col-span-2">Other: <span className="text-foreground">{r.other_social}</span></div>}
+                  </div>
+                  {r.status === "approved" && (
+                    <div className="mt-3 flex gap-6 text-sm">
+                      <div><span className="text-muted-foreground">Referrals:</span> <span className="font-mono text-foreground">{r.referral_count}</span></div>
+                      <div><span className="text-muted-foreground">Owed:</span> <span className="font-mono text-blood">${(r.earnings_cents / 100).toFixed(2)}</span></div>
+                    </div>
+                  )}
+                  {r.status === "pending" && (
+                    <div className="mt-2 text-xs text-muted-foreground">Requested code: <span className="text-foreground font-mono">{r.desired_code}</span></div>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {r.status === "pending" && (
+                    <>
+                      <button onClick={() => onApprove(r)} className="btn-blood hover:btn-blood-hover text-xs px-4 py-2 flex items-center gap-1"><Check size={12} /> Approve</button>
+                      <button onClick={() => onReject(r)} className="border border-foreground/20 hover:border-blood text-xs px-4 py-2 flex items-center gap-1"><X size={12} /> Reject</button>
+                    </>
+                  )}
+                  {r.status === "approved" && r.earnings_cents > 0 && (
+                    <button onClick={() => onMarkPaid(r)} className="border border-foreground/20 hover:border-blood text-xs px-4 py-2 flex items-center gap-1"><DollarSign size={12} /> Mark paid</button>
+                  )}
+                  <button onClick={() => onDelete(r)} className="border border-foreground/20 hover:border-blood text-xs px-4 py-2 flex items-center gap-1"><Trash2 size={12} /></button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StatusBadge({ status }: { status: "pending" | "approved" | "rejected" }) {
+  const cls = status === "approved" ? "text-emerald-500 border-emerald-500/40"
+    : status === "rejected" ? "text-blood border-blood/40"
+    : "text-amber-500 border-amber-500/40";
+  return <span className={`inline-block px-2 py-0.5 border font-mono text-[9px] uppercase tracking-[0.18em] ${cls}`}>{status}</span>;
+}
