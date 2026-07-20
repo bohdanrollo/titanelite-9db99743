@@ -186,13 +186,12 @@ function Showcase() {
     <section className="container-edge py-24 lg:py-32">
       <div className="grid lg:grid-cols-12 gap-8">
         <div className="lg:col-span-5 lg:sticky lg:top-24 self-start">
-          <div className="text-eyebrow">Results / Documentation</div>
-          <h2 className="mt-4 text-5xl lg:text-6xl">Document the work.</h2>
+          <div className="text-eyebrow">Results</div>
+          <h2 className="mt-4 text-5xl lg:text-6xl">Track the work.</h2>
           <p className="mt-6 text-muted-foreground">
-            Real before/after photos from past clients (representative imagery — your results
-            will vary based on consistency, genetics, and adherence).
+            Your protocol, stack, and progress live in the dashboard. Consistency + the right tools = results.
           </p>
-          <Link to="/intake" className="mt-8 btn-blood hover:btn-blood-hover inline-flex">Apply now</Link>
+          <Link to="/intake" className="mt-8 btn-blood hover:btn-blood-hover inline-flex">Get dashboard access</Link>
         </div>
         <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[transform1.url, transform2.url, transform3.url, transform4.url, transform5.url, transform6.url].map((src, i) => (
