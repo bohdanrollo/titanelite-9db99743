@@ -139,7 +139,7 @@ function Dashboard() {
                             className={`shrink-0 px-3 lg:px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] flex items-center gap-1.5 border-b-2 transition ${tab === t.k ? "border-blood text-blood" : "border-transparent text-muted-foreground hover:text-foreground"} ${idx < arr.length - 1 ? "mr-1" : ""}`}
                             title={t.l}
                           >
-                            <t.i size={14} /> <span className="hidden lg:inline">{t.l}</span><span className="lg:hidden">{t.l}</span>
+                            <t.i size={14} /> {t.l}
                           </button>
                         ))}
                       </div>
