@@ -68,6 +68,30 @@ export const approveAffiliate = createServerFn({ method: "POST" })
       .update({ status: "approved", code, user_id: userId, approved_at: new Date().toISOString() })
       .eq("id", data.id);
     if (error) throw error;
+
+    // Send approval email (best-effort)
+    if (app.email) {
+      try {
+        const { sendAppEmail } = await import("@/lib/email/send.server");
+        const { data: aff } = await supabaseAdmin
+          .from("affiliates")
+          .select("full_name")
+          .eq("id", data.id)
+          .maybeSingle();
+        await sendAppEmail({
+          templateName: "affiliate-approved",
+          recipientEmail: app.email,
+          idempotencyKey: `affiliate-approved-${data.id}`,
+          templateData: {
+            name: aff?.full_name || undefined,
+            code,
+            referralUrl: `https://titanelite.org/?ref=${code}`,
+          },
+        });
+      } catch (e) {
+        console.warn("[affiliate approve] email send failed", e);
+      }
+    }
     return { ok: true, code };
   });
 
