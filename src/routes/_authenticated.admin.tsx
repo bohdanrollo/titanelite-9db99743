@@ -543,6 +543,7 @@ function AffiliatesAdmin() {
   const rejectFn = useServerFn(rejectAffiliate);
   const deleteFn = useServerFn(deleteAffiliate);
   const paidFn = useServerFn(markAffiliatePaid);
+  const resendFn = useServerFn(resendApprovedAffiliateEmails);
 
   async function load() {
     setLoading(true);
