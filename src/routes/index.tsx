@@ -147,7 +147,7 @@ function Process() {
 
 function DashboardFeatures() {
   const items = [
-    { i: FileText, t: "Custom Protocols", d: "Your coach delivers personalized weightlifting and peptide protocols as downloadable PDFs." },
+    { i: FileText, t: "Custom Protocols", d: "Access personalized weightlifting and peptide research protocols as downloadable PDFs in your account." },
     { i: MessageCircle, t: "Pep Talk AI", d: "Ask anything about peptide effects, dosing, timing, stacking, and safety — instant research answers." },
     { i: Beaker, t: "Top 50 Peptides", d: "A searchable research library covering the most popular compounds and what each is studied for." },
     { i: ListChecks, t: "My Stack", d: "Track every peptide, dose, unit, frequency, schedule, and notes in your personal dosing log." },
@@ -160,13 +160,12 @@ function DashboardFeatures() {
   return (
     <section className="bg-ink text-bone py-24 lg:py-32 border-y border-foreground/15">
       <div className="container-edge">
-        <div className="text-eyebrow">Client Dashboard</div>
+        <div className="text-eyebrow">Built-In Tools</div>
         <h2 className="mt-4 text-5xl lg:text-7xl max-w-4xl">
-          Everything you need. <span className="text-blood">One dashboard.</span>
+          Nine tools. <span className="text-blood">One dashboard.</span>
         </h2>
         <p className="mt-6 max-w-2xl text-bone/70 leading-relaxed">
-          Whether you are researching peptides or dialing in your training, the Titan Elite dashboard
-          is built to hold every answer, calculator, and reference you will use — no guesswork, no app switching.
+          No more scattered notes, calculators, or search tabs. The Titan Elite dashboard puts peptides, dosing, and training guidance in one place.
         </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
           {items.map((b) => (
