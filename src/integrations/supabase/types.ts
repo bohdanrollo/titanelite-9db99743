@@ -14,6 +14,104 @@ export type Database = {
   }
   public: {
     Tables: {
+      affiliate_referrals: {
+        Row: {
+          affiliate_id: string
+          code_used: string
+          created_at: string
+          id: string
+          referred_user_id: string
+        }
+        Insert: {
+          affiliate_id: string
+          code_used: string
+          created_at?: string
+          id?: string
+          referred_user_id: string
+        }
+        Update: {
+          affiliate_id?: string
+          code_used?: string
+          created_at?: string
+          id?: string
+          referred_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_referrals_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliates: {
+        Row: {
+          admin_notes: string | null
+          approved_at: string | null
+          code: string | null
+          created_at: string
+          desired_code: string
+          earnings_cents: number
+          email: string
+          full_name: string | null
+          id: string
+          instagram: string | null
+          other_social: string | null
+          phone: string
+          referral_count: number
+          status: string
+          tiktok: string | null
+          twitter: string | null
+          updated_at: string
+          user_id: string | null
+          youtube: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          approved_at?: string | null
+          code?: string | null
+          created_at?: string
+          desired_code: string
+          earnings_cents?: number
+          email: string
+          full_name?: string | null
+          id?: string
+          instagram?: string | null
+          other_social?: string | null
+          phone: string
+          referral_count?: number
+          status?: string
+          tiktok?: string | null
+          twitter?: string | null
+          updated_at?: string
+          user_id?: string | null
+          youtube?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          approved_at?: string | null
+          code?: string | null
+          created_at?: string
+          desired_code?: string
+          earnings_cents?: number
+          email?: string
+          full_name?: string | null
+          id?: string
+          instagram?: string | null
+          other_social?: string | null
+          phone?: string
+          referral_count?: number
+          status?: string
+          tiktok?: string | null
+          twitter?: string | null
+          updated_at?: string
+          user_id?: string | null
+          youtube?: string | null
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
