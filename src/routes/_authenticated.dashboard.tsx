@@ -74,27 +74,81 @@ function Dashboard() {
           </div>
         )}
 
-        <nav className="mt-8 sm:mt-10 -mx-4 sm:mx-0 flex gap-1 overflow-x-auto border-b border-foreground/15 px-4 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {([
-            { k: "protocols", l: "Protocols", i: FileText },
-            { k: "peptalk", l: "Pep Talk", i: MessageCircle },
-            { k: "peptides", l: "Peptides", i: Beaker },
-            { k: "mystack", l: "My Stack", i: ListChecks },
-            { k: "supplies", l: "Supplies", i: Droplets },
-            { k: "reconstitution", l: "Reconstitution", i: FlaskConical },
-            { k: "injection", l: "Injection Guide", i: Syringe },
-            { k: "calculator", l: "Calculator", i: CalculatorIcon },
-            { k: "lifting", l: "Lifting", i: Dumbbell },
-            { k: "articles", l: "Articles", i: BookOpen },
-          ] as const).map((t) => (
-            <button
-              key={t.k}
-              onClick={() => setTab(t.k)}
-              className={`shrink-0 px-3 sm:px-5 py-3 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 border-b-2 transition ${tab === t.k ? "border-blood text-blood" : "border-transparent text-muted-foreground hover:text-foreground"}`}
-            >
-              <t.i size={14} /> {t.l}
-            </button>
-          ))}
+        <nav ref={navRef} className="mt-8 sm:mt-10 -mx-4 sm:mx-0 border-b border-foreground/15 px-4 sm:px-0 pb-3">
+          {(() => {
+            const allTabs = [
+              { k: "protocols", l: "Protocols", i: FileText, g: "Plan" },
+              { k: "mystack", l: "My Stack", i: ListChecks, g: "Plan" },
+              { k: "peptides", l: "Peptides", i: Beaker, g: "Research" },
+              { k: "articles", l: "Articles", i: BookOpen, g: "Research" },
+              { k: "lifting", l: "Lifting", i: Dumbbell, g: "Research" },
+              { k: "calculator", l: "Calculator", i: CalculatorIcon, g: "Tools" },
+              { k: "supplies", l: "Supplies", i: Droplets, g: "Tools" },
+              { k: "reconstitution", l: "Reconstitution", i: FlaskConical, g: "Tools" },
+              { k: "injection", l: "Injection", i: Syringe, g: "Tools" },
+              { k: "peptalk", l: "Pep Talk", i: MessageCircle, g: "Assistant" },
+            ] as const;
+            const active = allTabs.find((t) => t.k === tab) ?? allTabs[0];
+            const groups = ["Plan", "Research", "Tools", "Assistant"] as const;
+            return (
+              <>
+                {/* Mobile: compact dropdown */}
+                <div className="sm:hidden relative">
+                  <button
+                    onClick={() => setNavOpen((v) => !v)}
+                    className="w-full flex items-center justify-between gap-3 border border-foreground/15 px-3 py-2.5 text-left"
+                  >
+                    <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em]">
+                      <active.i size={14} className="text-blood" /> {active.l}
+                    </span>
+                    <ChevronDown size={14} className={`transition ${navOpen ? "rotate-180" : ""}`} />
+                  </button>
+                  {navOpen && (
+                    <div className="absolute z-20 mt-1 w-full border border-foreground/15 bg-card shadow-lg max-h-[70vh] overflow-y-auto">
+                      {groups.map((g) => (
+                        <div key={g}>
+                          <div className="px-3 py-2 text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground bg-muted/50">
+                            {g}
+                          </div>
+                          {allTabs.filter((t) => t.g === g).map((t) => (
+                            <button
+                              key={t.k}
+                              onClick={() => { setTab(t.k); setNavOpen(false); }}
+                              className={`w-full flex items-center gap-2 px-3 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] transition ${tab === t.k ? "bg-blood/10 text-blood" : "hover:bg-muted"}`}
+                            >
+                              <t.i size={14} /> {t.l}
+                            </button>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {/* Desktop: grouped compact tabs */}
+                <div className="hidden sm:flex items-start gap-6 lg:gap-8 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                  {groups.map((g) => (
+                    <div key={g} className="flex flex-col gap-1">
+                      <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-muted-foreground px-1">
+                        {g}
+                      </span>
+                      <div className="flex items-center">
+                        {allTabs.filter((t) => t.g === g).map((t, idx, arr) => (
+                          <button
+                            key={t.k}
+                            onClick={() => setTab(t.k)}
+                            className={`shrink-0 px-3 lg:px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] flex items-center gap-1.5 border-b-2 transition ${tab === t.k ? "border-blood text-blood" : "border-transparent text-muted-foreground hover:text-foreground"} ${idx < arr.length - 1 ? "mr-1" : ""}`}
+                            title={t.l}
+                          >
+                            <t.i size={14} /> <span className="hidden lg:inline">{t.l}</span><span className="lg:hidden">{t.l}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            );
+          })()}
         </nav>
 
         <div className="mt-8">
