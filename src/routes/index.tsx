@@ -60,6 +60,7 @@ function Hero() {
           <p className="mt-8 max-w-xl text-base text-muted-foreground leading-relaxed">
             Track your stack, calculate doses, ask AI peptide questions, browse the 50-compound research library,
             and get step-by-step injection, reconstitution, and lifting guidance — all inside one client dashboard.
+            Plus, every client receives a 100% custom educational peptide protocol and weight-programming plan built around their goals.
             No guesswork. No scattered tabs. Just the tools you need to research and train with precision.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
