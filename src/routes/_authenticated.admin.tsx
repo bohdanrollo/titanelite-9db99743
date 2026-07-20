@@ -4,15 +4,17 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2 } from "lucide-react";
+import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2, DollarSign, Check, X, Trash2 } from "lucide-react";
 import { generateProtocolDraft, saveProtocolDraft, sendProtocol, getProtocolDownloadUrl } from "@/lib/protocols.functions";
+import { approveAffiliate, rejectAffiliate, deleteAffiliate, markAffiliatePaid } from "@/lib/affiliates.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Titan Elite" }] }),
   component: Admin,
 });
 
-type Tab = "clients" | "intakes" | "protocols";
+type Tab = "clients" | "intakes" | "protocols" | "affiliates";
+
 
 function Admin() {
   const { user, role, loading, signOut } = useAuth();
@@ -61,6 +63,7 @@ function Admin() {
             { k: "clients", l: "Clients", i: Users },
             { k: "intakes", l: "Intakes", i: Inbox },
             { k: "protocols", l: "Protocols", i: FileText },
+            { k: "affiliates", l: "Affiliates", i: DollarSign },
           ] as const).map((t) => (
             <button
               key={t.k}
@@ -76,6 +79,7 @@ function Admin() {
           {tab === "clients" && <Clients />}
           {tab === "intakes" && <Intakes />}
           {tab === "protocols" && <ProtocolsAdmin />}
+          {tab === "affiliates" && <AffiliatesAdmin />}
         </div>
       </section>
     </div>
