@@ -75,6 +75,7 @@ function Dashboard() {
             { k: "injection", l: "Injection Guide", i: Syringe },
             { k: "calculator", l: "Calculator", i: CalculatorIcon },
             { k: "lifting", l: "Lifting", i: Dumbbell },
+            { k: "articles", l: "Articles", i: BookOpen },
           ] as const).map((t) => (
             <button
               key={t.k}
