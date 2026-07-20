@@ -275,7 +275,7 @@ function FinalCta() {
       <div className="container-edge py-24 lg:py-32 text-center">
         <div className="text-bone/80 font-mono text-[11px] uppercase tracking-[0.18em]">Dashboard access now open</div>
         <h2 className="mt-6 text-6xl lg:text-8xl leading-[0.85]">
-          Your tools.<br />Your protocol.<br />One place.
+          Your tools.<br />Your custom protocol.<br />One place.
         </h2>
         <Link to="/intake" className="mt-10 inline-flex items-center gap-2 bg-ink text-bone font-mono uppercase tracking-[0.14em] text-xs font-bold px-8 py-4 hover:bg-bone hover:text-ink transition">
           Get Dashboard Access <ArrowRight size={14} />
