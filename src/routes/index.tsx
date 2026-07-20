@@ -239,10 +239,10 @@ function Testimonials() {
 
 function FAQPreview() {
   const qa = [
+    { q: "What tools are inside the dashboard?", a: "The dashboard includes Pep Talk AI, a Top 50 Peptides research library, a dose calculator, My Stack tracker, reconstitution and injection guides, a supplies guide, lifting splits, and your custom protocols." },
     { q: "Do you prescribe peptides?", a: "No. Titan Elite provides educational protocol templates only. We do not diagnose, treat, prescribe, or sell peptides. Always consult a licensed medical provider." },
     { q: "How custom is the programming?", a: "Every protocol is built from scratch around your intake — no recycled templates. Updates roll out as you progress." },
     { q: "Do I need gym access?", a: "Yes. A full barbell setup is strongly recommended. We can adapt to commercial gyms or well-equipped home setups." },
-    { q: "How long is the commitment?", a: "Most clients commit to a minimum 12-week block to see meaningful change." },
   ];
   return (
     <section className="bg-background border-t border-foreground/10 py-24">
