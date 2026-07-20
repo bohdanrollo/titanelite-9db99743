@@ -130,7 +130,7 @@ function Process() {
           <h2 className="mt-4 text-5xl lg:text-7xl">Four steps. <br />One dashboard.</h2>
         </div>
         <p className="lg:col-span-5 text-muted-foreground">
-          The dashboard is the product. Apply, get reviewed, receive your protocol, and use the tools every day.
+          The dashboard is the product. Apply, get reviewed, receive your 100% custom educational peptide protocol and weight programming, and use the tools every day.
         </p>
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-foreground/15">
