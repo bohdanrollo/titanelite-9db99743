@@ -148,7 +148,7 @@ function Process() {
 
 function DashboardFeatures() {
   const items = [
-    { i: FileText, t: "Custom Protocols", d: "Access personalized weightlifting and peptide research protocols as downloadable PDFs in your account." },
+    { i: FileText, t: "Custom Protocols", d: "Receive a 100% custom educational peptide protocol and weight-programming plan built from your intake, delivered as a PDF." },
     { i: MessageCircle, t: "Pep Talk AI", d: "Ask anything about peptide effects, dosing, timing, stacking, and safety — instant research answers." },
     { i: Beaker, t: "Top 50 Peptides", d: "A searchable research library covering the most popular compounds and what each is studied for." },
     { i: ListChecks, t: "My Stack", d: "Track every peptide, dose, unit, frequency, schedule, and notes in your personal dosing log." },
