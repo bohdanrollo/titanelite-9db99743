@@ -54,31 +54,30 @@ function Hero() {
     <section className="relative overflow-hidden border-b border-foreground/10">
       <div className="container-edge grid lg:grid-cols-12 gap-10 pt-16 pb-20 lg:pt-24 lg:pb-32">
         <div className="lg:col-span-7 flex flex-col justify-center">
-          <div className="text-eyebrow">INVEST IN YOURSELF</div>
+          <div className="text-eyebrow">YOUR COMPLETE RESEARCH DASHBOARD</div>
           <h1 className="mt-6 text-6xl sm:text-7xl lg:text-[8.5rem] leading-[0.85]">
-            Engineer<br />
-            <span className="text-blood">the body</span><br />
-            you train for.
+            Everything<br />
+            <span className="text-blood">for peptides</span><br />
+            & training.
           </h1>
           <p className="mt-8 max-w-xl text-base text-muted-foreground leading-relaxed">
-            1:1 weightlifting programming and educational peptide protocols, delivered through a
-            client dashboard that puts every tool you need in one place — from AI peptide guidance
-            and dosing calculators to injection guides, lifting splits, and macro targets.
-            No templates. No filler. Just the science and the work.
+            Track your stack, calculate doses, ask AI peptide questions, browse the 50-compound research library,
+            and get step-by-step injection, reconstitution, and lifting guidance — all inside one client dashboard.
+            No guesswork. No scattered tabs. Just the tools you need to research and train with precision.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <Link to="/intake" className="btn-blood hover:btn-blood-hover">
-              Begin Intake <ArrowRight size={14} />
+              Get Dashboard Access <ArrowRight size={14} />
             </Link>
             <Link to="/services" className="btn-ghost hover:bg-foreground hover:text-background">
-              See Services
+              See Dashboard Tools
             </Link>
           </div>
           <div className="mt-12 grid grid-cols-3 gap-6 max-w-md">
             {[
-              { n: "10+", l: "Years coaching" },
-              { n: "150+", l: "Clients served" },
-              { n: "100%", l: "Custom protocols" },
+              { n: "50+", l: "Peptides catalogued" },
+              { n: "AI", l: "Pep Talk assistant" },
+              { n: "9", l: "Dashboard tools" },
             ].map((s) => (
               <div key={s.l}>
                 <div className="font-display text-3xl">{s.n}</div>
