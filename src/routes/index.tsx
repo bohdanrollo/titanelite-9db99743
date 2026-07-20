@@ -14,9 +14,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Titan Elite — Peptide & Training Dashboard" },
-      { name: "description", content: "All-in-one client dashboard for peptide research and weightlifting: AI peptide answers, 50-compound library, dose calculator, stack tracker, injection guides, and custom protocols." },
+      { name: "description", content: "All-in-one client dashboard for peptide research and weightlifting: AI peptide answers, 50-compound library, dose calculator, stack tracker, injection guides, and a 100% custom educational peptide protocol with weight programming." },
       { property: "og:title", content: "Titan Elite — Peptide & Training Dashboard" },
-      { property: "og:description", content: "All-in-one client dashboard for peptide research and weightlifting: AI peptide answers, 50-compound library, dose calculator, stack tracker, injection guides, and custom protocols." },
+      { property: "og:description", content: "All-in-one client dashboard for peptide research and weightlifting: AI peptide answers, 50-compound library, dose calculator, stack tracker, injection guides, and a 100% custom educational peptide protocol with weight programming." },
       { property: "og:url", content: "/" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
