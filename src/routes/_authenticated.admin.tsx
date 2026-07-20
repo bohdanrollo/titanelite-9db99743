@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2, DollarSign, Check, X, Trash2 } from "lucide-react";
 import { generateProtocolDraft, saveProtocolDraft, sendProtocol, getProtocolDownloadUrl } from "@/lib/protocols.functions";
-import { approveAffiliate, rejectAffiliate, deleteAffiliate, markAffiliatePaid } from "@/lib/affiliates.functions";
+import { approveAffiliate, rejectAffiliate, deleteAffiliate, markAffiliatePaid, resendApprovedAffiliateEmails } from "@/lib/affiliates.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Titan Elite" }] }),
@@ -543,6 +543,7 @@ function AffiliatesAdmin() {
   const rejectFn = useServerFn(rejectAffiliate);
   const deleteFn = useServerFn(deleteAffiliate);
   const paidFn = useServerFn(markAffiliatePaid);
+  const resendFn = useServerFn(resendApprovedAffiliateEmails);
 
   async function load() {
     setLoading(true);
@@ -601,13 +602,27 @@ function AffiliatesAdmin() {
         </div>
       </div>
 
-      <div className="flex gap-2 mb-4">
+      <div className="flex flex-wrap gap-2 mb-4 items-center">
         {(["pending", "approved", "rejected", "all"] as const).map((f) => (
           <button key={f} onClick={() => setFilter(f)}
             className={`px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] border ${filter === f ? "border-blood text-blood" : "border-foreground/20 text-muted-foreground hover:text-foreground"}`}>
             {f}
           </button>
         ))}
+        <button
+          onClick={async () => {
+            if (!confirm("Send approval email to every approved affiliate?")) return;
+            try {
+              const res = await resendFn();
+              toast.success(`Sent ${res.sent} approval email(s)`);
+            } catch (e: any) {
+              toast.error(e?.message ?? "Failed to send");
+            }
+          }}
+          className="ml-auto px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] border border-blood text-blood hover:bg-blood/10"
+        >
+          Resend approval emails
+        </button>
       </div>
 
       {loading ? (
