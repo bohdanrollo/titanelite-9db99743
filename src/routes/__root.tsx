@@ -105,6 +105,13 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get("ref");
+      if (ref) localStorage.setItem("titan_ref_code", ref.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 20));
+    } catch { /* ignore */ }
+  }, []);
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
