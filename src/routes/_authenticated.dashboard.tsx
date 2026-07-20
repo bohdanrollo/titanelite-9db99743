@@ -19,6 +19,7 @@ type Tab = "protocols" | "peptalk" | "peptides" | "mystack" | "supplies" | "reco
 function Dashboard() {
   const { user, signOut } = useAuth();
   const [tab, setTab] = useState<Tab>("protocols");
+  const [navOpen, setNavOpen] = useState(false);
   const [intake, setIntake] = useState<{ id: string; status: string; submitted_at: string } | null>(null);
 
   useEffect(() => {
