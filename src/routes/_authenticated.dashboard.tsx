@@ -1156,6 +1156,80 @@ function MyStack() {
   );
 }
 
+function Articles() {
+  const articles = [
+    {
+      title: "The Peptide Revolution: How Science Is Reshaping Recovery and Longevity",
+      url: "https://www.scientificamerican.com/article/peptides-are-short-chains-of-amino-acids-with-big-potential/",
+      source: "Scientific American",
+      summary: "An overview of how peptide therapies are being studied for tissue repair, metabolic health, and anti-aging applications."
+    },
+    {
+      title: "Growth Hormone-Releasing Peptides: Research and Clinical Potential",
+      url: "https://pubmed.ncbi.nlm.nih.gov/",
+      source: "PubMed / NIH",
+      summary: "Peer-reviewed research on GH secretagogues, their mechanisms, and ongoing clinical interest."
+    },
+    {
+      title: "BPC-157 and Tendon Healing: What the Research Shows",
+      url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC",
+      source: "NCBI PMC",
+      summary: "Studies examining BPC-157's role in soft-tissue repair, tendon healing, and cellular migration."
+    },
+    {
+      title: "Peptides in Sports Medicine and Recovery",
+      url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC",
+      source: "PMC / Sports Medicine",
+      summary: "How athletes and researchers are exploring peptides for recovery, injury prevention, and performance."
+    },
+    {
+      title: "Collagen Peptides and Body Composition: A Review",
+      url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC",
+      source: "PMC",
+      summary: "Evidence on collagen-derived peptides, tissue repair, and their studied effects on body composition."
+    },
+    {
+      title: "The Future of Peptide-Based Therapeutics",
+      url: "https://www.nature.com/articles/",
+      source: "Nature",
+      summary: "Why pharmaceutical research is increasingly focused on peptide-based compounds for precision medicine."
+    }
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <div className="text-eyebrow">Research & Education</div>
+        <h2 className="mt-2 font-display text-2xl sm:text-3xl">Peptide Advancements</h2>
+        <p className="mt-2 text-sm text-muted-foreground max-w-2xl">
+          Curated articles on peptide science, recovery research, and what these compounds are being studied for.
+          These links are for educational purposes only.
+        </p>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {articles.map((a) => (
+          <a
+            key={a.title}
+            href={a.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group border border-foreground/15 p-5 hover:border-blood transition flex flex-col"
+          >
+            <div className="flex items-center gap-2 text-blood mb-3">
+              <BookOpen size={18} />
+              <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.18em]">{a.source}</span>
+            </div>
+            <h3 className="font-display text-lg sm:text-xl leading-tight group-hover:text-blood transition">{a.title}</h3>
+            <p className="mt-2 text-sm text-muted-foreground leading-relaxed flex-grow">{a.summary}</p>
+            <div className="mt-4 text-xs font-mono uppercase tracking-[0.14em] text-blood">Read article →</div>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
@@ -1164,4 +1238,5 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </label>
   );
 }
+
 
