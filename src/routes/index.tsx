@@ -13,10 +13,10 @@ import transform6 from "@/assets/transform-6.jpg.asset.json";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Titan Elite — Engineered Physique Coaching" },
-      { name: "description", content: "Premium 1:1 weightlifting programming and peptide education. No templates. Invest in yourself and engineer the body you train for." },
-      { property: "og:title", content: "Titan Elite — Engineered Physique Coaching" },
-      { property: "og:description", content: "Premium 1:1 weightlifting programming and peptide education. No templates. Invest in yourself and engineer the body you train for." },
+      { title: "Titan Elite — Peptide & Training Dashboard" },
+      { name: "description", content: "All-in-one client dashboard for peptide research and weightlifting: AI peptide answers, 50-compound library, dose calculator, stack tracker, injection guides, and custom protocols." },
+      { property: "og:title", content: "Titan Elite — Peptide & Training Dashboard" },
+      { property: "og:description", content: "All-in-one client dashboard for peptide research and weightlifting: AI peptide answers, 50-compound library, dose calculator, stack tracker, injection guides, and custom protocols." },
       { property: "og:url", content: "/" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
