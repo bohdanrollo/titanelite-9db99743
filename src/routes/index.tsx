@@ -118,8 +118,8 @@ function Marquee() {
 function Process() {
   const steps = [
     { n: "01", t: "Apply", d: "Share your goals, training history, health background, and peptide interests to unlock dashboard access." },
-    { n: "02", t: "Review", d: "We analyze your intake and build a personalized weightlifting and peptide research protocol." },
-    { n: "03", t: "Deliver", d: "Your custom protocol is delivered as a PDF and attached to your account dashboard." },
+    { n: "02", t: "Review", d: "We analyze your intake and build a 100% custom educational peptide protocol and weight-programming plan around your goals." },
+    { n: "03", t: "Deliver", d: "Your custom protocol and weight program are delivered as a PDF and attached to your account dashboard." },
     { n: "04", t: "Use", d: "Log in to track your stack, ask AI peptide questions, calculate doses, and reference every guide." },
   ];
   return (
