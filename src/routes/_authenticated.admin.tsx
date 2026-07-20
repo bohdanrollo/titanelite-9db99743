@@ -613,7 +613,7 @@ function AffiliatesAdmin() {
           onClick={async () => {
             if (!confirm("Send approval email to every approved affiliate?")) return;
             try {
-              const res = await resendFn({ data: {} as any });
+              const res = await resendFn();
               toast.success(`Sent ${res.sent} approval email(s)`);
             } catch (e: any) {
               toast.error(e?.message ?? "Failed to send");
