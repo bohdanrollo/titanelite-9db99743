@@ -128,3 +128,32 @@ export const markAffiliatePaid = createServerFn({ method: "POST" })
     if (error) throw error;
     return { ok: true };
   });
+
+/** Admin: resend approval email to all approved affiliates */
+export const resendApprovedAffiliateEmails = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { sendAppEmail } = await import("@/lib/email/send.server");
+    const { data: approved } = await supabaseAdmin
+      .from("affiliates")
+      .select("id, email, full_name, code")
+      .eq("status", "approved");
+    let sent = 0;
+    for (const a of approved ?? []) {
+      if (!a.email || !a.code) continue;
+      await sendAppEmail({
+        templateName: "affiliate-approved",
+        recipientEmail: a.email,
+        idempotencyKey: `affiliate-approved-resend-${a.id}-${Date.now()}`,
+        templateData: {
+          name: a.full_name || undefined,
+          code: a.code,
+          referralUrl: `https://titanelite.org/?ref=${a.code}`,
+        },
+      });
+      sent++;
+    }
+    return { ok: true, sent };
+  });
