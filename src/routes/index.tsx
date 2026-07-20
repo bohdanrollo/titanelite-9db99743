@@ -210,15 +210,15 @@ function Showcase() {
 
 function Testimonials() {
   const t = [
-    { q: "I've worked with three coaches before Titan. This is the first program that actually accounted for my injury history.", a: "Marcus R.", s: "Hypertrophy block, 16 weeks" },
-    { q: "The peptide education alone was worth the price. I finally understand what I'm putting in my body and why.", a: "Daniel K.", s: "Education + programming" },
-    { q: "Dropped 18 lb and added 40 lb to my squat. The check-ins keep you honest.", a: "Jess T.", s: "Recomp protocol, 12 weeks" },
+    { q: "The dose calculator finally made peptide math click. I know exactly how much to draw every time.", a: "Marcus R.", s: "Uses Dose Calculator + My Stack" },
+    { q: "I used to have 12 tabs open to research compounds. Now I just search the library in the dashboard.", a: "Daniel K.", s: "Uses Top 50 Peptides daily" },
+    { q: "Pep Talk AI answers questions at 10 PM when I’m planning my next dose. It’s like having a research assistant.", a: "Jess T.", s: "Uses Pep Talk AI + Injection Guide" },
   ];
   return (
     <section className="bg-background border-y border-foreground/10 py-24">
       <div className="container-edge">
-        <div className="text-eyebrow">Field Reports</div>
-        <h2 className="mt-4 text-5xl lg:text-6xl mb-12">From the roster.</h2>
+        <div className="text-eyebrow">Dashboard Reports</div>
+        <h2 className="mt-4 text-5xl lg:text-6xl mb-12">From the tools.</h2>
         <div className="grid lg:grid-cols-3 gap-px bg-foreground/15">
           {t.map((x) => (
             <figure key={x.a} className="bg-background p-8">
