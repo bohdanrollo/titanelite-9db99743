@@ -99,7 +99,7 @@ function Hero() {
 }
 
 function Marquee() {
-  const items = ["Hypertrophy", "Strength", "Recomposition", "Peptide Education", "Bloodwork Review", "Programming", "Accountability"];
+  const items = ["Pep Talk AI", "Dose Calculator", "Top 50 Peptides", "My Stack", "Injection Guide", "Reconstitution", "Lifting & Nutrition"];
   return (
     <div className="bg-ink text-bone overflow-hidden border-y border-foreground/20">
       <div className="flex gap-12 py-5 animate-[scroll_30s_linear_infinite] whitespace-nowrap">
