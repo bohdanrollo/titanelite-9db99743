@@ -116,21 +116,20 @@ function Marquee() {
 
 function Process() {
   const steps = [
-    { n: "01", t: "Apply", d: "Submit your detailed intake — training, health, goals, and peptide interests." },
-    { n: "02", t: "Review", d: "Our team personally analyzes every form and drafts your custom protocol plan." },
-    { n: "03", t: "Build", d: "You receive a custom weightlifting protocol and educational peptide protocol as a PDF." },
-    { n: "04", t: "Train", d: "Weekly check-ins, programming adjustments, and unlimited access to the dashboard tools." },
+    { n: "01", t: "Apply", d: "Share your goals, training history, health background, and peptide interests to unlock dashboard access." },
+    { n: "02", t: "Review", d: "We analyze your intake and build a personalized weightlifting and peptide research protocol." },
+    { n: "03", t: "Deliver", d: "Your custom protocol is delivered as a PDF and attached to your account dashboard." },
+    { n: "04", t: "Use", d: "Log in to track your stack, ask AI peptide questions, calculate doses, and reference every guide." },
   ];
   return (
     <section id="process" className="container-edge py-24 lg:py-32">
       <div className="grid lg:grid-cols-12 gap-12 items-end mb-16">
         <div className="lg:col-span-7">
-          <div className="text-eyebrow">The Process</div>
-          <h2 className="mt-4 text-5xl lg:text-7xl">Four steps. <br />No guesswork.</h2>
+          <div className="text-eyebrow">How It Works</div>
+          <h2 className="mt-4 text-5xl lg:text-7xl">Four steps. <br />One dashboard.</h2>
         </div>
         <p className="lg:col-span-5 text-muted-foreground">
-          Coaching is a system, not a vibe. Every client moves through the same disciplined
-          intake, review, and delivery flow — the protocol is what's custom.
+          The dashboard is the product. Apply, get reviewed, receive your protocol, and use the tools every day.
         </p>
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-foreground/15">
