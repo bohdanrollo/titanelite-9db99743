@@ -189,7 +189,7 @@ function ApplicationForm({ onSubmitted }: { onSubmitted: (a: Affiliate) => void 
     try {
       const code = form.desired_code.toUpperCase().replace(/[^A-Z0-9]/g, "");
       if (code.length < 2) throw new Error("Desired code must be at least 2 alphanumeric characters");
-      const { data, error } = await supabase.from("affiliates").insert({
+      const { error } = await supabase.from("affiliates").insert({
         full_name: form.full_name || null,
         email: form.email,
         phone: form.phone,
@@ -200,10 +200,17 @@ function ApplicationForm({ onSubmitted }: { onSubmitted: (a: Affiliate) => void 
         twitter: form.twitter || null,
         other_social: form.other_social || null,
         user_id: user?.id ?? null,
-      }).select("id, status, code, desired_code, email, referral_count, earnings_cents, created_at").single();
+      });
       if (error) throw error;
+      // Re-fetch via owner-scoped SELECT policy instead of echoing the insert
+      const { data: mine } = await supabase.from("affiliates")
+        .select("id, status, code, desired_code, email, referral_count, earnings_cents, created_at")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
       toast.success("Application submitted");
-      onSubmitted(data as Affiliate);
+      if (mine) onSubmitted(mine as Affiliate);
+
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Failed to submit");
     } finally {
