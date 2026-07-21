@@ -61,9 +61,9 @@ function Dashboard() {
         </p>
 
         {!intake && (
-          <div className="mt-8 border border-blood/40 bg-blood/5 p-5 sm:p-6">
-            <div className="font-display text-xl sm:text-2xl">Your intake isn't submitted yet.</div>
-            <p className="text-sm text-muted-foreground mt-2">Submit your intake to begin protocol review.</p>
+          <div className="mt-8 border border-foreground/15 bg-muted/30 p-5 sm:p-6">
+            <div className="font-display text-xl sm:text-2xl">Want a custom protocol?</div>
+            <p className="text-sm text-muted-foreground mt-2">Submitting an intake is optional — explore the dashboard freely. When you're ready for a personalized peptide + training plan, fill one out.</p>
             <Link to="/intake" className="mt-4 inline-flex btn-blood hover:btn-blood-hover">Begin Intake</Link>
           </div>
         )}
