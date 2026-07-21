@@ -42,7 +42,7 @@ function About() {
               your licensed medical provider.
             </p>
           </div>
-          <Link to="/intake" className="mt-10 inline-flex btn-blood hover:btn-blood-hover">Apply for coaching</Link>
+          <Link to="/auth" className="mt-10 inline-flex btn-blood hover:btn-blood-hover">Apply for coaching</Link>
         </div>
         <div className="lg:col-span-5">
           <div className="aspect-[3/4] overflow-hidden">

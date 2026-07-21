@@ -64,7 +64,7 @@ function Hero() {
             No guesswork. No scattered tabs. Just the tools you need to research and train with precision.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
-            <Link to="/intake" className="btn-blood hover:btn-blood-hover">
+            <Link to="/auth" className="btn-blood hover:btn-blood-hover">
               Get Dashboard Access <ArrowRight size={14} />
             </Link>
             <Link to="/services" className="btn-ghost hover:bg-foreground hover:text-background">
@@ -192,7 +192,7 @@ function Showcase() {
           <p className="mt-6 text-muted-foreground">
             Your 100% custom educational peptide protocol and weight-programming plan, stack, and progress live in the dashboard. Consistency + the right tools = results.
           </p>
-          <Link to="/intake" className="mt-8 btn-blood hover:btn-blood-hover inline-flex">Get dashboard access</Link>
+          <Link to="/auth" className="mt-8 btn-blood hover:btn-blood-hover inline-flex">Get dashboard access</Link>
         </div>
         <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[transform1.url, transform2.url, transform3.url, transform4.url, transform5.url, transform6.url].map((src, i) => (
@@ -277,7 +277,7 @@ function FinalCta() {
         <h2 className="mt-6 text-6xl lg:text-8xl leading-[0.85]">
           Your tools.<br />Your custom protocol.<br />One place.
         </h2>
-        <Link to="/intake" className="mt-10 inline-flex items-center gap-2 bg-ink text-bone font-mono uppercase tracking-[0.14em] text-xs font-bold px-8 py-4 hover:bg-bone hover:text-ink transition">
+        <Link to="/auth" className="mt-10 inline-flex items-center gap-2 bg-ink text-bone font-mono uppercase tracking-[0.14em] text-xs font-bold px-8 py-4 hover:bg-bone hover:text-ink transition">
           Get Dashboard Access <ArrowRight size={14} />
         </Link>
       </div>

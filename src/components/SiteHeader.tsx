@@ -44,7 +44,7 @@ export function SiteHeader() {
               <Link to="/auth" className="font-mono text-[11px] uppercase tracking-[0.18em] hover:text-blood">
                 Sign in
               </Link>
-              <Link to="/intake" className="btn-blood hover:btn-blood-hover">
+              <Link to="/auth" className="btn-blood hover:btn-blood-hover">
                 Apply
               </Link>
             </>
@@ -83,7 +83,7 @@ export function SiteHeader() {
               ) : (
                 <>
                   <Link to="/auth" onClick={() => setOpen(false)} className="btn-ghost">Sign in</Link>
-                  <Link to="/intake" onClick={() => setOpen(false)} className="btn-blood hover:btn-blood-hover">Apply</Link>
+                  <Link to="/auth" onClick={() => setOpen(false)} className="btn-blood hover:btn-blood-hover">Apply</Link>
                 </>
               )}
             </div>

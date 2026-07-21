@@ -45,7 +45,7 @@ function Services() {
         </div>
         <div className="mt-16 border-t border-foreground/10 pt-10 flex flex-wrap items-center justify-between gap-4">
           <p className="font-display text-3xl">Ready to apply?</p>
-          <Link to="/intake" className="btn-blood hover:btn-blood-hover">Begin Intake</Link>
+          <Link to="/auth" className="btn-blood hover:btn-blood-hover">Begin Intake</Link>
         </div>
       </section>
       <SiteFooter />
