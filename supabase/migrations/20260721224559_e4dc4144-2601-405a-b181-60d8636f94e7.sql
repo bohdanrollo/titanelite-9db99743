@@ -1,0 +1,1 @@
+CREATE POLICY "Admins can view all peptide stacks" ON public.peptide_stacks FOR SELECT TO authenticated USING (private.has_role(auth.uid(), 'admin'));
