@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { streamText, type ModelMessage } from "ai";
+import { createClient } from "@supabase/supabase-js";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 
 const SYSTEM_PROMPT = `You are "Pep Talk," Titan Elite's peptide research assistant.
@@ -20,6 +21,43 @@ export const Route = createFileRoute("/api/pep-talk")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        // Verify the caller is signed in and has Full Access (server-side paywall).
+        const authHeader = request.headers.get("authorization");
+        if (!authHeader) return new Response("Unauthorized", { status: 401 });
+
+        const supabaseUrl = process.env.SUPABASE_URL;
+        const publishable = process.env.SUPABASE_PUBLISHABLE_KEY;
+        if (!supabaseUrl || !publishable) {
+          return new Response("Server not configured", { status: 500 });
+        }
+
+        const sb = createClient(supabaseUrl, publishable, {
+          auth: { persistSession: false, autoRefreshToken: false },
+          global: {
+            fetch: (input, init) => {
+              const h = new Headers(init?.headers);
+              if (publishable.startsWith("sb_") && h.get("Authorization") === `Bearer ${publishable}`) {
+                h.delete("Authorization");
+              }
+              h.set("apikey", publishable);
+              h.set("Authorization", authHeader);
+              return fetch(input, { ...init, headers: h });
+            },
+          },
+        });
+        const { data: userData, error: userErr } = await sb.auth.getUser();
+        if (userErr || !userData.user) return new Response("Unauthorized", { status: 401 });
+
+        const { data: allowed, error: rpcErr } = await sb.rpc("has_access", {
+          _user_id: userData.user.id,
+          _min_tier: "full",
+        });
+        if (rpcErr) {
+          console.error("[pep-talk] has_access error", rpcErr);
+          return new Response("Access check failed", { status: 500 });
+        }
+        if (!allowed) return new Response("Full Access required", { status: 403 });
+
         const { messages } = (await request.json()) as { messages?: ChatMessage[] };
         if (!Array.isArray(messages) || messages.length === 0) {
           return new Response("Messages required", { status: 400 });

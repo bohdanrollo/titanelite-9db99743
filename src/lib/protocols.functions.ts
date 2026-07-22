@@ -226,9 +226,15 @@ export const getProtocolDownloadUrl = createServerFn({ method: "POST" })
       .eq("id", data.protocolId)
       .single();
     if (error || !p) throw new Error("Not found");
-    if (p.user_id !== userId) {
+    const isOwner = p.user_id === userId;
+    if (!isOwner) {
       const { data: role } = await supabase.from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
       if (!role) throw new Error("Forbidden");
+    } else {
+      // Owner must have Full Access (or admin role) to download protocols.
+      const { data: allowed, error: aErr } = await supabase.rpc("has_access", { _user_id: userId, _min_tier: "full" });
+      if (aErr) throw new Error("Access check failed");
+      if (!allowed) throw new Error("Full Access required to download protocols");
     }
     if (!p.pdf_storage_path) throw new Error("No PDF available");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -236,9 +242,10 @@ export const getProtocolDownloadUrl = createServerFn({ method: "POST" })
       .from("client-uploads")
       .createSignedUrl(p.pdf_storage_path, 60 * 60);
     if (sErr || !signed) throw new Error("Could not sign URL");
-    if (p.user_id === userId) {
+    if (isOwner) {
       await supabase.from("protocols").update({ viewed_at: new Date().toISOString() }).eq("id", p.id);
     }
     return { url: signed.signedUrl };
   });
+
 
