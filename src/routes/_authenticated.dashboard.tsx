@@ -66,13 +66,6 @@ function Dashboard() {
           and use code <span className="text-blood font-medium">BJR</span> to save.
         </p>
 
-        {!intake && (
-          <div className="mt-8 border border-foreground/15 bg-muted/30 p-5 sm:p-6">
-            <div className="font-display text-xl sm:text-2xl">Want a custom protocol?</div>
-            <p className="text-sm text-muted-foreground mt-2">Submitting an intake is optional — explore the dashboard freely. When you're ready for a personalized peptide + training plan, fill one out.</p>
-            <Link to="/intake" className="mt-4 inline-flex btn-blood hover:btn-blood-hover">Begin Intake</Link>
-          </div>
-        )}
         {intake && (
           <div className="mt-8 flex flex-wrap items-center gap-4 sm:gap-6 border-y border-foreground/10 py-4 text-sm">
             <div><span className="text-eyebrow block">Status</span><span className="font-display text-lg sm:text-xl">{intake.status}</span></div>
