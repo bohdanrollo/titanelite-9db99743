@@ -163,18 +163,36 @@ function Dashboard() {
         </nav>
 
         <div className="mt-8">
-          {tab === "protocols" && <Protocols />}
-          {tab === "peptalk" && <PepTalk />}
-          {tab === "peptides" && <Peptides />}
-          {tab === "mystack" && <MyStack />}
-          {tab === "supplies" && <Supplies />}
-          {tab === "reconstitution" && <Reconstitution />}
-          {tab === "injection" && <Injection />}
-          {tab === "calculator" && <PeptideCalculator />}
-          {tab === "lifting" && <Lifting />}
-          {tab === "articles" && <Articles />}
+          {tab === "protocols" && isTabAllowed("protocols", tier, isAdmin) && <Protocols />}
+          {tab === "peptalk" && isTabAllowed("peptalk", tier, isAdmin) && <PepTalk />}
+          {tab === "peptides" && isTabAllowed("peptides", tier, isAdmin) && <Peptides />}
+          {tab === "mystack" && isTabAllowed("mystack", tier, isAdmin) && <MyStack />}
+          {tab === "supplies" && isTabAllowed("supplies", tier, isAdmin) && <Supplies />}
+          {tab === "reconstitution" && isTabAllowed("reconstitution", tier, isAdmin) && <Reconstitution />}
+          {tab === "injection" && isTabAllowed("injection", tier, isAdmin) && <Injection />}
+          {tab === "calculator" && isTabAllowed("calculator", tier, isAdmin) && <PeptideCalculator />}
+          {tab === "lifting" && isTabAllowed("lifting", tier, isAdmin) && <Lifting />}
+          {tab === "articles" && isTabAllowed("articles", tier, isAdmin) && <Articles />}
         </div>
+        </>
+        )}
       </section>
+    </div>
+  );
+}
+
+function PaywallCard() {
+  return (
+    <div className="mt-10 border border-foreground/15 p-6 sm:p-10 text-center max-w-2xl mx-auto">
+      <Lock size={40} className="mx-auto text-blood" />
+      <div className="text-eyebrow mt-4">Locked</div>
+      <h2 className="mt-3 font-display text-3xl sm:text-4xl">Unlock the dashboard</h2>
+      <p className="mt-4 text-sm text-muted-foreground">
+        Choose a tier to access peptide research, calculators, protocols, and more. One-time payment, no subscription.
+      </p>
+      <Link to="/checkout" className="mt-6 inline-flex btn-blood hover:btn-blood-hover">
+        View plans
+      </Link>
     </div>
   );
 }
