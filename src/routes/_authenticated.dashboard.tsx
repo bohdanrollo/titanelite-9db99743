@@ -66,13 +66,6 @@ function Dashboard() {
           and use code <span className="text-blood font-medium">BJR</span> to save.
         </p>
 
-        {!intake && (
-          <div className="mt-8 border border-foreground/15 bg-muted/30 p-5 sm:p-6">
-            <div className="font-display text-xl sm:text-2xl">Want a custom protocol?</div>
-            <p className="text-sm text-muted-foreground mt-2">Submitting an intake is optional — explore the dashboard freely. When you're ready for a personalized peptide + training plan, fill one out.</p>
-            <Link to="/intake" className="mt-4 inline-flex btn-blood hover:btn-blood-hover">Begin Intake</Link>
-          </div>
-        )}
         {intake && (
           <div className="mt-8 flex flex-wrap items-center gap-4 sm:gap-6 border-y border-foreground/10 py-4 text-sm">
             <div><span className="text-eyebrow block">Status</span><span className="font-display text-lg sm:text-xl">{intake.status}</span></div>
@@ -208,8 +201,12 @@ function PaywallCard() {
 
 function Protocols() {
   const { user } = useAuth();
+  const { tier, isAdmin } = useAccess();
   const downloadFn = useServerFn(getProtocolDownloadUrl);
   const [items, setItems] = useState<{ id: string; type: string; title: string; status: string; draft_content: unknown; pdf_storage_path: string | null; coach_notes: string | null; created_at: string; delivered_at: string | null }[]>([]);
+  const [intake, setIntake] = useState<{ id: string; status: string; submitted_at: string } | null>(null);
+
+  const canIntake = isAdmin || tier === "full";
 
   useEffect(() => {
     if (!user) return;
@@ -219,6 +216,7 @@ function Protocols() {
       .eq("status", "delivered")
       .order("delivered_at", { ascending: false })
       .then(({ data }) => setItems(data ?? []));
+    supabase.from("intakes").select("id, status, submitted_at").eq("user_id", user.id).order("submitted_at", { ascending: false }).limit(1).maybeSingle().then(({ data }) => setIntake(data));
   }, [user]);
 
   async function download(id: string) {
@@ -230,10 +228,44 @@ function Protocols() {
     }
   }
 
-  if (!items.length) return <Empty title="No protocols yet" body="Once your coach delivers your custom protocol, it'll appear here with a downloadable PDF." />;
+  const intakeCta = (
+    <div className="border border-foreground/15 bg-muted/30 p-5 sm:p-6">
+      <div className="font-display text-xl sm:text-2xl">
+        {intake ? "Intake submitted" : "Want a custom protocol?"}
+      </div>
+      {intake ? (
+        <p className="text-sm text-muted-foreground mt-2">
+          Status: <span className="font-medium text-foreground">{intake.status}</span> · Submitted {new Date(intake.submitted_at).toLocaleDateString()}. Your coach will deliver your protocol here when ready.
+        </p>
+      ) : canIntake ? (
+        <>
+          <p className="text-sm text-muted-foreground mt-2">Fill out your intake and your coach will build a personalized peptide + training plan, delivered right here.</p>
+          <Link to="/intake" className="mt-4 inline-flex btn-blood hover:btn-blood-hover">Begin Intake</Link>
+        </>
+      ) : (
+        <>
+          <p className="text-sm text-muted-foreground mt-2">Custom coaching intakes are a Full Access benefit. Upgrade to unlock a personalized peptide + training protocol built by your coach.</p>
+          <Link to="/checkout" className="mt-4 inline-flex btn-blood hover:btn-blood-hover">
+            <Lock size={14} /> Upgrade to Full Access
+          </Link>
+        </>
+      )}
+    </div>
+  );
+
+  if (!items.length) {
+    return (
+      <div className="space-y-6">
+        {intakeCta}
+        <Empty title="No protocols yet" body="Once your coach delivers your custom protocol, it'll appear here with a downloadable PDF." />
+      </div>
+    );
+  }
+
 
   return (
     <div className="space-y-4">
+      {intakeCta}
       {items.map((p) => {
         const draft = p.draft_content as { overview?: string } | null;
         return (
