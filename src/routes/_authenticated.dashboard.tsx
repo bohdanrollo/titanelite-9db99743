@@ -152,11 +152,14 @@ function Dashboard() {
                         {allTabs.filter((t) => t.g === g).map((t, idx, arr) => (
                           <button
                             key={t.k}
-                            onClick={() => setTab(t.k)}
-                            className={`shrink-0 px-3 lg:px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] flex items-center gap-1.5 border-b-2 transition ${tab === t.k ? "border-blood text-blood" : "border-transparent text-muted-foreground hover:text-foreground"} ${idx < arr.length - 1 ? "mr-1" : ""}`}
-                            title={t.l}
+                            onClick={() => {
+                              if (t.locked) { nav({ to: "/checkout" }); return; }
+                              setTab(t.k);
+                            }}
+                            className={`shrink-0 px-3 lg:px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] flex items-center gap-1.5 border-b-2 transition ${tab === t.k && !t.locked ? "border-blood text-blood" : t.locked ? "border-transparent text-muted-foreground/50 hover:text-muted-foreground" : "border-transparent text-muted-foreground hover:text-foreground"} ${idx < arr.length - 1 ? "mr-1" : ""}`}
+                            title={t.locked ? `${t.l} — upgrade to unlock` : t.l}
                           >
-                            <t.i size={14} /> {t.l}
+                            <t.i size={14} /> {t.l}{t.locked && <Lock size={10} className="ml-0.5" />}
                           </button>
                         ))}
                       </div>
