@@ -10,7 +10,7 @@ const exploreNav = [
 ];
 
 const nav = [
-  { to: "/services", label: "Services" },
+  
   { to: "/about", label: "About" },
   { to: "/faq", label: "FAQ" },
   { to: "/affiliate", label: "Affiliate" },

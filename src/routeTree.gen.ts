@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as ServicesRouteImport } from './routes/services'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as IntakeRouteImport } from './routes/intake'
@@ -42,11 +41,6 @@ const TermsRoute = TermsRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ServicesRoute = ServicesRouteImport.update({
-  id: '/services',
-  path: '/services',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResultsRoute = ResultsRouteImport.update({
@@ -170,7 +164,6 @@ export interface FileRoutesByFullPath {
   '/intake': typeof IntakeRoute
   '/privacy': typeof PrivacyRoute
   '/results': typeof ResultsRoute
-  '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -195,7 +188,6 @@ export interface FileRoutesByTo {
   '/intake': typeof IntakeRoute
   '/privacy': typeof PrivacyRoute
   '/results': typeof ResultsRoute
-  '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -222,7 +214,6 @@ export interface FileRoutesById {
   '/intake': typeof IntakeRoute
   '/privacy': typeof PrivacyRoute
   '/results': typeof ResultsRoute
-  '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
@@ -249,7 +240,6 @@ export interface FileRouteTypes {
     | '/intake'
     | '/privacy'
     | '/results'
-    | '/services'
     | '/sitemap.xml'
     | '/terms'
     | '/admin'
@@ -274,7 +264,6 @@ export interface FileRouteTypes {
     | '/intake'
     | '/privacy'
     | '/results'
-    | '/services'
     | '/sitemap.xml'
     | '/terms'
     | '/admin'
@@ -300,7 +289,6 @@ export interface FileRouteTypes {
     | '/intake'
     | '/privacy'
     | '/results'
-    | '/services'
     | '/sitemap.xml'
     | '/terms'
     | '/_authenticated/admin'
@@ -327,7 +315,6 @@ export interface RootRouteChildren {
   IntakeRoute: typeof IntakeRoute
   PrivacyRoute: typeof PrivacyRoute
   ResultsRoute: typeof ResultsRoute
-  ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   ApiPepTalkRoute: typeof ApiPepTalkRoute
@@ -352,13 +339,6 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/services': {
-      id: '/services'
-      path: '/services'
-      fullPath: '/services'
-      preLoaderRoute: typeof ServicesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/results': {
@@ -539,7 +519,6 @@ const rootRouteChildren: RootRouteChildren = {
   IntakeRoute: IntakeRoute,
   PrivacyRoute: PrivacyRoute,
   ResultsRoute: ResultsRoute,
-  ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   ApiPepTalkRoute: ApiPepTalkRoute,
