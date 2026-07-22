@@ -1,10 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown } from "lucide-react";
+import { useAccess, isTabAllowed } from "@/lib/access";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock } from "lucide-react";
 import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import ReactMarkdown from "react-markdown";
@@ -18,10 +19,15 @@ type Tab = "protocols" | "peptalk" | "peptides" | "mystack" | "supplies" | "reco
 
 function Dashboard() {
   const { user, signOut } = useAuth();
-  const [tab, setTab] = useState<Tab>("protocols");
+  const { tier, loading: accessLoading, isAdmin } = useAccess();
+  const nav = useNavigate();
+  const [tab, setTab] = useState<Tab>("peptides");
   const [navOpen, setNavOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const [intake, setIntake] = useState<{ id: string; status: string; submitted_at: string } | null>(null);
+
+  // If user has no access, keep them on paywall regardless of `tab` state.
+  const hasAccess = isAdmin || tier === "limited" || tier === "full";
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
@@ -74,6 +80,12 @@ function Dashboard() {
           </div>
         )}
 
+        {accessLoading ? (
+          <div className="mt-10 text-eyebrow">Loading access…</div>
+        ) : !hasAccess ? (
+          <PaywallCard />
+        ) : (
+        <>
         <nav ref={navRef} className="mt-8 sm:mt-10 -mx-4 sm:mx-0 border-b border-foreground/15 px-4 sm:px-0 pb-3">
           {(() => {
             const allTabs = [
@@ -87,7 +99,7 @@ function Dashboard() {
               { k: "reconstitution", l: "Reconstitution", i: FlaskConical, g: "Tools" },
               { k: "injection", l: "Injection", i: Syringe, g: "Tools" },
               { k: "peptalk", l: "Pep Talk", i: MessageCircle, g: "Assistant" },
-            ] as const;
+            ].map((t) => ({ ...t, locked: !isTabAllowed(t.k, tier, isAdmin) })) as Array<{ k: Tab; l: string; i: typeof FileText; g: string; locked: boolean }>;
             const active = allTabs.find((t) => t.k === tab) ?? allTabs[0];
             const groups = ["Plan", "Research", "Tools", "Assistant"] as const;
             return (
@@ -113,10 +125,15 @@ function Dashboard() {
                           {allTabs.filter((t) => t.g === g).map((t) => (
                             <button
                               key={t.k}
-                              onClick={() => { setTab(t.k); setNavOpen(false); }}
-                              className={`w-full flex items-center gap-2 px-3 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] transition ${tab === t.k ? "bg-blood/10 text-blood" : "hover:bg-muted"}`}
+                              onClick={() => {
+                                setNavOpen(false);
+                                if (t.locked) { nav({ to: "/checkout" }); return; }
+                                setTab(t.k);
+                              }}
+                              className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] transition ${tab === t.k && !t.locked ? "bg-blood/10 text-blood" : t.locked ? "text-muted-foreground/60 hover:bg-muted" : "hover:bg-muted"}`}
                             >
-                              <t.i size={14} /> {t.l}
+                              <span className="flex items-center gap-2"><t.i size={14} /> {t.l}</span>
+                              {t.locked && <Lock size={11} />}
                             </button>
                           ))}
                         </div>
@@ -135,11 +152,14 @@ function Dashboard() {
                         {allTabs.filter((t) => t.g === g).map((t, idx, arr) => (
                           <button
                             key={t.k}
-                            onClick={() => setTab(t.k)}
-                            className={`shrink-0 px-3 lg:px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] flex items-center gap-1.5 border-b-2 transition ${tab === t.k ? "border-blood text-blood" : "border-transparent text-muted-foreground hover:text-foreground"} ${idx < arr.length - 1 ? "mr-1" : ""}`}
-                            title={t.l}
+                            onClick={() => {
+                              if (t.locked) { nav({ to: "/checkout" }); return; }
+                              setTab(t.k);
+                            }}
+                            className={`shrink-0 px-3 lg:px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] flex items-center gap-1.5 border-b-2 transition ${tab === t.k && !t.locked ? "border-blood text-blood" : t.locked ? "border-transparent text-muted-foreground/50 hover:text-muted-foreground" : "border-transparent text-muted-foreground hover:text-foreground"} ${idx < arr.length - 1 ? "mr-1" : ""}`}
+                            title={t.locked ? `${t.l} — upgrade to unlock` : t.l}
                           >
-                            <t.i size={14} /> {t.l}
+                            <t.i size={14} /> {t.l}{t.locked && <Lock size={10} className="ml-0.5" />}
                           </button>
                         ))}
                       </div>
@@ -152,18 +172,36 @@ function Dashboard() {
         </nav>
 
         <div className="mt-8">
-          {tab === "protocols" && <Protocols />}
-          {tab === "peptalk" && <PepTalk />}
-          {tab === "peptides" && <Peptides />}
-          {tab === "mystack" && <MyStack />}
-          {tab === "supplies" && <Supplies />}
-          {tab === "reconstitution" && <Reconstitution />}
-          {tab === "injection" && <Injection />}
-          {tab === "calculator" && <PeptideCalculator />}
-          {tab === "lifting" && <Lifting />}
-          {tab === "articles" && <Articles />}
+          {tab === "protocols" && isTabAllowed("protocols", tier, isAdmin) && <Protocols />}
+          {tab === "peptalk" && isTabAllowed("peptalk", tier, isAdmin) && <PepTalk />}
+          {tab === "peptides" && isTabAllowed("peptides", tier, isAdmin) && <Peptides />}
+          {tab === "mystack" && isTabAllowed("mystack", tier, isAdmin) && <MyStack />}
+          {tab === "supplies" && isTabAllowed("supplies", tier, isAdmin) && <Supplies />}
+          {tab === "reconstitution" && isTabAllowed("reconstitution", tier, isAdmin) && <Reconstitution />}
+          {tab === "injection" && isTabAllowed("injection", tier, isAdmin) && <Injection />}
+          {tab === "calculator" && isTabAllowed("calculator", tier, isAdmin) && <PeptideCalculator />}
+          {tab === "lifting" && isTabAllowed("lifting", tier, isAdmin) && <Lifting />}
+          {tab === "articles" && isTabAllowed("articles", tier, isAdmin) && <Articles />}
         </div>
+        </>
+        )}
       </section>
+    </div>
+  );
+}
+
+function PaywallCard() {
+  return (
+    <div className="mt-10 border border-foreground/15 p-6 sm:p-10 text-center max-w-2xl mx-auto">
+      <Lock size={40} className="mx-auto text-blood" />
+      <div className="text-eyebrow mt-4">Locked</div>
+      <h2 className="mt-3 font-display text-3xl sm:text-4xl">Unlock the dashboard</h2>
+      <p className="mt-4 text-sm text-muted-foreground">
+        Choose a tier to access peptide research, calculators, protocols, and more. One-time payment, no subscription.
+      </p>
+      <Link to="/checkout" className="mt-6 inline-flex btn-blood hover:btn-blood-hover">
+        View plans
+      </Link>
     </div>
   );
 }
