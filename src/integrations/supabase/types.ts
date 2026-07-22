@@ -569,6 +569,7 @@ export type Database = {
           environment: string
           id: string
           stripe_customer_id: string | null
+          stripe_payment_intent_id: string | null
           stripe_price_id: string | null
           stripe_session_id: string | null
           tier: string
@@ -580,6 +581,7 @@ export type Database = {
           environment?: string
           id?: string
           stripe_customer_id?: string | null
+          stripe_payment_intent_id?: string | null
           stripe_price_id?: string | null
           stripe_session_id?: string | null
           tier: string
@@ -591,6 +593,7 @@ export type Database = {
           environment?: string
           id?: string
           stripe_customer_id?: string | null
+          stripe_payment_intent_id?: string | null
           stripe_price_id?: string | null
           stripe_session_id?: string | null
           tier?: string
@@ -633,6 +636,10 @@ export type Database = {
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
+      }
+      has_access: {
+        Args: { _env?: string; _min_tier?: string; _user_id: string }
+        Returns: boolean
       }
       move_to_dlq: {
         Args: {
