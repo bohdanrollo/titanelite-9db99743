@@ -350,12 +350,19 @@ function PepTalk() {
     setStatus("submitted");
 
     try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
       const res = await fetch("/api/pep-talk", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ messages: next.map((m) => ({ role: m.role, content: m.content })) }),
       });
+      if (res.status === 403) throw new Error("Full Access required to use Pep Talk.");
       if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
+
 
       setStatus("streaming");
       const reader = res.body.getReader();
