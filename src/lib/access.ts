@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import { getStripeEnvironment } from "@/lib/stripe";
 
 export type AccessTier = "limited" | "full" | null;
 
@@ -21,36 +22,41 @@ export function isTabAllowed(tab: string, tier: AccessTier, isAdmin: boolean): b
   return false;
 }
 
+function currentEnv(): "sandbox" | "live" | null {
+  try {
+    return getStripeEnvironment();
+  } catch {
+    return null;
+  }
+}
+
 export function useAccess() {
   const { user, role } = useAuth();
   const [tier, setTier] = useState<AccessTier>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const load = useCallback(async () => {
     if (!user) {
       setTier(null);
       setLoading(false);
       return;
     }
-    let cancelled = false;
-    setLoading(true);
+    const env = currentEnv();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (supabase as any)
-      .from("user_access")
-      .select("tier")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle()
-      .then(({ data }: { data: { tier: AccessTier } | null }) => {
-        if (cancelled) return;
-        setTier((data?.tier as AccessTier) ?? null);
-        setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
+    let q: any = (supabase as any).from("user_access").select("tier").eq("user_id", user.id);
+    if (env) q = q.eq("environment", env);
+    q = q.order("created_at", { ascending: false }).limit(1).maybeSingle();
+    const { data } = await q;
+    setTier((data?.tier as AccessTier) ?? null);
+    setLoading(false);
   }, [user]);
 
-  return { tier, loading, isAdmin: role === "admin" };
+  useEffect(() => {
+    setLoading(true);
+    let cancelled = false;
+    load().catch(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [load]);
+
+  return { tier, loading, isAdmin: role === "admin", refresh: load };
 }
