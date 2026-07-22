@@ -2,15 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-async function assertAdmin(
-  supabase: { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: unknown }> },
-  userId: string,
-) {
-  const { data, error } = await supabase.rpc("has_access", { _user_id: userId, _min_tier: "full" });
-  // has_access returns true for admins; but we want a strict admin gate here.
-  // Use user_roles directly instead.
-  void data; void error;
-}
+// Admin gate is performed inline via user_roles lookups below.
 
 export const grantAccess = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
