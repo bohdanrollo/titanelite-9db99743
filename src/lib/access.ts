@@ -34,14 +34,15 @@ export function useAccess() {
     }
     let cancelled = false;
     setLoading(true);
-    supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (supabase as any)
       .from("user_access")
       .select("tier")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle()
-      .then(({ data }) => {
+      .then(({ data }: { data: { tier: AccessTier } | null }) => {
         if (cancelled) return;
         setTier((data?.tier as AccessTier) ?? null);
         setLoading(false);
