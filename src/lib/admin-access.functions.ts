@@ -15,7 +15,6 @@ export const grantAccess = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { supabase, userId } = context;
     // Strict admin check
     const { data: roleRow } = await supabase
       .from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
