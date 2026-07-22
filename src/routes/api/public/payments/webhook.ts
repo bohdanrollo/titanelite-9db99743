@@ -43,7 +43,8 @@ async function handleCheckoutCompleted(session: CheckoutSession, env: StripeEnv)
 
   // Upgrade rule: only overwrite an existing row if the new tier is 'full'
   // (upgrade from limited → full). Never downgrade.
-  const supa = getSupabase();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supa = getSupabase() as any;
   const { data: existing } = await supa
     .from("user_access")
     .select("id, tier")
@@ -52,7 +53,7 @@ async function handleCheckoutCompleted(session: CheckoutSession, env: StripeEnv)
 
   if (existing) {
     const currentTier = existing.tier as "limited" | "full";
-    if (currentTier === "full") return; // already max
+    if (currentTier === "full") return;
     if (tier === "full") {
       await supa
         .from("user_access")
@@ -64,7 +65,7 @@ async function handleCheckoutCompleted(session: CheckoutSession, env: StripeEnv)
           environment: env,
           updated_at: new Date().toISOString(),
         })
-        .eq("id", existing.id as string);
+        .eq("id", existing.id);
     }
     return;
   }
