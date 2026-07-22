@@ -48,15 +48,26 @@ export const Route = createFileRoute("/api/pep-talk")({
         const { data: userData, error: userErr } = await sb.auth.getUser();
         if (userErr || !userData.user) return new Response("Unauthorized", { status: 401 });
 
-        const { data: allowed, error: rpcErr } = await sb.rpc("has_access", {
-          _user_id: userData.user.id,
-          _min_tier: "full",
-        });
-        if (rpcErr) {
-          console.error("[pep-talk] has_access error", rpcErr);
+        const { data: accessRow, error: accErr } = await sb
+          .from("user_access")
+          .select("tier")
+          .eq("user_id", userData.user.id)
+          .eq("tier", "full")
+          .maybeSingle();
+        if (accErr) {
+          console.error("[pep-talk] access check error", accErr);
           return new Response("Access check failed", { status: 500 });
         }
-        if (!allowed) return new Response("Full Access required", { status: 403 });
+        if (!accessRow) {
+          // Admins are also allowed
+          const { data: roleRow } = await sb
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", userData.user.id)
+            .eq("role", "admin")
+            .maybeSingle();
+          if (!roleRow) return new Response("Full Access required", { status: 403 });
+        }
 
         const { messages } = (await request.json()) as { messages?: ChatMessage[] };
         if (!Array.isArray(messages) || messages.length === 0) {

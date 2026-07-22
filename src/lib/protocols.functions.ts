@@ -231,10 +231,15 @@ export const getProtocolDownloadUrl = createServerFn({ method: "POST" })
       const { data: role } = await supabase.from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
       if (!role) throw new Error("Forbidden");
     } else {
-      // Owner must have Full Access (or admin role) to download protocols.
-      const { data: allowed, error: aErr } = await supabase.rpc("has_access", { _user_id: userId, _min_tier: "full" });
+      // Owner must have Full Access to download protocols.
+      const { data: access, error: aErr } = await supabase
+        .from("user_access")
+        .select("tier")
+        .eq("user_id", userId)
+        .eq("tier", "full")
+        .maybeSingle();
       if (aErr) throw new Error("Access check failed");
-      if (!allowed) throw new Error("Full Access required to download protocols");
+      if (!access) throw new Error("Full Access required to download protocols");
     }
     if (!p.pdf_storage_path) throw new Error("No PDF available");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
