@@ -20,6 +20,7 @@ type Tab = "protocols" | "peptalk" | "peptides" | "mystack" | "supplies" | "reco
 function Dashboard() {
   const { user, signOut } = useAuth();
   const { tier, loading: accessLoading, isAdmin } = useAccess();
+  const nav = useNavigate();
   const [tab, setTab] = useState<Tab>("peptides");
   const [navOpen, setNavOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
