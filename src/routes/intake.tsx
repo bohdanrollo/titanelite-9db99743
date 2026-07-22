@@ -40,6 +40,7 @@ const initial: Form = {
 
 function Intake() {
   const { user } = useAuth();
+  const { tier, isAdmin, loading: accessLoading } = useAccess();
   const nav = useNavigate();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<Form>(initial);
@@ -65,6 +66,25 @@ function Intake() {
       </div>
     );
   }
+
+  const canIntake = isAdmin || tier === "full";
+  if (!accessLoading && !canIntake) {
+    return (
+      <div className="min-h-dvh bg-background">
+        <SiteHeader />
+        <section className="container-edge py-20 text-center max-w-xl mx-auto">
+          <div className="text-eyebrow">Intake — Full Access</div>
+          <h1 className="mt-4 text-4xl sm:text-5xl">Custom intakes are a Full Access benefit.</h1>
+          <p className="mt-4 text-muted-foreground">Upgrade to Full Access to submit your intake and receive a personalized peptide + training protocol built by your coach.</p>
+          <button onClick={() => nav({ to: "/checkout" })} className="mt-8 btn-blood hover:btn-blood-hover">
+            <Lock size={14} /> Upgrade to Full Access
+          </button>
+        </section>
+        <SiteFooter />
+      </div>
+    );
+  }
+
 
 
   async function uploadFiles(files: File[], folder: string): Promise<string[]> {
