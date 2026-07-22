@@ -265,6 +265,7 @@ function Protocols() {
 
   return (
     <div className="space-y-4">
+      {intakeCta}
       {items.map((p) => {
         const draft = p.draft_content as { overview?: string } | null;
         return (
