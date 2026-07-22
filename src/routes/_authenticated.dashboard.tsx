@@ -4,7 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown } from "lucide-react";
+import { useAccess, isTabAllowed } from "@/lib/access";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock } from "lucide-react";
 import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import ReactMarkdown from "react-markdown";
@@ -18,10 +19,14 @@ type Tab = "protocols" | "peptalk" | "peptides" | "mystack" | "supplies" | "reco
 
 function Dashboard() {
   const { user, signOut } = useAuth();
-  const [tab, setTab] = useState<Tab>("protocols");
+  const { tier, loading: accessLoading, isAdmin } = useAccess();
+  const [tab, setTab] = useState<Tab>("peptides");
   const [navOpen, setNavOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const [intake, setIntake] = useState<{ id: string; status: string; submitted_at: string } | null>(null);
+
+  // If user has no access, keep them on paywall regardless of `tab` state.
+  const hasAccess = isAdmin || tier === "limited" || tier === "full";
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
