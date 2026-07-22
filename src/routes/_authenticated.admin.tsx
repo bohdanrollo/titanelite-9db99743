@@ -91,37 +91,129 @@ function Admin() {
 
 function Clients() {
   const [rows, setRows] = useState<{ id: string; full_name: string | null; email: string | null; created_at: string }[]>([]);
+  const [access, setAccess] = useState<Record<string, "limited" | "full">>({});
   const [q, setQ] = useState("");
-  useEffect(() => {
-    supabase.from("profiles").select("id, full_name, email, created_at").order("created_at", { ascending: false }).then(({ data }) => setRows(data ?? []));
-  }, []);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const grantFn = useServerFn(grantAccess);
+  const revokeFn = useServerFn(revokeAccess);
+  const listFn = useServerFn(listAccess);
+
+  let env: "sandbox" | "live" = "sandbox";
+  try { env = getStripeEnvironment(); } catch { /* keep default */ }
+
+  const reload = async () => {
+    const [{ data }, accessRes] = await Promise.all([
+      supabase.from("profiles").select("id, full_name, email, created_at").order("created_at", { ascending: false }),
+      listFn({ data: { environment: env } }).catch(() => ({ rows: [] as { user_id: string; tier: "limited" | "full" }[] })),
+    ]);
+    setRows(data ?? []);
+    const map: Record<string, "limited" | "full"> = {};
+    accessRes.rows.forEach((r) => { map[r.user_id] = r.tier; });
+    setAccess(map);
+  };
+
+  useEffect(() => { reload(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, []);
+
+  const grant = async (userId: string, tier: "limited" | "full") => {
+    setBusyId(userId);
+    try {
+      await grantFn({ data: { userId, tier, environment: env } });
+      toast.success(`Granted ${tier === "full" ? "Full" : "Limited"} access.`);
+      await reload();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to grant access");
+    } finally { setBusyId(null); }
+  };
+  const revoke = async (userId: string) => {
+    if (!confirm("Revoke this client's dashboard access?")) return;
+    setBusyId(userId);
+    try {
+      await revokeFn({ data: { userId, environment: env } });
+      toast.success("Access revoked.");
+      await reload();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to revoke access");
+    } finally { setBusyId(null); }
+  };
+
   const filtered = rows.filter((r) => !q || `${r.full_name ?? ""} ${r.email ?? ""}`.toLowerCase().includes(q.toLowerCase()));
   return (
     <div>
-      <div className="relative max-w-md mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name or email…" className="w-full pl-10 pr-4 py-3 bg-background border border-foreground/20 focus:outline-none focus:border-blood" />
+      <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
+        <div className="relative max-w-md flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name or email…" className="w-full pl-10 pr-4 py-3 bg-background border border-foreground/20 focus:outline-none focus:border-blood" />
+        </div>
+        <span className="text-eyebrow text-muted-foreground">Env: {env}</span>
       </div>
-      <div className="border border-foreground/10">
+      <div className="border border-foreground/10 overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-muted text-left text-eyebrow">
-            <tr><th className="p-3">Name</th><th className="p-3">Email</th><th className="p-3">Joined</th></tr>
+            <tr>
+              <th className="p-3">Name</th>
+              <th className="p-3">Email</th>
+              <th className="p-3">Access</th>
+              <th className="p-3">Joined</th>
+              <th className="p-3 text-right">Actions</th>
+            </tr>
           </thead>
           <tbody>
-            {filtered.map((r) => (
-              <tr key={r.id} className="border-t border-foreground/10 hover:bg-muted/40">
-                <td className="p-3 font-medium">{r.full_name || "—"}</td>
-                <td className="p-3 text-muted-foreground">{r.email}</td>
-                <td className="p-3 font-mono text-xs">{new Date(r.created_at).toLocaleDateString()}</td>
-              </tr>
-            ))}
-            {!filtered.length && <tr><td colSpan={3} className="p-8 text-center text-muted-foreground">No clients yet.</td></tr>}
+            {filtered.map((r) => {
+              const tier = access[r.id];
+              return (
+                <tr key={r.id} className="border-t border-foreground/10 hover:bg-muted/40">
+                  <td className="p-3 font-medium">{r.full_name || "—"}</td>
+                  <td className="p-3 text-muted-foreground">{r.email}</td>
+                  <td className="p-3">
+                    {tier === "full" ? (
+                      <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-emerald-600">
+                        <span className="h-2 w-2 rounded-full bg-emerald-500" /> Full
+                      </span>
+                    ) : tier === "limited" ? (
+                      <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-600">
+                        <span className="h-2 w-2 rounded-full bg-amber-500" /> Limited
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                        <Lock size={10} /> None
+                      </span>
+                    )}
+                  </td>
+                  <td className="p-3 font-mono text-xs">{new Date(r.created_at).toLocaleDateString()}</td>
+                  <td className="p-3 text-right whitespace-nowrap">
+                    {busyId === r.id ? (
+                      <Loader2 size={14} className="animate-spin inline text-muted-foreground" />
+                    ) : (
+                      <div className="inline-flex gap-1">
+                        {tier !== "limited" && tier !== "full" && (
+                          <button onClick={() => grant(r.id, "limited")} className="px-2 py-1 border border-foreground/20 font-mono text-[10px] uppercase tracking-[0.14em] hover:border-blood hover:text-blood">
+                            Grant Limited
+                          </button>
+                        )}
+                        {tier !== "full" && (
+                          <button onClick={() => grant(r.id, "full")} className="px-2 py-1 border border-foreground/20 font-mono text-[10px] uppercase tracking-[0.14em] hover:border-blood hover:text-blood">
+                            Grant Full
+                          </button>
+                        )}
+                        {(tier === "limited" || tier === "full") && (
+                          <button onClick={() => revoke(r.id)} className="px-2 py-1 border border-foreground/20 font-mono text-[10px] uppercase tracking-[0.14em] text-blood hover:bg-blood hover:text-background">
+                            Revoke
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+            {!filtered.length && <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">No clients yet.</td></tr>}
           </tbody>
         </table>
       </div>
     </div>
   );
 }
+
 
 type IntakeRow = {
   id: string; user_id: string; status: string; submitted_at: string;
