@@ -79,6 +79,12 @@ function Dashboard() {
           </div>
         )}
 
+        {accessLoading ? (
+          <div className="mt-10 text-eyebrow">Loading access…</div>
+        ) : !hasAccess ? (
+          <PaywallCard />
+        ) : (
+        <>
         <nav ref={navRef} className="mt-8 sm:mt-10 -mx-4 sm:mx-0 border-b border-foreground/15 px-4 sm:px-0 pb-3">
           {(() => {
             const allTabs = [
@@ -92,7 +98,7 @@ function Dashboard() {
               { k: "reconstitution", l: "Reconstitution", i: FlaskConical, g: "Tools" },
               { k: "injection", l: "Injection", i: Syringe, g: "Tools" },
               { k: "peptalk", l: "Pep Talk", i: MessageCircle, g: "Assistant" },
-            ] as const;
+            ].map((t) => ({ ...t, locked: !isTabAllowed(t.k, tier, isAdmin) })) as Array<{ k: Tab; l: string; i: typeof FileText; g: string; locked: boolean }>;
             const active = allTabs.find((t) => t.k === tab) ?? allTabs[0];
             const groups = ["Plan", "Research", "Tools", "Assistant"] as const;
             return (
