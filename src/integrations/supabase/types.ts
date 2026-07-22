@@ -637,10 +637,6 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
-      has_access: {
-        Args: { _env?: string; _min_tier?: string; _user_id: string }
-        Returns: boolean
-      }
       move_to_dlq: {
         Args: {
           dlq_name: string
