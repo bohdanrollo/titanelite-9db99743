@@ -563,6 +563,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_access: {
+        Row: {
+          created_at: string
+          environment: string
+          id: string
+          stripe_customer_id: string | null
+          stripe_price_id: string | null
+          stripe_session_id: string | null
+          tier: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          environment?: string
+          id?: string
+          stripe_customer_id?: string | null
+          stripe_price_id?: string | null
+          stripe_session_id?: string | null
+          tier: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          environment?: string
+          id?: string
+          stripe_customer_id?: string | null
+          stripe_price_id?: string | null
+          stripe_session_id?: string | null
+          tier?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
