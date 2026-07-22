@@ -125,10 +125,15 @@ function Dashboard() {
                           {allTabs.filter((t) => t.g === g).map((t) => (
                             <button
                               key={t.k}
-                              onClick={() => { setTab(t.k); setNavOpen(false); }}
-                              className={`w-full flex items-center gap-2 px-3 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] transition ${tab === t.k ? "bg-blood/10 text-blood" : "hover:bg-muted"}`}
+                              onClick={() => {
+                                setNavOpen(false);
+                                if (t.locked) { nav({ to: "/checkout" }); return; }
+                                setTab(t.k);
+                              }}
+                              className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] transition ${tab === t.k && !t.locked ? "bg-blood/10 text-blood" : t.locked ? "text-muted-foreground/60 hover:bg-muted" : "hover:bg-muted"}`}
                             >
-                              <t.i size={14} /> {t.l}
+                              <span className="flex items-center gap-2"><t.i size={14} /> {t.l}</span>
+                              {t.locked && <Lock size={11} />}
                             </button>
                           ))}
                         </div>
