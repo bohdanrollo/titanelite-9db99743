@@ -7,9 +7,11 @@ export const Route = createFileRoute("/faq")({
   head: () => ({
     meta: [
       { title: "FAQ — Titan Elite" },
-      { name: "description", content: "Frequently asked questions about Titan Elite coaching." },
+      { name: "description", content: "Answers to common questions about Titan Elite's custom fitness protocols, peptide education tools, and the client dashboard." },
       { property: "og:title", content: "FAQ — Titan Elite" },
-      { property: "og:description", content: "Common questions answered." },
+      { property: "og:description", content: "Answers to common questions about Titan Elite's custom fitness protocols, peptide education tools, and the client dashboard." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: FAQ,
