@@ -1,14 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Dumbbell, FlaskConical, FileText, ChevronDown, MessageCircle, Beaker, ListChecks, Droplets, Syringe, Calculator } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import heroImg from "@/assets/titan-logo.jpg.asset.json";
-import transform1 from "@/assets/transform-1.jpg.asset.json";
-import transform2 from "@/assets/transform-2.jpg.asset.json";
-import transform3 from "@/assets/transform-3.jpg.asset.json";
-import transform4 from "@/assets/transform-4.jpg.asset.json";
-import transform5 from "@/assets/transform-5.jpg.asset.json";
-import transform6 from "@/assets/transform-6.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -21,26 +15,16 @@ export const Route = createFileRoute("/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [
-      { rel: "canonical", href: "/" },
-    ],
+    links: [{ rel: "canonical", href: "/" }],
   }),
   component: Home,
 });
 
 function Home() {
   return (
-    <div className="min-h-dvh bg-background text-foreground">
+    <div className="min-h-dvh bg-background text-foreground flex flex-col">
       <SiteHeader />
       <Hero />
-      <Marquee />
-      <Process />
-      <DashboardFeatures />
-      <Showcase />
-      <Testimonials />
-
-      <FAQPreview />
-      <FinalCta />
       <SiteFooter />
     </div>
   );
@@ -48,7 +32,7 @@ function Home() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden border-b border-foreground/10">
+    <section className="relative overflow-hidden border-b border-foreground/10 flex-1">
       <div className="container-edge grid lg:grid-cols-12 gap-10 pt-16 pb-20 lg:pt-24 lg:pb-32">
         <div className="lg:col-span-7 flex flex-col justify-center">
           <div className="text-eyebrow">YOUR COMPLETE RESEARCH DASHBOARD</div>
@@ -67,7 +51,7 @@ function Hero() {
             <Link to="/auth" className="btn-blood hover:btn-blood-hover">
               Get Dashboard Access <ArrowRight size={14} />
             </Link>
-            <Link to="/services" className="btn-ghost hover:bg-foreground hover:text-background">
+            <Link to="/features" className="btn-ghost hover:bg-foreground hover:text-background">
               See Dashboard Tools
             </Link>
           </div>
@@ -94,192 +78,6 @@ function Hero() {
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  );
-}
-
-function Marquee() {
-  const items = ["Pep Talk AI", "Dose Calculator", "Top 50 Peptides", "My Stack", "Injection Guide", "Reconstitution", "Lifting & Nutrition"];
-  return (
-    <div className="bg-ink text-bone overflow-hidden border-y border-foreground/20">
-      <div className="flex gap-12 py-5 animate-[scroll_30s_linear_infinite] whitespace-nowrap">
-        {[...items, ...items, ...items].map((t, i) => (
-          <span key={i} className="font-display text-2xl tracking-wider flex items-center gap-12">
-            {t} <span className="h-1.5 w-1.5 bg-blood inline-block rounded-full" />
-          </span>
-        ))}
-      </div>
-      <style>{`@keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-33.333%); } }`}</style>
-    </div>
-  );
-}
-
-function Process() {
-  const steps = [
-    { n: "01", t: "Apply", d: "Share your goals, training history, health background, and peptide interests to unlock dashboard access." },
-    { n: "02", t: "Review", d: "We analyze your intake and build a 100% custom educational peptide protocol and weight-programming plan around your goals." },
-    { n: "03", t: "Deliver", d: "Your custom protocol and weight program are delivered as a PDF and attached to your account dashboard." },
-    { n: "04", t: "Use", d: "Log in to track your stack, ask AI peptide questions, calculate doses, and reference every guide." },
-  ];
-  return (
-    <section id="process" className="container-edge py-24 lg:py-32">
-      <div className="grid lg:grid-cols-12 gap-12 items-end mb-16">
-        <div className="lg:col-span-7">
-          <div className="text-eyebrow">How It Works</div>
-          <h2 className="mt-4 text-5xl lg:text-7xl">Four steps. <br />One dashboard.</h2>
-        </div>
-        <p className="lg:col-span-5 text-muted-foreground">
-          The dashboard is the product. Apply, get reviewed, receive your 100% custom educational peptide protocol and weight programming, and use the tools every day.
-        </p>
-      </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-foreground/15">
-        {steps.map((s) => (
-          <div key={s.n} className="bg-background p-8 group hover:bg-ink hover:text-bone transition">
-            <div className="font-mono text-blood text-sm">{s.n}</div>
-            <div className="font-display text-3xl mt-4">{s.t}</div>
-            <p className="mt-3 text-sm text-muted-foreground group-hover:text-bone/70">{s.d}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function DashboardFeatures() {
-  const items = [
-    { i: FileText, t: "Custom Protocols", d: "Receive a 100% custom educational peptide protocol and weight-programming plan built from your intake, delivered as a PDF." },
-    { i: MessageCircle, t: "Pep Talk AI", d: "Ask anything about peptide effects, dosing, timing, stacking, and safety — instant research answers." },
-    { i: Beaker, t: "Top 50 Peptides", d: "A searchable research library covering the most popular compounds and what each is studied for." },
-    { i: ListChecks, t: "My Stack", d: "Track every peptide, dose, unit, frequency, schedule, and notes in your personal dosing log." },
-    { i: Droplets, t: "Supplies Guide", d: "BAC water, insulin syringes, alcohol wipes, plus storage techniques before and after reconstitution." },
-    { i: FlaskConical, t: "Reconstitution", d: "Step-by-step mixing instructions: roll the vial gently in your hands until the powder dissolves — never shake." },
-    { i: Syringe, t: "Injection Guide", d: "Subcutaneous injection site diagrams, rotation advice, and sterile technique walkthroughs." },
-    { i: Calculator, t: "Dose Calculator", d: "Input vial strength, desired dose, and BAC water to see the exact draw volume on a 1 mL syringe." },
-    { i: Dumbbell, t: "Lifting & Nutrition", d: "Training splits, popular lifts, and caloric / macro targets tailored to bulking, cutting, or maintenance." },
-  ];
-  return (
-    <section className="bg-ink text-bone py-24 lg:py-32 border-y border-foreground/15">
-      <div className="container-edge">
-        <div className="text-eyebrow">Built-In Tools</div>
-        <h2 className="mt-4 text-5xl lg:text-7xl max-w-4xl">
-          Nine tools. <span className="text-blood">One dashboard.</span>
-        </h2>
-        <p className="mt-6 max-w-2xl text-bone/70 leading-relaxed">
-          No more scattered notes, calculators, or search tabs. The Titan Elite dashboard puts peptides, dosing, and training guidance in one place.
-        </p>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
-          {items.map((b) => (
-            <div key={b.t} className="border border-bone/15 bg-ink/50 p-6 hover:border-blood/60 transition">
-              <b.i className="text-blood" size={26} strokeWidth={1.2} />
-              <div className="font-display text-2xl mt-5">{b.t}</div>
-              <p className="text-bone/70 text-sm mt-2 leading-relaxed">{b.d}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Showcase() {
-  return (
-    <section className="container-edge py-24 lg:py-32">
-      <div className="grid lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-5 lg:sticky lg:top-24 self-start">
-          <div className="text-eyebrow">Results</div>
-          <h2 className="mt-4 text-5xl lg:text-6xl">Track the work.</h2>
-          <p className="mt-6 text-muted-foreground">
-            Your 100% custom educational peptide protocol and weight-programming plan, stack, and progress live in the dashboard. Consistency + the right tools = results.
-          </p>
-          <Link to="/auth" className="mt-8 btn-blood hover:btn-blood-hover inline-flex">Get dashboard access</Link>
-        </div>
-        <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {[transform1.url, transform2.url, transform3.url, transform4.url, transform5.url, transform6.url].map((src, i) => (
-            <div key={i} className="relative overflow-hidden aspect-[4/5]">
-              <img src={src} alt={`Client transformation ${i + 1}`} loading="lazy" className="size-full object-cover hover:scale-105 transition duration-700" />
-              <div className="absolute bottom-2 left-2 text-bone font-mono text-[9px] uppercase tracking-[0.2em] bg-ink/70 px-2 py-1">
-                Client / {String(i + 1).padStart(3, "0")}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Testimonials() {
-  const t = [
-    { q: "The dose calculator finally made peptide math click. I know exactly how much to draw every time.", a: "Marcus R.", s: "Uses Dose Calculator + My Stack" },
-    { q: "I used to have 12 tabs open to research compounds. Now I just search the library in the dashboard.", a: "Daniel K.", s: "Uses Top 50 Peptides daily" },
-    { q: "Pep Talk AI answers questions at 10 PM when I’m planning my next dose. It’s like having a research assistant.", a: "Jess T.", s: "Uses Pep Talk AI + Injection Guide" },
-  ];
-  return (
-    <section className="bg-background border-y border-foreground/10 py-24">
-      <div className="container-edge">
-        <div className="text-eyebrow">Dashboard Reports</div>
-        <h2 className="mt-4 text-5xl lg:text-6xl mb-12">From the tools.</h2>
-        <div className="grid lg:grid-cols-3 gap-px bg-foreground/15">
-          {t.map((x) => (
-            <figure key={x.a} className="bg-background p-8">
-              <div className="text-blood font-serif text-5xl leading-none">"</div>
-              <blockquote className="mt-2 text-lg leading-relaxed">{x.q}</blockquote>
-              <figcaption className="mt-6 pt-6 border-t border-foreground/10">
-                <div className="font-display text-xl">{x.a}</div>
-                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground mt-1">{x.s}</div>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-
-function FAQPreview() {
-  const qa = [
-    { q: "What tools are inside the dashboard?", a: "The dashboard includes Pep Talk AI, a Top 50 Peptides research library, a dose calculator, My Stack tracker, reconstitution and injection guides, a supplies guide, lifting splits, and your custom protocols." },
-    { q: "Do you prescribe peptides?", a: "No. Titan Elite provides educational protocol templates only. We do not diagnose, treat, prescribe, or sell peptides. Always consult a licensed medical provider." },
-    { q: "How custom is the programming?", a: "Every protocol is a 100% custom educational peptide protocol and weight-programming plan built from scratch around your intake — no recycled templates. Updates roll out as you progress." },
-    { q: "Do I need gym access?", a: "Yes. A full barbell setup is strongly recommended. We can adapt to commercial gyms or well-equipped home setups." },
-  ];
-  return (
-    <section className="bg-background border-t border-foreground/10 py-24">
-      <div className="container-edge grid lg:grid-cols-12 gap-12">
-        <div className="lg:col-span-4">
-          <div className="text-eyebrow">FAQ</div>
-          <h2 className="mt-4 text-5xl lg:text-6xl">Common questions.</h2>
-          <Link to="/faq" className="mt-8 inline-flex btn-ghost hover:bg-foreground hover:text-background">All FAQs →</Link>
-        </div>
-        <div className="lg:col-span-8 divide-y divide-foreground/10">
-          {qa.map((x) => (
-            <details key={x.q} className="group py-5">
-              <summary className="flex items-center justify-between cursor-pointer list-none">
-                <span className="font-display text-2xl">{x.q}</span>
-                <ChevronDown className="text-blood group-open:rotate-180 transition" />
-              </summary>
-              <p className="mt-3 text-muted-foreground leading-relaxed">{x.a}</p>
-            </details>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function FinalCta() {
-  return (
-    <section className="bg-blood text-primary-foreground">
-      <div className="container-edge py-24 lg:py-32 text-center">
-        <div className="text-bone/80 font-mono text-[11px] uppercase tracking-[0.18em]">Dashboard access now open</div>
-        <h2 className="mt-6 text-6xl lg:text-8xl leading-[0.85]">
-          Your tools.<br />Your custom protocol.<br />One place.
-        </h2>
-        <Link to="/auth" className="mt-10 inline-flex items-center gap-2 bg-ink text-bone font-mono uppercase tracking-[0.14em] text-xs font-bold px-8 py-4 hover:bg-bone hover:text-ink transition">
-          Get Dashboard Access <ArrowRight size={14} />
-        </Link>
       </div>
     </section>
   );
