@@ -628,6 +628,7 @@ type AffiliateRow = {
   other_social: string | null;
   referral_count: number;
   earnings_cents: number;
+  payout_cents_per_5: number;
   created_at: string;
 };
 
