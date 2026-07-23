@@ -777,6 +777,27 @@ function AffiliatesAdmin() {
                     <div className="mt-3 flex gap-6 text-sm items-center flex-wrap">
                       <div><span className="text-muted-foreground">Referrals:</span> <span className="font-mono text-foreground">{r.referral_count}</span></div>
                       <div><span className="text-muted-foreground">Owed:</span> <span className="font-mono text-blood">${(r.earnings_cents / 100).toFixed(2)}</span></div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">Rate: $</span>
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={rateDraft[r.id] ?? ((r.payout_cents_per_5 ?? 2500) / 100).toFixed(2)}
+                          onChange={(e) => setRateDraft((d) => ({ ...d, [r.id]: e.target.value }))}
+                          className="w-24 bg-background border border-foreground/20 px-2 py-1 font-mono text-sm text-blood"
+                        />
+                        <span className="text-muted-foreground text-[10px] uppercase tracking-wider">/ 5 signups</span>
+                        {rateDraft[r.id] !== undefined && rateDraft[r.id] !== ((r.payout_cents_per_5 ?? 2500) / 100).toFixed(2) && (
+                          <button
+                            onClick={() => onSaveRate(r)}
+                            disabled={savingRate[r.id]}
+                            className="btn-blood hover:btn-blood-hover text-[10px] px-2 py-1 font-mono uppercase tracking-wider disabled:opacity-40"
+                          >
+                            {savingRate[r.id] ? "…" : "Save"}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   )}
                   {r.status === "pending" && (
