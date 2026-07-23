@@ -112,6 +112,24 @@ export type Database = {
         }
         Relationships: []
       }
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value_int: number | null
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value_int?: number | null
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value_int?: number | null
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -654,6 +672,7 @@ export type Database = {
           read_ct: number
         }[]
       }
+      recompute_all_affiliate_totals: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "client"
