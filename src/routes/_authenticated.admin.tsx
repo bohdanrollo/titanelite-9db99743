@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth";
 import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2, DollarSign, Check, X, Trash2, Lock } from "lucide-react";
 import { generateProtocolDraft, saveProtocolDraft, sendProtocol, getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import { approveAffiliate, rejectAffiliate, deleteAffiliate, markAffiliatePaid, resendApprovedAffiliateEmails } from "@/lib/affiliates.functions";
+import { grantFullAccessByEmail } from "@/lib/admin-access.functions";
 import { grantAccess, revokeAccess, listAccess } from "@/lib/admin-access.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 
@@ -639,6 +640,15 @@ function AffiliatesAdmin() {
   const deleteFn = useServerFn(deleteAffiliate);
   const paidFn = useServerFn(markAffiliatePaid);
   const resendFn = useServerFn(resendApprovedAffiliateEmails);
+  const grantFn = useServerFn(grantFullAccessByEmail);
+
+  async function onGrantAccess(r: AffiliateRow) {
+    if (!confirm(`Grant Full Access to ${r.email}? They must have an account with this email.`)) return;
+    try {
+      await grantFn({ data: { email: r.email } });
+      toast.success(`Full Access granted to ${r.email}`);
+    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
+  }
 
   async function load() {
     setLoading(true);
@@ -759,6 +769,9 @@ function AffiliatesAdmin() {
                       <button onClick={() => onApprove(r)} className="btn-blood hover:btn-blood-hover text-xs px-4 py-2 flex items-center gap-1"><Check size={12} /> Approve</button>
                       <button onClick={() => onReject(r)} className="border border-foreground/20 hover:border-blood text-xs px-4 py-2 flex items-center gap-1"><X size={12} /> Reject</button>
                     </>
+                  )}
+                  {r.status === "approved" && (
+                    <button onClick={() => onGrantAccess(r)} className="border border-blood text-blood hover:bg-blood/10 text-xs px-4 py-2 flex items-center gap-1"><Check size={12} /> Grant Full Access</button>
                   )}
                   {r.status === "approved" && r.earnings_cents > 0 && (
                     <button onClick={() => onMarkPaid(r)} className="border border-foreground/20 hover:border-blood text-xs px-4 py-2 flex items-center gap-1"><DollarSign size={12} /> Mark paid</button>
