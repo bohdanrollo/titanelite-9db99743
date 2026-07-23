@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2, DollarSign, Check, X, Trash2, Lock } from "lucide-react";
 import { generateProtocolDraft, saveProtocolDraft, sendProtocol, getProtocolDownloadUrl } from "@/lib/protocols.functions";
-import { approveAffiliate, rejectAffiliate, deleteAffiliate, markAffiliatePaid, resendApprovedAffiliateEmails } from "@/lib/affiliates.functions";
+import { approveAffiliate, rejectAffiliate, deleteAffiliate, markAffiliatePaid, resendApprovedAffiliateEmails, setAffiliateEarnings } from "@/lib/affiliates.functions";
 import { grantFullAccessByEmail } from "@/lib/admin-access.functions";
 import { grantAccess, revokeAccess, listAccess } from "@/lib/admin-access.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
@@ -641,6 +641,21 @@ function AffiliatesAdmin() {
   const paidFn = useServerFn(markAffiliatePaid);
   const resendFn = useServerFn(resendApprovedAffiliateEmails);
   const grantFn = useServerFn(grantFullAccessByEmail);
+  const setEarningsFn = useServerFn(setAffiliateEarnings);
+  const [earningsDraft, setEarningsDraft] = useState<Record<string, string>>({});
+
+  async function onSaveEarnings(r: AffiliateRow) {
+    const raw = earningsDraft[r.id];
+    if (raw === undefined) return;
+    const amount = parseFloat(raw);
+    if (isNaN(amount) || amount < 0) { toast.error("Enter a valid amount"); return; }
+    try {
+      await setEarningsFn({ data: { id: r.id, amountDollars: amount } });
+      toast.success(`Earnings set to $${amount.toFixed(2)}`);
+      setEarningsDraft((d) => { const n = { ...d }; delete n[r.id]; return n; });
+      void load();
+    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
+  }
 
   async function onGrantAccess(r: AffiliateRow) {
     if (!confirm(`Grant Full Access to ${r.email}? They must have an account with this email.`)) return;
@@ -754,9 +769,22 @@ function AffiliatesAdmin() {
                     {r.other_social && <div className="sm:col-span-2">Other: <span className="text-foreground">{r.other_social}</span></div>}
                   </div>
                   {r.status === "approved" && (
-                    <div className="mt-3 flex gap-6 text-sm">
+                    <div className="mt-3 flex gap-6 text-sm items-center flex-wrap">
                       <div><span className="text-muted-foreground">Referrals:</span> <span className="font-mono text-foreground">{r.referral_count}</span></div>
-                      <div><span className="text-muted-foreground">Owed:</span> <span className="font-mono text-blood">${(r.earnings_cents / 100).toFixed(2)}</span></div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">Owed: $</span>
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={earningsDraft[r.id] ?? (r.earnings_cents / 100).toFixed(2)}
+                          onChange={(e) => setEarningsDraft((d) => ({ ...d, [r.id]: e.target.value }))}
+                          className="w-24 bg-background border border-foreground/20 px-2 py-1 font-mono text-sm text-blood"
+                        />
+                        {earningsDraft[r.id] !== undefined && earningsDraft[r.id] !== (r.earnings_cents / 100).toFixed(2) && (
+                          <button onClick={() => onSaveEarnings(r)} className="btn-blood hover:btn-blood-hover text-[10px] px-2 py-1 font-mono uppercase tracking-wider">Save</button>
+                        )}
+                      </div>
                     </div>
                   )}
                   {r.status === "pending" && (

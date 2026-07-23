@@ -129,6 +129,25 @@ export const markAffiliatePaid = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+/** Admin: set an affiliate's current earnings balance (in dollars) */
+export const setAffiliateEarnings = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({
+    id: z.string().uuid(),
+    amountDollars: z.number().min(0).max(1000000),
+  }).parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const cents = Math.round(data.amountDollars * 100);
+    const { error } = await supabaseAdmin
+      .from("affiliates")
+      .update({ earnings_cents: cents, updated_at: new Date().toISOString() })
+      .eq("id", data.id);
+    if (error) throw error;
+    return { ok: true, earnings_cents: cents };
+  });
+
 /** Admin: resend approval email to all approved affiliates */
 export const resendApprovedAffiliateEmails = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
