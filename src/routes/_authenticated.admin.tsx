@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2, DollarSign, Check, X, Trash2, Lock } from "lucide-react";
 import { generateProtocolDraft, saveProtocolDraft, sendProtocol, getProtocolDownloadUrl } from "@/lib/protocols.functions";
-import { approveAffiliate, rejectAffiliate, deleteAffiliate, markAffiliatePaid, resendApprovedAffiliateEmails } from "@/lib/affiliates.functions";
+import { approveAffiliate, rejectAffiliate, deleteAffiliate, markAffiliatePaid, resendApprovedAffiliateEmails, setAffiliateEarnings } from "@/lib/affiliates.functions";
 import { grantFullAccessByEmail } from "@/lib/admin-access.functions";
 import { grantAccess, revokeAccess, listAccess } from "@/lib/admin-access.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
