@@ -785,20 +785,7 @@ function AffiliatesAdmin() {
                   {r.status === "approved" && (
                     <div className="mt-3 flex gap-6 text-sm items-center flex-wrap">
                       <div><span className="text-muted-foreground">Referrals:</span> <span className="font-mono text-foreground">{r.referral_count}</span></div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground">Owed: $</span>
-                        <input
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          value={earningsDraft[r.id] ?? (r.earnings_cents / 100).toFixed(2)}
-                          onChange={(e) => setEarningsDraft((d) => ({ ...d, [r.id]: e.target.value }))}
-                          className="w-24 bg-background border border-foreground/20 px-2 py-1 font-mono text-sm text-blood"
-                        />
-                        {earningsDraft[r.id] !== undefined && earningsDraft[r.id] !== (r.earnings_cents / 100).toFixed(2) && (
-                          <button onClick={() => onSaveEarnings(r)} className="btn-blood hover:btn-blood-hover text-[10px] px-2 py-1 font-mono uppercase tracking-wider">Save</button>
-                        )}
-                      </div>
+                      <div><span className="text-muted-foreground">Owed:</span> <span className="font-mono text-blood">${(r.earnings_cents / 100).toFixed(2)}</span></div>
                     </div>
                   )}
                   {r.status === "pending" && (
