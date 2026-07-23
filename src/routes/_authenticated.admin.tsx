@@ -642,34 +642,23 @@ function AffiliatesAdmin() {
   const paidFn = useServerFn(markAffiliatePaid);
   const resendFn = useServerFn(resendApprovedAffiliateEmails);
   const grantFn = useServerFn(grantFullAccessByEmail);
-  const getRateFn = useServerFn(getAffiliatePayoutRate);
   const setRateFn = useServerFn(setAffiliatePayoutRate);
-  const [rateDollars, setRateDollars] = useState<string>("25.00");
-  const [rateDraft, setRateDraft] = useState<string>("");
-  const [savingRate, setSavingRate] = useState(false);
+  const [rateDraft, setRateDraft] = useState<Record<string, string>>({});
+  const [savingRate, setSavingRate] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
-    void (async () => {
-      try {
-        const r = await getRateFn();
-        setRateDollars((r.cents / 100).toFixed(2));
-      } catch { /* noop */ }
-    })();
-  }, []);
-
-  async function onSaveRate() {
-    const raw = rateDraft;
+  async function onSaveRate(r: AffiliateRow) {
+    const raw = rateDraft[r.id];
+    if (raw === undefined) return;
     const amount = parseFloat(raw);
     if (isNaN(amount) || amount < 0) { toast.error("Enter a valid amount"); return; }
-    setSavingRate(true);
+    setSavingRate((s) => ({ ...s, [r.id]: true }));
     try {
-      await setRateFn({ data: { amountDollars: amount } });
-      setRateDollars(amount.toFixed(2));
-      setRateDraft("");
-      toast.success(`Payout set to $${amount.toFixed(2)} per 5 signups`);
+      await setRateFn({ data: { id: r.id, amountDollars: amount } });
+      setRateDraft((d) => { const n = { ...d }; delete n[r.id]; return n; });
+      toast.success(`Rate set to $${amount.toFixed(2)} per 5 signups`);
       void load();
     } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
-    finally { setSavingRate(false); }
+    finally { setSavingRate((s) => { const n = { ...s }; delete n[r.id]; return n; }); }
   }
 
   async function onGrantAccess(r: AffiliateRow) {
