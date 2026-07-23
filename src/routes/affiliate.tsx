@@ -46,6 +46,17 @@ function AffiliatePage() {
       .then(({ data }) => { setExisting(data as Affiliate | null); setChecking(false); });
   }, [user, loading]);
 
+  // Realtime: reflect admin edits to earnings/status immediately
+  useEffect(() => {
+    if (!existing?.id) return;
+    const channel = supabase
+      .channel(`affiliate-${existing.id}`)
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "affiliates", filter: `id=eq.${existing.id}` },
+        (payload) => setExisting((prev) => prev ? { ...prev, ...(payload.new as Partial<Affiliate>) } : prev))
+      .subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, [existing?.id]);
+
   return (
     <div className="min-h-dvh bg-background flex flex-col">
       <SiteHeader />
