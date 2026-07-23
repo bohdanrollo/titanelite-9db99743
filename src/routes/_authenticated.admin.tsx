@@ -641,6 +641,21 @@ function AffiliatesAdmin() {
   const paidFn = useServerFn(markAffiliatePaid);
   const resendFn = useServerFn(resendApprovedAffiliateEmails);
   const grantFn = useServerFn(grantFullAccessByEmail);
+  const setEarningsFn = useServerFn(setAffiliateEarnings);
+  const [earningsDraft, setEarningsDraft] = useState<Record<string, string>>({});
+
+  async function onSaveEarnings(r: AffiliateRow) {
+    const raw = earningsDraft[r.id];
+    if (raw === undefined) return;
+    const amount = parseFloat(raw);
+    if (isNaN(amount) || amount < 0) { toast.error("Enter a valid amount"); return; }
+    try {
+      await setEarningsFn({ data: { id: r.id, amountDollars: amount } });
+      toast.success(`Earnings set to $${amount.toFixed(2)}`);
+      setEarningsDraft((d) => { const n = { ...d }; delete n[r.id]; return n; });
+      void load();
+    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
+  }
 
   async function onGrantAccess(r: AffiliateRow) {
     if (!confirm(`Grant Full Access to ${r.email}? They must have an account with this email.`)) return;
