@@ -27,7 +27,7 @@ const faqs = [
   { q: "What's inside the client dashboard?", a: "The dashboard is organized into four areas: Plan (your protocol and intake), Research (peptide profiles, articles, lifting tips), Tools (supplies, reconstitution, injection guide, calculator, My Stack), and Assistant (Pep Talk AI chat)." },
   { q: "What is My Stack?", a: "My Stack is a personal tracker where you can log the peptides you're researching, the dose you're taking, and the schedule. Your entries are saved so you can review or edit them later." },
   { q: "How does the peptide calculator work?", a: "Enter the peptide strength, your desired dose, and the amount of BAC water used to reconstitute. The calculator shows the correct draw on a 1 mL / 100-unit syringe." },
-  { q: "Where do I buy peptides and supplies?", a: "We do not sell peptides. For research supply needs, the dashboard links to Powerbuilt Labs, and using code BJR can save money on your order." },
+  { q: "Where do I buy peptides and supplies?", a: "We do not sell peptides. For research supply needs, the dashboard links to Powerbuilt Labs." },
   { q: "Can I become an affiliate?", a: "Yes. Apply through the Become an Affiliate page with your social handles, email, and phone number. Once approved, you get a unique referral link and code. Every five people who sign up through your link earns you $25." },
   { q: "Is my health data secure?", a: "Yes. Your data is encrypted at rest and in transit, and access is restricted to you and the admin. See our Privacy Policy for more details." },
   { q: "Do you work with women?", a: "Yes. The intake captures sex assigned at birth and hormonal context to help inform programming." },
