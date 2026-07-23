@@ -736,6 +736,32 @@ function AffiliatesAdmin() {
         </div>
       </div>
 
+      <div className="border border-foreground/15 p-4 mb-6 flex flex-wrap items-center gap-4">
+        <div>
+          <div className="text-eyebrow">Payout rate</div>
+          <div className="text-xs text-muted-foreground mt-1">Dollars paid per 5 signups. Applies to every affiliate immediately.</div>
+        </div>
+        <div className="flex items-center gap-2 ml-auto">
+          <span className="text-muted-foreground font-mono text-sm">$</span>
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            value={rateDraft !== "" ? rateDraft : rateDollars}
+            onChange={(e) => setRateDraft(e.target.value)}
+            className="w-28 bg-background border border-foreground/20 px-2 py-1 font-mono text-sm text-blood"
+          />
+          <span className="text-muted-foreground text-xs uppercase tracking-wider">/ 5 signups</span>
+          <button
+            onClick={onSaveRate}
+            disabled={savingRate || rateDraft === "" || rateDraft === rateDollars}
+            className="btn-blood hover:btn-blood-hover text-[10px] px-3 py-1.5 font-mono uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {savingRate ? "Saving…" : "Save"}
+          </button>
+        </div>
+      </div>
+
       <div className="flex flex-wrap gap-2 mb-4 items-center">
         {(["pending", "approved", "rejected", "all"] as const).map((f) => (
           <button key={f} onClick={() => setFilter(f)}
