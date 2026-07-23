@@ -59,6 +59,7 @@ export type Database = {
           id: string
           instagram: string | null
           other_social: string | null
+          payout_cents_per_5: number
           phone: string
           referral_count: number
           status: string
@@ -80,6 +81,7 @@ export type Database = {
           id?: string
           instagram?: string | null
           other_social?: string | null
+          payout_cents_per_5?: number
           phone: string
           referral_count?: number
           status?: string
@@ -101,6 +103,7 @@ export type Database = {
           id?: string
           instagram?: string | null
           other_social?: string | null
+          payout_cents_per_5?: number
           phone?: string
           referral_count?: number
           status?: string
@@ -109,24 +112,6 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
           youtube?: string | null
-        }
-        Relationships: []
-      }
-      app_settings: {
-        Row: {
-          key: string
-          updated_at: string
-          value_int: number | null
-        }
-        Insert: {
-          key: string
-          updated_at?: string
-          value_int?: number | null
-        }
-        Update: {
-          key?: string
-          updated_at?: string
-          value_int?: number | null
         }
         Relationships: []
       }
@@ -672,7 +657,6 @@ export type Database = {
           read_ct: number
         }[]
       }
-      recompute_all_affiliate_totals: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "client"

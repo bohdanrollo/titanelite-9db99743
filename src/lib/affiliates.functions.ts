@@ -129,36 +129,35 @@ export const markAffiliatePaid = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-/** Public: read current payout rate ($ paid per 5 signups) */
-export const getAffiliatePayoutRate = createServerFn({ method: "GET" })
-  .handler(async () => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data } = await supabaseAdmin
-      .from("app_settings")
-      .select("value_int")
-      .eq("key", "affiliate_payout_cents_per_5")
-      .maybeSingle();
-    const cents = (data?.value_int as number | null) ?? 2500;
-    return { cents };
-  });
-
-/** Admin: set payout rate ($ per 5 signups) and recompute all affiliate balances */
+/** Admin: set a single affiliate's payout rate ($ per 5 signups) and recompute their balance */
 export const setAffiliatePayoutRate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({
+    id: z.string().uuid(),
     amountDollars: z.number().min(0).max(1000000),
   }).parse(input))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const cents = Math.round(data.amountDollars * 100);
-    const { error } = await supabaseAdmin
-      .from("app_settings")
-      .upsert({ key: "affiliate_payout_cents_per_5", value_int: cents, updated_at: new Date().toISOString() });
+    const { error } = await (supabaseAdmin as any)
+      .from("affiliates")
+      .update({ payout_cents_per_5: cents, updated_at: new Date().toISOString() })
+      .eq("id", data.id);
     if (error) throw error;
-    const { error: rpcErr } = await supabaseAdmin.rpc("recompute_all_affiliate_totals" as never);
-    if (rpcErr) throw rpcErr;
-    return { ok: true, cents };
+    // Recompute this affiliate's earnings using the new rate
+    const { data: refs } = await supabaseAdmin
+      .from("affiliate_referrals")
+      .select("id", { count: "exact", head: false })
+      .eq("affiliate_id", data.id);
+    const cnt = refs?.length ?? 0;
+    const earnings = Math.floor(cnt / 5) * cents;
+    const { error: e2 } = await supabaseAdmin
+      .from("affiliates")
+      .update({ earnings_cents: earnings, updated_at: new Date().toISOString() })
+      .eq("id", data.id);
+    if (e2) throw e2;
+    return { ok: true, cents, earnings_cents: earnings };
   });
 
 /** Admin: resend approval email to all approved affiliates */

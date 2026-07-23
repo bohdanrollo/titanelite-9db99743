@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2, DollarSign, Check, X, Trash2, Lock } from "lucide-react";
 import { generateProtocolDraft, saveProtocolDraft, sendProtocol, getProtocolDownloadUrl } from "@/lib/protocols.functions";
-import { approveAffiliate, rejectAffiliate, deleteAffiliate, markAffiliatePaid, resendApprovedAffiliateEmails, getAffiliatePayoutRate, setAffiliatePayoutRate } from "@/lib/affiliates.functions";
+import { approveAffiliate, rejectAffiliate, deleteAffiliate, markAffiliatePaid, resendApprovedAffiliateEmails, setAffiliatePayoutRate } from "@/lib/affiliates.functions";
 import { grantFullAccessByEmail } from "@/lib/admin-access.functions";
 import { grantAccess, revokeAccess, listAccess } from "@/lib/admin-access.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
@@ -628,6 +628,7 @@ type AffiliateRow = {
   other_social: string | null;
   referral_count: number;
   earnings_cents: number;
+  payout_cents_per_5: number;
   created_at: string;
 };
 
@@ -641,34 +642,23 @@ function AffiliatesAdmin() {
   const paidFn = useServerFn(markAffiliatePaid);
   const resendFn = useServerFn(resendApprovedAffiliateEmails);
   const grantFn = useServerFn(grantFullAccessByEmail);
-  const getRateFn = useServerFn(getAffiliatePayoutRate);
   const setRateFn = useServerFn(setAffiliatePayoutRate);
-  const [rateDollars, setRateDollars] = useState<string>("25.00");
-  const [rateDraft, setRateDraft] = useState<string>("");
-  const [savingRate, setSavingRate] = useState(false);
+  const [rateDraft, setRateDraft] = useState<Record<string, string>>({});
+  const [savingRate, setSavingRate] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
-    void (async () => {
-      try {
-        const r = await getRateFn();
-        setRateDollars((r.cents / 100).toFixed(2));
-      } catch { /* noop */ }
-    })();
-  }, []);
-
-  async function onSaveRate() {
-    const raw = rateDraft;
+  async function onSaveRate(r: AffiliateRow) {
+    const raw = rateDraft[r.id];
+    if (raw === undefined) return;
     const amount = parseFloat(raw);
     if (isNaN(amount) || amount < 0) { toast.error("Enter a valid amount"); return; }
-    setSavingRate(true);
+    setSavingRate((s) => ({ ...s, [r.id]: true }));
     try {
-      await setRateFn({ data: { amountDollars: amount } });
-      setRateDollars(amount.toFixed(2));
-      setRateDraft("");
-      toast.success(`Payout set to $${amount.toFixed(2)} per 5 signups`);
+      await setRateFn({ data: { id: r.id, amountDollars: amount } });
+      setRateDraft((d) => { const n = { ...d }; delete n[r.id]; return n; });
+      toast.success(`Rate set to $${amount.toFixed(2)} per 5 signups`);
       void load();
     } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
-    finally { setSavingRate(false); }
+    finally { setSavingRate((s) => { const n = { ...s }; delete n[r.id]; return n; }); }
   }
 
   async function onGrantAccess(r: AffiliateRow) {
@@ -683,7 +673,7 @@ function AffiliatesAdmin() {
     setLoading(true);
     const { data } = await supabase
       .from("affiliates")
-      .select("id, status, full_name, email, phone, desired_code, code, instagram, tiktok, youtube, twitter, other_social, referral_count, earnings_cents, created_at")
+      .select("id, status, full_name, email, phone, desired_code, code, instagram, tiktok, youtube, twitter, other_social, referral_count, earnings_cents, payout_cents_per_5, created_at")
       .order("created_at", { ascending: false });
     setRows((data as AffiliateRow[] | null) ?? []);
     setLoading(false);
@@ -736,31 +726,6 @@ function AffiliatesAdmin() {
         </div>
       </div>
 
-      <div className="border border-foreground/15 p-4 mb-6 flex flex-wrap items-center gap-4">
-        <div>
-          <div className="text-eyebrow">Payout rate</div>
-          <div className="text-xs text-muted-foreground mt-1">Dollars paid per 5 signups. Applies to every affiliate immediately.</div>
-        </div>
-        <div className="flex items-center gap-2 ml-auto">
-          <span className="text-muted-foreground font-mono text-sm">$</span>
-          <input
-            type="number"
-            min="0"
-            step="0.01"
-            value={rateDraft !== "" ? rateDraft : rateDollars}
-            onChange={(e) => setRateDraft(e.target.value)}
-            className="w-28 bg-background border border-foreground/20 px-2 py-1 font-mono text-sm text-blood"
-          />
-          <span className="text-muted-foreground text-xs uppercase tracking-wider">/ 5 signups</span>
-          <button
-            onClick={onSaveRate}
-            disabled={savingRate || rateDraft === "" || rateDraft === rateDollars}
-            className="btn-blood hover:btn-blood-hover text-[10px] px-3 py-1.5 font-mono uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            {savingRate ? "Saving…" : "Save"}
-          </button>
-        </div>
-      </div>
 
       <div className="flex flex-wrap gap-2 mb-4 items-center">
         {(["pending", "approved", "rejected", "all"] as const).map((f) => (
@@ -812,6 +777,27 @@ function AffiliatesAdmin() {
                     <div className="mt-3 flex gap-6 text-sm items-center flex-wrap">
                       <div><span className="text-muted-foreground">Referrals:</span> <span className="font-mono text-foreground">{r.referral_count}</span></div>
                       <div><span className="text-muted-foreground">Owed:</span> <span className="font-mono text-blood">${(r.earnings_cents / 100).toFixed(2)}</span></div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">Rate: $</span>
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={rateDraft[r.id] ?? ((r.payout_cents_per_5 ?? 2500) / 100).toFixed(2)}
+                          onChange={(e) => setRateDraft((d) => ({ ...d, [r.id]: e.target.value }))}
+                          className="w-24 bg-background border border-foreground/20 px-2 py-1 font-mono text-sm text-blood"
+                        />
+                        <span className="text-muted-foreground text-[10px] uppercase tracking-wider">/ 5 signups</span>
+                        {rateDraft[r.id] !== undefined && rateDraft[r.id] !== ((r.payout_cents_per_5 ?? 2500) / 100).toFixed(2) && (
+                          <button
+                            onClick={() => onSaveRate(r)}
+                            disabled={savingRate[r.id]}
+                            className="btn-blood hover:btn-blood-hover text-[10px] px-2 py-1 font-mono uppercase tracking-wider disabled:opacity-40"
+                          >
+                            {savingRate[r.id] ? "…" : "Save"}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   )}
                   {r.status === "pending" && (
