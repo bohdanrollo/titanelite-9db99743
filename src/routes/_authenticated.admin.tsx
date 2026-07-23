@@ -640,6 +640,15 @@ function AffiliatesAdmin() {
   const deleteFn = useServerFn(deleteAffiliate);
   const paidFn = useServerFn(markAffiliatePaid);
   const resendFn = useServerFn(resendApprovedAffiliateEmails);
+  const grantFn = useServerFn(grantFullAccessByEmail);
+
+  async function onGrantAccess(r: AffiliateRow) {
+    if (!confirm(`Grant Full Access to ${r.email}? They must have an account with this email.`)) return;
+    try {
+      await grantFn({ data: { email: r.email } });
+      toast.success(`Full Access granted to ${r.email}`);
+    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
+  }
 
   async function load() {
     setLoading(true);
