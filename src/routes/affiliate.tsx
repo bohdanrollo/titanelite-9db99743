@@ -216,8 +216,10 @@ function ApplicationForm({ onSubmitted }: { onSubmitted: (a: Affiliate) => void 
       });
       if (error) throw error;
       // Re-fetch via owner-scoped SELECT policy instead of echoing the insert
+      const mineEmail = form.email;
       const { data: mine } = await supabase.from("affiliates")
         .select("id, status, code, desired_code, email, referral_count, earnings_cents, created_at")
+        .or(`user_id.eq.${user?.id ?? "00000000-0000-0000-0000-000000000000"}${mineEmail ? `,email.ilike.${mineEmail}` : ""}`)
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
