@@ -129,11 +129,23 @@ export const markAffiliatePaid = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-/** Admin: set an affiliate's current earnings balance (in dollars) */
-export const setAffiliateEarnings = createServerFn({ method: "POST" })
+/** Public: read current payout rate ($ paid per 5 signups) */
+export const getAffiliatePayoutRate = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data } = await supabaseAdmin
+      .from("app_settings")
+      .select("value_int")
+      .eq("key", "affiliate_payout_cents_per_5")
+      .maybeSingle();
+    const cents = (data?.value_int as number | null) ?? 2500;
+    return { cents };
+  });
+
+/** Admin: set payout rate ($ per 5 signups) and recompute all affiliate balances */
+export const setAffiliatePayoutRate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({
-    id: z.string().uuid(),
     amountDollars: z.number().min(0).max(1000000),
   }).parse(input))
   .handler(async ({ data, context }) => {
@@ -141,11 +153,12 @@ export const setAffiliateEarnings = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const cents = Math.round(data.amountDollars * 100);
     const { error } = await supabaseAdmin
-      .from("affiliates")
-      .update({ earnings_cents: cents, updated_at: new Date().toISOString() })
-      .eq("id", data.id);
+      .from("app_settings")
+      .upsert({ key: "affiliate_payout_cents_per_5", value_int: cents, updated_at: new Date().toISOString() });
     if (error) throw error;
-    return { ok: true, earnings_cents: cents };
+    const { error: rpcErr } = await supabaseAdmin.rpc("recompute_all_affiliate_totals" as never);
+    if (rpcErr) throw rpcErr;
+    return { ok: true, cents };
   });
 
 /** Admin: resend approval email to all approved affiliates */
