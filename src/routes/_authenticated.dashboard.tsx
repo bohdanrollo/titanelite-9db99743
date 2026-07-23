@@ -60,10 +60,9 @@ function Dashboard() {
         <h1 className="mt-4 text-3xl sm:text-5xl lg:text-6xl">Welcome back.</h1>
         <p className="mt-3 text-sm text-muted-foreground">
           Need peptides? Order through{" "}
-          <a href="https://powerbuiltlabs.com/?ref=bjr" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">
+          <a href="https://powerbuiltlabs.com" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">
             Powerbuilt Labs
-          </a>{" "}
-          and use code <span className="text-blood font-medium">BJR</span> to save.
+          </a>.
         </p>
 
         {intake && (
@@ -525,8 +524,7 @@ function Peptides() {
         <h3 className="font-display text-2xl sm:text-3xl">Top 50 Research Peptides</h3>
         <p className="text-sm text-muted-foreground mt-2">
           Educational reference only. Compounds listed for research purposes — not medical advice. Order through{" "}
-          <a href="https://powerbuiltlabs.com/?ref=bjr" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">Powerbuilt Labs</a>{" "}
-          with code <span className="text-blood font-medium">BJR</span>.
+          <a href="https://powerbuiltlabs.com" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">Powerbuilt Labs</a>.
         </p>
       </div>
       <div className="grid sm:grid-cols-2 gap-3">
