@@ -129,7 +129,7 @@ export const markAffiliatePaid = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-/** Admin: set a single affiliate's payout rate ($ per 5 signups) and recompute their balance */
+/** Admin: set a single affiliate's payout rate ($ per 5 signups). Only applies to future referrals. */
 export const setAffiliatePayoutRate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({
@@ -145,20 +145,9 @@ export const setAffiliatePayoutRate = createServerFn({ method: "POST" })
       .update({ payout_cents_per_5: cents, updated_at: new Date().toISOString() })
       .eq("id", data.id);
     if (error) throw error;
-    // Recompute this affiliate's earnings using the new rate
-    const { data: refs } = await supabaseAdmin
-      .from("affiliate_referrals")
-      .select("id", { count: "exact", head: false })
-      .eq("affiliate_id", data.id);
-    const cnt = refs?.length ?? 0;
-    const earnings = Math.floor(cnt / 5) * cents;
-    const { error: e2 } = await supabaseAdmin
-      .from("affiliates")
-      .update({ earnings_cents: earnings, updated_at: new Date().toISOString() })
-      .eq("id", data.id);
-    if (e2) throw e2;
-    return { ok: true, cents, earnings_cents: earnings };
+    return { ok: true, cents };
   });
+
 
 /** Admin: resend approval email to all approved affiliates */
 export const resendApprovedAffiliateEmails = createServerFn({ method: "POST" })
