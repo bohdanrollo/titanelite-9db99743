@@ -38,8 +38,10 @@ function AffiliatePage() {
   useEffect(() => {
     if (loading) return;
     if (!user) { setChecking(false); return; }
+    const email = user.email ?? "";
     supabase.from("affiliates")
       .select("id, status, code, desired_code, email, referral_count, earnings_cents, created_at")
+      .or(`user_id.eq.${user.id}${email ? `,email.ilike.${email}` : ""}`)
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle()
