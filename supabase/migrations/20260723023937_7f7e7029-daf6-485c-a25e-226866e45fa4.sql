@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION private.has_access(uuid, text, text) TO authenticated;
