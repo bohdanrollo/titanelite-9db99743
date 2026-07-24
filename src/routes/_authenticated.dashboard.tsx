@@ -1436,6 +1436,197 @@ function Combos() {
   );
 }
 
+function Learning() {
+  const [openCourse, setOpenCourse] = useState<string | null>(null);
+  const [openLesson, setOpenLesson] = useState<Record<string, number>>({});
+
+  const courses = [
+    {
+      id: "peptides-101",
+      title: "Peptides 101",
+      tag: "Foundations",
+      summary: "Start here. What peptides actually are, how they differ from steroids and hormones, and how researchers think about them.",
+      lessons: [
+        {
+          title: "What is a peptide?",
+          body: "A peptide is a short chain of amino acids — the same building blocks that make up proteins, just in smaller sequences. Because they're small and specific, peptides can signal targeted actions in the body, like triggering hormone release, aiding tissue repair, or influencing metabolism. This targeted signaling is what makes them so interesting in research."
+        },
+        {
+          title: "Peptides vs. steroids vs. hormones",
+          body: "Steroids are lipid-based molecules that flood systemic pathways. Hormones can be either peptide- or steroid-based and act as long-range messengers. Research peptides typically act more like precise signals — they tell the body to do something it already knows how to do (release GH, repair tissue, regulate appetite) rather than overriding a system entirely."
+        },
+        {
+          title: "How peptides are typically studied",
+          body: "Most research peptides are reconstituted with bacteriostatic water and administered subcutaneously with an insulin syringe. Dosing is measured in micrograms (mcg) or milligrams (mg), and timing often matters as much as dose — pulsatile compounds like GH secretagogues are studied around sleep and away from meals."
+        },
+        {
+          title: "Quality, sourcing, and safety",
+          body: "Purity matters more than price. Reputable suppliers provide certificates of analysis (COAs) verifying identity and purity. Storage matters too — most peptides need refrigeration after reconstitution and have a limited shelf life. Cutting corners on sourcing is the single biggest risk factor in this space."
+        }
+      ]
+    },
+    {
+      id: "muscle-growth",
+      title: "Muscle Growth Science",
+      tag: "Hypertrophy",
+      summary: "The three drivers of hypertrophy, how satellite cells and mTOR fit in, and what actually determines whether you grow.",
+      lessons: [
+        {
+          title: "The three drivers of hypertrophy",
+          body: "Mechanical tension is the primary driver — heavy loads through a full range of motion. Metabolic stress (the pump, higher-rep work) and muscle damage play smaller supporting roles. If you had to prioritize one variable, it's progressive overload on compound lifts through complete ranges of motion."
+        },
+        {
+          title: "Protein synthesis and mTOR",
+          body: "Training triggers muscle protein synthesis (MPS) via the mTOR pathway. MPS stays elevated for roughly 24–48 hours after a hard session. Leucine (found in complete proteins) is the primary amino acid that flips the mTOR switch — which is why per-meal protein quality matters, not just daily totals."
+        },
+        {
+          title: "Satellite cells and the growth ceiling",
+          body: "Satellite cells donate nuclei to muscle fibers, raising the ceiling on how much a fiber can grow. This is part of why consistent training over years compounds — you're not just growing existing tissue, you're expanding the infrastructure that allows more growth later."
+        },
+        {
+          title: "Volume, frequency, and recovery",
+          body: "Most trained lifters grow best with 10–20 hard sets per muscle group per week, split across 2 sessions. Recovery isn't optional — it's when the actual adaptation happens. Sleep, protein, and managed stress do more for hypertrophy than any single training tweak."
+        }
+      ]
+    },
+    {
+      id: "fat-loss",
+      title: "Fat Loss Fundamentals",
+      tag: "Body Composition",
+      summary: "Energy balance, why the scale lies, protecting muscle in a deficit, and how to structure a sustainable cut.",
+      lessons: [
+        {
+          title: "Energy balance is the foundation",
+          body: "Fat loss requires a sustained calorie deficit — no peptide, supplement, or training style bypasses this. Everything else (macros, timing, training style) determines the quality of the fat loss: how much comes from fat vs. muscle, how you feel, and whether you can sustain it."
+        },
+        {
+          title: "Why the scale lies",
+          body: "Scale weight reflects fat, muscle, water, glycogen, and gut contents. Sodium, carbs, hormones, and stress can swing daily weight by 3–5 lbs with no actual change in fat. Track weekly averages and use tape measurements or photos alongside — trends over 3–4 weeks tell the real story."
+        },
+        {
+          title: "Protecting muscle in a deficit",
+          body: "In a deficit, three things preserve muscle: (1) high protein intake — around 1g per lb of goal bodyweight, (2) heavy resistance training with maintained or slightly reduced volume, (3) a reasonable deficit — aggressive cuts (>1% bodyweight/week for long periods) accelerate muscle loss."
+        },
+        {
+          title: "Structuring a sustainable cut",
+          body: "Start with a 15–20% deficit. Recalculate every 3–4 weeks as bodyweight drops. Take planned diet breaks (a week at maintenance) every 6–10 weeks to restore hormones and adherence. End the cut before you're miserable — dragging a deficit past its useful life is where most people lose muscle and regain fat."
+        }
+      ]
+    },
+    {
+      id: "recovery",
+      title: "Recovery Optimization",
+      tag: "Adaptation",
+      summary: "Sleep architecture, autonomic recovery, deloads, and how to tell over-reaching from actual overtraining.",
+      lessons: [
+        {
+          title: "Sleep is the primary recovery tool",
+          body: "Deep sleep is when GH pulses hardest, memory consolidates, and tissue repair peaks. Most adults need 7–9 hours. Consistent sleep and wake times, a cool dark room, and cutting screens/caffeine late in the day outperform almost any supplement stack you could build for recovery."
+        },
+        {
+          title: "Nervous system recovery vs. muscle recovery",
+          body: "Muscles can feel fine while your nervous system is fried. Signs of autonomic under-recovery: elevated resting heart rate, poor HRV, disrupted sleep, low motivation, plateaued lifts despite feeling 'fresh.' This is what actually forces most people into deloads — not soreness."
+        },
+        {
+          title: "Deloads and planned recovery",
+          body: "A deload — 40–60% of normal volume for a week — every 4–8 weeks lets fatigue drop while fitness stays. Programmed deloads prevent forced ones. If you've never deloaded and feel constantly beat up, that's usually the missing piece."
+        },
+        {
+          title: "Overreaching vs. overtraining",
+          body: "Functional overreaching is a short intentional overload followed by a deload — you come back stronger. Non-functional overreaching (weeks of accumulated fatigue) blunts progress. True overtraining (months of decline, HPA dysfunction) is rare in gen-pop but real. If performance drops week over week despite reduced load, back off."
+        }
+      ]
+    },
+    {
+      id: "nutrition",
+      title: "Nutrition Basics",
+      tag: "Fueling",
+      summary: "Macros, meal timing, hydration, and how to build a diet you'll actually stick to.",
+      lessons: [
+        {
+          title: "Protein: the non-negotiable",
+          body: "Aim for roughly 0.8–1g of protein per lb of bodyweight, spread across 3–5 meals. Complete protein sources (meat, fish, eggs, dairy, whey) hit leucine thresholds most efficiently. If you get protein right, most other diet decisions become much more forgiving."
+        },
+        {
+          title: "Carbs and fats — pick your fuel mix",
+          body: "Once protein is set, the split between carbs and fats is mostly preference and performance. Higher carbs generally support hard training and recovery. Higher fats support satiety and hormone production. Neither is 'better' — they're levers you tune to how you eat and train."
+        },
+        {
+          title: "Meal timing (and when it actually matters)",
+          body: "For most goals, total daily intake matters far more than meal timing. That said: protein spread across the day (every 3–5 hours) optimizes MPS, and carbs around training support performance and recovery. Beyond that, eat on a schedule that fits your life."
+        },
+        {
+          title: "Hydration, micros, and consistency",
+          body: "Aim for pale-yellow urine as a rough hydration target — usually 0.5–1 oz of water per lb of bodyweight daily. Get most micronutrients from whole foods; supplement only what's actually low. The best diet is the one you can run for years — not the one that looks best on paper for six weeks."
+        }
+      ]
+    }
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <div className="text-eyebrow">Learning Center</div>
+        <h2 className="mt-2 font-display text-2xl sm:text-3xl">Mini Courses</h2>
+        <p className="mt-2 text-sm text-muted-foreground max-w-2xl">
+          Short, focused lessons on the foundations. Each course is broken into a handful of quick reads — tap to expand.
+          For educational purposes only.
+        </p>
+      </div>
+
+      <div className="space-y-3">
+        {courses.map((c) => {
+          const isOpen = openCourse === c.id;
+          return (
+            <div key={c.id} className="border border-foreground/15">
+              <button
+                type="button"
+                onClick={() => setOpenCourse(isOpen ? null : c.id)}
+                className="w-full flex items-center gap-4 p-5 text-left hover:border-blood transition"
+              >
+                <div className="text-blood shrink-0"><GraduationCap size={22} /></div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.18em] text-blood">{c.tag} · {c.lessons.length} lessons</div>
+                  <h3 className="mt-1 font-display text-lg sm:text-xl leading-tight">{c.title}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{c.summary}</p>
+                </div>
+                <ChevronDown size={18} className={`shrink-0 transition ${isOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {isOpen && (
+                <div className="border-t border-foreground/10 divide-y divide-foreground/10">
+                  {c.lessons.map((l, idx) => {
+                    const key = `${c.id}:${idx}`;
+                    const lessonOpen = openLesson[key];
+                    return (
+                      <div key={key} className="p-5">
+                        <button
+                          type="button"
+                          onClick={() => setOpenLesson((prev) => ({ ...prev, [key]: !prev[key] }))}
+                          className="w-full flex items-center gap-3 text-left"
+                        >
+                          <span className="font-mono text-xs text-blood">{String(idx + 1).padStart(2, "0")}</span>
+                          <span className="flex-1 font-display text-base sm:text-lg">{l.title}</span>
+                          <ChevronDown size={16} className={`shrink-0 transition ${lessonOpen ? "rotate-180" : ""}`} />
+                        </button>
+                        {lessonOpen && (
+                          <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{l.body}</p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+
+
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
