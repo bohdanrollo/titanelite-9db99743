@@ -1438,7 +1438,7 @@ function Combos() {
 
 function Learning() {
   const [openCourse, setOpenCourse] = useState<string | null>(null);
-  const [openLesson, setOpenLesson] = useState<Record<string, number>>({});
+  const [openLesson, setOpenLesson] = useState<Record<string, boolean>>({});
 
   const courses = [
     {
