@@ -7,7 +7,7 @@ export type AccessTier = "limited" | "full" | null;
 
 export const LIMITED_TABS = [
   "peptides",
-  "articles",
+  "combos",
   "lifting",
   "supplies",
   "reconstitution",
