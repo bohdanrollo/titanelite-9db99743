@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useAccess, isTabAllowed } from "@/lib/access";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, Search } from "lucide-react";
 import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import ReactMarkdown from "react-markdown";
@@ -350,6 +350,14 @@ const PEPTIDES: { name: string; researched: string }[] = [
   { name: "Clenbuterol (research context)", researched: "Researched for beta-2 agonism, thermogenesis, and fat loss in animal models." },
   { name: "T3 / Liothyronine (research context)", researched: "Researched for thyroid hormone metabolism, energy expenditure, and fat oxidation." },
   { name: "T4 / Levothyroxine (research context)", researched: "Researched for thyroid replacement, metabolic rate, and hormone balance." },
+  { name: "KLOW", researched: "Researched for metabolic regulation, body composition, and performance-related signaling pathways." },
+  { name: "Glutathione", researched: "Researched as a master antioxidant for oxidative stress, detoxification, and immune support." },
+  { name: "Retatrutide", researched: "Researched as a triple GIP/GLP-1/glucagon agonist for weight management and metabolic health." },
+  { name: "Liraglutide", researched: "Researched as a GLP-1 agonist for appetite control, glucose regulation, and fat loss." },
+  { name: "Dulaglutide", researched: "Researched as a long-acting GLP-1 agonist for glycemic control and metabolic support." },
+  { name: "Apamin", researched: "Researched for neuroprotection, cognitive enhancement, and calcium-activated potassium channel modulation." },
+  { name: "Follistatin 315", researched: "Researched for myostatin inhibition, muscle growth, and tissue development support." },
+  { name: "PNC-27 (research context)", researched: "Researched for selective membrane-disrupting effects on damaged or transformed cells." },
 ];
 
 type ChatMsg = { id: string; role: "user" | "assistant"; content: string };
@@ -518,17 +526,31 @@ function PepTalk() {
 }
 
 function Peptides() {
+  const [query, setQuery] = useState("");
+  const q = query.trim().toLowerCase();
+  const filtered = q ? PEPTIDES.filter((p) => p.name.toLowerCase().includes(q) || p.researched.toLowerCase().includes(q)) : PEPTIDES;
   return (
     <div>
-      <div className="mb-6">
-        <h3 className="font-display text-2xl sm:text-3xl">Top 50 Research Peptides</h3>
-        <p className="text-sm text-muted-foreground mt-2">
-          Educational reference only. Compounds listed for research purposes — not medical advice. Order through{" "}
-          <a href="https://powerbuiltlabs.com" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">Powerbuilt Labs</a>.
-        </p>
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+          <h3 className="font-display text-2xl sm:text-3xl">Research Peptides</h3>
+          <p className="text-sm text-muted-foreground mt-2">
+            Educational reference only. Compounds listed for research purposes — not medical advice. Order through{" "}
+            <a href="https://powerbuiltlabs.com" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">Powerbuilt Labs</a>.
+          </p>
+        </div>
+        <div className="relative w-full sm:w-72">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search peptides…"
+            className="w-full bg-background border border-foreground/15 pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-blood"
+          />
+        </div>
       </div>
       <div className="grid sm:grid-cols-2 gap-3">
-        {PEPTIDES.map((p, i) => (
+        {filtered.map((p, i) => (
           <article key={p.name} className="border border-foreground/10 p-5 hover:border-blood transition">
             <div className="flex items-baseline gap-3">
               <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
@@ -537,6 +559,11 @@ function Peptides() {
             <p className="text-sm text-muted-foreground mt-2">{p.researched}</p>
           </article>
         ))}
+        {filtered.length === 0 && (
+          <div className="col-span-full border border-foreground/10 p-6 text-sm text-muted-foreground text-center">
+            No peptides found matching “{query}”.
+          </div>
+        )}
       </div>
     </div>
   );
