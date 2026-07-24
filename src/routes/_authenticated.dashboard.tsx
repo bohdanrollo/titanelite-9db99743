@@ -177,6 +177,7 @@ function Dashboard() {
           {tab === "lifting" && isTabAllowed("lifting", tier, isAdmin) && <Lifting />}
           {tab === "combos" && isTabAllowed("combos", tier, isAdmin) && <Combos />}
           {tab === "learning" && isTabAllowed("learning", tier, isAdmin) && <Learning />}
+          {tab === "myths" && isTabAllowed("myths", tier, isAdmin) && <Myths />}
         </div>
         </>
         )}
