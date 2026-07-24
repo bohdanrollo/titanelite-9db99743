@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useAccess, isTabAllowed } from "@/lib/access";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, Search, GraduationCap } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, Search, GraduationCap, Scale, XCircle, CheckCircle } from "lucide-react";
 import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import ReactMarkdown from "react-markdown";
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 
-type Tab = "protocols" | "peptalk" | "peptides" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning";
+type Tab = "protocols" | "peptalk" | "peptides" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning" | "myths";
 
 function Dashboard() {
   const { user, signOut } = useAuth();
@@ -87,6 +87,7 @@ function Dashboard() {
               { k: "combos", l: "Combos", i: BookOpen, g: "Research" },
               { k: "lifting", l: "Lifting", i: Dumbbell, g: "Research" },
               { k: "learning", l: "Learning", i: GraduationCap, g: "Research" },
+              { k: "myths", l: "Myth vs Evidence", i: Scale, g: "Research" },
               { k: "calculator", l: "Calculator", i: CalculatorIcon, g: "Tools" },
               { k: "supplies", l: "Supplies", i: Droplets, g: "Tools" },
               { k: "reconstitution", l: "Reconstitution", i: FlaskConical, g: "Tools" },
@@ -176,6 +177,7 @@ function Dashboard() {
           {tab === "lifting" && isTabAllowed("lifting", tier, isAdmin) && <Lifting />}
           {tab === "combos" && isTabAllowed("combos", tier, isAdmin) && <Combos />}
           {tab === "learning" && isTabAllowed("learning", tier, isAdmin) && <Learning />}
+          {tab === "myths" && isTabAllowed("myths", tier, isAdmin) && <Myths />}
         </div>
         </>
         )}
@@ -1627,6 +1629,81 @@ function Learning() {
 
 
 
+function Myths() {
+  const myths = [
+    {
+      myth: "Peptides work instantly.",
+      evidence: "Most research peptides need days to weeks to show measurable effects. Tissue-repair, body-composition, and GH-axis changes are gradual and depend on consistency, dose, sleep, nutrition, and training."
+    },
+    {
+      myth: "More peptide = better results.",
+      evidence: "Dosing follows an inverted-U curve in most research. Exceeding studied ranges often increases side effects, desensitization, and cost without improving outcomes."
+    },
+    {
+      myth: "You can take peptides orally like a pill.",
+      evidence: "Most peptides are not orally bioavailable because stomach acids and enzymes break them down. Research administration is typically subcutaneous injection with an insulin syringe."
+    },
+    {
+      myth: "Peptides are just steroids.",
+      evidence: "Peptides are short chains of amino acids that signal existing pathways. Steroids are hormone-based molecules that enter cells and alter gene expression directly. They are different classes of compounds with different mechanisms and risk profiles."
+    },
+    {
+      myth: "Peptides don't require training or diet to work.",
+      evidence: "Peptides are research tools, not substitutes for training, protein intake, sleep, and a calorie plan. The best outcomes are seen when compounds are layered on top of solid fundamentals, not in place of them."
+    },
+    {
+      myth: "All peptides are legal for human use.",
+      evidence: "Many peptides are sold for research purposes only and are not FDA-approved or approved by equivalent agencies for human consumption. The legal status and intended use vary by compound, country, and vendor labeling."
+    },
+    {
+      myth: "You don't need to worry about side effects or monitoring.",
+      evidence: "Every compound has potential side effects, contraindications, and interactions. Research best practice includes tracking markers, symptoms, and stopping if adverse reactions appear."
+    },
+    {
+      myth: "Generic peptides from any source are the same.",
+      evidence: "Purity and identity vary widely between suppliers. Reputable vendors provide third-party certificates of analysis (COAs). Poor-quality or mislabeled products are one of the biggest real-world risks in this space."
+    }
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <div className="text-eyebrow">Research & Education</div>
+        <h2 className="mt-2 font-display text-2xl sm:text-3xl">Myth vs Evidence</h2>
+        <p className="mt-2 text-sm text-muted-foreground max-w-2xl">
+          Common claims about peptides compared with what the research actually shows. For educational purposes only.
+        </p>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        {myths.map((m) => (
+          <article key={m.myth} className="border border-foreground/15 p-5 sm:p-6 hover:border-blood transition">
+            <div className="flex items-start gap-3">
+              <XCircle size={18} className="text-blood shrink-0 mt-0.5" />
+              <div>
+                <div className="text-eyebrow mb-1">Myth</div>
+                <p className="font-display text-base sm:text-lg leading-snug">{m.myth}</p>
+              </div>
+            </div>
+            <div className="mt-4 flex items-start gap-3">
+              <CheckCircle size={18} className="text-emerald-500 shrink-0 mt-0.5" />
+              <div>
+                <div className="text-eyebrow mb-1">Evidence</div>
+                <p className="text-sm text-muted-foreground leading-relaxed">{m.evidence}</p>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div className="border border-blood/40 bg-blood/5 p-5 text-sm text-muted-foreground">
+        <span className="text-blood font-mono uppercase tracking-[0.14em] text-xs">Reminder</span>
+        <p className="mt-2">This content is educational and not a substitute for advice from a qualified medical professional. Always research independently and consult a physician before using any peptide or research compound.</p>
+      </div>
+    </div>
+  );
+}
+
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
@@ -1635,5 +1712,6 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </label>
   );
 }
+
 
 
