@@ -1632,6 +1632,42 @@ function Learning() {
 function Myths() {
   const myths = [
     {
+      myth: "Retatrutide is just a stronger semaglutide.",
+      evidence: "Retatrutide is a triple agonist (GLP-1, GIP, and glucagon receptors) with distinct metabolic and muscle-preservation effects. It is not simply a stronger GLP-1 peptide and remains investigational."
+    },
+    {
+      myth: "GHK-Cu builds muscle like an anabolic peptide.",
+      evidence: "GHK-Cu is primarily studied for tissue repair, wound healing, skin remodeling, and gene-expression modulation. It is not a direct muscle-building anabolic compound."
+    },
+    {
+      myth: "BPC-157 heals any injury overnight.",
+      evidence: "BPC-157 shows tendon, ligament, gut, and connective-tissue repair potential in animal models, but recovery is gradual, context-dependent, and human data is limited."
+    },
+    {
+      myth: "KPV is only a skin/melanocyte peptide.",
+      evidence: "KPV is an alpha-MSH fragment studied for anti-inflammatory, gut-barrier, and immune-modulating effects. Its research scope extends beyond pigmentation."
+    },
+    {
+      myth: "Tesamorelin burns fat directly.",
+      evidence: "Tesamorelin is a GHRH analog that raises GH and IGF-1. It is FDA-approved for HIV-associated visceral adiposity reduction, but it is not a direct fat burner and still requires diet and training."
+    },
+    {
+      myth: "MOTS-c is a testosterone booster.",
+      evidence: "MOTS-c is a mitochondrial-derived peptide studied for metabolic regulation, insulin sensitivity, and exercise-mimetic effects. It does not directly increase testosterone."
+    },
+    {
+      myth: "MT2 (Melanotan II) is a safe tanning peptide.",
+      evidence: "Melanotan II can cause nausea, flushing, increased moles, darkened freckles, spontaneous erections, and potential cardiovascular and renal concerns. It is not risk-free."
+    },
+    {
+      myth: "Semax is a stimulant like caffeine or Adderall.",
+      evidence: "Semax is a synthetic ACTH fragment studied for neuroprotection, BDNF modulation, and cognitive effects. Its mechanism is not a simple stimulant and responses vary widely."
+    },
+    {
+      myth: "Selank works immediately and eliminates all anxiety.",
+      evidence: "Selank is a tuftsin analog studied for anxiolytic and immune-modulating effects. Benefits are often subtle, cumulative, and individual—not a rapid cure for anxiety."
+    },
+    {
       myth: "Peptides work instantly.",
       evidence: "Most research peptides need days to weeks to show measurable effects. Tissue-repair, body-composition, and GH-axis changes are gradual and depend on consistency, dose, sleep, nutrition, and training."
     },
