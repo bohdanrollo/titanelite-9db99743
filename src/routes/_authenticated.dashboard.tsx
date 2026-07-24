@@ -350,6 +350,14 @@ const PEPTIDES: { name: string; researched: string }[] = [
   { name: "Clenbuterol (research context)", researched: "Researched for beta-2 agonism, thermogenesis, and fat loss in animal models." },
   { name: "T3 / Liothyronine (research context)", researched: "Researched for thyroid hormone metabolism, energy expenditure, and fat oxidation." },
   { name: "T4 / Levothyroxine (research context)", researched: "Researched for thyroid replacement, metabolic rate, and hormone balance." },
+  { name: "KLOW", researched: "Researched for metabolic regulation, body composition, and performance-related signaling pathways." },
+  { name: "Glutathione", researched: "Researched as a master antioxidant for oxidative stress, detoxification, and immune support." },
+  { name: "Retatrutide", researched: "Researched as a triple GIP/GLP-1/glucagon agonist for weight management and metabolic health." },
+  { name: "Liraglutide", researched: "Researched as a GLP-1 agonist for appetite control, glucose regulation, and fat loss." },
+  { name: "Dulaglutide", researched: "Researched as a long-acting GLP-1 agonist for glycemic control and metabolic support." },
+  { name: "Apamin", researched: "Researched for neuroprotection, cognitive enhancement, and calcium-activated potassium channel modulation." },
+  { name: "Follistatin 315", researched: "Researched for myostatin inhibition, muscle growth, and tissue development support." },
+  { name: "PNC-27 (research context)", researched: "Researched for selective membrane-disrupting effects on damaged or transformed cells." },
 ];
 
 type ChatMsg = { id: string; role: "user" | "assistant"; content: string };
