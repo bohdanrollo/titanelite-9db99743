@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 
-type Tab = "protocols" | "peptalk" | "peptides" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "articles";
+type Tab = "protocols" | "peptalk" | "peptides" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos";
 
 function Dashboard() {
   const { user, signOut } = useAuth();
@@ -84,7 +84,7 @@ function Dashboard() {
               { k: "protocols", l: "Protocols", i: FileText, g: "Plan" },
               { k: "mystack", l: "My Stack", i: ListChecks, g: "Plan" },
               { k: "peptides", l: "Peptides", i: Beaker, g: "Research" },
-              { k: "articles", l: "Articles", i: BookOpen, g: "Research" },
+              { k: "combos", l: "Combos", i: BookOpen, g: "Research" },
               { k: "lifting", l: "Lifting", i: Dumbbell, g: "Research" },
               { k: "calculator", l: "Calculator", i: CalculatorIcon, g: "Tools" },
               { k: "supplies", l: "Supplies", i: Droplets, g: "Tools" },
@@ -173,7 +173,7 @@ function Dashboard() {
           {tab === "injection" && isTabAllowed("injection", tier, isAdmin) && <Injection />}
           {tab === "calculator" && isTabAllowed("calculator", tier, isAdmin) && <PeptideCalculator />}
           {tab === "lifting" && isTabAllowed("lifting", tier, isAdmin) && <Lifting />}
-          {tab === "articles" && isTabAllowed("articles", tier, isAdmin) && <Articles />}
+          {tab === "combos" && isTabAllowed("combos", tier, isAdmin) && <Combos />}
         </div>
         </>
         )}
@@ -1322,61 +1322,70 @@ function MyStack() {
   );
 }
 
-function Articles() {
-  const articles = [
+function Combos() {
+  const combos = [
     {
-      title: "From Regeneration to Analgesia: The Role of BPC-157 in Tissue Repair and Pain Management",
-      url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13026520/",
-      source: "NCBI PMC · 2025",
-      summary: "A recent review of BPC-157 research covering soft-tissue repair, tendon and ligament healing, and emerging work on pain modulation."
+      name: "BPC-157 + TB-500",
+      tag: "Recovery & Tissue Repair",
+      pathways: "Both are studied for soft-tissue, tendon, ligament, and gut-lining repair. BPC-157 is researched for angiogenesis and growth-factor upregulation; TB-500 (Thymosin β4) is studied for cell migration, actin regulation, and inflammation modulation.",
+      overlap: "Overlapping interest in wound healing, vascular growth, and reducing local inflammation — which is why they're frequently discussed together in recovery-focused research.",
+      questions: "Is the goal acute injury recovery or general connective-tissue support? How long is the intended research window? Are you tracking one variable at a time so you can tell which compound is doing what?"
     },
     {
-      title: "Unregulated Peptide Use in the Age of Biohacking: Digital Promotion, Gray-Market Access, and Public Health Risks",
-      url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13355462/",
-      source: "NCBI PMC · 2025",
-      summary: "An up-to-date look at how the peptide space is evolving online — sourcing, quality, and why responsible research use matters more than ever."
+      name: "Ipamorelin + CJC-1295 (No DAC)",
+      tag: "GH Secretagogue Stack",
+      pathways: "Ipamorelin is a selective ghrelin-receptor agonist; CJC-1295 (No DAC) is a GHRH analog. Different receptors, same downstream target: pulsatile GH release from the pituitary.",
+      overlap: "Synergistic pulse amplification — GHRH primes the pituitary while a GHRP triggers release. This is why the two are almost always studied together rather than alone.",
+      questions: "Are pulses timed away from meals and around sleep to mirror natural GH rhythm? Is IGF-1 being monitored? Is the DAC vs. no-DAC choice appropriate for the research goal (pulsatile vs. sustained elevation)?"
     },
     {
-      title: "GLP-1-Directed NMDA Receptor Antagonism for Obesity Treatment",
-      url: "https://www.nature.com/articles/s41586-024-07419-8",
-      source: "Nature · 2024",
-      summary: "A next-generation peptide conjugate that pairs GLP-1 activity with targeted brain receptor modulation — one of the most talked-about advancements in obesity pharmacology."
+      name: "Semaglutide + Tirzepatide (sequential, not combined)",
+      tag: "GLP-1 Class Transition",
+      pathways: "Semaglutide is a GLP-1 receptor agonist. Tirzepatide is a dual GIP/GLP-1 agonist. Both act on incretin pathways affecting satiety, gastric emptying, and glucose handling.",
+      overlap: "Heavy mechanistic overlap on the GLP-1 axis — which is exactly why stacking them simultaneously is not something the research supports. They are typically discussed as a transition (one to the other), not a combination.",
+      questions: "Is this a transition or an actual stack? What's the washout consideration? How are GI side effects and lean-mass loss being tracked? Is there a muscle-preservation strategy in place?"
     },
     {
-      title: "Effects of Semaglutide on Body Composition and Kidney Function: The SMART Trial",
-      url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13379112/",
-      source: "NCBI PMC · 2025",
-      summary: "New clinical data on semaglutide's impact on lean vs. fat mass and renal markers — relevant to anyone thinking about GLP-1s and body composition."
+      name: "Retatrutide + Muscle-Preservation Peptides",
+      tag: "Body Composition Research",
+      pathways: "Retatrutide is a triple agonist (GLP-1 / GIP / glucagon). Aggressive fat loss on triple agonists raises concerns about lean-mass loss, which is why muscle-preservation compounds are studied alongside it.",
+      overlap: "The overlap isn't mechanistic — it's strategic. One arm drives fat loss; the other arm targets the muscle-preservation gap that arm creates.",
+      questions: "Is protein intake and resistance training the actual foundation, with peptides layered on top? Is body composition being measured (DEXA, tape, photos) rather than just scale weight?"
     },
     {
-      title: "Anti-Obesity Drugs' Side Effects: What We Know So Far",
-      url: "https://www.nature.com/articles/d41586-023-03183-3",
-      source: "Nature · 2023",
-      summary: "A plain-language breakdown of the known and emerging side-effect profile of semaglutide, tirzepatide, and the newer peptide analogs."
+      name: "GHK-Cu + BPC-157",
+      tag: "Skin, Hair & Tissue",
+      pathways: "GHK-Cu is a copper peptide studied for extracellular matrix remodeling, collagen synthesis, and antioxidant activity. BPC-157 is studied for systemic tissue repair and angiogenesis.",
+      overlap: "Both touch collagen, wound healing, and tissue remodeling — but through different mechanisms, which is why they're often discussed as complementary rather than redundant.",
+      questions: "Is the research goal topical (skin/hair) or systemic (injury recovery)? Different delivery methods matter. Is copper status being considered with GHK-Cu?"
     },
     {
-      title: "Tirzepatide After Intensive Lifestyle Intervention: The SURMOUNT-3 Phase 3 Trial",
-      url: "https://www.nature.com/articles/s41591-023-02597-w",
-      source: "Nature Medicine · 2023",
-      summary: "Landmark trial showing how tirzepatide performs when layered on top of lifestyle work — required reading for anyone tracking dual-agonist peptides."
+      name: "Tesamorelin + Ipamorelin",
+      tag: "Advanced GH Axis",
+      pathways: "Tesamorelin is a stabilized GHRH analog with strong research on visceral fat reduction. Ipamorelin is a selective GHRP that triggers a clean GH pulse without significantly affecting cortisol or prolactin.",
+      overlap: "Same GHRH + GHRP logic as CJC/Ipamorelin, but Tesamorelin brings a distinct body-composition profile that CJC does not.",
+      questions: "Is Tesamorelin the right choice over CJC for this specific research goal? Is IGF-1 being monitored? Is insulin sensitivity being tracked?"
     },
     {
-      title: "Targeting the Activin / Myostatin – ActRII Pathway to Preserve Muscle Mass in Obesity",
-      url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13388822/",
-      source: "NCBI PMC · 2025",
-      summary: "Where peptide therapy is heading next: compounds designed to protect skeletal muscle during aggressive fat loss with GLP-1s and dual/triple agonists."
+      name: "NAD+ + Glutathione",
+      tag: "Cellular & Longevity Research",
+      pathways: "NAD+ is central to mitochondrial function, sirtuin activity, and cellular energy. Glutathione is the body's primary intracellular antioxidant, tied to oxidative-stress regulation and detox pathways.",
+      overlap: "Both sit in the metabolic-health / longevity research space and are frequently discussed together, though their mechanisms are distinct rather than overlapping.",
+      questions: "Is baseline energy, sleep, and recovery being tracked? Is delivery route appropriate for the compound? Are you isolating variables long enough to know what's actually working?"
     },
     {
-      title: "Copper Peptide (GHK-Cu) Activated Cascade Catalysis for Diabetic Wound Healing",
-      url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13330688/",
-      source: "NCBI PMC · 2025",
-      summary: "Cutting-edge research on copper peptides for tissue repair — expanding what GHK-Cu is being studied for beyond skin and cosmetic applications."
+      name: "Melanotan II + PT-141",
+      tag: "MC Receptor Family",
+      pathways: "Both act on melanocortin receptors. MT-II is a broad MC agonist studied for pigmentation and appetite effects; PT-141 (Bremelanotide) is a more selective MC4R agonist studied for sexual response.",
+      overlap: "Same receptor family, different selectivity profiles. Effects can compound in ways that aren't always desirable, which is why they're rarely studied simultaneously.",
+      questions: "Is there a reason to combine rather than choose one? How is blood pressure being monitored? Are side-effect profiles (nausea, flushing, pigmentation) acceptable for the research context?"
     },
     {
-      title: "Thymosin β4 Inhibits Pyroptosis in Microglial Cells: A Mechanistic Study",
-      url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13372563/",
-      source: "NCBI PMC · 2025",
-      summary: "New mechanistic work on TB-500 / Thymosin β4 and its anti-inflammatory effects at the cellular level."
+      name: "Follistatin + Myostatin Inhibitors",
+      tag: "Muscle Growth Pathway",
+      pathways: "Follistatin binds and inhibits myostatin, a negative regulator of muscle growth. Other myostatin-pathway compounds target the same axis from different angles (ActRII, activin).",
+      overlap: "Direct pathway overlap. Combining agents that all suppress the same negative regulator raises questions about magnitude, safety, and off-target effects on other TGF-β family signaling.",
+      questions: "What does the actual research on combined pathway suppression show? Is this pathway one you should be aggressively suppressing at all? Is there long-term safety data to justify the strategy?"
     }
   ];
 
@@ -1384,31 +1393,42 @@ function Articles() {
     <div className="space-y-6">
       <div>
         <div className="text-eyebrow">Research & Education</div>
-        <h2 className="mt-2 font-display text-2xl sm:text-3xl">Peptide Advancements</h2>
+        <h2 className="mt-2 font-display text-2xl sm:text-3xl">Peptide Combinations</h2>
         <p className="mt-2 text-sm text-muted-foreground max-w-2xl">
-          Curated articles on peptide science, recovery research, and what these compounds are being studied for.
-          These links are for educational purposes only.
+          Compounds that are commonly researched together — including where their mechanisms overlap and what to think through before considering a combination.
+          For educational purposes only. Not medical advice.
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {articles.map((a) => (
-          <a
-            key={a.title}
-            href={a.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group border border-foreground/15 p-5 hover:border-blood transition flex flex-col"
-          >
+      <div className="grid gap-4 sm:grid-cols-2">
+        {combos.map((c) => (
+          <article key={c.name} className="border border-foreground/15 p-5 sm:p-6 hover:border-blood transition flex flex-col">
             <div className="flex items-center gap-2 text-blood mb-3">
               <BookOpen size={18} />
-              <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.18em]">{a.source}</span>
+              <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.18em]">{c.tag}</span>
             </div>
-            <h3 className="font-display text-lg sm:text-xl leading-tight group-hover:text-blood transition">{a.title}</h3>
-            <p className="mt-2 text-sm text-muted-foreground leading-relaxed flex-grow">{a.summary}</p>
-            <div className="mt-4 text-xs font-mono uppercase tracking-[0.14em] text-blood">Read article →</div>
-          </a>
+            <h3 className="font-display text-lg sm:text-xl leading-tight">{c.name}</h3>
+            <div className="mt-4 space-y-3 text-sm leading-relaxed">
+              <div>
+                <div className="text-eyebrow mb-1">Similar pathways</div>
+                <p className="text-muted-foreground">{c.pathways}</p>
+              </div>
+              <div>
+                <div className="text-eyebrow mb-1">Overlapping mechanisms</div>
+                <p className="text-muted-foreground">{c.overlap}</p>
+              </div>
+              <div>
+                <div className="text-eyebrow mb-1">Questions to consider</div>
+                <p className="text-muted-foreground">{c.questions}</p>
+              </div>
+            </div>
+          </article>
         ))}
+      </div>
+
+      <div className="border border-blood/40 bg-blood/5 p-5 text-sm text-muted-foreground">
+        <span className="text-blood font-mono uppercase tracking-[0.14em] text-xs">Reminder</span>
+        <p className="mt-2">This information is educational. It is not a recommendation to combine any compounds. Combinations multiply variables, side-effect risk, and unknowns — always research each compound individually first and consult a qualified professional.</p>
       </div>
     </div>
   );
