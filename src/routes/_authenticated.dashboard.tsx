@@ -526,17 +526,31 @@ function PepTalk() {
 }
 
 function Peptides() {
+  const [query, setQuery] = useState("");
+  const q = query.trim().toLowerCase();
+  const filtered = q ? PEPTIDES.filter((p) => p.name.toLowerCase().includes(q) || p.researched.toLowerCase().includes(q)) : PEPTIDES;
   return (
     <div>
-      <div className="mb-6">
-        <h3 className="font-display text-2xl sm:text-3xl">Top 50 Research Peptides</h3>
-        <p className="text-sm text-muted-foreground mt-2">
-          Educational reference only. Compounds listed for research purposes — not medical advice. Order through{" "}
-          <a href="https://powerbuiltlabs.com" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">Powerbuilt Labs</a>.
-        </p>
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+          <h3 className="font-display text-2xl sm:text-3xl">Research Peptides</h3>
+          <p className="text-sm text-muted-foreground mt-2">
+            Educational reference only. Compounds listed for research purposes — not medical advice. Order through{" "}
+            <a href="https://powerbuiltlabs.com" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">Powerbuilt Labs</a>.
+          </p>
+        </div>
+        <div className="relative w-full sm:w-72">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search peptides…"
+            className="w-full bg-background border border-foreground/15 pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-blood"
+          />
+        </div>
       </div>
       <div className="grid sm:grid-cols-2 gap-3">
-        {PEPTIDES.map((p, i) => (
+        {filtered.map((p, i) => (
           <article key={p.name} className="border border-foreground/10 p-5 hover:border-blood transition">
             <div className="flex items-baseline gap-3">
               <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
@@ -545,6 +559,11 @@ function Peptides() {
             <p className="text-sm text-muted-foreground mt-2">{p.researched}</p>
           </article>
         ))}
+        {filtered.length === 0 && (
+          <div className="col-span-full border border-foreground/10 p-6 text-sm text-muted-foreground text-center">
+            No peptides found matching “{query}”.
+          </div>
+        )}
       </div>
     </div>
   );
