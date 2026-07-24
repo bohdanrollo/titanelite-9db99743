@@ -1325,40 +1325,58 @@ function MyStack() {
 function Articles() {
   const articles = [
     {
-      title: "The Peptide Revolution: How Science Is Reshaping Recovery and Longevity",
-      url: "https://www.scientificamerican.com/article/peptides-are-short-chains-of-amino-acids-with-big-potential/",
-      source: "Scientific American",
-      summary: "An overview of how peptide therapies are being studied for tissue repair, metabolic health, and anti-aging applications."
+      title: "From Regeneration to Analgesia: The Role of BPC-157 in Tissue Repair and Pain Management",
+      url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13026520/",
+      source: "NCBI PMC · 2025",
+      summary: "A recent review of BPC-157 research covering soft-tissue repair, tendon and ligament healing, and emerging work on pain modulation."
     },
     {
-      title: "Growth Hormone-Releasing Peptides: Research and Clinical Potential",
-      url: "https://pubmed.ncbi.nlm.nih.gov/",
-      source: "PubMed / NIH",
-      summary: "Peer-reviewed research on GH secretagogues, their mechanisms, and ongoing clinical interest."
+      title: "Unregulated Peptide Use in the Age of Biohacking: Digital Promotion, Gray-Market Access, and Public Health Risks",
+      url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13355462/",
+      source: "NCBI PMC · 2025",
+      summary: "An up-to-date look at how the peptide space is evolving online — sourcing, quality, and why responsible research use matters more than ever."
     },
     {
-      title: "BPC-157 and Tendon Healing: What the Research Shows",
-      url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC",
-      source: "NCBI PMC",
-      summary: "Studies examining BPC-157's role in soft-tissue repair, tendon healing, and cellular migration."
+      title: "GLP-1-Directed NMDA Receptor Antagonism for Obesity Treatment",
+      url: "https://www.nature.com/articles/s41586-024-07419-8",
+      source: "Nature · 2024",
+      summary: "A next-generation peptide conjugate that pairs GLP-1 activity with targeted brain receptor modulation — one of the most talked-about advancements in obesity pharmacology."
     },
     {
-      title: "Peptides in Sports Medicine and Recovery",
-      url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC",
-      source: "PMC / Sports Medicine",
-      summary: "How athletes and researchers are exploring peptides for recovery, injury prevention, and performance."
+      title: "Effects of Semaglutide on Body Composition and Kidney Function: The SMART Trial",
+      url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13379112/",
+      source: "NCBI PMC · 2025",
+      summary: "New clinical data on semaglutide's impact on lean vs. fat mass and renal markers — relevant to anyone thinking about GLP-1s and body composition."
     },
     {
-      title: "Collagen Peptides and Body Composition: A Review",
-      url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC",
-      source: "PMC",
-      summary: "Evidence on collagen-derived peptides, tissue repair, and their studied effects on body composition."
+      title: "Anti-Obesity Drugs' Side Effects: What We Know So Far",
+      url: "https://www.nature.com/articles/d41586-023-03183-3",
+      source: "Nature · 2023",
+      summary: "A plain-language breakdown of the known and emerging side-effect profile of semaglutide, tirzepatide, and the newer peptide analogs."
     },
     {
-      title: "The Future of Peptide-Based Therapeutics",
-      url: "https://www.nature.com/articles/",
-      source: "Nature",
-      summary: "Why pharmaceutical research is increasingly focused on peptide-based compounds for precision medicine."
+      title: "Tirzepatide After Intensive Lifestyle Intervention: The SURMOUNT-3 Phase 3 Trial",
+      url: "https://www.nature.com/articles/s41591-023-02597-w",
+      source: "Nature Medicine · 2023",
+      summary: "Landmark trial showing how tirzepatide performs when layered on top of lifestyle work — required reading for anyone tracking dual-agonist peptides."
+    },
+    {
+      title: "Targeting the Activin / Myostatin – ActRII Pathway to Preserve Muscle Mass in Obesity",
+      url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13388822/",
+      source: "NCBI PMC · 2025",
+      summary: "Where peptide therapy is heading next: compounds designed to protect skeletal muscle during aggressive fat loss with GLP-1s and dual/triple agonists."
+    },
+    {
+      title: "Copper Peptide (GHK-Cu) Activated Cascade Catalysis for Diabetic Wound Healing",
+      url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13330688/",
+      source: "NCBI PMC · 2025",
+      summary: "Cutting-edge research on copper peptides for tissue repair — expanding what GHK-Cu is being studied for beyond skin and cosmetic applications."
+    },
+    {
+      title: "Thymosin β4 Inhibits Pyroptosis in Microglial Cells: A Mechanistic Study",
+      url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13372563/",
+      source: "NCBI PMC · 2025",
+      summary: "New mechanistic work on TB-500 / Thymosin β4 and its anti-inflammatory effects at the cellular level."
     }
   ];
 
