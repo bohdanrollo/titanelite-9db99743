@@ -175,6 +175,7 @@ function Dashboard() {
           {tab === "calculator" && isTabAllowed("calculator", tier, isAdmin) && <PeptideCalculator />}
           {tab === "lifting" && isTabAllowed("lifting", tier, isAdmin) && <Lifting />}
           {tab === "combos" && isTabAllowed("combos", tier, isAdmin) && <Combos />}
+          {tab === "learning" && isTabAllowed("learning", tier, isAdmin) && <Learning />}
         </div>
         </>
         )}
