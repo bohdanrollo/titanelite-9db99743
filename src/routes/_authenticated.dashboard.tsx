@@ -86,6 +86,7 @@ function Dashboard() {
               { k: "peptides", l: "Peptides", i: Beaker, g: "Research" },
               { k: "combos", l: "Combos", i: BookOpen, g: "Research" },
               { k: "lifting", l: "Lifting", i: Dumbbell, g: "Research" },
+              { k: "learning", l: "Learning", i: GraduationCap, g: "Research" },
               { k: "calculator", l: "Calculator", i: CalculatorIcon, g: "Tools" },
               { k: "supplies", l: "Supplies", i: Droplets, g: "Tools" },
               { k: "reconstitution", l: "Reconstitution", i: FlaskConical, g: "Tools" },
