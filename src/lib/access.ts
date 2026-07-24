@@ -9,6 +9,7 @@ export const LIMITED_TABS = [
   "peptides",
   "combos",
   "learning",
+  "myths",
   "lifting",
   "supplies",
   "reconstitution",
