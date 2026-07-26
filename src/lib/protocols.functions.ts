@@ -237,9 +237,9 @@ export const getProtocolDownloadUrl = createServerFn({ method: "POST" })
         .select("tier")
         .eq("user_id", userId)
         .eq("tier", "full")
-        .maybeSingle();
+        .limit(1);
       if (aErr) throw new Error("Access check failed");
-      if (!access) throw new Error("Full Access required to download protocols");
+      if (!access || access.length === 0) throw new Error("Full Access required to download protocols");
     }
     if (!p.pdf_storage_path) throw new Error("No PDF available");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
