@@ -32,7 +32,7 @@ function Terms() {
           <P t="Account Termination">We may suspend or terminate accounts for fraud, abuse, illegal activity, or violation of these Terms.</P>
           <P t="Governing Law">These Terms are governed by the laws of the jurisdiction of Titan Elite's principal place of business, without regard to conflict-of-law principles.</P>
           <P t="Changes">We may update these Terms; the latest version is always posted here.</P>
-          <P t="Contact">coach@titanelite.com</P>
+          <P t="Contact">titanelitee@gmail.com</P>
         </div>
       </section>
       <SiteFooter />

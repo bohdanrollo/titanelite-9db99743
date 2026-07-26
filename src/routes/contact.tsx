@@ -31,7 +31,7 @@ function Contact() {
               <Mail className="text-blood mt-1" size={20} />
               <div>
                 <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Email</div>
-                <div className="font-display text-xl">coach@titanelite.com</div>
+                <div className="font-display text-xl">titanelitee@gmail.com</div>
               </div>
             </div>
             <div className="flex items-start gap-3">
