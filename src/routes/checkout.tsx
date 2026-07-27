@@ -12,15 +12,15 @@ export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
       { title: "Get Access — Titan Elite" },
-      { name: "description", content: "Unlock the Titan Elite client dashboard: peptide research, calculators, protocols, and more." },
+      { name: "description", content: "Subscribe to the Titan Elite client dashboard: peptide research, calculators, protocols, and more." },
       { property: "og:title", content: "Get Access — Titan Elite" },
-      { property: "og:description", content: "Unlock the Titan Elite client dashboard." },
+      { property: "og:description", content: "Subscribe to the Titan Elite client dashboard." },
     ],
   }),
   component: CheckoutPage,
 });
 
-type PlanId = "limited_access_onetime" | "full_access_lifetime" | "full_access_upgrade";
+type PlanId = "limited_monthly" | "full_monthly";
 type Plan = {
   id: PlanId;
   name: string;
@@ -32,50 +32,35 @@ type Plan = {
 
 const PLANS: Plan[] = [
   {
-    id: "limited_access_onetime",
+    id: "limited_monthly",
     name: "Limited Access",
     price: "$10.99",
-    tag: "One-time",
+    tag: "Per month",
     features: [
+      "Full client dashboard access",
       "Peptides research library",
-      "Articles & studies",
-      "Lifting programs & nutrition",
-      "Supplies checklist",
-      "Reconstitution guide",
-      "Injection guide",
-    ],
-    disabled: "No custom protocols, My Stack, Calculator, or Pep Talk AI",
-  },
-  {
-    id: "full_access_lifetime",
-    name: "Full Access",
-    price: "$59.99",
-    tag: "Lifetime",
-    features: [
-      "Everything in Limited Access",
-      "Custom peptide + training protocols",
+      "Combos, Myths, Learning center",
       "My Stack dose tracker",
       "Peptide dose calculator",
       "Pep Talk AI assistant",
-      "Lifetime access, one payment",
+      "Lifting programs & nutrition",
+      "Supplies, reconstitution, injection guides",
+    ],
+    disabled: "Does NOT include custom peptide + training protocols",
+  },
+  {
+    id: "full_monthly",
+    name: "Full Access",
+    price: "$49.99 then $10.99/mo",
+    tag: "Subscription",
+    features: [
+      "Everything in Limited Access",
+      "Custom peptide + training protocols",
+      "One-on-one intake review",
+      "Cancel anytime",
     ],
   },
 ];
-
-const UPGRADE_PLAN: Plan = {
-  id: "full_access_upgrade",
-  name: "Upgrade to Full Access",
-  price: "$39.99",
-  tag: "Upgrade",
-  features: [
-    "Unlock custom peptide + training protocols",
-    "My Stack dose tracker",
-    "Peptide dose calculator",
-    "Pep Talk AI assistant",
-    "Keeps all your Limited Access features",
-    "Lifetime access, one payment",
-  ],
-};
 
 function CheckoutPage() {
   const { user, loading } = useAuth();
@@ -95,28 +80,28 @@ function CheckoutPage() {
     return <div className="min-h-dvh bg-background flex items-center justify-center text-eyebrow">Loading…</div>;
   }
 
-  const plansToShow: Plan[] = tier === "limited" ? [UPGRADE_PLAN] : PLANS;
-
   return (
     <div className="min-h-dvh bg-background flex flex-col">
       <PaymentTestModeBanner />
       <SiteHeader />
       <section className="container-edge py-12 sm:py-20 flex-1">
         <div className="text-eyebrow">Get Access</div>
-        <h1 className="mt-4 text-4xl sm:text-6xl">{tier === "limited" ? "Upgrade your access." : "Unlock the dashboard."}</h1>
+        <h1 className="mt-4 text-4xl sm:text-6xl">
+          {tier === "limited" ? "Upgrade your access." : "Unlock the dashboard."}
+        </h1>
         <p className="mt-4 max-w-2xl text-muted-foreground">
           {tier === "limited"
-            ? "You currently have Limited Access. Upgrade to Full Access for $39.99 — one payment, lifetime access to every tool."
-            : "Choose your tier. One payment — no subscriptions."}
+            ? "You currently have Limited Access. Upgrade to Full Access for custom protocols — $49.99 first payment, then $10.99/month."
+            : "Choose your plan. Promo codes supported at checkout. Cancel anytime."}
         </p>
 
         {!selected && (
-          <div className={`mt-10 grid gap-6 ${plansToShow.length > 1 ? "md:grid-cols-2" : "md:max-w-lg"}`}>
-            {plansToShow.map((p) => (
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
+            {PLANS.map((p) => (
               <div key={p.id} className="border border-foreground/15 p-6 sm:p-8 flex flex-col">
                 <div className="text-eyebrow text-blood">{p.tag}</div>
                 <div className="mt-2 font-display text-3xl">{p.name}</div>
-                <div className="mt-2 text-5xl font-display">{p.price}</div>
+                <div className="mt-2 text-4xl font-display">{p.price}</div>
                 <ul className="mt-6 space-y-2 text-sm flex-1">
                   {p.features.map((f) => (
                     <li key={f} className="flex gap-2">
@@ -131,7 +116,7 @@ function CheckoutPage() {
                   onClick={() => setSelected(p.id)}
                   className="mt-6 btn-blood hover:btn-blood-hover"
                 >
-                  {p.id === "full_access_upgrade" ? "Upgrade for $39.99" : `Select ${p.name}`}
+                  Select {p.name}
                 </button>
               </div>
             ))}
@@ -151,7 +136,6 @@ function CheckoutPage() {
             </div>
           </div>
         )}
-
 
         <p className="mt-8 text-xs text-muted-foreground">
           Questions? <Link to="/contact" className="underline">Contact us</Link>.

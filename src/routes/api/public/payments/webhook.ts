@@ -14,10 +14,34 @@ function getSupabase() {
 }
 
 const TIER_BY_PRICE: Record<string, "limited" | "full"> = {
+  // Legacy one-time products (kept so old webhooks + admin actions still work)
   limited_access_onetime: "limited",
   full_access_lifetime: "full",
   full_access_upgrade: "full",
+  // Subscription products
+  limited_monthly: "limited",
+  full_monthly: "full",
 };
+
+// Access-granting price IDs that should never be overwritten/downgraded by
+// a subscription event (grandfathered lifetime buyers, admin grants).
+const LIFETIME_PRICES = new Set([
+  "limited_access_onetime",
+  "full_access_lifetime",
+  "full_access_upgrade",
+  "admin_grant_limited",
+  "admin_grant_full",
+]);
+
+const ACTIVE_SUB_STATUSES = new Set(["active", "trialing", "past_due"]);
+
+interface Subscription {
+  id: string;
+  status: string;
+  customer: string | { id: string } | null;
+  metadata?: { userId?: string; tier?: string } | null;
+  items?: { data: Array<{ price: { id: string; lookup_key?: string | null; metadata?: Record<string, string> | null } }> };
+}
 
 interface CheckoutSession {
   id: string;
@@ -143,6 +167,76 @@ async function ensurePaymentIntent(session: CheckoutSession, env: StripeEnv): Pr
   }
 }
 
+function resolveSubTier(sub: Subscription): { tier: "limited" | "full"; priceLookup: string } | null {
+  const items = sub.items?.data ?? [];
+  // Pick the item whose lookup_key maps to a known tier (prefer highest = full).
+  let best: { tier: "limited" | "full"; priceLookup: string } | null = null;
+  for (const it of items) {
+    const lk = it.price?.lookup_key || it.price?.metadata?.lovable_external_id;
+    if (!lk) continue;
+    const t = TIER_BY_PRICE[lk];
+    if (!t) continue;
+    if (!best || (t === "full" && best.tier !== "full")) best = { tier: t, priceLookup: lk };
+  }
+  return best;
+}
+
+async function handleSubscriptionChange(sub: Subscription, env: StripeEnv) {
+  const userId = sub.metadata?.userId;
+  if (!userId) {
+    console.error("[webhook] subscription missing userId metadata", sub.id);
+    return;
+  }
+  const resolved = resolveSubTier(sub);
+  const isActive = ACTIVE_SUB_STATUSES.has(sub.status);
+  const customerId = typeof sub.customer === "string" ? sub.customer : sub.customer?.id ?? null;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supa = getSupabase() as any;
+  const { data: existing } = await supa
+    .from("user_access")
+    .select("id, tier, stripe_price_id, stripe_payment_intent_id")
+    .eq("user_id", userId)
+    .eq("environment", env)
+    .maybeSingle();
+
+  // Cancellation / non-active status: revoke only if the row belongs to THIS subscription.
+  if (!isActive) {
+    if (existing && existing.stripe_payment_intent_id === sub.id) {
+      await supa.from("user_access").delete().eq("id", existing.id);
+      console.log("[webhook] revoked access for ended subscription", sub.id);
+    }
+    return;
+  }
+
+  if (!resolved) {
+    console.error("[webhook] could not resolve tier for subscription", sub.id);
+    return;
+  }
+
+  // Don't overwrite a lifetime/admin-granted row.
+  if (existing && existing.stripe_price_id && LIFETIME_PRICES.has(existing.stripe_price_id)) {
+    return;
+  }
+
+  const payload = {
+    user_id: userId,
+    tier: resolved.tier,
+    stripe_price_id: resolved.priceLookup,
+    stripe_customer_id: customerId,
+    stripe_session_id: null as string | null,
+    stripe_payment_intent_id: sub.id,
+    environment: env,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (existing) {
+    await supa.from("user_access").update(payload).eq("id", existing.id);
+  } else {
+    await supa.from("user_access").insert(payload);
+  }
+}
+
 export const Route = createFileRoute("/api/public/payments/webhook")({
   server: {
     handlers: {
@@ -158,10 +252,21 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
           switch (event.type) {
             case "checkout.session.completed":
             case "checkout.session.async_payment_succeeded": {
-              const session = await ensurePaymentIntent(event.data.object as CheckoutSession, env);
-              await handleCheckoutCompleted(session, env);
+              const session = event.data.object as CheckoutSession;
+              // Subscription sessions are handled by customer.subscription.* events.
+              // Only run legacy one-time handling if there's no subscription attached.
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const anySession = session as any;
+              if (anySession.mode === "subscription" || anySession.subscription) break;
+              const withPi = await ensurePaymentIntent(session, env);
+              await handleCheckoutCompleted(withPi, env);
               break;
             }
+            case "customer.subscription.created":
+            case "customer.subscription.updated":
+            case "customer.subscription.deleted":
+              await handleSubscriptionChange(event.data.object as Subscription, env);
+              break;
             case "charge.refunded":
               await handleChargeRefunded(event.data.object as Charge, env);
               break;

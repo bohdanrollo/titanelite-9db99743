@@ -56,27 +56,37 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
 
       const stripe = createStripeClient(data.environment);
 
+      // Resolve the primary (recurring) price by lookup key.
       const prices = await stripe.prices.list({ lookup_keys: [data.priceId] });
       if (!prices.data.length) throw new Error("Price not found");
-      const stripePrice = prices.data[0];
+      const primary = prices.data[0];
+
+      // Full plan: charge $49.99 initial fee on the first invoice alongside
+      // the recurring $10.99/month. Limited plan: recurring only.
+      const lineItems: { price: string; quantity: number }[] = [
+        { price: primary.id, quantity: 1 },
+      ];
+      if (data.priceId === "full_monthly") {
+        const feeLookup = await stripe.prices.list({ lookup_keys: ["full_initial_fee"] });
+        if (feeLookup.data.length) {
+          lineItems.push({ price: feeLookup.data[0].id, quantity: 1 });
+        }
+      }
 
       const customerId = await resolveOrCreateCustomer(stripe, { email, userId });
-
-      const productId =
-        typeof stripePrice.product === "string"
-          ? stripePrice.product
-          : stripePrice.product.id;
-      const product = await stripe.products.retrieve(productId);
+      const isRecurring = primary.type === "recurring";
 
       const session = await stripe.checkout.sessions.create({
-        line_items: [{ price: stripePrice.id, quantity: 1 }],
-        mode: "payment",
+        line_items: lineItems,
+        mode: isRecurring ? "subscription" : "payment",
         ui_mode: "embedded_page",
         return_url: data.returnUrl,
         customer: customerId,
         allow_promotion_codes: true,
-        payment_intent_data: { description: product.name },
         metadata: { userId, tier: data.priceId },
+        ...(isRecurring && {
+          subscription_data: { metadata: { userId, tier: data.priceId } },
+        }),
       });
 
       return { clientSecret: session.client_secret ?? "" };

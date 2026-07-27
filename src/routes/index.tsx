@@ -57,7 +57,7 @@ function Hero() {
           </div>
           <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
             <span className="inline-block h-2 w-2 rounded-full bg-blood" />
-            One payment. Lifetime access. No recurring fees.
+            Simple monthly access. Cancel anytime.
           </div>
           <div className="mt-12 grid grid-cols-3 gap-6 max-w-md">
             {[
