@@ -32,9 +32,8 @@ export const grantAccess = createServerFn({ method: "POST" })
       .maybeSingle();
 
     if (existing) {
-      // Never downgrade full → limited via comp; require explicit revoke first.
-      if (existing.tier === "full" && data.tier === "limited") {
-        throw new Error("User already has Full access. Revoke first to downgrade.");
+      if (existing.tier === data.tier) {
+        return { ok: true, action: "unchanged" as const };
       }
       const { error } = await admin
         .from("user_access")
@@ -43,6 +42,7 @@ export const grantAccess = createServerFn({ method: "POST" })
       if (error) throw new Error(error.message);
       return { ok: true, action: "updated" as const };
     }
+
 
     const { error } = await admin.from("user_access").insert({
       user_id: data.userId,
