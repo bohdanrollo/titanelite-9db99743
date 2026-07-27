@@ -16,6 +16,7 @@ function getSupabase() {
 const TIER_BY_PRICE: Record<string, "limited" | "full"> = {
   limited_access_onetime: "limited",
   full_access_lifetime: "full",
+  full_access_upgrade: "full",
 };
 
 interface CheckoutSession {
