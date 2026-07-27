@@ -154,6 +154,19 @@ async function handleChargeRefunded(charge: Charge, env: StripeEnv) {
   console.log("[webhook] revoked access for refund", { paymentIntentId, count: rows.length });
 }
 
+// Newer sessions store payment_intent inline; older ones may need a lookup.
+async function ensurePaymentIntent(session: CheckoutSession, env: StripeEnv): Promise<CheckoutSession> {
+  if (session.payment_intent) return session;
+  try {
+    const stripe = createStripeClient(env);
+    const full = await stripe.checkout.sessions.retrieve(session.id);
+    return { ...session, payment_intent: (full.payment_intent as string | null) ?? null };
+  } catch (e) {
+    console.error("[webhook] failed to hydrate payment_intent", e);
+    return session;
+  }
+}
+
 function resolveSubTier(sub: Subscription): { tier: "limited" | "full"; priceLookup: string } | null {
   const items = sub.items?.data ?? [];
   // Pick the item whose lookup_key maps to a known tier (prefer highest = full).
