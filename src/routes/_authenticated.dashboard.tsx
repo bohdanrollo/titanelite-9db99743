@@ -72,6 +72,22 @@ function Dashboard() {
           </div>
         )}
 
+        {!accessLoading && tier === "limited" && (
+          <div className="mt-8 border border-blood/40 bg-blood/5 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <div className="text-eyebrow text-blood">Limited Access</div>
+              <div className="mt-1 font-display text-xl sm:text-2xl">Upgrade to Full Access</div>
+              <p className="mt-1 text-sm text-muted-foreground">Unlock custom protocols, My Stack, Calculator, and Pep Talk AI — one payment, lifetime access.</p>
+            </div>
+            <button
+              onClick={() => nav({ to: "/checkout" })}
+              className="btn-blood hover:btn-blood-hover shrink-0"
+            >
+              Upgrade — $39.99
+            </button>
+          </div>
+        )}
+
         {accessLoading ? (
           <div className="mt-10 text-eyebrow">Loading access…</div>
         ) : !hasAccess ? (
