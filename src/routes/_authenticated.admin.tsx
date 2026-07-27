@@ -117,25 +117,32 @@ function Clients() {
 
   const grant = async (userId: string, tier: "limited" | "full") => {
     setBusyId(userId);
+    const prev = access[userId];
+    setAccess((s) => ({ ...s, [userId]: tier })); // optimistic
     try {
       await grantFn({ data: { userId, tier, environment: env } });
-      toast.success(`Granted ${tier === "full" ? "Full" : "Limited"} access.`);
+      toast.success(`${tier === "full" ? "Full" : "Limited"} access ${prev ? "updated" : "granted"}.`);
       await reload();
     } catch (err) {
+      setAccess((s) => { const n = { ...s }; if (prev) n[userId] = prev; else delete n[userId]; return n; });
       toast.error(err instanceof Error ? err.message : "Failed to grant access");
     } finally { setBusyId(null); }
   };
   const revoke = async (userId: string) => {
     if (!confirm("Revoke this client's dashboard access?")) return;
     setBusyId(userId);
+    const prev = access[userId];
+    setAccess((s) => { const n = { ...s }; delete n[userId]; return n; }); // optimistic
     try {
       await revokeFn({ data: { userId, environment: env } });
       toast.success("Access revoked.");
       await reload();
     } catch (err) {
+      if (prev) setAccess((s) => ({ ...s, [userId]: prev }));
       toast.error(err instanceof Error ? err.message : "Failed to revoke access");
     } finally { setBusyId(null); }
   };
+
 
   const filtered = rows.filter((r) => !q || `${r.full_name ?? ""} ${r.email ?? ""}`.toLowerCase().includes(q.toLowerCase()));
   return (
