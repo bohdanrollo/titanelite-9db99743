@@ -14,10 +14,34 @@ function getSupabase() {
 }
 
 const TIER_BY_PRICE: Record<string, "limited" | "full"> = {
+  // Legacy one-time products (kept so old webhooks + admin actions still work)
   limited_access_onetime: "limited",
   full_access_lifetime: "full",
   full_access_upgrade: "full",
+  // Subscription products
+  limited_monthly: "limited",
+  full_monthly: "full",
 };
+
+// Access-granting price IDs that should never be overwritten/downgraded by
+// a subscription event (grandfathered lifetime buyers, admin grants).
+const LIFETIME_PRICES = new Set([
+  "limited_access_onetime",
+  "full_access_lifetime",
+  "full_access_upgrade",
+  "admin_grant_limited",
+  "admin_grant_full",
+]);
+
+const ACTIVE_SUB_STATUSES = new Set(["active", "trialing", "past_due"]);
+
+interface Subscription {
+  id: string;
+  status: string;
+  customer: string | { id: string } | null;
+  metadata?: { userId?: string; tier?: string } | null;
+  items?: { data: Array<{ price: { id: string; lookup_key?: string | null; metadata?: Record<string, string> | null } }> };
+}
 
 interface CheckoutSession {
   id: string;
