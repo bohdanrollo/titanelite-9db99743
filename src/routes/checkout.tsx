@@ -20,8 +20,9 @@ export const Route = createFileRoute("/checkout")({
   component: CheckoutPage,
 });
 
+type PlanId = "limited_access_onetime" | "full_access_lifetime" | "full_access_upgrade";
 type Plan = {
-  id: "limited_access_onetime" | "full_access_lifetime";
+  id: PlanId;
   name: string;
   price: string;
   tag: string;
@@ -60,6 +61,21 @@ const PLANS: Plan[] = [
     ],
   },
 ];
+
+const UPGRADE_PLAN: Plan = {
+  id: "full_access_upgrade",
+  name: "Upgrade to Full Access",
+  price: "$39.99",
+  tag: "Upgrade",
+  features: [
+    "Unlock custom peptide + training protocols",
+    "My Stack dose tracker",
+    "Peptide dose calculator",
+    "Pep Talk AI assistant",
+    "Keeps all your Limited Access features",
+    "Lifetime access, one payment",
+  ],
+};
 
 function CheckoutPage() {
   const { user, loading } = useAuth();
