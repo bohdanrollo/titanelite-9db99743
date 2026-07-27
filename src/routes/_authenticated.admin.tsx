@@ -193,23 +193,30 @@ function Clients() {
                       <Loader2 size={14} className="animate-spin inline text-muted-foreground" />
                     ) : (
                       <div className="inline-flex gap-1">
-                        {tier !== "limited" && tier !== "full" && (
-                          <button onClick={() => grant(r.id, "limited")} className="px-2 py-1 border border-foreground/20 font-mono text-[10px] uppercase tracking-[0.14em] hover:border-blood hover:text-blood">
-                            Grant Limited
-                          </button>
-                        )}
-                        {tier !== "full" && (
-                          <button onClick={() => grant(r.id, "full")} className="px-2 py-1 border border-foreground/20 font-mono text-[10px] uppercase tracking-[0.14em] hover:border-blood hover:text-blood">
-                            Grant Full
-                          </button>
-                        )}
-                        {(tier === "limited" || tier === "full") && (
-                          <button onClick={() => revoke(r.id)} className="px-2 py-1 border border-foreground/20 font-mono text-[10px] uppercase tracking-[0.14em] text-blood hover:bg-blood hover:text-background">
-                            Revoke
-                          </button>
-                        )}
+                        <button
+                          onClick={() => grant(r.id, "limited")}
+                          disabled={tier === "limited"}
+                          className="px-2 py-1 border border-foreground/20 font-mono text-[10px] uppercase tracking-[0.14em] hover:border-blood hover:text-blood disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-foreground/20 disabled:hover:text-inherit"
+                        >
+                          {tier === "limited" ? "Limited ✓" : "Set Limited"}
+                        </button>
+                        <button
+                          onClick={() => grant(r.id, "full")}
+                          disabled={tier === "full"}
+                          className="px-2 py-1 border border-foreground/20 font-mono text-[10px] uppercase tracking-[0.14em] hover:border-blood hover:text-blood disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-foreground/20 disabled:hover:text-inherit"
+                        >
+                          {tier === "full" ? "Full ✓" : tier === "limited" ? "Upgrade to Full" : "Set Full"}
+                        </button>
+                        <button
+                          onClick={() => revoke(r.id)}
+                          disabled={!tier}
+                          className="px-2 py-1 border border-foreground/20 font-mono text-[10px] uppercase tracking-[0.14em] text-blood hover:bg-blood hover:text-background disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-blood"
+                        >
+                          Revoke
+                        </button>
                       </div>
                     )}
+
                   </td>
                 </tr>
               );
