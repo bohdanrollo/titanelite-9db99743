@@ -209,7 +209,7 @@ function PaywallCard() {
       <div className="text-eyebrow mt-4">Locked</div>
       <h2 className="mt-3 font-display text-3xl sm:text-4xl">Unlock the dashboard</h2>
       <p className="mt-4 text-sm text-muted-foreground">
-        Choose a tier to access peptide research, calculators, protocols, and more. One-time payment, no subscription.
+        Choose a plan to access peptide research, calculators, protocols, and more. Simple monthly access. Cancel anytime.
       </p>
       <Link to="/checkout" className="mt-6 inline-flex btn-blood hover:btn-blood-hover">
         View plans
