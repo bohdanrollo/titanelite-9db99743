@@ -58,7 +58,7 @@ function AffiliatePage() {
     if (!user) { setChecking(false); return; }
     const email = user.email ?? "";
     supabase.from("affiliates")
-      .select("id, status, code, desired_code, email, referral_count, earnings_cents, recruit_earnings_cents, recruiter_affiliate_id, created_at")
+      .select("id, status, code, desired_code, email, referral_count, earnings_cents, recruit_earnings_cents, lifetime_earnings_cents, lifetime_recruit_earnings_cents, click_count, last_paid_at, recruiter_affiliate_id, created_at")
       .or(`user_id.eq.${user.id}${email ? `,email.ilike.${email}` : ""}`)
       .order("created_at", { ascending: false })
       .limit(1)
@@ -350,7 +350,7 @@ function ApplicationForm({ onSubmitted }: { onSubmitted: (a: Affiliate) => void 
       if (error) throw error;
       const mineEmail = form.email;
       const { data: mine } = await supabase.from("affiliates")
-        .select("id, status, code, desired_code, email, referral_count, earnings_cents, recruit_earnings_cents, recruiter_affiliate_id, created_at")
+        .select("id, status, code, desired_code, email, referral_count, earnings_cents, recruit_earnings_cents, lifetime_earnings_cents, lifetime_recruit_earnings_cents, click_count, last_paid_at, recruiter_affiliate_id, created_at")
         .or(`user_id.eq.${user?.id ?? "00000000-0000-0000-0000-000000000000"}${mineEmail ? `,email.ilike.${mineEmail}` : ""}`)
         .order("created_at", { ascending: false })
         .limit(1)
