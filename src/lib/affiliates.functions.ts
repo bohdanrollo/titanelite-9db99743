@@ -117,19 +117,140 @@ export const deleteAffiliate = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-/** Admin: mark earnings as paid out (resets both direct + recruit balances) */
+/** Admin: mark earnings as paid out. Adds current owed to lifetime totals, then resets current balances. */
 export const markAffiliatePaid = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: aff, error: readErr } = await (supabaseAdmin as any)
+      .from("affiliates")
+      .select("earnings_cents, recruit_earnings_cents, lifetime_earnings_cents, lifetime_recruit_earnings_cents")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (readErr) throw readErr;
+    if (!aff) throw new Error("Affiliate not found");
+    const paidAmount = (aff.earnings_cents ?? 0) + (aff.recruit_earnings_cents ?? 0);
     const { error } = await (supabaseAdmin as any)
       .from("affiliates")
-      .update({ earnings_cents: 0, recruit_earnings_cents: 0 })
+      .update({
+        earnings_cents: 0,
+        recruit_earnings_cents: 0,
+        lifetime_earnings_cents: (aff.lifetime_earnings_cents ?? 0) + (aff.earnings_cents ?? 0),
+        lifetime_recruit_earnings_cents: (aff.lifetime_recruit_earnings_cents ?? 0) + (aff.recruit_earnings_cents ?? 0),
+        last_paid_at: new Date().toISOString(),
+      })
       .eq("id", data.id);
     if (error) throw error;
+    return { ok: true, paidCents: paidAmount };
+  });
+
+/** Public: record a click on a referral link. Silently ignores unknown/unapproved codes. */
+export const trackAffiliateClick = createServerFn({ method: "POST" })
+  .inputValidator((input) => z.object({
+    code: z.string().min(1).max(40),
+    referrer: z.string().max(500).optional(),
+    path: z.string().max(500).optional(),
+    userAgent: z.string().max(500).optional(),
+  }).parse(input))
+  .handler(async ({ data }) => {
+    const code = normalizeCode(data.code);
+    if (!code) return { ok: false };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: aff } = await supabaseAdmin
+      .from("affiliates")
+      .select("id, click_count")
+      .eq("code", code)
+      .eq("status", "approved")
+      .maybeSingle();
+    if (!aff) return { ok: false };
+    await (supabaseAdmin as any).from("affiliate_clicks").insert({
+      affiliate_id: aff.id,
+      referrer: data.referrer ?? null,
+      path: data.path ?? null,
+      user_agent: data.userAgent ?? null,
+    });
+    await (supabaseAdmin as any)
+      .from("affiliates")
+      .update({ click_count: ((aff as any).click_count ?? 0) + 1 })
+      .eq("id", aff.id);
     return { ok: true };
+  });
+
+/** Affiliate: full stats for own dashboard — referred users, driven revenue, clicks. */
+export const getMyAffiliateStats = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({ affiliateId: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { data: aff } = await context.supabase
+      .from("affiliates")
+      .select("id, click_count, code")
+      .eq("id", data.affiliateId)
+      .maybeSingle();
+    if (!aff) throw new Error("Affiliate not found");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: refs } = await (supabaseAdmin as any)
+      .from("affiliate_referrals")
+      .select("id, referred_user_id, created_at")
+      .eq("affiliate_id", data.affiliateId)
+      .order("created_at", { ascending: false });
+
+    const userIds = (refs ?? []).map((r: any) => r.referred_user_id);
+    let profiles: Record<string, { full_name: string | null; email: string | null }> = {};
+    const revenueByUser: Record<string, number> = {};
+    let totalRevenueCents = 0;
+
+    if (userIds.length) {
+      const { data: profs } = await (supabaseAdmin as any)
+        .from("profiles").select("id, full_name, email").in("id", userIds);
+      profiles = Object.fromEntries((profs ?? []).map((p: any) => [p.id, { full_name: p.full_name, email: p.email }]));
+
+      const { data: purchases } = await (supabaseAdmin as any)
+        .from("purchases").select("user_id, amount_cents, status").in("user_id", userIds).eq("status", "paid");
+      for (const p of purchases ?? []) {
+        revenueByUser[p.user_id] = (revenueByUser[p.user_id] ?? 0) + (p.amount_cents ?? 0);
+        totalRevenueCents += p.amount_cents ?? 0;
+      }
+    }
+
+    const referrals = (refs ?? []).map((r: any) => ({
+      id: r.id,
+      created_at: r.created_at,
+      full_name: profiles[r.referred_user_id]?.full_name ?? null,
+      email: profiles[r.referred_user_id]?.email ?? null,
+      revenue_cents: revenueByUser[r.referred_user_id] ?? 0,
+      paid: (revenueByUser[r.referred_user_id] ?? 0) > 0,
+    }));
+
+    const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const { data: recentAll } = await (supabaseAdmin as any)
+      .from("affiliate_clicks").select("created_at, referrer, path")
+      .eq("affiliate_id", data.affiliateId)
+      .gte("created_at", since)
+      .order("created_at", { ascending: false });
+
+    const clicksByDay: Record<string, number> = {};
+    for (const c of recentAll ?? []) {
+      const day = new Date(c.created_at).toISOString().slice(0, 10);
+      clicksByDay[day] = (clicksByDay[day] ?? 0) + 1;
+    }
+
+    const conversionRate = ((aff as any).click_count ?? 0) > 0
+      ? (referrals.length / ((aff as any).click_count as number)) * 100
+      : 0;
+
+    return {
+      referrals,
+      totalRevenueCents,
+      recentClicks: (recentAll ?? []).slice(0, 30),
+      clicksByDay,
+      clickCount: (aff as any).click_count ?? 0,
+      last30Clicks: (recentAll ?? []).length,
+      conversionRate,
+    };
   });
 
 /** Resolve a recruiter code (used at application time) → returns approved affiliate id, or null */
