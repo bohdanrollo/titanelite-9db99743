@@ -642,7 +642,9 @@ type AffiliateRow = {
   other_social: string | null;
   referral_count: number;
   earnings_cents: number;
+  recruit_earnings_cents: number;
   payout_cents_per_5: number;
+  recruiter_affiliate_id: string | null;
   created_at: string;
 };
 
@@ -687,7 +689,7 @@ function AffiliatesAdmin() {
     setLoading(true);
     const { data } = await supabase
       .from("affiliates")
-      .select("id, status, full_name, email, phone, desired_code, code, instagram, tiktok, youtube, twitter, other_social, referral_count, earnings_cents, payout_cents_per_5, created_at")
+      .select("id, status, full_name, email, phone, desired_code, code, instagram, tiktok, youtube, twitter, other_social, referral_count, earnings_cents, recruit_earnings_cents, payout_cents_per_5, recruiter_affiliate_id, created_at")
       .order("created_at", { ascending: false });
     setRows((data as AffiliateRow[] | null) ?? []);
     setLoading(false);
@@ -696,7 +698,10 @@ function AffiliatesAdmin() {
 
   const filtered = filter === "all" ? rows : rows.filter((r) => r.status === filter);
   const totalPending = rows.filter((r) => r.status === "pending").length;
-  const totalOwed = rows.reduce((s, r) => s + (r.status === "approved" ? r.earnings_cents : 0), 0);
+  const totalDirectOwed = rows.reduce((s, r) => s + (r.status === "approved" ? r.earnings_cents : 0), 0);
+  const totalRecruitOwed = rows.reduce((s, r) => s + (r.status === "approved" ? (r.recruit_earnings_cents ?? 0) : 0), 0);
+  const totalOwed = totalDirectOwed + totalRecruitOwed;
+  const codeToName = new Map(rows.filter((r) => r.code).map((r) => [r.id, `${r.full_name || r.email} (${r.code})`]));
 
   async function onApprove(r: AffiliateRow) {
     const code = prompt("Assign affiliate code:", r.code ?? r.desired_code);
@@ -718,14 +723,15 @@ function AffiliatesAdmin() {
     catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
   }
   async function onMarkPaid(r: AffiliateRow) {
-    if (!confirm(`Mark $${(r.earnings_cents / 100).toFixed(2)} as paid to ${r.email}? This resets their earnings balance.`)) return;
+    const total = r.earnings_cents + (r.recruit_earnings_cents ?? 0);
+    if (!confirm(`Mark $${(total / 100).toFixed(2)} as paid to ${r.email}? This resets both direct ($${(r.earnings_cents/100).toFixed(2)}) and recruit ($${((r.recruit_earnings_cents??0)/100).toFixed(2)}) balances.`)) return;
     try { await paidFn({ data: { id: r.id } }); toast.success("Marked as paid"); void load(); }
     catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
   }
 
   return (
     <div>
-      <div className="grid sm:grid-cols-3 gap-4 mb-6">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="border border-foreground/15 p-4">
           <div className="text-eyebrow">Pending review</div>
           <div className="mt-2 font-display text-3xl">{totalPending}</div>
@@ -735,8 +741,14 @@ function AffiliatesAdmin() {
           <div className="mt-2 font-display text-3xl">{rows.filter((r) => r.status === "approved").length}</div>
         </div>
         <div className="border border-foreground/15 p-4">
-          <div className="text-eyebrow">Owed to affiliates</div>
-          <div className="mt-2 font-display text-3xl text-blood">${(totalOwed / 100).toFixed(2)}</div>
+          <div className="text-eyebrow">Direct owed</div>
+          <div className="mt-2 font-display text-3xl text-blood">${(totalDirectOwed / 100).toFixed(2)}</div>
+          <div className="mt-1 text-[10px] font-mono uppercase tracking-wider text-muted-foreground">from own signups</div>
+        </div>
+        <div className="border border-foreground/15 p-4">
+          <div className="text-eyebrow">Recruit owed</div>
+          <div className="mt-2 font-display text-3xl text-blood">${(totalRecruitOwed / 100).toFixed(2)}</div>
+          <div className="mt-1 text-[10px] font-mono uppercase tracking-wider text-muted-foreground">from sub-affiliates · total ${(totalOwed / 100).toFixed(2)}</div>
         </div>
       </div>
 
@@ -778,6 +790,11 @@ function AffiliatesAdmin() {
                     <div className="font-display text-xl">{r.full_name || r.email}</div>
                     <StatusBadge status={r.status} />
                     {r.code && <span className="font-mono text-xs text-blood tracking-wider">CODE: {r.code}</span>}
+                    {r.recruiter_affiliate_id && (
+                      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground border border-foreground/20 px-2 py-0.5">
+                        Recruited by: {codeToName.get(r.recruiter_affiliate_id) ?? "—"}
+                      </span>
+                    )}
                   </div>
                   <div className="mt-1 text-xs text-muted-foreground font-mono">{r.email} · {r.phone}</div>
                   <div className="mt-3 text-xs text-muted-foreground grid sm:grid-cols-2 gap-x-6 gap-y-1">
@@ -790,7 +807,9 @@ function AffiliatesAdmin() {
                   {r.status === "approved" && (
                     <div className="mt-3 flex gap-6 text-sm items-center flex-wrap">
                       <div><span className="text-muted-foreground">Referrals:</span> <span className="font-mono text-foreground">{r.referral_count}</span></div>
-                      <div><span className="text-muted-foreground">Owed:</span> <span className="font-mono text-blood">${(r.earnings_cents / 100).toFixed(2)}</span></div>
+                      <div><span className="text-muted-foreground">Recruits:</span> <span className="font-mono text-foreground">{rows.filter((x) => x.recruiter_affiliate_id === r.id).length}</span></div>
+                      <div><span className="text-muted-foreground">Direct owed:</span> <span className="font-mono text-blood">${(r.earnings_cents / 100).toFixed(2)}</span></div>
+                      <div><span className="text-muted-foreground">Recruit owed:</span> <span className="font-mono text-blood">${((r.recruit_earnings_cents ?? 0) / 100).toFixed(2)}</span></div>
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground">Rate: $</span>
                         <input
@@ -828,7 +847,7 @@ function AffiliatesAdmin() {
                   {r.status === "approved" && (
                     <button onClick={() => onGrantAccess(r)} className="border border-blood text-blood hover:bg-blood/10 text-xs px-4 py-2 flex items-center gap-1"><Check size={12} /> Grant Full Access</button>
                   )}
-                  {r.status === "approved" && r.earnings_cents > 0 && (
+                  {r.status === "approved" && (r.earnings_cents > 0 || (r.recruit_earnings_cents ?? 0) > 0) && (
                     <button onClick={() => onMarkPaid(r)} className="border border-foreground/20 hover:border-blood text-xs px-4 py-2 flex items-center gap-1"><DollarSign size={12} /> Mark paid</button>
                   )}
                   <button onClick={() => onDelete(r)} className="border border-foreground/20 hover:border-blood text-xs px-4 py-2 flex items-center gap-1"><Trash2 size={12} /></button>
