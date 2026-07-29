@@ -731,7 +731,7 @@ function AffiliatesAdmin() {
 
   return (
     <div>
-      <div className="grid sm:grid-cols-3 gap-4 mb-6">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="border border-foreground/15 p-4">
           <div className="text-eyebrow">Pending review</div>
           <div className="mt-2 font-display text-3xl">{totalPending}</div>
@@ -741,8 +741,14 @@ function AffiliatesAdmin() {
           <div className="mt-2 font-display text-3xl">{rows.filter((r) => r.status === "approved").length}</div>
         </div>
         <div className="border border-foreground/15 p-4">
-          <div className="text-eyebrow">Owed to affiliates</div>
-          <div className="mt-2 font-display text-3xl text-blood">${(totalOwed / 100).toFixed(2)}</div>
+          <div className="text-eyebrow">Direct owed</div>
+          <div className="mt-2 font-display text-3xl text-blood">${(totalDirectOwed / 100).toFixed(2)}</div>
+          <div className="mt-1 text-[10px] font-mono uppercase tracking-wider text-muted-foreground">from own signups</div>
+        </div>
+        <div className="border border-foreground/15 p-4">
+          <div className="text-eyebrow">Recruit owed</div>
+          <div className="mt-2 font-display text-3xl text-blood">${(totalRecruitOwed / 100).toFixed(2)}</div>
+          <div className="mt-1 text-[10px] font-mono uppercase tracking-wider text-muted-foreground">from sub-affiliates · total ${(totalOwed / 100).toFixed(2)}</div>
         </div>
       </div>
 
