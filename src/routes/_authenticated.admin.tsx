@@ -698,7 +698,10 @@ function AffiliatesAdmin() {
 
   const filtered = filter === "all" ? rows : rows.filter((r) => r.status === filter);
   const totalPending = rows.filter((r) => r.status === "pending").length;
-  const totalOwed = rows.reduce((s, r) => s + (r.status === "approved" ? r.earnings_cents : 0), 0);
+  const totalDirectOwed = rows.reduce((s, r) => s + (r.status === "approved" ? r.earnings_cents : 0), 0);
+  const totalRecruitOwed = rows.reduce((s, r) => s + (r.status === "approved" ? (r.recruit_earnings_cents ?? 0) : 0), 0);
+  const totalOwed = totalDirectOwed + totalRecruitOwed;
+  const codeToName = new Map(rows.filter((r) => r.code).map((r) => [r.id, `${r.full_name || r.email} (${r.code})`]));
 
   async function onApprove(r: AffiliateRow) {
     const code = prompt("Assign affiliate code:", r.code ?? r.desired_code);
