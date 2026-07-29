@@ -143,9 +143,14 @@ function ApprovedDashboard({ affiliate }: { affiliate: Affiliate }) {
   const nextMilestone = 5 - (affiliate.referral_count % 5);
   const progress = ((affiliate.referral_count % 5) / 5) * 100;
 
-  const [tab, setTab] = useState<"overview" | "recruits">("overview");
+  const lifetimeTotal = ((affiliate.lifetime_earnings_cents + affiliate.lifetime_recruit_earnings_cents) / 100).toFixed(2);
+
+  const [tab, setTab] = useState<"overview" | "referrals" | "analytics" | "recruits">("overview");
   const [recruits, setRecruits] = useState<Recruit[]>([]);
   const [loadingRecruits, setLoadingRecruits] = useState(true);
+  const statsFn = useServerFn(getMyAffiliateStats);
+  const [stats, setStats] = useState<Awaited<ReturnType<typeof getMyAffiliateStats>> | null>(null);
+  const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
     supabase.from("affiliates")
@@ -158,22 +163,39 @@ function ApprovedDashboard({ affiliate }: { affiliate: Affiliate }) {
       });
   }, [affiliate.id]);
 
+  useEffect(() => {
+    setLoadingStats(true);
+    statsFn({ data: { affiliateId: affiliate.id } })
+      .then((s) => setStats(s))
+      .catch(() => { /* silent */ })
+      .finally(() => setLoadingStats(false));
+  }, [affiliate.id, statsFn]);
+
   const approvedRecruits = useMemo(() => recruits.filter((r) => r.status === "approved"), [recruits]);
+  const drivenRevenue = ((stats?.totalRevenueCents ?? 0) / 100).toFixed(2);
+  const payingReferrals = (stats?.referrals ?? []).filter((r) => r.paid).length;
 
   return (
     <div className="mt-10 space-y-8">
       <div className="flex items-center gap-3 text-emerald-500">
         <CheckCircle2 size={20} />
         <div className="font-mono text-[11px] uppercase tracking-[0.18em]">Approved affiliate</div>
+        {affiliate.last_paid_at && (
+          <div className="text-xs text-muted-foreground font-mono">
+            Last paid {new Date(affiliate.last_paid_at).toLocaleDateString()}
+          </div>
+        )}
       </div>
 
-      <nav className="flex gap-1 border-b border-foreground/15 max-w-4xl">
+      <nav className="flex gap-1 border-b border-foreground/15 max-w-5xl overflow-x-auto">
         {([
           { k: "overview", l: "Overview", i: DollarSign },
+          { k: "referrals", l: `Referrals (${affiliate.referral_count})`, i: Users },
+          { k: "analytics", l: "Analytics", i: BarChart3 },
           { k: "recruits", l: `Recruits (${approvedRecruits.length})`, i: UserPlus },
         ] as const).map((t) => (
           <button key={t.k} onClick={() => setTab(t.k)}
-            className={`px-5 py-3 font-mono text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 border-b-2 transition ${tab === t.k ? "border-blood text-blood" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+            className={`px-5 py-3 font-mono text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 border-b-2 whitespace-nowrap transition ${tab === t.k ? "border-blood text-blood" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
             <t.i size={14} /> {t.l}
           </button>
         ))}
@@ -181,20 +203,28 @@ function ApprovedDashboard({ affiliate }: { affiliate: Affiliate }) {
 
       {tab === "overview" && (
         <>
-          <div className="grid md:grid-cols-4 gap-4 max-w-4xl">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl">
             <Stat icon={Users} label="Direct referrals" value={affiliate.referral_count.toString()} />
-            <Stat icon={DollarSign} label="Direct earnings" value={`$${directEarnings}`} />
-            <Stat icon={UserPlus} label="Recruit earnings" value={`$${recruitEarnings}`} />
+            <Stat icon={MousePointerClick} label="Link clicks" value={(affiliate.click_count ?? 0).toString()} />
+            <Stat icon={TrendingUp} label="Driven revenue" value={`$${drivenRevenue}`} />
             <Stat icon={DollarSign} label="Total owed" value={`$${totalEarnings}`} accent />
           </div>
 
-          <div className="max-w-4xl">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl">
+            <Stat icon={DollarSign} label="Direct owed" value={`$${directEarnings}`} />
+            <Stat icon={UserPlus} label="Recruit owed" value={`$${recruitEarnings}`} />
+            <Stat icon={Award} label="Lifetime earned" value={`$${lifetimeTotal}`} />
+            <Stat icon={CheckCircle2} label="Paying referrals" value={payingReferrals.toString()} />
+          </div>
+
+          <div className="max-w-5xl">
             <div className="text-eyebrow">Progress to next $25 (direct)</div>
             <div className="mt-3 h-2 bg-foreground/10 overflow-hidden">
               <div className="h-full bg-blood transition-all" style={{ width: `${progress}%` }} />
             </div>
             <div className="mt-2 text-xs text-muted-foreground">{nextMilestone} more direct sign-up{nextMilestone === 1 ? "" : "s"} to your next $25.</div>
           </div>
+
 
           <div className="max-w-4xl border border-foreground/15 p-6">
             <div className="text-eyebrow">Your referral link</div>
