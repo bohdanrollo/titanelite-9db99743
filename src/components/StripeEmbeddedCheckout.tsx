@@ -45,18 +45,19 @@ function friendlyMessage(raw: string): { title: string; detail: string } {
 
 export function StripeEmbeddedCheckoutForm({ priceId, returnUrl }: Props) {
   const [attempt, setAttempt] = useState(0);
-  const [configError, setConfigError] = useState<string | null>(null);
-  const [runtimeError, setRuntimeError] = useState<string | null>(null);
-  const error = configError ?? runtimeError;
-  const setError = setRuntimeError;
-  const stripePromise = useMemo(() => {
+  const [runtimeError, setError] = useState<string | null>(null);
+  const stripe = useMemo(() => {
     try {
-      return getStripe();
+      return { promise: getStripe(), err: null as string | null };
     } catch (e) {
-      setConfigError(e instanceof Error ? e.message : "Payments are not configured");
-      return null;
+      return {
+        promise: null,
+        err: e instanceof Error ? e.message : "Payments are not configured",
+      };
     }
   }, []);
+  const error = stripe.err ?? runtimeError;
+
 
 
   const fetchClientSecret = useCallback(async (): Promise<string> => {
