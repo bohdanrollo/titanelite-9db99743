@@ -90,10 +90,13 @@ function Admin() {
   );
 }
 
+type ClientTier = "full" | "limited" | null;
+
 function Clients() {
   const [rows, setRows] = useState<{ id: string; full_name: string | null; email: string | null; created_at: string }[]>([]);
-  const [access, setAccess] = useState<Record<string, "limited" | "full">>({});
+  const [access, setAccess] = useState<Record<string, ClientTier>>({});
   const [q, setQ] = useState("");
+  const [subTab, setSubTab] = useState<ClientTier | "all">("all");
   const [busyId, setBusyId] = useState<string | null>(null);
   const grantFn = useServerFn(grantAccess);
   const revokeFn = useServerFn(revokeAccess);
@@ -108,7 +111,7 @@ function Clients() {
       listFn({ data: { environment: env } }).catch(() => ({ rows: [] as { user_id: string; tier: "limited" | "full" }[] })),
     ]);
     setRows(data ?? []);
-    const map: Record<string, "limited" | "full"> = {};
+    const map: Record<string, ClientTier> = {};
     accessRes.rows.forEach((r) => { map[r.user_id] = r.tier; });
     setAccess(map);
   };
@@ -143,8 +146,23 @@ function Clients() {
     } finally { setBusyId(null); }
   };
 
-
   const filtered = rows.filter((r) => !q || `${r.full_name ?? ""} ${r.email ?? ""}`.toLowerCase().includes(q.toLowerCase()));
+  const grouped = {
+    all: filtered,
+    full: filtered.filter((r) => access[r.id] === "full"),
+    limited: filtered.filter((r) => access[r.id] === "limited"),
+    none: filtered.filter((r) => !access[r.id]),
+  };
+
+  const subTabs = [
+    { k: "all" as const, label: "All", count: grouped.all.length },
+    { k: "full" as const, label: "Full Access", count: grouped.full.length },
+    { k: "limited" as const, label: "Limited Access", count: grouped.limited.length },
+    { k: "none" as const, label: "No Plan", count: grouped.none.length },
+  ];
+
+  const activeRows = grouped[subTab];
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
@@ -154,6 +172,23 @@ function Clients() {
         </div>
         <span className="text-eyebrow text-muted-foreground">Env: {env}</span>
       </div>
+
+      <div className="flex gap-2 mb-6 flex-wrap">
+        {subTabs.map((t) => (
+          <button
+            key={t.k}
+            onClick={() => setSubTab(t.k)}
+            className={`px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] border transition ${
+              subTab === t.k
+                ? "border-blood text-blood bg-blood/10"
+                : "border-foreground/20 text-muted-foreground hover:border-foreground/40 hover:text-foreground"
+            }`}
+          >
+            {t.label} ({t.count})
+          </button>
+        ))}
+      </div>
+
       <div className="border border-foreground/10 overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-muted text-left text-eyebrow">
@@ -166,7 +201,7 @@ function Clients() {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((r) => {
+            {activeRows.map((r) => {
               const tier = access[r.id];
               return (
                 <tr key={r.id} className="border-t border-foreground/10 hover:bg-muted/40">
@@ -183,7 +218,7 @@ function Clients() {
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                        <Lock size={10} /> None
+                        <Lock size={10} /> No Plan
                       </span>
                     )}
                   </td>
@@ -216,12 +251,11 @@ function Clients() {
                         </button>
                       </div>
                     )}
-
                   </td>
                 </tr>
               );
             })}
-            {!filtered.length && <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">No clients yet.</td></tr>}
+            {!activeRows.length && <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">No clients in this group.</td></tr>}
           </tbody>
         </table>
       </div>
