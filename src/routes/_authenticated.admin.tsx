@@ -642,7 +642,9 @@ type AffiliateRow = {
   other_social: string | null;
   referral_count: number;
   earnings_cents: number;
+  recruit_earnings_cents: number;
   payout_cents_per_5: number;
+  recruiter_affiliate_id: string | null;
   created_at: string;
 };
 
