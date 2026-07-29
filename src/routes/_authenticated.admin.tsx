@@ -790,6 +790,11 @@ function AffiliatesAdmin() {
                     <div className="font-display text-xl">{r.full_name || r.email}</div>
                     <StatusBadge status={r.status} />
                     {r.code && <span className="font-mono text-xs text-blood tracking-wider">CODE: {r.code}</span>}
+                    {r.recruiter_affiliate_id && (
+                      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground border border-foreground/20 px-2 py-0.5">
+                        Recruited by: {codeToName.get(r.recruiter_affiliate_id) ?? "—"}
+                      </span>
+                    )}
                   </div>
                   <div className="mt-1 text-xs text-muted-foreground font-mono">{r.email} · {r.phone}</div>
                   <div className="mt-3 text-xs text-muted-foreground grid sm:grid-cols-2 gap-x-6 gap-y-1">
