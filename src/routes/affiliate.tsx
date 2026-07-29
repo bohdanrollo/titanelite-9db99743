@@ -408,6 +408,23 @@ function ApprovedDashboard({ affiliate }: { affiliate: Affiliate }) {
           )}
         </div>
       )}
+
+      <div className="max-w-5xl border border-foreground/15 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <div className="text-eyebrow">Affiliate community</div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Join the private Discord for updates, tips, and direct support.
+          </p>
+        </div>
+        <a
+          href="https://discord.gg/wFWvtAmkx"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-blood hover:btn-blood-hover inline-flex items-center gap-2"
+        >
+          JOIN DISCORD
+        </a>
+      </div>
     </div>
   );
 }
