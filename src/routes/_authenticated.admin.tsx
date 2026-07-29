@@ -807,7 +807,9 @@ function AffiliatesAdmin() {
                   {r.status === "approved" && (
                     <div className="mt-3 flex gap-6 text-sm items-center flex-wrap">
                       <div><span className="text-muted-foreground">Referrals:</span> <span className="font-mono text-foreground">{r.referral_count}</span></div>
-                      <div><span className="text-muted-foreground">Owed:</span> <span className="font-mono text-blood">${(r.earnings_cents / 100).toFixed(2)}</span></div>
+                      <div><span className="text-muted-foreground">Recruits:</span> <span className="font-mono text-foreground">{rows.filter((x) => x.recruiter_affiliate_id === r.id).length}</span></div>
+                      <div><span className="text-muted-foreground">Direct owed:</span> <span className="font-mono text-blood">${(r.earnings_cents / 100).toFixed(2)}</span></div>
+                      <div><span className="text-muted-foreground">Recruit owed:</span> <span className="font-mono text-blood">${((r.recruit_earnings_cents ?? 0) / 100).toFixed(2)}</span></div>
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground">Rate: $</span>
                         <input
