@@ -847,7 +847,7 @@ function AffiliatesAdmin() {
                   {r.status === "approved" && (
                     <button onClick={() => onGrantAccess(r)} className="border border-blood text-blood hover:bg-blood/10 text-xs px-4 py-2 flex items-center gap-1"><Check size={12} /> Grant Full Access</button>
                   )}
-                  {r.status === "approved" && r.earnings_cents > 0 && (
+                  {r.status === "approved" && (r.earnings_cents > 0 || (r.recruit_earnings_cents ?? 0) > 0) && (
                     <button onClick={() => onMarkPaid(r)} className="border border-foreground/20 hover:border-blood text-xs px-4 py-2 flex items-center gap-1"><DollarSign size={12} /> Mark paid</button>
                   )}
                   <button onClick={() => onDelete(r)} className="border border-foreground/20 hover:border-blood text-xs px-4 py-2 flex items-center gap-1"><Trash2 size={12} /></button>
