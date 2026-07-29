@@ -109,7 +109,25 @@ function RootComponent() {
     try {
       const params = new URLSearchParams(window.location.search);
       const ref = params.get("ref");
-      if (ref) localStorage.setItem("titan_ref_code", ref.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 20));
+      if (ref) {
+        const code = ref.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 20);
+        localStorage.setItem("titan_ref_code", code);
+        // Fire-and-forget click tracking (server validates the code)
+        const lastKey = `titan_ref_click_${code}`;
+        const last = Number(localStorage.getItem(lastKey) ?? 0);
+        // dedupe: 1 click per code per 30 min per browser
+        if (Date.now() - last > 30 * 60 * 1000) {
+          localStorage.setItem(lastKey, String(Date.now()));
+          import("@/lib/affiliates.functions").then(({ trackAffiliateClick }) => {
+            trackAffiliateClick({ data: {
+              code,
+              referrer: document.referrer || undefined,
+              path: window.location.pathname,
+              userAgent: navigator.userAgent,
+            } }).catch(() => { /* silent */ });
+          });
+        }
+      }
     } catch { /* ignore */ }
   }, []);
   return (
