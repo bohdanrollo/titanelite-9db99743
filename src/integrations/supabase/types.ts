@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      affiliate_clicks: {
+        Row: {
+          affiliate_id: string
+          created_at: string
+          id: string
+          path: string | null
+          referrer: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          affiliate_id: string
+          created_at?: string
+          id?: string
+          path?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          affiliate_id?: string
+          created_at?: string
+          id?: string
+          path?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_clicks_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       affiliate_referrals: {
         Row: {
           affiliate_id: string
@@ -50,6 +85,7 @@ export type Database = {
         Row: {
           admin_notes: string | null
           approved_at: string | null
+          click_count: number
           code: string | null
           created_at: string
           desired_code: string
@@ -58,6 +94,9 @@ export type Database = {
           full_name: string | null
           id: string
           instagram: string | null
+          last_paid_at: string | null
+          lifetime_earnings_cents: number
+          lifetime_recruit_earnings_cents: number
           other_social: string | null
           payout_cents_per_5: number
           phone: string
@@ -74,6 +113,7 @@ export type Database = {
         Insert: {
           admin_notes?: string | null
           approved_at?: string | null
+          click_count?: number
           code?: string | null
           created_at?: string
           desired_code: string
@@ -82,6 +122,9 @@ export type Database = {
           full_name?: string | null
           id?: string
           instagram?: string | null
+          last_paid_at?: string | null
+          lifetime_earnings_cents?: number
+          lifetime_recruit_earnings_cents?: number
           other_social?: string | null
           payout_cents_per_5?: number
           phone: string
@@ -98,6 +141,7 @@ export type Database = {
         Update: {
           admin_notes?: string | null
           approved_at?: string | null
+          click_count?: number
           code?: string | null
           created_at?: string
           desired_code?: string
@@ -106,6 +150,9 @@ export type Database = {
           full_name?: string | null
           id?: string
           instagram?: string | null
+          last_paid_at?: string | null
+          lifetime_earnings_cents?: number
+          lifetime_recruit_earnings_cents?: number
           other_social?: string | null
           payout_cents_per_5?: number
           phone?: string
