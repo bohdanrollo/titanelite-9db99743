@@ -91,12 +91,13 @@ function Admin() {
 }
 
 type ClientTier = "full" | "limited" | null;
+type ClientSubTab = "all" | "full" | "limited" | "none";
 
 function Clients() {
   const [rows, setRows] = useState<{ id: string; full_name: string | null; email: string | null; created_at: string }[]>([]);
   const [access, setAccess] = useState<Record<string, ClientTier>>({});
   const [q, setQ] = useState("");
-  const [subTab, setSubTab] = useState<ClientTier | "all">("all");
+  const [subTab, setSubTab] = useState<ClientSubTab>("all");
   const [busyId, setBusyId] = useState<string | null>(null);
   const grantFn = useServerFn(grantAccess);
   const revokeFn = useServerFn(revokeAccess);
@@ -147,18 +148,18 @@ function Clients() {
   };
 
   const filtered = rows.filter((r) => !q || `${r.full_name ?? ""} ${r.email ?? ""}`.toLowerCase().includes(q.toLowerCase()));
-  const grouped = {
+  const grouped: Record<ClientSubTab, typeof filtered> = {
     all: filtered,
     full: filtered.filter((r) => access[r.id] === "full"),
     limited: filtered.filter((r) => access[r.id] === "limited"),
     none: filtered.filter((r) => !access[r.id]),
   };
 
-  const subTabs = [
-    { k: "all" as const, label: "All", count: grouped.all.length },
-    { k: "full" as const, label: "Full Access", count: grouped.full.length },
-    { k: "limited" as const, label: "Limited Access", count: grouped.limited.length },
-    { k: "none" as const, label: "No Plan", count: grouped.none.length },
+  const subTabs: { k: ClientSubTab; label: string; count: number }[] = [
+    { k: "all", label: "All", count: grouped.all.length },
+    { k: "full", label: "Full Access", count: grouped.full.length },
+    { k: "limited", label: "Limited Access", count: grouped.limited.length },
+    { k: "none", label: "No Plan", count: grouped.none.length },
   ];
 
   const activeRows = grouped[subTab];
