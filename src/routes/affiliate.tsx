@@ -30,6 +30,10 @@ type Affiliate = {
   referral_count: number;
   earnings_cents: number;
   recruit_earnings_cents: number;
+  lifetime_earnings_cents: number;
+  lifetime_recruit_earnings_cents: number;
+  click_count: number;
+  last_paid_at: string | null;
   recruiter_affiliate_id: string | null;
   created_at: string;
 };
