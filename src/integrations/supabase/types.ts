@@ -61,6 +61,8 @@ export type Database = {
           other_social: string | null
           payout_cents_per_5: number
           phone: string
+          recruit_earnings_cents: number
+          recruiter_affiliate_id: string | null
           referral_count: number
           status: string
           tiktok: string | null
@@ -83,6 +85,8 @@ export type Database = {
           other_social?: string | null
           payout_cents_per_5?: number
           phone: string
+          recruit_earnings_cents?: number
+          recruiter_affiliate_id?: string | null
           referral_count?: number
           status?: string
           tiktok?: string | null
@@ -105,6 +109,8 @@ export type Database = {
           other_social?: string | null
           payout_cents_per_5?: number
           phone?: string
+          recruit_earnings_cents?: number
+          recruiter_affiliate_id?: string | null
           referral_count?: number
           status?: string
           tiktok?: string | null
@@ -113,7 +119,15 @@ export type Database = {
           user_id?: string | null
           youtube?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "affiliates_recruiter_affiliate_id_fkey"
+            columns: ["recruiter_affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_send_log: {
         Row: {
