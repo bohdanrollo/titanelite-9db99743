@@ -115,7 +115,7 @@ export function StripeEmbeddedCheckoutForm({ priceId, returnUrl }: Props) {
   return (
     <div id="checkout">
       {/* key remounts the provider so a retry creates a fresh session */}
-      <EmbeddedCheckoutProvider key={attempt} stripe={getStripe()} options={{ fetchClientSecret }}>
+      <EmbeddedCheckoutProvider key={attempt} stripe={stripe.promise} options={{ fetchClientSecret }}>
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>
     </div>
