@@ -6,8 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { resolveRecruiterCode } from "@/lib/affiliates.functions";
-import { Copy, DollarSign, Users, Clock, CheckCircle2, XCircle, UserPlus } from "lucide-react";
+import { resolveRecruiterCode, getMyAffiliateStats } from "@/lib/affiliates.functions";
+import { Copy, DollarSign, Users, Clock, CheckCircle2, XCircle, UserPlus, MousePointerClick, TrendingUp, Award, BarChart3 } from "lucide-react";
 
 export const Route = createFileRoute("/affiliate")({
   head: () => ({
