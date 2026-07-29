@@ -117,16 +117,35 @@ export const deleteAffiliate = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-/** Admin: mark earnings as paid out (resets earnings_cents to 0 but keeps referral history) */
+/** Admin: mark earnings as paid out (resets both direct + recruit balances) */
 export const markAffiliatePaid = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("affiliates").update({ earnings_cents: 0 }).eq("id", data.id);
+    const { error } = await (supabaseAdmin as any)
+      .from("affiliates")
+      .update({ earnings_cents: 0, recruit_earnings_cents: 0 })
+      .eq("id", data.id);
     if (error) throw error;
     return { ok: true };
+  });
+
+/** Resolve a recruiter code (used at application time) → returns approved affiliate id, or null */
+export const resolveRecruiterCode = createServerFn({ method: "POST" })
+  .inputValidator((input) => z.object({ code: z.string().min(1).max(40) }).parse(input))
+  .handler(async ({ data }) => {
+    const code = normalizeCode(data.code);
+    if (!code) return { affiliateId: null as string | null };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: aff } = await supabaseAdmin
+      .from("affiliates")
+      .select("id")
+      .eq("code", code)
+      .eq("status", "approved")
+      .maybeSingle();
+    return { affiliateId: aff?.id ?? null };
   });
 
 /** Admin: set a single affiliate's payout rate ($ per 5 signups). Only applies to future referrals. */
