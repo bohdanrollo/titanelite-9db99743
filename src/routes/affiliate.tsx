@@ -261,6 +261,114 @@ function ApprovedDashboard({ affiliate }: { affiliate: Affiliate }) {
         </>
       )}
 
+      {tab === "referrals" && (
+        <div className="max-w-5xl">
+          {loadingStats ? (
+            <div className="text-eyebrow">Loading…</div>
+          ) : (stats?.referrals ?? []).length === 0 ? (
+            <div className="border border-foreground/15 p-8 text-center">
+              <Users size={28} className="mx-auto text-muted-foreground" />
+              <p className="mt-3 text-sm text-muted-foreground">
+                No referrals yet. Share your referral link to start earning.
+              </p>
+            </div>
+          ) : (
+            <div className="border border-foreground/15 overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-muted text-left text-eyebrow">
+                  <tr>
+                    <th className="p-3">Name</th>
+                    <th className="p-3">Email</th>
+                    <th className="p-3">Status</th>
+                    <th className="p-3 text-right">Revenue</th>
+                    <th className="p-3">Signed up</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(stats?.referrals ?? []).map((r: { id: string; full_name: string | null; email: string | null; paid: boolean; revenue_cents: number; created_at: string }) => (
+                    <tr key={r.id} className="border-t border-foreground/10">
+                      <td className="p-3">{r.full_name || "—"}</td>
+                      <td className="p-3 text-muted-foreground break-all">{r.email || "—"}</td>
+                      <td className="p-3">
+                        {r.paid ? (
+                          <span className="inline-block px-2 py-0.5 border border-emerald-500/40 text-emerald-500 font-mono text-[9px] uppercase tracking-[0.18em]">Paid</span>
+                        ) : (
+                          <span className="inline-block px-2 py-0.5 border border-foreground/20 text-muted-foreground font-mono text-[9px] uppercase tracking-[0.18em]">Free</span>
+                        )}
+                      </td>
+                      <td className="p-3 font-mono text-right">${(r.revenue_cents / 100).toFixed(2)}</td>
+                      <td className="p-3 font-mono text-xs">{new Date(r.created_at).toLocaleDateString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {tab === "analytics" && (
+        <div className="max-w-5xl space-y-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Stat icon={MousePointerClick} label="Total clicks" value={(affiliate.click_count ?? 0).toString()} />
+            <Stat icon={MousePointerClick} label="Clicks (30d)" value={(stats?.last30Clicks ?? 0).toString()} />
+            <Stat icon={TrendingUp} label="Conversion" value={`${(stats?.conversionRate ?? 0).toFixed(1)}%`} />
+            <Stat icon={DollarSign} label="Driven revenue" value={`$${drivenRevenue}`} />
+          </div>
+
+          <div className="border border-foreground/15 p-6">
+            <div className="text-eyebrow">Clicks per day (last 30 days)</div>
+            {loadingStats ? (
+              <div className="mt-4 text-xs text-muted-foreground">Loading…</div>
+            ) : Object.keys(stats?.clicksByDay ?? {}).length === 0 ? (
+              <div className="mt-4 text-xs text-muted-foreground">No clicks yet in the last 30 days.</div>
+            ) : (
+              <div className="mt-4 flex items-end gap-1 h-40">
+                {Array.from({ length: 30 }).map((_, i) => {
+                  const day = new Date(Date.now() - (29 - i) * 86400000).toISOString().slice(0, 10);
+                  const count = stats?.clicksByDay?.[day] ?? 0;
+                  const max = Math.max(1, ...Object.values(stats?.clicksByDay ?? { z: 1 }));
+                  const h = count === 0 ? 2 : Math.max(6, (count / max) * 100);
+                  return (
+                    <div key={day} className="flex-1 flex flex-col items-center justify-end gap-1" title={`${day}: ${count} click${count === 1 ? "" : "s"}`}>
+                      <div className={`w-full ${count > 0 ? "bg-blood" : "bg-foreground/10"}`} style={{ height: `${h}%` }} />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          <div className="border border-foreground/15 overflow-x-auto">
+            <div className="p-4 text-eyebrow border-b border-foreground/10">Recent clicks</div>
+            {loadingStats ? (
+              <div className="p-4 text-xs text-muted-foreground">Loading…</div>
+            ) : (stats?.recentClicks ?? []).length === 0 ? (
+              <div className="p-4 text-xs text-muted-foreground">No clicks recorded yet.</div>
+            ) : (
+              <table className="w-full text-sm">
+                <thead className="bg-muted text-left text-eyebrow">
+                  <tr>
+                    <th className="p-3">When</th>
+                    <th className="p-3">Landed on</th>
+                    <th className="p-3">Came from</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(stats?.recentClicks ?? []).map((c: { created_at: string; path: string | null; referrer: string | null }, idx: number) => (
+                    <tr key={idx} className="border-t border-foreground/10">
+                      <td className="p-3 font-mono text-xs">{new Date(c.created_at).toLocaleString()}</td>
+                      <td className="p-3 font-mono text-xs">{c.path || "/"}</td>
+                      <td className="p-3 text-xs text-muted-foreground break-all">{c.referrer || "direct"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+      )}
+
       {tab === "recruits" && (
         <div className="max-w-4xl">
           {loadingRecruits ? (
