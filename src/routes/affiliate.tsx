@@ -173,7 +173,7 @@ function ApprovedDashboard({ affiliate }: { affiliate: Affiliate }) {
 
   const approvedRecruits = useMemo(() => recruits.filter((r) => r.status === "approved"), [recruits]);
   const drivenRevenue = ((stats?.totalRevenueCents ?? 0) / 100).toFixed(2);
-  const payingReferrals = (stats?.referrals ?? []).filter((r) => r.paid).length;
+  const payingReferrals = (stats?.referrals ?? []).filter((r: { paid: boolean }) => r.paid).length;
 
   return (
     <div className="mt-10 space-y-8">
