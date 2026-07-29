@@ -689,7 +689,7 @@ function AffiliatesAdmin() {
     setLoading(true);
     const { data } = await supabase
       .from("affiliates")
-      .select("id, status, full_name, email, phone, desired_code, code, instagram, tiktok, youtube, twitter, other_social, referral_count, earnings_cents, payout_cents_per_5, created_at")
+      .select("id, status, full_name, email, phone, desired_code, code, instagram, tiktok, youtube, twitter, other_social, referral_count, earnings_cents, recruit_earnings_cents, payout_cents_per_5, recruiter_affiliate_id, created_at")
       .order("created_at", { ascending: false });
     setRows((data as AffiliateRow[] | null) ?? []);
     setLoading(false);
