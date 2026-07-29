@@ -723,7 +723,8 @@ function AffiliatesAdmin() {
     catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
   }
   async function onMarkPaid(r: AffiliateRow) {
-    if (!confirm(`Mark $${(r.earnings_cents / 100).toFixed(2)} as paid to ${r.email}? This resets their earnings balance.`)) return;
+    const total = r.earnings_cents + (r.recruit_earnings_cents ?? 0);
+    if (!confirm(`Mark $${(total / 100).toFixed(2)} as paid to ${r.email}? This resets both direct ($${(r.earnings_cents/100).toFixed(2)}) and recruit ($${((r.recruit_earnings_cents??0)/100).toFixed(2)}) balances.`)) return;
     try { await paidFn({ data: { id: r.id } }); toast.success("Marked as paid"); void load(); }
     catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
   }
