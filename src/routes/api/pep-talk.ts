@@ -48,26 +48,31 @@ export const Route = createFileRoute("/api/pep-talk")({
         const { data: userData, error: userErr } = await sb.auth.getUser();
         if (userErr || !userData.user) return new Response("Unauthorized", { status: 401 });
 
-        const { data: accessRow, error: accErr } = await sb
+        // A user can legitimately have several access rows (e.g. live + sandbox),
+        // so never use maybeSingle() here — it errors on multiple matches.
+        const { data: accessRows, error: accErr } = await sb
           .from("user_access")
           .select("tier")
           .eq("user_id", userData.user.id)
           .eq("tier", "full")
-          .maybeSingle();
+          .limit(1);
         if (accErr) {
           console.error("[pep-talk] access check error", accErr);
           return new Response("Access check failed", { status: 500 });
         }
-        if (!accessRow) {
+        if (!accessRows || accessRows.length === 0) {
           // Admins are also allowed
-          const { data: roleRow } = await sb
+          const { data: roleRows } = await sb
             .from("user_roles")
             .select("role")
             .eq("user_id", userData.user.id)
             .eq("role", "admin")
-            .maybeSingle();
-          if (!roleRow) return new Response("Full Access required", { status: 403 });
+            .limit(1);
+          if (!roleRows || roleRows.length === 0) {
+            return new Response("Full Access required", { status: 403 });
+          }
         }
+
 
         const { messages } = (await request.json()) as { messages?: ChatMessage[] };
         if (!Array.isArray(messages) || messages.length === 0) {
@@ -84,7 +89,7 @@ export const Route = createFileRoute("/api/pep-talk")({
 
         const gateway = createLovableAiGatewayProvider(key);
         const result = streamText({
-          model: gateway("google/gemini-3.5-flash"),
+          model: gateway("google/gemini-3.6-flash"),
           messages: modelMessages,
         });
 
