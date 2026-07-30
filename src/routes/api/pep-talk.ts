@@ -45,8 +45,15 @@ export const Route = createFileRoute("/api/pep-talk")({
             },
           },
         });
-        const { data: userData, error: userErr } = await sb.auth.getUser();
-        if (userErr || !userData.user) return new Response("Unauthorized", { status: 401 });
+        // Pass the JWT explicitly: with no persisted session, getUser() would
+        // fail locally with "Auth session missing" and never hit the server.
+        const jwt = authHeader.replace(/^Bearer\s+/i, "");
+        const { data: userData, error: userErr } = await sb.auth.getUser(jwt);
+        if (userErr || !userData.user) {
+          console.error("[pep-talk] auth failed", userErr?.message);
+          return new Response("Unauthorized", { status: 401 });
+        }
+
 
         // A user can legitimately have several access rows (e.g. live + sandbox),
         // so never use maybeSingle() here — it errors on multiple matches.
