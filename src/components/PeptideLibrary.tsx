@@ -319,14 +319,13 @@ export default function PeptideLibrary() {
         <p className="text-eyebrow">Reference databases</p>
         <ul className="flex flex-wrap gap-x-6 gap-y-2 mt-2">
           {PEPTIDE_GENERAL_SOURCES.map((s) => (
-            <li key={s.url}>
-              <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-sm text-blood hover:underline inline-flex items-center gap-1.5">
-                <ExternalLink size={13} /> {s.label}
-              </a>
+            <li key={s.url} className="text-sm text-muted-foreground inline-flex items-center gap-1.5">
+              <FileText size={13} className="text-blood" /> {s.label}
             </li>
           ))}
         </ul>
       </div>
+
     </div>
   );
 }
