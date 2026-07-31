@@ -5,10 +5,11 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useAccess, isTabAllowed } from "@/lib/access";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, Search, GraduationCap, Scale, XCircle, CheckCircle } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, CheckCircle } from "lucide-react";
 import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import ReactMarkdown from "react-markdown";
+import PeptideLibrary from "@/components/PeptideLibrary";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Client Dashboard — Titan Elite" }] }),
@@ -317,68 +318,6 @@ function Protocols() {
   );
 }
 
-const PEPTIDES: { name: string; researched: string }[] = [
-  { name: "BPC-157", researched: "Researched for gut lining repair, tendon/ligament healing, and systemic anti-inflammatory effects." },
-  { name: "TB-500 (Thymosin Beta-4)", researched: "Researched for soft-tissue recovery, muscle repair, and improved cellular migration." },
-  { name: "CJC-1295 (with DAC)", researched: "Researched as a long-acting GHRH analog to elevate baseline growth hormone and IGF-1." },
-  { name: "Ipamorelin", researched: "Researched as a selective GH secretagogue that boosts growth hormone without spiking cortisol or prolactin." },
-  { name: "Sermorelin", researched: "Researched for stimulating natural GH release, sleep quality, and recovery." },
-  { name: "Tesamorelin", researched: "Researched for reducing visceral adipose tissue and improving lipid metabolism." },
-  { name: "MOTS-c", researched: "Researched for mitochondrial function, insulin sensitivity, and metabolic efficiency." },
-  { name: "5-Amino-1MQ", researched: "Researched for NNMT inhibition, fat loss, and preservation of lean tissue." },
-  { name: "GHK-Cu", researched: "Researched for skin regeneration, collagen synthesis, and hair follicle health." },
-  { name: "Epithalon", researched: "Researched for telomerase activation, sleep-cycle regulation, and longevity markers." },
-  { name: "Semaglutide", researched: "Researched as a GLP-1 agonist for appetite regulation, glucose control, and fat loss." },
-  { name: "Tirzepatide", researched: "Researched as a dual GIP/GLP-1 agonist for weight management and metabolic health." },
-  { name: "PT-141 (Bremelanotide)", researched: "Researched for libido and sexual response via melanocortin receptor activation." },
-  { name: "Melanotan II", researched: "Researched for melanogenesis, UV protection, and appetite suppression." },
-  { name: "Selank", researched: "Researched for anxiolytic effects, cognitive focus, and stress resilience." },
-  { name: "Semax", researched: "Researched for cognitive enhancement, neuroprotection, and BDNF expression." },
-  { name: "Dihexa", researched: "Researched for cognitive support, neurogenesis, and improved synaptic connectivity." },
-  { name: "Pinealon", researched: "Researched for brain health, sleep regulation, and cellular differentiation." },
-  { name: "Cerebrolysin", researched: "Researched for neuroprotection, recovery, and cognitive function support." },
-  { name: "Thymalin", researched: "Researched for immune modulation, thymus function, and overall immune balance." },
-  { name: "Thymosin Alpha-1", researched: "Researched for immune system modulation, antiviral response, and immune cell activity." },
-  { name: "LL-37", researched: "Researched for antimicrobial activity, immune response, and tissue repair signaling." },
-  { name: "KPV", researched: "Researched for anti-inflammatory effects, skin healing, and immune modulation." },
-  { name: "VIP (Vasoactive Intestinal Peptide)", researched: "Researched for immune regulation, gut health, and respiratory support." },
-  { name: "DSIP", researched: "Researched for sleep architecture, stress recovery, and endocrine balance." },
-  { name: "AOD-9604", researched: "Researched for fat metabolism, lipolysis, and weight management without hunger modulation." },
-  { name: "HGH Fragment 176-191", researched: "Researched for fat oxidation, lipolysis, and metabolic enhancement." },
-  { name: "IGF-1 LR3", researched: "Researched for muscle cell growth, hypertrophy, and recovery signaling." },
-  { name: "IGF-1 DES", researched: "Researched for localized tissue growth, muscle repair, and anabolic signaling." },
-  { name: "PEG-MGF", researched: "Researched for muscle stem cell activation, recovery, and tissue regeneration." },
-  { name: "MGF (Mechano Growth Factor)", researched: "Researched for muscle repair, hypertrophy, and training adaptation." },
-  { name: "Follistatin 344", researched: "Researched for myostatin inhibition, muscle growth, and tissue development." },
-  { name: "ACE-031", researched: "Researched for myostatin pathway inhibition and muscle mass support." },
-  { name: "SARMs / S-23 (research context)", researched: "Researched for selective androgen receptor modulation and body composition." },
-  { name: "SARMs / RAD-140 (research context)", researched: "Researched for neuroprotective and anabolic signaling properties." },
-  { name: "SARMs / LGD-4033 (research context)", researched: "Researched for muscle preservation, strength, and lean tissue support." },
-  { name: "Oxytocin", researched: "Researched for social bonding, stress response, and metabolic regulation." },
-  { name: "Vasopressin", researched: "Researched for memory consolidation, circadian rhythm, and water balance." },
-  { name: "Delta Sleep-Inducing Peptide (DSIP)", researched: "Researched for sleep quality, recovery, and stress hormone balance." },
-  { name: "Melanotan I", researched: "Researched for tanning response, melanogenesis, and UV protection." },
-  { name: "Hexarelin", researched: "Researched as a potent GH secretagogue for growth hormone release and cardiac protection." },
-  { name: "GHRP-2", researched: "Researched for growth hormone release, appetite stimulation, and recovery." },
-  { name: "GHRP-6", researched: "Researched for growth hormone release, appetite increase, and tissue repair." },
-  { name: "Ipamorelin + CJC-1295 (combo)", researched: "Researched for synergistic GH release, recovery, and body composition." },
-  { name: "Triptorelin", researched: "Researched for hormone modulation, testosterone regulation, and fertility contexts." },
-  { name: " kisspeptin-10", researched: "Researched for reproductive hormone signaling, LH/FSH release, and fertility." },
-  { name: "hCG (Human Chorionic Gonadotropin)", researched: "Researched for fertility support, hormone preservation, and testicular function." },
-  { name: "Bremelanotide (PT-141)", researched: "Researched for sexual arousal, libido, and melanocortin receptor activation." },
-  { name: "Albuterol (research context)", researched: "Researched for bronchodilation, fat oxidation, and metabolic performance." },
-  { name: "Clenbuterol (research context)", researched: "Researched for beta-2 agonism, thermogenesis, and fat loss in animal models." },
-  { name: "T3 / Liothyronine (research context)", researched: "Researched for thyroid hormone metabolism, energy expenditure, and fat oxidation." },
-  { name: "T4 / Levothyroxine (research context)", researched: "Researched for thyroid replacement, metabolic rate, and hormone balance." },
-  { name: "KLOW", researched: "Researched for metabolic regulation, body composition, and performance-related signaling pathways." },
-  { name: "Glutathione", researched: "Researched as a master antioxidant for oxidative stress, detoxification, and immune support." },
-  { name: "Retatrutide", researched: "Researched as a triple GIP/GLP-1/glucagon agonist for weight management and metabolic health." },
-  { name: "Liraglutide", researched: "Researched as a GLP-1 agonist for appetite control, glucose regulation, and fat loss." },
-  { name: "Dulaglutide", researched: "Researched as a long-acting GLP-1 agonist for glycemic control and metabolic support." },
-  { name: "Apamin", researched: "Researched for neuroprotection, cognitive enhancement, and calcium-activated potassium channel modulation." },
-  { name: "Follistatin 315", researched: "Researched for myostatin inhibition, muscle growth, and tissue development support." },
-  { name: "PNC-27 (research context)", researched: "Researched for selective membrane-disrupting effects on damaged or transformed cells." },
-];
 
 type ChatMsg = { id: string; role: "user" | "assistant"; content: string };
 
@@ -546,48 +485,9 @@ function PepTalk() {
 }
 
 function Peptides() {
-  const [query, setQuery] = useState("");
-  const q = query.trim().toLowerCase();
-  const filtered = q ? PEPTIDES.filter((p) => p.name.toLowerCase().includes(q) || p.researched.toLowerCase().includes(q)) : PEPTIDES;
-  return (
-    <div>
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        <div>
-          <h3 className="font-display text-2xl sm:text-3xl">Research Peptides</h3>
-          <p className="text-sm text-muted-foreground mt-2">
-            Educational reference only. Compounds listed for research purposes — not medical advice. Order through{" "}
-            <a href="https://powerbuiltlabs.com" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">Powerbuilt Labs</a>.
-          </p>
-        </div>
-        <div className="relative w-full sm:w-72">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search peptides…"
-            className="w-full bg-background border border-foreground/15 pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-blood"
-          />
-        </div>
-      </div>
-      <div className="grid sm:grid-cols-2 gap-3">
-        {filtered.map((p, i) => (
-          <article key={p.name} className="border border-foreground/10 p-5 hover:border-blood transition">
-            <div className="flex items-baseline gap-3">
-              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
-              <h4 className="font-display text-xl">{p.name}</h4>
-            </div>
-            <p className="text-sm text-muted-foreground mt-2">{p.researched}</p>
-          </article>
-        ))}
-        {filtered.length === 0 && (
-          <div className="col-span-full border border-foreground/10 p-6 text-sm text-muted-foreground text-center">
-            No peptides found matching “{query}”.
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  return <PeptideLibrary />;
 }
+
 
 
 function Supplies() {
