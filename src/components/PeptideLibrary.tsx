@@ -215,14 +215,13 @@ function PeptideDetail({ p, onClose }: { p: PeptideEntry; onClose: () => void })
             <h5 className="font-display text-lg mb-2">Sources</h5>
             <ul className="space-y-1.5">
               {(p.sources && p.sources.length > 0 ? p.sources : PEPTIDE_GENERAL_SOURCES.slice(0, 2)).map((s) => (
-                <li key={s.url}>
-                  <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-sm text-blood hover:underline inline-flex items-start gap-1.5">
-                    <ExternalLink size={13} className="shrink-0 mt-0.5" />
-                    <span>{s.label}</span>
-                  </a>
+                <li key={s.url} className="text-sm text-muted-foreground flex items-start gap-2">
+                  <FileText size={13} className="shrink-0 mt-0.5 text-blood" />
+                  <span>{s.label}</span>
                 </li>
               ))}
             </ul>
+
           </div>
         </section>
       </div>
