@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Search, X, ExternalLink, FileText, ChevronRight } from "lucide-react";
+import { Search, X, FileText, ChevronRight } from "lucide-react";
 import {
   PEPTIDE_LIBRARY,
   PEPTIDE_CATEGORIES,
@@ -7,49 +7,135 @@ import {
   type PeptideEntry,
 } from "@/lib/peptide-library";
 
+/** Wrap a label into lines that fit the vial's label plate. */
+function wrapLabel(label: string, maxChars: number, maxLines: number) {
+  const words = label.toUpperCase().split(/[\s/]+/).filter(Boolean);
+  const lines: string[] = [];
+  let cur = "";
+  for (const w of words) {
+    const next = cur ? `${cur} ${w}` : w;
+    if (next.length <= maxChars) {
+      cur = next;
+    } else {
+      if (cur) lines.push(cur);
+      cur = w.length > maxChars ? `${w.slice(0, maxChars - 1)}…` : w;
+    }
+  }
+  if (cur) lines.push(cur);
+  if (lines.length > maxLines) {
+    const trimmed = lines.slice(0, maxLines);
+    trimmed[maxLines - 1] = `${trimmed[maxLines - 1].slice(0, maxChars - 1)}…`;
+    return trimmed;
+  }
+  return lines;
+}
+
 /** Unbranded research vial illustration — no vendor labels. */
 function Vial({ label }: { label: string }) {
+  const maxChars = 13;
+  const lines = wrapLabel(label, maxChars, 3);
+  const fontSize = lines.some((l) => l.length > 10) ? 6.4 : 7.6;
+  const lineHeight = fontSize + 2.6;
+  const startY = 78 - ((lines.length - 1) * lineHeight) / 2;
+
   return (
     <div className="relative aspect-square w-full overflow-hidden bg-muted flex items-center justify-center">
       <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "radial-gradient(currentColor 1px, transparent 1px)", backgroundSize: "14px 14px" }} />
-      <svg viewBox="0 0 120 160" className="relative h-[78%] w-auto" role="img" aria-label={`${label} research vial illustration`}>
+      <svg viewBox="0 0 120 160" className="relative h-[82%] w-auto" role="img" aria-label={`${label} research vial illustration`}>
         <defs>
           <linearGradient id="glassG" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="currentColor" stopOpacity="0.16" />
-            <stop offset="35%" stopColor="currentColor" stopOpacity="0.04" />
-            <stop offset="100%" stopColor="currentColor" stopOpacity="0.14" />
+            <stop offset="0%" stopColor="currentColor" stopOpacity="0.22" />
+            <stop offset="14%" stopColor="currentColor" stopOpacity="0.06" />
+            <stop offset="42%" stopColor="currentColor" stopOpacity="0.02" />
+            <stop offset="78%" stopColor="currentColor" stopOpacity="0.08" />
+            <stop offset="100%" stopColor="currentColor" stopOpacity="0.2" />
           </linearGradient>
+          <linearGradient id="capG" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#000" stopOpacity="0.35" />
+            <stop offset="22%" stopColor="#fff" stopOpacity="0.28" />
+            <stop offset="55%" stopColor="#fff" stopOpacity="0.04" />
+            <stop offset="100%" stopColor="#000" stopOpacity="0.4" />
+          </linearGradient>
+          <linearGradient id="liqG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="currentColor" stopOpacity="0.26" />
+            <stop offset="100%" stopColor="currentColor" stopOpacity="0.42" />
+          </linearGradient>
+          <linearGradient id="labelG" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#000" stopOpacity="0.14" />
+            <stop offset="20%" stopColor="#fff" stopOpacity="0.1" />
+            <stop offset="80%" stopColor="#fff" stopOpacity="0.04" />
+            <stop offset="100%" stopColor="#000" stopOpacity="0.16" />
+          </linearGradient>
+          <clipPath id="bodyClip">
+            <path d="M34 52 Q34 44 42 40 L42 38 L78 38 L78 40 Q86 44 86 52 L86 141 Q86 148 79 148 L41 148 Q34 148 34 141 Z" />
+          </clipPath>
         </defs>
+
         <g className="text-foreground">
-          {/* cap */}
-          <rect x="42" y="10" width="36" height="16" rx="2" className="fill-blood" />
-          <rect x="46" y="26" width="28" height="7" rx="1" fill="currentColor" opacity="0.35" />
-          {/* neck */}
-          <rect x="50" y="33" width="20" height="9" fill="url(#glassG)" stroke="currentColor" strokeOpacity="0.28" />
-          {/* body */}
-          <rect x="32" y="42" width="56" height="104" rx="5" fill="url(#glassG)" stroke="currentColor" strokeOpacity="0.32" />
+          {/* shadow */}
+          <ellipse cx="60" cy="151" rx="27" ry="4" fill="currentColor" opacity="0.12" />
+
+          {/* rubber stopper */}
+          <rect x="47" y="16" width="26" height="12" rx="2" fill="currentColor" opacity="0.5" />
+
+          {/* crimp cap */}
+          <rect x="42" y="10" width="36" height="20" rx="2.5" className="fill-blood" />
+          <rect x="42" y="10" width="36" height="20" rx="2.5" fill="url(#capG)" />
+          {/* cap flip-top ring */}
+          <ellipse cx="60" cy="11.5" rx="10" ry="3" fill="#000" opacity="0.28" />
+          {/* crimp ridges */}
+          {[46, 50, 54, 58, 62, 66, 70, 74].map((x) => (
+            <rect key={x} x={x} y="19" width="1" height="11" fill="#000" opacity="0.18" />
+          ))}
+          {/* crimp skirt over neck */}
+          <path d="M44 30 L76 30 L74 36 L46 36 Z" className="fill-blood" />
+          <path d="M44 30 L76 30 L74 36 L46 36 Z" fill="url(#capG)" />
+
+          {/* glass body with shoulders */}
+          <path
+            d="M34 52 Q34 44 42 40 L42 36 L78 36 L78 40 Q86 44 86 52 L86 141 Q86 148 79 148 L41 148 Q34 148 34 141 Z"
+            fill="url(#glassG)"
+            stroke="currentColor"
+            strokeOpacity="0.35"
+            strokeWidth="1.1"
+          />
+
           {/* liquid */}
-          <rect x="34" y="118" width="52" height="26" rx="4" className="fill-blood" opacity="0.18" />
+          <g clipPath="url(#bodyClip)">
+            <path d="M34 112 Q60 107 86 112 L86 149 L34 149 Z" fill="url(#liqG)" className="text-blood" />
+            <path d="M34 112 Q60 107 86 112" stroke="currentColor" strokeOpacity="0.3" fill="none" strokeWidth="1" />
+          </g>
+
           {/* label plate */}
-          <rect x="38" y="62" width="44" height="42" fill="currentColor" opacity="0.05" stroke="currentColor" strokeOpacity="0.18" />
-          <line x1="44" y1="94" x2="76" y2="94" stroke="currentColor" strokeOpacity="0.2" />
-          <line x1="44" y1="99" x2="66" y2="99" stroke="currentColor" strokeOpacity="0.14" />
-          {/* highlight */}
-          <rect x="38" y="48" width="4" height="90" rx="2" fill="currentColor" opacity="0.1" />
+          <g clipPath="url(#bodyClip)">
+            <rect x="34" y="60" width="52" height="40" fill="currentColor" opacity="0.08" />
+            <rect x="34" y="60" width="52" height="40" fill="url(#labelG)" />
+            <line x1="34" y1="60" x2="86" y2="60" stroke="currentColor" strokeOpacity="0.22" />
+            <line x1="34" y1="100" x2="86" y2="100" stroke="currentColor" strokeOpacity="0.22" />
+            <line x1="41" y1="94" x2="79" y2="94" stroke="currentColor" strokeOpacity="0.16" strokeWidth="0.7" />
+          </g>
+
+          {/* glass highlights */}
+          <rect x="38.5" y="50" width="3" height="88" rx="1.5" fill="#fff" opacity="0.14" />
+          <rect x="79" y="56" width="2" height="78" rx="1" fill="#fff" opacity="0.07" />
         </g>
+
         <text
-          x="60"
-          y="82"
           textAnchor="middle"
           className="fill-foreground"
-          style={{ fontFamily: "var(--font-mono)", fontSize: label.length > 12 ? 7 : 9, letterSpacing: "0.06em" }}
+          style={{ fontFamily: "var(--font-mono)", fontSize, letterSpacing: "0.05em" }}
         >
-          {label.length > 16 ? `${label.slice(0, 15)}…` : label.toUpperCase()}
+          {lines.map((l, i) => (
+            <tspan key={l + i} x="60" y={startY + i * lineHeight}>
+              {l}
+            </tspan>
+          ))}
         </text>
       </svg>
     </div>
   );
 }
+
 
 function ProfileRow({ label, value }: { label: string; value?: string }) {
   if (!value) return null;
