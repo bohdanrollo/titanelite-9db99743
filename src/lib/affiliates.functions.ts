@@ -201,6 +201,7 @@ export const getMyAffiliateStats = createServerFn({ method: "POST" })
     const userIds = (refs ?? []).map((r: any) => r.referred_user_id);
     let profiles: Record<string, { full_name: string | null; email: string | null }> = {};
     const revenueByUser: Record<string, number> = {};
+    const tierByUser: Record<string, string> = {};
     let totalRevenueCents = 0;
 
     if (userIds.length) {
@@ -214,6 +215,13 @@ export const getMyAffiliateStats = createServerFn({ method: "POST" })
         revenueByUser[p.user_id] = (revenueByUser[p.user_id] ?? 0) + (p.amount_cents ?? 0);
         totalRevenueCents += p.amount_cents ?? 0;
       }
+
+      // Paid plans are tracked in user_access for the current checkout flow.
+      const { data: access } = await (supabaseAdmin as any)
+        .from("user_access").select("user_id, tier").in("user_id", userIds);
+      for (const a of access ?? []) {
+        if (a.tier === "full" || !tierByUser[a.user_id]) tierByUser[a.user_id] = a.tier;
+      }
     }
 
     const referrals = (refs ?? []).map((r: any) => ({
@@ -222,7 +230,8 @@ export const getMyAffiliateStats = createServerFn({ method: "POST" })
       full_name: profiles[r.referred_user_id]?.full_name ?? null,
       email: profiles[r.referred_user_id]?.email ?? null,
       revenue_cents: revenueByUser[r.referred_user_id] ?? 0,
-      paid: (revenueByUser[r.referred_user_id] ?? 0) > 0,
+      tier: tierByUser[r.referred_user_id] ?? null,
+      paid: (revenueByUser[r.referred_user_id] ?? 0) > 0 || !!tierByUser[r.referred_user_id],
     }));
 
     const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
