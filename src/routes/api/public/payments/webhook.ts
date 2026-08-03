@@ -310,6 +310,10 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
               // Only run legacy one-time handling if there's no subscription attached.
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const anySession = session as any;
+              // Credit affiliate promo-code usage for every paid checkout.
+              if (anySession.payment_status !== "unpaid") {
+                await attributeAffiliateFromSession(session, env);
+              }
               if (anySession.mode === "subscription" || anySession.subscription) break;
               const withPi = await ensurePaymentIntent(session, env);
               await handleCheckoutCompleted(withPi, env);
