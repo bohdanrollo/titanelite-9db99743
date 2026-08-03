@@ -965,7 +965,7 @@ function PeptideCalculator() {
 
         <div className="mt-6">
           <div className="text-eyebrow mb-3">1 mL / 100 Unit Syringe</div>
-          <svg viewBox="0 0 440 90" className="w-full h-auto">
+          <svg viewBox="0 -6 440 96" className="w-full h-auto">
             {/* Plunger */}
             <rect x="0" y="30" width="20" height="30" fill="var(--color-foreground)" opacity="0.7" />
             <rect x="20" y="35" width="10" height="20" fill="var(--color-foreground)" opacity="0.5" />
