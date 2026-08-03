@@ -216,20 +216,28 @@ function Clients() {
                   <td className="p-3 font-medium">{r.full_name || "—"}</td>
                   <td className="p-3 text-muted-foreground">{r.email}</td>
                   <td className="p-3">
-                    {tier === "full" ? (
-                      <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-emerald-600">
-                        <span className="h-2 w-2 rounded-full bg-emerald-500" /> Full
-                      </span>
-                    ) : tier === "limited" ? (
-                      <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-600">
-                        <span className="h-2 w-2 rounded-full bg-amber-500" /> Limited
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                        <Lock size={10} /> No Plan
-                      </span>
-                    )}
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {tier === "full" ? (
+                        <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-emerald-600">
+                          <span className="h-2 w-2 rounded-full bg-emerald-500" /> Full
+                        </span>
+                      ) : tier === "limited" ? (
+                        <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-600">
+                          <span className="h-2 w-2 rounded-full bg-amber-500" /> Limited
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                          <Lock size={10} /> No Plan
+                        </span>
+                      )}
+                      {tier && (
+                        <span className="font-mono text-[9px] uppercase tracking-[0.18em] px-1.5 py-0.5 border border-foreground/20 text-muted-foreground">
+                          {paid[r.id] ? "Paid" : "Granted"}
+                        </span>
+                      )}
+                    </div>
                   </td>
+
                   <td className="p-3 font-mono text-xs">{new Date(r.created_at).toLocaleDateString()}</td>
                   <td className="p-3 text-right whitespace-nowrap">
                     {busyId === r.id ? (
