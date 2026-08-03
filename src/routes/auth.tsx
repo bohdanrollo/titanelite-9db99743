@@ -58,7 +58,16 @@ function AuthPage() {
         nav({ to: "/dashboard" });
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Auth failed";
+      const raw = err instanceof Error ? err.message : "Auth failed";
+      const lower = raw.toLowerCase();
+      let msg = raw;
+      if (lower.includes("email not confirmed")) {
+        msg = "Your email isn't confirmed yet. Try again in a moment — if it keeps failing, contact support.";
+      } else if (lower.includes("invalid login credentials")) {
+        msg = "Incorrect email or password. Check for typos or create an account.";
+      } else if (lower.includes("already registered") || lower.includes("user already")) {
+        msg = "An account with that email already exists — sign in instead.";
+      }
       toast.error(msg);
     } finally {
       setBusy(false);
