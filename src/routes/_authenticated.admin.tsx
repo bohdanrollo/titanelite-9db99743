@@ -96,6 +96,7 @@ type ClientSubTab = "all" | "full" | "limited" | "none";
 function Clients() {
   const [rows, setRows] = useState<{ id: string; full_name: string | null; email: string | null; created_at: string }[]>([]);
   const [access, setAccess] = useState<Record<string, ClientTier>>({});
+  const [paid, setPaid] = useState<Record<string, boolean>>({});
   const [q, setQ] = useState("");
   const [subTab, setSubTab] = useState<ClientSubTab>("all");
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -109,12 +110,18 @@ function Clients() {
   const reload = async () => {
     const [{ data }, accessRes] = await Promise.all([
       supabase.from("profiles").select("id, full_name, email, created_at").order("created_at", { ascending: false }),
-      listFn({ data: { environment: env } }).catch(() => ({ rows: [] as { user_id: string; tier: "limited" | "full" }[] })),
+      listFn({ data: { environment: env } }).catch(() => ({ rows: [] as { user_id: string; tier: "limited" | "full"; stripe_price_id?: string | null }[] })),
     ]);
     setRows(data ?? []);
     const map: Record<string, ClientTier> = {};
-    accessRes.rows.forEach((r) => { map[r.user_id] = r.tier; });
+    const paidMap: Record<string, boolean> = {};
+    accessRes.rows.forEach((r) => {
+      // A user can have rows in both environments (and both tiers) — keep the highest.
+      if (map[r.user_id] !== "full") map[r.user_id] = r.tier;
+      if (r.stripe_price_id) paidMap[r.user_id] = true;
+    });
     setAccess(map);
+    setPaid(paidMap);
   };
 
   useEffect(() => { reload(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, []);
@@ -209,20 +216,28 @@ function Clients() {
                   <td className="p-3 font-medium">{r.full_name || "—"}</td>
                   <td className="p-3 text-muted-foreground">{r.email}</td>
                   <td className="p-3">
-                    {tier === "full" ? (
-                      <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-emerald-600">
-                        <span className="h-2 w-2 rounded-full bg-emerald-500" /> Full
-                      </span>
-                    ) : tier === "limited" ? (
-                      <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-600">
-                        <span className="h-2 w-2 rounded-full bg-amber-500" /> Limited
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                        <Lock size={10} /> No Plan
-                      </span>
-                    )}
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {tier === "full" ? (
+                        <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-emerald-600">
+                          <span className="h-2 w-2 rounded-full bg-emerald-500" /> Full
+                        </span>
+                      ) : tier === "limited" ? (
+                        <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-600">
+                          <span className="h-2 w-2 rounded-full bg-amber-500" /> Limited
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                          <Lock size={10} /> No Plan
+                        </span>
+                      )}
+                      {tier && (
+                        <span className="font-mono text-[9px] uppercase tracking-[0.18em] px-1.5 py-0.5 border border-foreground/20 text-muted-foreground">
+                          {paid[r.id] ? "Paid" : "Granted"}
+                        </span>
+                      )}
+                    </div>
                   </td>
+
                   <td className="p-3 font-mono text-xs">{new Date(r.created_at).toLocaleDateString()}</td>
                   <td className="p-3 text-right whitespace-nowrap">
                     {busyId === r.id ? (
