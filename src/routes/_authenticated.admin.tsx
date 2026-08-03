@@ -96,6 +96,7 @@ type ClientSubTab = "all" | "full" | "limited" | "none";
 function Clients() {
   const [rows, setRows] = useState<{ id: string; full_name: string | null; email: string | null; created_at: string }[]>([]);
   const [access, setAccess] = useState<Record<string, ClientTier>>({});
+  const [paid, setPaid] = useState<Record<string, boolean>>({});
   const [q, setQ] = useState("");
   const [subTab, setSubTab] = useState<ClientSubTab>("all");
   const [busyId, setBusyId] = useState<string | null>(null);
