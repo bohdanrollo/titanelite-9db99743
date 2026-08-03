@@ -237,6 +237,59 @@ async function handleSubscriptionChange(sub: Subscription, env: StripeEnv) {
   }
 }
 
+function normalizeCode(raw: string) {
+  return raw.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 20);
+}
+
+/**
+ * If the buyer used an affiliate's promo code at checkout, credit that
+ * affiliate with the signup so it appears in their dashboard and in admin.
+ */
+async function attributeAffiliateFromSession(session: CheckoutSession, env: StripeEnv) {
+  const userId = session.metadata?.userId;
+  if (!userId) return;
+  try {
+    const stripe = createStripeClient(env);
+    const full = await stripe.checkout.sessions.retrieve(session.id, {
+      expand: ["discounts.promotion_code"],
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const discounts = ((full as any).discounts ?? []) as any[];
+    const codes: string[] = [];
+    for (const d of discounts) {
+      const pc = d?.promotion_code;
+      if (pc && typeof pc === "object" && pc.code) codes.push(String(pc.code));
+    }
+    if (!codes.length) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const supa = getSupabase() as any;
+    for (const raw of codes) {
+      const code = normalizeCode(raw);
+      if (!code) continue;
+      const { data: aff } = await supa
+        .from("affiliates")
+        .select("id, user_id")
+        .eq("code", code)
+        .eq("status", "approved")
+        .maybeSingle();
+      if (!aff) continue;
+      if (aff.user_id === userId) continue; // no self-referrals
+      const { error } = await supa
+        .from("affiliate_referrals")
+        .insert({ affiliate_id: aff.id, referred_user_id: userId, code_used: code });
+      if (error && !/duplicate|unique/i.test(error.message ?? "")) {
+        console.error("[webhook] affiliate attribution insert failed", error);
+      } else if (!error) {
+        console.log("[webhook] affiliate credited for purchase", { code, userId });
+      }
+      return; // one affiliate per buyer
+    }
+  } catch (e) {
+    console.error("[webhook] affiliate attribution failed", e);
+  }
+}
+
 export const Route = createFileRoute("/api/public/payments/webhook")({
   server: {
     handlers: {
@@ -257,6 +310,10 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
               // Only run legacy one-time handling if there's no subscription attached.
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const anySession = session as any;
+              // Credit affiliate promo-code usage for every paid checkout.
+              if (anySession.payment_status !== "unpaid") {
+                await attributeAffiliateFromSession(session, env);
+              }
               if (anySession.mode === "subscription" || anySession.subscription) break;
               const withPi = await ensurePaymentIntent(session, env);
               await handleCheckoutCompleted(withPi, env);
