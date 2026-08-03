@@ -92,10 +92,12 @@ export const listAccess = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const admin = supabaseAdmin as any;
+    // Return access rows across BOTH environments. Live purchases must still
+    // show up when the admin dashboard is viewed in preview (sandbox) mode.
+    void data.environment;
     const { data: rows, error } = await admin
       .from("user_access")
-      .select("user_id, tier, stripe_price_id, environment, created_at, updated_at")
-      .eq("environment", data.environment);
+      .select("user_id, tier, stripe_price_id, environment, created_at, updated_at");
     if (error) throw new Error(error.message);
     return { rows: rows as Array<{ user_id: string; tier: "limited" | "full"; stripe_price_id: string | null; environment: string; created_at: string; updated_at: string }> };
   });
