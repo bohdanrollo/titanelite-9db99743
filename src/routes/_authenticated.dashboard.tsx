@@ -973,31 +973,38 @@ function PeptideCalculator() {
             <rect x="30" y="20" width={barrelWidth} height="50" fill="none" stroke="var(--color-foreground)" strokeWidth="1.5" />
             {/* Fill (dose) */}
             <rect x={30 + barrelWidth - fillWidth} y="22" width={fillWidth} height="46" fill="var(--color-blood)" opacity="0.85" />
-            {/* Tick marks every 10 units */}
-            {Array.from({ length: 11 }).map((_, i) => (
-              <g key={i}>
-                <line
-                  x1={30 + (i / 10) * barrelWidth}
-                  y1="20"
-                  x2={30 + (i / 10) * barrelWidth}
-                  y2={i % 5 === 0 ? "12" : "16"}
-                  stroke="var(--color-foreground)"
-                  strokeWidth="1"
-                />
-                {i % 2 === 0 && (
-                  <text
-                    x={30 + (i / 10) * barrelWidth}
-                    y="9"
-                    fontSize="7"
-                    textAnchor="middle"
-                    fill="var(--color-foreground)"
-                    fontFamily="monospace"
-                  >
-                    {(10 - i) * 10}
-                  </text>
-                )}
-              </g>
-            ))}
+            {/* Graduations: every 1 unit, longer every 5, numbered every 10 (as on a real U-100 syringe) */}
+            {Array.from({ length: 101 }).map((_, i) => {
+              const major = i % 10 === 0;
+              const mid = i % 5 === 0;
+              const x = 30 + (i / 100) * barrelWidth;
+              return (
+                <g key={i}>
+                  <line
+                    x1={x}
+                    y1="20"
+                    x2={x}
+                    y2={major ? 8 : mid ? 12 : 15}
+                    stroke="var(--color-foreground)"
+                    strokeWidth={major ? 1.2 : 0.6}
+                    opacity={major ? 1 : mid ? 0.8 : 0.55}
+                  />
+                  {major && (
+                    <text
+                      x={x}
+                      y="5"
+                      fontSize="6"
+                      textAnchor="middle"
+                      fill="var(--color-foreground)"
+                      fontFamily="monospace"
+                    >
+                      {100 - i}
+                    </text>
+                  )}
+                </g>
+              );
+            })}
+
             {/* Needle hub */}
             <rect x={30 + barrelWidth} y="35" width="14" height="20" fill="var(--color-foreground)" opacity="0.7" />
             {/* Needle */}
