@@ -109,12 +109,18 @@ function Clients() {
   const reload = async () => {
     const [{ data }, accessRes] = await Promise.all([
       supabase.from("profiles").select("id, full_name, email, created_at").order("created_at", { ascending: false }),
-      listFn({ data: { environment: env } }).catch(() => ({ rows: [] as { user_id: string; tier: "limited" | "full" }[] })),
+      listFn({ data: { environment: env } }).catch(() => ({ rows: [] as { user_id: string; tier: "limited" | "full"; stripe_price_id?: string | null }[] })),
     ]);
     setRows(data ?? []);
     const map: Record<string, ClientTier> = {};
-    accessRes.rows.forEach((r) => { map[r.user_id] = r.tier; });
+    const paidMap: Record<string, boolean> = {};
+    accessRes.rows.forEach((r) => {
+      // A user can have rows in both environments (and both tiers) — keep the highest.
+      if (map[r.user_id] !== "full") map[r.user_id] = r.tier;
+      if (r.stripe_price_id) paidMap[r.user_id] = true;
+    });
     setAccess(map);
+    setPaid(paidMap);
   };
 
   useEffect(() => { reload(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, []);
