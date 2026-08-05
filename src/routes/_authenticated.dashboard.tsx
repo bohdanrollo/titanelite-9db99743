@@ -884,6 +884,7 @@ function PeptideCalculator() {
               <input
                 type="number"
                 inputMode="decimal"
+                step="0.01"
                 value={strength}
                 onChange={(e) => setStrength(e.target.value)}
                 className="flex-1 border border-foreground/20 bg-background px-3 py-2 font-mono text-sm"
@@ -907,6 +908,7 @@ function PeptideCalculator() {
               <input
                 type="number"
                 inputMode="decimal"
+                step="0.01"
                 value={dose}
                 onChange={(e) => setDose(e.target.value)}
                 className="flex-1 border border-foreground/20 bg-background px-3 py-2 font-mono text-sm"
@@ -921,6 +923,7 @@ function PeptideCalculator() {
                 <option value="mg">mg</option>
               </select>
             </div>
+            <p className="text-xs text-muted-foreground mt-1">Works with decimal doses like 1.5 mg or 2.5 mcg.</p>
           </div>
 
           <div>
@@ -928,6 +931,7 @@ function PeptideCalculator() {
             <input
               type="number"
               inputMode="decimal"
+              step="0.01"
               value={bac}
               onChange={(e) => setBac(e.target.value)}
               className="w-full border border-foreground/20 bg-background px-3 py-2 font-mono text-sm"
