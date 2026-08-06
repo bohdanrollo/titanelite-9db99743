@@ -7,7 +7,8 @@ import { useAuth } from "@/lib/auth";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { resolveRecruiterCode, getMyAffiliateStats } from "@/lib/affiliates.functions";
-import { Copy, DollarSign, Users, Clock, CheckCircle2, XCircle, UserPlus, MousePointerClick, TrendingUp, Award, BarChart3 } from "lucide-react";
+import { submitAffiliateVideo, listMyAffiliateVideos } from "@/lib/affiliate-videos.functions";
+import { Copy, DollarSign, Users, Clock, CheckCircle2, XCircle, UserPlus, MousePointerClick, TrendingUp, Award, BarChart3, Video } from "lucide-react";
 
 export const Route = createFileRoute("/affiliate")({
   head: () => ({
