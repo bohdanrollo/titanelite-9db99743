@@ -928,3 +928,143 @@ function StatusBadge({ status }: { status: "pending" | "approved" | "rejected" }
     : "text-amber-500 border-amber-500/40";
   return <span className={`inline-block px-2 py-0.5 border font-mono text-[9px] uppercase tracking-[0.18em] ${cls}`}>{status}</span>;
 }
+
+// ---------------- Video Incentives Admin ----------------
+type AdminVideoRow = {
+  id: string;
+  affiliate_id: string;
+  url: string;
+  platform: string | null;
+  claimed_views: number;
+  approved_views: number | null;
+  status: "pending" | "approved" | "declined";
+  payout_cents: number;
+  admin_notes: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  affiliate_name: string | null;
+  affiliate_email: string | null;
+  affiliate_code: string | null;
+};
+
+function VideoIncentivesAdmin() {
+  const listFn = useServerFn(adminListAffiliateVideos);
+  const reviewFn = useServerFn(reviewAffiliateVideo);
+  const [rows, setRows] = useState<AdminVideoRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<"pending" | "approved" | "declined" | "all">("pending");
+  const [busy, setBusy] = useState<Record<string, boolean>>({});
+
+  function load() {
+    setLoading(true);
+    listFn()
+      .then((r) => setRows((r.videos as AdminVideoRow[]) ?? []))
+      .catch((e: unknown) => toast.error(e instanceof Error ? e.message : "Failed to load"))
+      .finally(() => setLoading(false));
+  }
+  useEffect(load, []);
+
+  const filtered = filter === "all" ? rows : rows.filter((r) => r.status === filter);
+  const pendingCount = rows.filter((r) => r.status === "pending").length;
+  const approvedTotal = rows.filter((r) => r.status === "approved").reduce((s, r) => s + r.payout_cents, 0);
+
+  async function onApprove(r: AdminVideoRow) {
+    const raw = prompt(
+      `Verified view count for this video?\n${r.url}\n\nAffiliate claimed ${r.claimed_views.toLocaleString()} views. $5 is credited per full 1,000 views.`,
+      String(r.claimed_views || 0),
+    );
+    if (raw === null) return;
+    const views = Math.max(0, Math.round(Number(raw)));
+    if (isNaN(views)) { toast.error("Enter a valid number"); return; }
+    const payout = Math.floor(views / 1000) * 5;
+    if (!confirm(`Approve and credit $${payout.toFixed(2)} to ${r.affiliate_email ?? "this affiliate"}?`)) return;
+    setBusy((b) => ({ ...b, [r.id]: true }));
+    try {
+      await reviewFn({ data: { id: r.id, action: "approve", approvedViews: views } });
+      toast.success(`Approved · $${payout.toFixed(2)} credited`);
+      load();
+    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
+    finally { setBusy((b) => { const n = { ...b }; delete n[r.id]; return n; }); }
+  }
+
+  async function onDecline(r: AdminVideoRow) {
+    const notes = prompt("Reason for declining (optional, shown to the affiliate):", "");
+    if (notes === null) return;
+    setBusy((b) => ({ ...b, [r.id]: true }));
+    try {
+      await reviewFn({ data: { id: r.id, action: "decline", notes: notes.trim() || undefined } });
+      toast.success("Declined");
+      load();
+    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
+    finally { setBusy((b) => { const n = { ...b }; delete n[r.id]; return n; }); }
+  }
+
+  return (
+    <div>
+      <div className="grid sm:grid-cols-3 gap-4 mb-6">
+        <div className="border border-foreground/15 p-4">
+          <div className="text-eyebrow">Pending review</div>
+          <div className="mt-2 font-display text-3xl">{pendingCount}</div>
+        </div>
+        <div className="border border-foreground/15 p-4">
+          <div className="text-eyebrow">Approved videos</div>
+          <div className="mt-2 font-display text-3xl">{rows.filter((r) => r.status === "approved").length}</div>
+        </div>
+        <div className="border border-foreground/15 p-4">
+          <div className="text-eyebrow">Video payouts credited</div>
+          <div className="mt-2 font-display text-3xl text-blood">${(approvedTotal / 100).toFixed(2)}</div>
+          <div className="mt-1 text-[10px] font-mono uppercase tracking-wider text-muted-foreground">$5 per 1,000 views</div>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-4">
+        {(["pending", "approved", "declined", "all"] as const).map((f) => (
+          <button key={f} onClick={() => setFilter(f)}
+            className={`px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] border ${filter === f ? "border-blood text-blood" : "border-foreground/20 text-muted-foreground hover:text-foreground"}`}>
+            {f}
+          </button>
+        ))}
+      </div>
+
+      {loading ? (
+        <div className="text-eyebrow">Loading…</div>
+      ) : filtered.length === 0 ? (
+        <div className="text-muted-foreground text-sm">No video submissions in this view.</div>
+      ) : (
+        <div className="space-y-3">
+          {filtered.map((r) => (
+            <div key={r.id} className="border border-foreground/15 p-5">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <div className="font-display text-xl">{r.affiliate_name || r.affiliate_email || "Unknown affiliate"}</div>
+                    <StatusBadge status={r.status === "declined" ? "rejected" : r.status} />
+                    {r.affiliate_code && <span className="font-mono text-xs text-blood tracking-wider">CODE: {r.affiliate_code}</span>}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground font-mono">{r.affiliate_email}</div>
+                  <a href={r.url} target="_blank" rel="noopener noreferrer" className="mt-3 block text-sm text-blood hover:underline break-all">{r.url}</a>
+                  <div className="mt-3 flex gap-6 text-sm flex-wrap">
+                    <div><span className="text-muted-foreground">Platform:</span> <span className="text-foreground">{r.platform || "—"}</span></div>
+                    <div><span className="text-muted-foreground">Claimed views:</span> <span className="font-mono text-foreground">{r.claimed_views.toLocaleString()}</span></div>
+                    {r.approved_views !== null && (
+                      <div><span className="text-muted-foreground">Verified views:</span> <span className="font-mono text-foreground">{r.approved_views.toLocaleString()}</span></div>
+                    )}
+                    <div><span className="text-muted-foreground">Payout:</span> <span className="font-mono text-blood">${(r.payout_cents / 100).toFixed(2)}</span></div>
+                    <div><span className="text-muted-foreground">Submitted:</span> <span className="font-mono text-xs">{new Date(r.created_at).toLocaleDateString()}</span></div>
+                  </div>
+                  {r.admin_notes && <div className="mt-2 text-xs text-muted-foreground">Note: {r.admin_notes}</div>}
+                </div>
+                {r.status === "pending" && (
+                  <div className="flex flex-wrap gap-2">
+                    <button onClick={() => onApprove(r)} disabled={busy[r.id]} className="btn-blood hover:btn-blood-hover text-xs px-4 py-2 flex items-center gap-1 disabled:opacity-40"><Check size={12} /> Approve</button>
+                    <button onClick={() => onDecline(r)} disabled={busy[r.id]} className="border border-foreground/20 hover:border-blood text-xs px-4 py-2 flex items-center gap-1 disabled:opacity-40"><X size={12} /> Decline</button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
