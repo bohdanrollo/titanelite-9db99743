@@ -4,11 +4,12 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2, DollarSign, Check, X, Trash2, Lock } from "lucide-react";
+import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2, DollarSign, Check, X, Trash2, Lock, Video } from "lucide-react";
 import { generateProtocolDraft, saveProtocolDraft, sendProtocol, getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import { approveAffiliate, rejectAffiliate, deleteAffiliate, markAffiliatePaid, resendApprovedAffiliateEmails, setAffiliatePayoutRate } from "@/lib/affiliates.functions";
 import { grantFullAccessByEmail } from "@/lib/admin-access.functions";
 import { grantAccess, revokeAccess, listAccess } from "@/lib/admin-access.functions";
+import { adminListAffiliateVideos, reviewAffiliateVideo } from "@/lib/affiliate-videos.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 
 
@@ -17,7 +18,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: Admin,
 });
 
-type Tab = "clients" | "intakes" | "protocols" | "affiliates";
+type Tab = "clients" | "intakes" | "protocols" | "affiliates" | "videos";
 
 
 function Admin() {
@@ -68,6 +69,7 @@ function Admin() {
             { k: "intakes", l: "Intakes", i: Inbox },
             { k: "protocols", l: "Protocols", i: FileText },
             { k: "affiliates", l: "Affiliates", i: DollarSign },
+            { k: "videos", l: "Video incentives", i: Video },
           ] as const).map((t) => (
             <button
               key={t.k}
@@ -84,6 +86,7 @@ function Admin() {
           {tab === "intakes" && <Intakes />}
           {tab === "protocols" && <ProtocolsAdmin />}
           {tab === "affiliates" && <AffiliatesAdmin />}
+          {tab === "videos" && <VideoIncentivesAdmin />}
         </div>
       </section>
     </div>
@@ -693,6 +696,7 @@ type AffiliateRow = {
   referral_count: number;
   earnings_cents: number;
   recruit_earnings_cents: number;
+  video_earnings_cents: number;
   payout_cents_per_5: number;
   recruiter_affiliate_id: string | null;
   created_at: string;
@@ -739,7 +743,7 @@ function AffiliatesAdmin() {
     setLoading(true);
     const { data } = await supabase
       .from("affiliates")
-      .select("id, status, full_name, email, phone, desired_code, code, instagram, tiktok, youtube, twitter, other_social, referral_count, earnings_cents, recruit_earnings_cents, payout_cents_per_5, recruiter_affiliate_id, created_at")
+      .select("id, status, full_name, email, phone, desired_code, code, instagram, tiktok, youtube, twitter, other_social, referral_count, earnings_cents, recruit_earnings_cents, video_earnings_cents, payout_cents_per_5, recruiter_affiliate_id, created_at")
       .order("created_at", { ascending: false });
     setRows((data as AffiliateRow[] | null) ?? []);
     setLoading(false);
