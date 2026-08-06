@@ -126,24 +126,27 @@ export const markAffiliatePaid = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: aff, error: readErr } = await (supabaseAdmin as any)
       .from("affiliates")
-      .select("earnings_cents, recruit_earnings_cents, lifetime_earnings_cents, lifetime_recruit_earnings_cents")
+      .select("earnings_cents, recruit_earnings_cents, video_earnings_cents, lifetime_earnings_cents, lifetime_recruit_earnings_cents, lifetime_video_earnings_cents")
       .eq("id", data.id)
       .maybeSingle();
     if (readErr) throw readErr;
     if (!aff) throw new Error("Affiliate not found");
-    const paidAmount = (aff.earnings_cents ?? 0) + (aff.recruit_earnings_cents ?? 0);
+    const paidAmount = (aff.earnings_cents ?? 0) + (aff.recruit_earnings_cents ?? 0) + (aff.video_earnings_cents ?? 0);
     const { error } = await (supabaseAdmin as any)
       .from("affiliates")
       .update({
         earnings_cents: 0,
         recruit_earnings_cents: 0,
+        video_earnings_cents: 0,
         lifetime_earnings_cents: (aff.lifetime_earnings_cents ?? 0) + (aff.earnings_cents ?? 0),
         lifetime_recruit_earnings_cents: (aff.lifetime_recruit_earnings_cents ?? 0) + (aff.recruit_earnings_cents ?? 0),
+        lifetime_video_earnings_cents: (aff.lifetime_video_earnings_cents ?? 0) + (aff.video_earnings_cents ?? 0),
         last_paid_at: new Date().toISOString(),
       })
       .eq("id", data.id);
     if (error) throw error;
     return { ok: true, paidCents: paidAmount };
+
   });
 
 /** Public: record a click on a referral link. Silently ignores unknown/unapproved codes. */
