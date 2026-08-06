@@ -198,6 +198,7 @@ function ApprovedDashboard({ affiliate }: { affiliate: Affiliate }) {
           { k: "referrals", l: `Referrals (${affiliate.referral_count})`, i: Users },
           { k: "analytics", l: "Analytics", i: BarChart3 },
           { k: "recruits", l: `Recruits (${approvedRecruits.length})`, i: UserPlus },
+          { k: "incentives", l: "Video incentives", i: Video },
         ] as const).map((t) => (
           <button key={t.k} onClick={() => setTab(t.k)}
             className={`px-5 py-3 font-mono text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 border-b-2 whitespace-nowrap transition ${tab === t.k ? "border-blood text-blood" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
@@ -218,9 +219,14 @@ function ApprovedDashboard({ affiliate }: { affiliate: Affiliate }) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl">
             <Stat icon={DollarSign} label="Direct owed" value={`$${directEarnings}`} />
             <Stat icon={UserPlus} label="Recruit owed" value={`$${recruitEarnings}`} />
+            <Stat icon={Video} label="Video owed" value={`$${videoEarnings}`} />
             <Stat icon={Award} label="Lifetime earned" value={`$${lifetimeTotal}`} />
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl">
             <Stat icon={CheckCircle2} label="Paying referrals" value={payingReferrals.toString()} />
           </div>
+
 
           <div className="max-w-5xl">
             <div className="text-eyebrow">Progress to next $25 (direct)</div>
