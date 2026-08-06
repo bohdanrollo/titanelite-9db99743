@@ -446,6 +446,163 @@ function ApprovedDashboard({ affiliate }: { affiliate: Affiliate }) {
   );
 }
 
+type VideoRow = {
+  id: string;
+  url: string;
+  platform: string | null;
+  claimed_views: number;
+  approved_views: number | null;
+  status: "pending" | "approved" | "declined";
+  payout_cents: number;
+  admin_notes: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+};
+
+function VideoIncentives({ affiliateId, videoOwed, lifetimeVideo }: { affiliateId: string; videoOwed: string; lifetimeVideo: string }) {
+  const listFn = useServerFn(listMyAffiliateVideos);
+  const submitFn = useServerFn(submitAffiliateVideo);
+  const [videos, setVideos] = useState<VideoRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [url, setUrl] = useState("");
+  const [platform, setPlatform] = useState("");
+  const [views, setViews] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  function load() {
+    setLoading(true);
+    listFn({ data: { affiliateId } })
+      .then((r) => setVideos((r.videos as VideoRow[]) ?? []))
+      .catch(() => { /* silent */ })
+      .finally(() => setLoading(false));
+  }
+  useEffect(load, [affiliateId]);
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!url.trim()) { toast.error("Paste your video link"); return; }
+    setSubmitting(true);
+    try {
+      await submitFn({
+        data: {
+          affiliateId,
+          url: url.trim(),
+          platform: platform.trim() || undefined,
+          claimedViews: views.trim() ? Math.max(0, Math.round(Number(views))) : undefined,
+        },
+      });
+      toast.success("Video submitted for review");
+      setUrl(""); setPlatform(""); setViews("");
+      load();
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Could not submit video");
+    } finally { setSubmitting(false); }
+  }
+
+  const approvedTotal = videos.filter((v) => v.status === "approved").reduce((s, v) => s + v.payout_cents, 0);
+
+  return (
+    <div className="max-w-5xl space-y-6">
+      <div className="border border-blood p-6">
+        <div className="text-eyebrow text-blood">Video incentive program</div>
+        <h3 className="mt-2 font-display text-3xl">Get paid $5 per 1,000 views.</h3>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Make a video about Titan Elite — a review, a walkthrough of the client dashboard, your results, anything honest.
+          Once it passes <span className="text-foreground font-semibold">1,000 views</span>, drop the link below.
+          We verify the view count and credit <span className="text-blood font-semibold">$5 for every 1,000 views</span> to your earnings.
+        </p>
+        <ul className="mt-4 space-y-1 text-xs text-muted-foreground font-mono">
+          <li>· Videos under 1,000 views earn $0 — resubmit once you cross the threshold.</li>
+          <li>· Payout is rounded down per full 1,000 views (4,800 views = $20).</li>
+          <li>· The video must clearly mention Titan Elite and stay publicly viewable.</li>
+          <li>· Each video is reviewed and approved or declined manually.</li>
+        </ul>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <Stat icon={DollarSign} label="Video earnings owed" value={`$${videoOwed}`} accent />
+        <Stat icon={Award} label="Lifetime video paid" value={`$${lifetimeVideo}`} />
+        <Stat icon={Video} label="Approved videos" value={videos.filter((v) => v.status === "approved").length.toString()} />
+      </div>
+
+      <form onSubmit={onSubmit} className="border border-foreground/15 p-6 space-y-4">
+        <div className="text-eyebrow">Submit a video</div>
+        <div className="grid md:grid-cols-3 gap-3">
+          <input
+            value={url} onChange={(e) => setUrl(e.target.value)}
+            placeholder="https://…video link"
+            className="md:col-span-3 bg-background border border-foreground/20 px-4 py-3 text-sm"
+          />
+          <input
+            value={platform} onChange={(e) => setPlatform(e.target.value)}
+            placeholder="Platform (TikTok, YouTube…)"
+            className="bg-background border border-foreground/20 px-4 py-3 text-sm"
+          />
+          <input
+            value={views} onChange={(e) => setViews(e.target.value)}
+            type="number" min="0" step="1"
+            placeholder="Current view count"
+            className="bg-background border border-foreground/20 px-4 py-3 text-sm font-mono"
+          />
+          <button type="submit" disabled={submitting} className="btn-blood hover:btn-blood-hover disabled:opacity-40">
+            {submitting ? "Submitting…" : "Submit for review"}
+          </button>
+        </div>
+      </form>
+
+      <div className="border border-foreground/15 overflow-x-auto">
+        <div className="p-4 text-eyebrow border-b border-foreground/10">
+          Your submissions {approvedTotal > 0 && <span className="text-blood">· ${(approvedTotal / 100).toFixed(2)} approved all-time</span>}
+        </div>
+        {loading ? (
+          <div className="p-4 text-xs text-muted-foreground">Loading…</div>
+        ) : videos.length === 0 ? (
+          <div className="p-8 text-center">
+            <Video size={28} className="mx-auto text-muted-foreground" />
+            <p className="mt-3 text-sm text-muted-foreground">No videos submitted yet.</p>
+          </div>
+        ) : (
+          <table className="w-full text-sm">
+            <thead className="bg-muted text-left text-eyebrow">
+              <tr>
+                <th className="p-3">Video</th>
+                <th className="p-3">Platform</th>
+                <th className="p-3 text-right">Views</th>
+                <th className="p-3">Status</th>
+                <th className="p-3 text-right">Earned</th>
+                <th className="p-3">Submitted</th>
+              </tr>
+            </thead>
+            <tbody>
+              {videos.map((v) => (
+                <tr key={v.id} className="border-t border-foreground/10">
+                  <td className="p-3 max-w-[220px]">
+                    <a href={v.url} target="_blank" rel="noopener noreferrer" className="text-blood hover:underline break-all text-xs">{v.url}</a>
+                    {v.admin_notes && <div className="mt-1 text-[11px] text-muted-foreground">Note: {v.admin_notes}</div>}
+                  </td>
+                  <td className="p-3 text-muted-foreground text-xs">{v.platform || "—"}</td>
+                  <td className="p-3 font-mono text-right">{(v.approved_views ?? v.claimed_views ?? 0).toLocaleString()}</td>
+                  <td className="p-3"><VideoBadge status={v.status} /></td>
+                  <td className="p-3 font-mono text-right">${(v.payout_cents / 100).toFixed(2)}</td>
+                  <td className="p-3 font-mono text-xs">{new Date(v.created_at).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function VideoBadge({ status }: { status: "pending" | "approved" | "declined" }) {
+  const cls = status === "approved" ? "text-emerald-500 border-emerald-500/40"
+    : status === "declined" ? "text-blood border-blood/40"
+    : "text-amber-500 border-amber-500/40";
+  return <span className={`inline-block px-2 py-0.5 border font-mono text-[9px] uppercase tracking-[0.18em] ${cls}`}>{status}</span>;
+}
+
+
 function RecruitBadge({ status }: { status: "pending" | "approved" | "rejected" }) {
   const cls = status === "approved" ? "text-emerald-500 border-emerald-500/40"
     : status === "rejected" ? "text-blood border-blood/40"
