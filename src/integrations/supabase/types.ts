@@ -81,6 +81,59 @@ export type Database = {
           },
         ]
       }
+      affiliate_videos: {
+        Row: {
+          admin_notes: string | null
+          affiliate_id: string
+          approved_views: number | null
+          claimed_views: number
+          created_at: string
+          id: string
+          payout_cents: number
+          platform: string | null
+          reviewed_at: string | null
+          status: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          affiliate_id: string
+          approved_views?: number | null
+          claimed_views?: number
+          created_at?: string
+          id?: string
+          payout_cents?: number
+          platform?: string | null
+          reviewed_at?: string | null
+          status?: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          admin_notes?: string | null
+          affiliate_id?: string
+          approved_views?: number | null
+          claimed_views?: number
+          created_at?: string
+          id?: string
+          payout_cents?: number
+          platform?: string | null
+          reviewed_at?: string | null
+          status?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_videos_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       affiliates: {
         Row: {
           admin_notes: string | null
@@ -97,6 +150,7 @@ export type Database = {
           last_paid_at: string | null
           lifetime_earnings_cents: number
           lifetime_recruit_earnings_cents: number
+          lifetime_video_earnings_cents: number
           other_social: string | null
           payout_cents_per_5: number
           phone: string
@@ -108,6 +162,7 @@ export type Database = {
           twitter: string | null
           updated_at: string
           user_id: string | null
+          video_earnings_cents: number
           youtube: string | null
         }
         Insert: {
@@ -125,6 +180,7 @@ export type Database = {
           last_paid_at?: string | null
           lifetime_earnings_cents?: number
           lifetime_recruit_earnings_cents?: number
+          lifetime_video_earnings_cents?: number
           other_social?: string | null
           payout_cents_per_5?: number
           phone: string
@@ -136,6 +192,7 @@ export type Database = {
           twitter?: string | null
           updated_at?: string
           user_id?: string | null
+          video_earnings_cents?: number
           youtube?: string | null
         }
         Update: {
@@ -153,6 +210,7 @@ export type Database = {
           last_paid_at?: string | null
           lifetime_earnings_cents?: number
           lifetime_recruit_earnings_cents?: number
+          lifetime_video_earnings_cents?: number
           other_social?: string | null
           payout_cents_per_5?: number
           phone?: string
@@ -164,6 +222,7 @@ export type Database = {
           twitter?: string | null
           updated_at?: string
           user_id?: string | null
+          video_earnings_cents?: number
           youtube?: string | null
         }
         Relationships: [
