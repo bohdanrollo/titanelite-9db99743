@@ -420,6 +420,12 @@ function ApprovedDashboard({ affiliate }: { affiliate: Affiliate }) {
         </div>
       )}
 
+      {tab === "incentives" && (
+        <VideoIncentives affiliateId={affiliate.id} videoOwed={videoEarnings} lifetimeVideo={((affiliate.lifetime_video_earnings_cents ?? 0) / 100).toFixed(2)} />
+      )}
+
+
+
       <div className="max-w-5xl border border-foreground/15 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="text-eyebrow">Affiliate community</div>
