@@ -143,13 +143,14 @@ function ApprovedDashboard({ affiliate }: { affiliate: Affiliate }) {
   const recruitLink = `${origin}/affiliate?recruit=${affiliate.code}`;
   const directEarnings = (affiliate.earnings_cents / 100).toFixed(2);
   const recruitEarnings = (affiliate.recruit_earnings_cents / 100).toFixed(2);
-  const totalEarnings = ((affiliate.earnings_cents + affiliate.recruit_earnings_cents) / 100).toFixed(2);
+  const videoEarnings = ((affiliate.video_earnings_cents ?? 0) / 100).toFixed(2);
+  const totalEarnings = ((affiliate.earnings_cents + affiliate.recruit_earnings_cents + (affiliate.video_earnings_cents ?? 0)) / 100).toFixed(2);
   const nextMilestone = 5 - (affiliate.referral_count % 5);
   const progress = ((affiliate.referral_count % 5) / 5) * 100;
 
-  const lifetimeTotal = ((affiliate.lifetime_earnings_cents + affiliate.lifetime_recruit_earnings_cents) / 100).toFixed(2);
+  const lifetimeTotal = ((affiliate.lifetime_earnings_cents + affiliate.lifetime_recruit_earnings_cents + (affiliate.lifetime_video_earnings_cents ?? 0)) / 100).toFixed(2);
 
-  const [tab, setTab] = useState<"overview" | "referrals" | "analytics" | "recruits">("overview");
+  const [tab, setTab] = useState<"overview" | "referrals" | "analytics" | "recruits" | "incentives">("overview");
   const [recruits, setRecruits] = useState<Recruit[]>([]);
   const [loadingRecruits, setLoadingRecruits] = useState(true);
   const statsFn = useServerFn(getMyAffiliateStats);
