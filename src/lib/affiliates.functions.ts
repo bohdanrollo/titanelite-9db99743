@@ -11,31 +11,6 @@ function normalizeCode(raw: string) {
   return raw.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 20);
 }
 
-/** Record a referral for a newly signed-up user via ?ref=CODE */
-export const recordReferral = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input) => z.object({ code: z.string().min(1).max(40) }).parse(input))
-  .handler(async ({ data, context }) => {
-    const code = normalizeCode(data.code);
-    if (!code) return { ok: false };
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: aff } = await supabaseAdmin
-      .from("affiliates")
-      .select("id, user_id, status")
-      .eq("code", code)
-      .eq("status", "approved")
-      .maybeSingle();
-    if (!aff) return { ok: false };
-    // Don't credit self-referrals
-    if (aff.user_id === context.userId) return { ok: false };
-    // Ignore duplicates (unique constraint on referred_user_id)
-    const { error } = await supabaseAdmin
-      .from("affiliate_referrals")
-      .insert({ affiliate_id: aff.id, referred_user_id: context.userId, code_used: code });
-    if (error && !error.message.includes("duplicate")) throw error;
-    return { ok: true };
-  });
-
 /** Admin: approve an affiliate application, assign code, link user_id if exists */
 export const approveAffiliate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

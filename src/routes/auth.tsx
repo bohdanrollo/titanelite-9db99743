@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { recordReferral } from "@/lib/affiliates.functions";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Sign in — Titan Elite" }] }),
@@ -21,7 +20,6 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
   const nav = useNavigate();
   const { user, role } = useAuth();
-  const recordRef = useServerFn(recordReferral);
 
   if (user) {
     nav({ to: role === "admin" ? "/admin" : "/dashboard" });
@@ -41,14 +39,8 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        // Attribute affiliate referral if a code was captured
-        try {
-          const ref = typeof window !== "undefined" ? localStorage.getItem("titan_ref_code") : null;
-          if (ref) {
-            await recordRef({ data: { code: ref } });
-            localStorage.removeItem("titan_ref_code");
-          }
-        } catch { /* ignore */ }
+        // Referral codes are kept in localStorage and only credited to the
+        // affiliate once the client actually pays for a plan (at checkout).
         toast.success("Account created. You're signed in.");
         nav({ to: "/dashboard" });
       } else {
