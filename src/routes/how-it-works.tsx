@@ -33,7 +33,7 @@ function Page() {
             <h1 className="mt-4 text-5xl lg:text-7xl">Four steps. <br />One dashboard.</h1>
           </div>
           <p className="lg:col-span-5 text-muted-foreground">
-            The dashboard is the product. Apply, get reviewed, receive your 100% custom educational peptide protocol and weight programming, and use the tools every day.
+            The dashboard is the product. Apply, get reviewed, receive your 100% custom educational peptide protocol and weight programming, use the tools every day, and message your coach directly from the dashboard.
           </p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-foreground/15">

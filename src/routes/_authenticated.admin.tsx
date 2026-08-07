@@ -4,13 +4,14 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2, DollarSign, Check, X, Trash2, Lock, Video } from "lucide-react";
+import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2, DollarSign, Check, X, Trash2, Lock, Video, MessagesSquare } from "lucide-react";
 import { generateProtocolDraft, saveProtocolDraft, sendProtocol, getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import { approveAffiliate, rejectAffiliate, deleteAffiliate, markAffiliatePaid, resendApprovedAffiliateEmails, setAffiliatePayoutRate } from "@/lib/affiliates.functions";
 import { grantFullAccessByEmail } from "@/lib/admin-access.functions";
 import { grantAccess, revokeAccess, listAccess } from "@/lib/admin-access.functions";
 import { adminListAffiliateVideos, reviewAffiliateVideo } from "@/lib/affiliate-videos.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
+import { AdminMessages } from "@/components/Messaging";
 
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -18,7 +19,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: Admin,
 });
 
-type Tab = "clients" | "intakes" | "protocols" | "affiliates" | "videos";
+type Tab = "clients" | "intakes" | "protocols" | "messages" | "affiliates" | "videos";
 
 
 function Admin() {
@@ -68,6 +69,7 @@ function Admin() {
             { k: "clients", l: "Clients", i: Users },
             { k: "intakes", l: "Intakes", i: Inbox },
             { k: "protocols", l: "Protocols", i: FileText },
+            { k: "messages", l: "Messages", i: MessagesSquare },
             { k: "affiliates", l: "Affiliates", i: DollarSign },
             { k: "videos", l: "Video incentives", i: Video },
           ] as const).map((t) => (
@@ -85,6 +87,7 @@ function Admin() {
           {tab === "clients" && <Clients />}
           {tab === "intakes" && <Intakes />}
           {tab === "protocols" && <ProtocolsAdmin />}
+          {tab === "messages" && user && <AdminMessages adminId={user.id} />}
           {tab === "affiliates" && <AffiliatesAdmin />}
           {tab === "videos" && <VideoIncentivesAdmin />}
         </div>
