@@ -64,7 +64,7 @@ export function ClientMessages({ myId }: { myId: string }) {
 
   const refresh = useCallback(async () => {
     try {
-      const r = await load({ data: {} });
+      const r = await load();
       setAllowed(r.allowed);
       setMsgs(r.messages);
     } catch {
@@ -138,7 +138,7 @@ export function AdminMessages({ adminId }: { adminId: string }) {
 
   const refreshThreads = useCallback(async () => {
     try {
-      const r = await loadThreads({ data: {} });
+      const r = await loadThreads();
       setThreads(r.threads);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to load messages");
@@ -156,7 +156,7 @@ export function AdminMessages({ adminId }: { adminId: string }) {
 
   useEffect(() => {
     void refreshThreads();
-    loadClients({ data: {} }).then((r) => setClients(r.clients)).catch(() => {});
+    loadClients().then((r) => setClients(r.clients)).catch(() => {});
   }, [refreshThreads, loadClients]);
 
   const activeClient = clients.find((c) => c.id === active) ?? threads.find((t) => t.userId === active);
