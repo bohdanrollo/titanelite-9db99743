@@ -39,7 +39,7 @@ interface Subscription {
   id: string;
   status: string;
   customer: string | { id: string } | null;
-  metadata?: { userId?: string; tier?: string } | null;
+  metadata?: { userId?: string; tier?: string; refCode?: string } | null;
   items?: { data: Array<{ price: { id: string; lookup_key?: string | null; metadata?: Record<string, string> | null } }> };
 }
 
@@ -47,7 +47,7 @@ interface CheckoutSession {
   id: string;
   customer: string | { id: string } | null;
   payment_intent: string | { id: string } | null;
-  metadata?: { userId?: string; tier?: string } | null;
+  metadata?: { userId?: string; tier?: string; refCode?: string } | null;
   payment_status?: string;
 }
 
