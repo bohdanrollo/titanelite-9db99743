@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION private.current_verified_email() TO authenticated;
