@@ -43,7 +43,7 @@ async function resolveOrCreateCustomer(
 export const createCheckoutSession = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(
-    (data: { priceId: string; returnUrl: string; environment: StripeEnv }) => {
+    (data: { priceId: string; returnUrl: string; environment: StripeEnv; refCode?: string }) => {
       if (!/^[a-zA-Z0-9_-]+$/.test(data.priceId)) throw new Error("Invalid priceId");
       return data;
     },
@@ -73,6 +73,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         }
       }
 
+      const refCode = (data.refCode ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 20);
+
       const customerId = await resolveOrCreateCustomer(stripe, { email, userId });
       const isRecurring = primary.type === "recurring";
 
@@ -83,9 +85,11 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         return_url: data.returnUrl,
         customer: customerId,
         allow_promotion_codes: true,
-        metadata: { userId, tier: data.priceId },
+        metadata: { userId, tier: data.priceId, ...(refCode && { refCode }) },
         ...(isRecurring && {
-          subscription_data: { metadata: { userId, tier: data.priceId } },
+          subscription_data: {
+            metadata: { userId, tier: data.priceId, ...(refCode && { refCode }) },
+          },
         }),
       });
 

@@ -260,6 +260,10 @@ async function attributeAffiliateFromSession(session: CheckoutSession, env: Stri
       const pc = d?.promotion_code;
       if (pc && typeof pc === "object" && pc.code) codes.push(String(pc.code));
     }
+    // Fall back to the referral link code captured at signup and forwarded
+    // through checkout metadata — referrals only count once a plan is paid.
+    const metaRef = (full as any).metadata?.refCode ?? session.metadata?.refCode;
+    if (metaRef) codes.push(String(metaRef));
     if (!codes.length) return;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

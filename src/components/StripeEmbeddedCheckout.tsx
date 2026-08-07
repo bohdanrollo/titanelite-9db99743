@@ -68,6 +68,10 @@ export function StripeEmbeddedCheckoutForm({ priceId, returnUrl }: Props) {
           returnUrl:
             returnUrl || `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
           environment: getStripeEnvironment(),
+          refCode:
+            (typeof window !== "undefined"
+              ? localStorage.getItem("titan_ref_code")
+              : null) ?? undefined,
         },
       });
       if ("error" in result) throw new Error(result.error);
