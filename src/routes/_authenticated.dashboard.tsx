@@ -61,7 +61,12 @@ function Dashboard() {
         <div className="text-eyebrow">Client Dashboard</div>
         <h1 className="mt-4 text-3xl sm:text-5xl lg:text-6xl">Welcome back.</h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          Need peptides? Order through{" "}
+          <span className="inline-flex items-center gap-2 text-blood font-medium">
+            <CheckCircle size={14} />
+            Congrats! As a Titan Elite client you get 30% off of all peptides with code TITAN30
+          </span>
+          <span className="mx-2">·</span>
+          Order through{" "}
           <a href="https://powerbuiltlabs.com" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">
             Powerbuilt Labs
           </a>.
