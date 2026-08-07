@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Dumbbell, FlaskConical, FileText, MessageCircle, Beaker, ListChecks, Droplets, Syringe, Calculator } from "lucide-react";
+import { Dumbbell, FlaskConical, FileText, MessageCircle, MessagesSquare, Beaker, ListChecks, Droplets, Syringe, Calculator } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
@@ -7,9 +7,9 @@ export const Route = createFileRoute("/features")({
   head: () => ({
     meta: [
       { title: "Dashboard Features — Titan Elite" },
-      { name: "description", content: "Nine tools inside the Titan Elite client dashboard: custom protocols, Pep Talk AI, Top 50 Peptides library, dose calculator, stack tracker, and more." },
+      { name: "description", content: "Ten tools inside the Titan Elite client dashboard: custom protocols, direct coach messaging, Pep Talk AI, Top 50 Peptides library, dose calculator, stack tracker, and more." },
       { property: "og:title", content: "Dashboard Features — Titan Elite" },
-      { property: "og:description", content: "Nine tools inside the Titan Elite client dashboard: custom protocols, Pep Talk AI, Top 50 Peptides library, dose calculator, stack tracker, and more." },
+      { property: "og:description", content: "Ten tools inside the Titan Elite client dashboard: custom protocols, direct coach messaging, Pep Talk AI, Top 50 Peptides library, dose calculator, stack tracker, and more." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -20,6 +20,7 @@ export const Route = createFileRoute("/features")({
 function Page() {
   const items = [
     { i: FileText, t: "Custom Protocols", d: "Receive a 100% custom educational peptide protocol and weight-programming plan built from your intake, delivered as a PDF." },
+    { i: MessagesSquare, t: "Coach Messaging", d: "Message your coach directly from the dashboard and get replies in the same thread. Included with Full Access." },
     { i: MessageCircle, t: "Pep Talk AI", d: "Ask anything about peptide effects, dosing, timing, stacking, and safety — instant research answers." },
     { i: Beaker, t: "Top 50 Peptides", d: "A searchable research library covering the most popular compounds and what each is studied for." },
     { i: ListChecks, t: "My Stack", d: "Track every peptide, dose, unit, frequency, schedule, and notes in your personal dosing log." },
@@ -36,7 +37,7 @@ function Page() {
         <div className="container-edge">
           <div className="text-eyebrow">Built-In Tools</div>
           <h1 className="mt-4 text-5xl lg:text-7xl max-w-4xl">
-            Nine tools. <span className="text-blood">One dashboard.</span>
+            Ten tools. <span className="text-blood">One dashboard.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-bone/70 leading-relaxed">
             No more scattered notes, calculators, or search tabs. The Titan Elite dashboard puts peptides, dosing, and training guidance in one place.

@@ -46,7 +46,7 @@ const PLANS: Plan[] = [
       "Lifting programs & nutrition",
       "Supplies, reconstitution, injection guides",
     ],
-    disabled: "Does NOT include custom peptide + training protocols",
+    disabled: "Does NOT include custom protocols or direct coach messaging",
   },
   {
     id: "full_monthly",
@@ -56,6 +56,7 @@ const PLANS: Plan[] = [
     features: [
       "Everything in Limited Access",
       "Custom peptide + training protocols",
+      "Direct messaging with your coach",
       "One-on-one intake review",
       "Cancel anytime",
     ],

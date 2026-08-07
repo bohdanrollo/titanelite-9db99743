@@ -79,7 +79,7 @@ function Dashboard() {
             <div>
               <div className="text-eyebrow text-blood">Limited Access</div>
               <div className="mt-1 font-display text-xl sm:text-2xl">Upgrade to Full Access</div>
-              <p className="mt-1 text-sm text-muted-foreground">Unlock custom peptide + training protocols. $49.99 first payment, then $10.99/month. Cancel anytime.</p>
+              <p className="mt-1 text-sm text-muted-foreground">Unlock custom peptide + training protocols and direct messaging with your coach. $49.99 first payment, then $10.99/month. Cancel anytime.</p>
             </div>
             <button
               onClick={() => nav({ to: "/checkout" })}
