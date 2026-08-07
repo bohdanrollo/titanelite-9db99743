@@ -19,7 +19,7 @@ export const LIMITED_TABS = [
   "peptalk",
 ] as const;
 
-export const FULL_ONLY_TABS = ["protocols"] as const;
+export const FULL_ONLY_TABS = ["protocols", "messages"] as const;
 
 export function isTabAllowed(tab: string, tier: AccessTier, isAdmin: boolean): boolean {
   if (isAdmin || tier === "full") return true;
