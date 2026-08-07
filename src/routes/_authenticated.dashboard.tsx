@@ -67,7 +67,7 @@ function Dashboard() {
           </span>
           <span className="mx-2">·</span>
           Order through{" "}
-          <a href="https://powerbuiltlabs.com" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">
+          <a href="https://powerbuiltlabs.com/us?ref=TITAN30" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">
             Powerbuilt Labs
           </a>.
         </p>
