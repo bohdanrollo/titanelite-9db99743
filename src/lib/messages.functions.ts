@@ -55,9 +55,17 @@ export const sendMessageToCoach = createServerFn({ method: "POST" })
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const admin = supabaseAdmin as any;
     const { data: admins } = await admin
-      .from("user_roles").select("user_id").eq("role", "admin").order("created_at", { ascending: true }).limit(1);
-    const coachId = admins?.[0]?.user_id as string | undefined;
-    if (!coachId) throw new Error("No coach account is available right now.");
+      .from("user_roles").select("user_id").eq("role", "admin").order("created_at", { ascending: true });
+    const coachId = ((admins ?? []) as { user_id: string }[])
+      .map((a) => a.user_id)
+      .find((id) => id !== userId);
+    if (!coachId) {
+      throw new Error(
+        (await isAdmin(supabase, userId))
+          ? "You're signed in as the coach — reply to clients from the admin dashboard."
+          : "No coach account is available right now.",
+      );
+    }
 
     const { error } = await admin.from("messages").insert({
       sender_id: userId, recipient_id: coachId, body: data.body.trim(),
