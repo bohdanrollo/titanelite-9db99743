@@ -5,18 +5,19 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useAccess, isTabAllowed } from "@/lib/access";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, CheckCircle } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, MessagesSquare, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, CheckCircle } from "lucide-react";
 import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import ReactMarkdown from "react-markdown";
 import PeptideLibrary from "@/components/PeptideLibrary";
+import { ClientMessages } from "@/components/Messaging";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Client Dashboard — Titan Elite" }] }),
   component: Dashboard,
 });
 
-type Tab = "protocols" | "peptalk" | "peptides" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning" | "myths";
+type Tab = "protocols" | "messages" | "peptalk" | "peptides" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning" | "myths";
 
 function Dashboard() {
   const { user, signOut } = useAuth();
@@ -99,6 +100,7 @@ function Dashboard() {
           {(() => {
             const allTabs = [
               { k: "protocols", l: "Protocols", i: FileText, g: "Plan" },
+              { k: "messages", l: "Messages", i: MessagesSquare, g: "Plan" },
               { k: "mystack", l: "My Stack", i: ListChecks, g: "Plan" },
               { k: "peptides", l: "Peptides", i: Beaker, g: "Research" },
               { k: "combos", l: "Combos", i: BookOpen, g: "Research" },
@@ -184,6 +186,7 @@ function Dashboard() {
 
         <div className="mt-8">
           {tab === "protocols" && isTabAllowed("protocols", tier, isAdmin) && <Protocols />}
+          {tab === "messages" && isTabAllowed("messages", tier, isAdmin) && user && <ClientMessages myId={user.id} />}
           {tab === "peptalk" && isTabAllowed("peptalk", tier, isAdmin) && <PepTalk />}
           {tab === "peptides" && isTabAllowed("peptides", tier, isAdmin) && <Peptides />}
           {tab === "mystack" && isTabAllowed("mystack", tier, isAdmin) && <MyStack />}
