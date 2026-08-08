@@ -5,19 +5,21 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useAccess, isTabAllowed } from "@/lib/access";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, MessagesSquare, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, CheckCircle } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, MessagesSquare, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, CheckCircle, Activity } from "lucide-react";
 import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import ReactMarkdown from "react-markdown";
 import PeptideLibrary from "@/components/PeptideLibrary";
 import { ClientMessages } from "@/components/Messaging";
+import LabAnalysis from "@/components/LabAnalysis";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Client Dashboard — Titan Elite" }] }),
   component: Dashboard,
 });
 
-type Tab = "protocols" | "messages" | "peptalk" | "peptides" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning" | "myths";
+type Tab = "protocols" | "messages" | "peptalk" | "peptides" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning" | "myths" | "labs";
+
 
 function Dashboard() {
   const { user, signOut } = useAuth();
@@ -112,7 +114,9 @@ function Dashboard() {
               { k: "lifting", l: "Lifting", i: Dumbbell, g: "Research" },
               { k: "learning", l: "Learning", i: GraduationCap, g: "Research" },
               { k: "myths", l: "Myth vs Evidence", i: Scale, g: "Research" },
+              { k: "labs", l: "Lab Analysis", i: Activity, g: "Tools" },
               { k: "calculator", l: "Calculator", i: CalculatorIcon, g: "Tools" },
+
               { k: "supplies", l: "Supplies", i: Droplets, g: "Tools" },
               { k: "reconstitution", l: "Reconstitution", i: FlaskConical, g: "Tools" },
               { k: "injection", l: "Injection", i: Syringe, g: "Tools" },
@@ -199,6 +203,8 @@ function Dashboard() {
           {tab === "reconstitution" && isTabAllowed("reconstitution", tier, isAdmin) && <Reconstitution />}
           {tab === "injection" && isTabAllowed("injection", tier, isAdmin) && <Injection />}
           {tab === "calculator" && isTabAllowed("calculator", tier, isAdmin) && <PeptideCalculator />}
+          {tab === "labs" && isTabAllowed("labs", tier, isAdmin) && <LabAnalysis />}
+
           {tab === "lifting" && isTabAllowed("lifting", tier, isAdmin) && <Lifting />}
           {tab === "combos" && isTabAllowed("combos", tier, isAdmin) && <Combos />}
           {tab === "learning" && isTabAllowed("learning", tier, isAdmin) && <Learning />}
