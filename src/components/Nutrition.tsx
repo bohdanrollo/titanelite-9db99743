@@ -122,14 +122,14 @@ export default function Nutrition() {
       .insert({ user_id: user.id, log_date: today, ...food })
       .select("*")
       .single();
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setEntries((prev) => [...prev, data as Entry]);
     toast.success(`Added ${food.name}`);
   }
 
   async function removeEntry(id: string) {
     const { error } = await supabase.from("food_log_entries").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setEntries((prev) => prev.filter((e) => e.id !== id));
   }
 
@@ -406,7 +406,7 @@ function FoodSearch({ onAdd }: { onAdd: (f: Omit<Entry, "id" | "log_date">) => P
           <div className="flex items-end">
             <button
               onClick={async () => {
-                if (!m.name.trim()) return toast.error("Give the food a name.");
+                if (!m.name.trim()) { toast.error("Give the food a name."); return; }
                 await onAdd({
                   name: m.name.trim(),
                   brand: m.brand.trim() || null,
