@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Dumbbell, FlaskConical, FileText, MessageCircle, MessagesSquare, Beaker, ListChecks, Droplets, Syringe, Calculator, Activity } from "lucide-react";
+import { Dumbbell, FlaskConical, FileText, MessageCircle, MessagesSquare, Beaker, Apple, ListChecks, Droplets, Syringe, Calculator, Activity } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
@@ -7,9 +7,9 @@ export const Route = createFileRoute("/features")({
   head: () => ({
     meta: [
       { title: "Dashboard Features — Titan Elite" },
-      { name: "description", content: "Eleven tools inside the Titan Elite client dashboard: blood panel lab analysis, custom protocols, direct coach messaging, Pep Talk AI, Top 50 Peptides library, dose calculator, stack tracker, and more." },
+      { name: "description", content: "Twelve tools inside the Titan Elite client dashboard: blood panel lab analysis, a calorie and macro tracker, custom protocols, direct coach messaging, Pep Talk AI, Top 50 Peptides library, dose calculator, stack tracker, and more." },
       { property: "og:title", content: "Dashboard Features — Titan Elite" },
-      { property: "og:description", content: "Eleven tools inside the Titan Elite client dashboard: blood panel lab analysis, custom protocols, direct coach messaging, Pep Talk AI, Top 50 Peptides library, dose calculator, stack tracker, and more." },
+      { property: "og:description", content: "Twelve tools inside the Titan Elite client dashboard: blood panel lab analysis, a calorie and macro tracker, custom protocols, direct coach messaging, Pep Talk AI, Top 50 Peptides library, dose calculator, stack tracker, and more." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -29,6 +29,7 @@ function Page() {
     { i: Syringe, t: "Injection Guide", d: "Subcutaneous injection site diagrams, rotation advice, and sterile technique walkthroughs." },
     { i: Calculator, t: "Dose Calculator", d: "Input vial strength, desired dose, and BAC water to see the exact draw volume on a 1 mL syringe." },
     { i: Activity, t: "Lab Analysis", d: "Upload your blood test panel and enter your age, height, and weight to see what's outside optimal range and how to fix it. Results save and can be updated or re-uploaded anytime." },
+    { i: Apple, t: "Calorie Tracker", d: "Set a daily calorie goal and get automatic protein, carb, and fat targets. Search foods and drinks by brand, log them in one tap, and macros fill in for you. Days reset automatically and every past day is saved in your history." },
     { i: Dumbbell, t: "Lifting & Nutrition", d: "Training splits, popular lifts, and caloric / macro targets tailored to bulking, cutting, or maintenance." },
   ];
   return (
@@ -38,7 +39,7 @@ function Page() {
         <div className="container-edge">
           <div className="text-eyebrow">Built-In Tools</div>
           <h1 className="mt-4 text-5xl lg:text-7xl max-w-4xl">
-            Eleven tools. <span className="text-blood">One dashboard.</span>
+            Twelve tools. <span className="text-blood">One dashboard.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-bone/70 leading-relaxed">
             No more scattered notes, calculators, or search tabs. The Titan Elite dashboard puts peptides, dosing, and training guidance in one place.

@@ -8,7 +8,7 @@ export const Route = createFileRoute("/about")({
       { title: "About — Titan Elite" },
       { name: "description", content: "Titan Elite is an all-in-one peptide research and training dashboard: custom educational protocols, Pep Talk AI, a 50-compound library, dose calculator, stack tracker, and injection guides." },
       { property: "og:title", content: "About — Titan Elite" },
-      { property: "og:description", content: "Titan Elite is an all-in-one peptide research and training dashboard with custom educational protocols and nine built-in tools." },
+      { property: "og:description", content: "Titan Elite is an all-in-one peptide research and training dashboard with custom educational protocols and twelve built-in tools." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -46,7 +46,7 @@ function About() {
 
         <div className="mt-16">
           <div className="text-eyebrow">The Dashboard</div>
-          <h2 className="mt-4 text-4xl lg:text-5xl">Nine tools. One place.</h2>
+          <h2 className="mt-4 text-4xl lg:text-5xl">Twelve tools. One place.</h2>
           <p className="mt-6 leading-relaxed">
             The dashboard is the product. When you become a client, you get access to every
             tool we've built for peptide research and training — no scattered notes, no
@@ -60,6 +60,7 @@ function About() {
               ["My Stack", "Track every peptide, dose, unit, frequency, schedule, and notes in your personal dosing log."],
               ["Dose Calculator", "Input vial strength, desired dose, and BAC water to see the exact draw on a 1 mL syringe."],
               ["Lab Analysis", "Upload your blood panel plus age, height, and weight to see what's off and how to fix it — saved and re-uploadable anytime."],
+              ["Calorie Tracker", "Set a daily calorie goal, search foods and drinks by brand, and log them — macros fill in automatically. Days reset each morning and past days are saved."],
               ["Reconstitution Guide", "Step-by-step mixing instructions — roll the vial gently, never shake."],
               ["Injection Guide", "Subcutaneous injection site diagrams, rotation advice, and sterile technique."],
               ["Supplies Guide", "BAC water, insulin syringes, alcohol wipes, plus storage before and after reconstitution."],
