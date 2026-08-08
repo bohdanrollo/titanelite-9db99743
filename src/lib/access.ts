@@ -17,6 +17,7 @@ export const LIMITED_TABS = [
   "mystack",
   "calculator",
   "labs",
+  "nutrition",
   "peptalk",
 ] as const;
 
