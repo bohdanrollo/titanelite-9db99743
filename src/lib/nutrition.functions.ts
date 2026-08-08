@@ -136,7 +136,8 @@ export const searchFoods = createServerFn({ method: "POST" })
     const q = data.query.trim();
     if (q.length < 2) return [] as FoodResult[];
 
-    const apiKey = process.env["FDC_API_KEY"] || "DEMO_KEY";
+    const apiKey =
+      process.env["USDA_FDC_API_KEY"] || process.env["FDC_API_KEY"] || "DEMO_KEY";
     const url =
       "https://api.nal.usda.gov/fdc/v1/foods/search?" +
       new URLSearchParams({
