@@ -60,8 +60,8 @@ function Hero() {
             Simple monthly access. Cancel anytime.
           </div>
           <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-blood/30 bg-blood/10 px-4 py-2 text-sm text-blood">
-            <span className="font-semibold">TITAN30</span>
-            <span className="text-blood/80">— clients save 30% on peptides</span>
+            <span className="inline-block h-2 w-2 rounded-full bg-blood" />
+            <span>Clients save 30% on peptides</span>
           </div>
           <div className="mt-12 grid grid-cols-3 gap-6 max-w-md">
             {[
