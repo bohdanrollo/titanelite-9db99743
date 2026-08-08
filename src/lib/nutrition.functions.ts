@@ -143,8 +143,7 @@ export const searchFoods = createServerFn({ method: "POST" })
         api_key: apiKey,
         query: q,
         pageSize: "25",
-        dataType: "Branded,Foundation,SR Legacy,Survey (FNDDS)",
-        requireAllWords: "true",
+        dataType: "Branded,Foundation,SR Legacy",
       }).toString();
 
     const results: FoodResult[] = [];
