@@ -5,20 +5,21 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useAccess, isTabAllowed } from "@/lib/access";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, MessagesSquare, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, CheckCircle, Activity } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, MessagesSquare, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, CheckCircle, Activity, Apple } from "lucide-react";
 import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import ReactMarkdown from "react-markdown";
 import PeptideLibrary from "@/components/PeptideLibrary";
 import { ClientMessages } from "@/components/Messaging";
 import LabAnalysis from "@/components/LabAnalysis";
+import Nutrition from "@/components/Nutrition";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Client Dashboard — Titan Elite" }] }),
   component: Dashboard,
 });
 
-type Tab = "protocols" | "messages" | "peptalk" | "peptides" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning" | "myths" | "labs";
+type Tab = "protocols" | "messages" | "peptalk" | "peptides" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning" | "myths" | "labs" | "nutrition";
 
 
 function Dashboard() {
@@ -115,6 +116,7 @@ function Dashboard() {
               { k: "learning", l: "Learning", i: GraduationCap, g: "Research" },
               { k: "myths", l: "Myth vs Evidence", i: Scale, g: "Research" },
               { k: "labs", l: "Lab Analysis", i: Activity, g: "Tools" },
+              { k: "nutrition", l: "Calorie Tracker", i: Apple, g: "Tools" },
               { k: "calculator", l: "Calculator", i: CalculatorIcon, g: "Tools" },
 
               { k: "supplies", l: "Supplies", i: Droplets, g: "Tools" },
@@ -204,6 +206,7 @@ function Dashboard() {
           {tab === "injection" && isTabAllowed("injection", tier, isAdmin) && <Injection />}
           {tab === "calculator" && isTabAllowed("calculator", tier, isAdmin) && <PeptideCalculator />}
           {tab === "labs" && isTabAllowed("labs", tier, isAdmin) && <LabAnalysis />}
+          {tab === "nutrition" && isTabAllowed("nutrition", tier, isAdmin) && <Nutrition />}
 
           {tab === "lifting" && isTabAllowed("lifting", tier, isAdmin) && <Lifting />}
           {tab === "combos" && isTabAllowed("combos", tier, isAdmin) && <Combos />}

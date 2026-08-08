@@ -322,6 +322,54 @@ export type Database = {
         }
         Relationships: []
       }
+      food_log_entries: {
+        Row: {
+          brand: string | null
+          calories: number
+          carbs_g: number
+          created_at: string
+          fat_g: number
+          id: string
+          log_date: string
+          name: string
+          protein_g: number
+          quantity: number
+          serving: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          brand?: string | null
+          calories?: number
+          carbs_g?: number
+          created_at?: string
+          fat_g?: number
+          id?: string
+          log_date?: string
+          name: string
+          protein_g?: number
+          quantity?: number
+          serving?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          brand?: string | null
+          calories?: number
+          carbs_g?: number
+          created_at?: string
+          fat_g?: number
+          id?: string
+          log_date?: string
+          name?: string
+          protein_g?: number
+          quantity?: number
+          serving?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       intakes: {
         Row: {
           age: number | null
@@ -495,6 +543,39 @@ export type Database = {
           read_at?: string | null
           recipient_id?: string
           sender_id?: string
+        }
+        Relationships: []
+      }
+      nutrition_goals: {
+        Row: {
+          calorie_goal: number
+          carbs_pct: number
+          created_at: string
+          fat_pct: number
+          id: string
+          protein_pct: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          calorie_goal?: number
+          carbs_pct?: number
+          created_at?: string
+          fat_pct?: number
+          id?: string
+          protein_pct?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          calorie_goal?: number
+          carbs_pct?: number
+          created_at?: string
+          fat_pct?: number
+          id?: string
+          protein_pct?: number
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
