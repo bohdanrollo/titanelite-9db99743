@@ -42,6 +42,7 @@ const PLANS: Plan[] = [
       "Combos, Myths, Learning center",
       "My Stack dose tracker",
       "Peptide dose calculator",
+      "Blood panel Lab Analysis",
       "Pep Talk AI assistant",
       "Lifting programs & nutrition",
       "Supplies, reconstitution, injection guides",

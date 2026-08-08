@@ -59,6 +59,7 @@ function About() {
               ["Top 50 Peptides", "A searchable research library covering the most popular compounds and what each is studied for."],
               ["My Stack", "Track every peptide, dose, unit, frequency, schedule, and notes in your personal dosing log."],
               ["Dose Calculator", "Input vial strength, desired dose, and BAC water to see the exact draw on a 1 mL syringe."],
+              ["Lab Analysis", "Upload your blood panel plus age, height, and weight to see what's off and how to fix it — saved and re-uploadable anytime."],
               ["Reconstitution Guide", "Step-by-step mixing instructions — roll the vial gently, never shake."],
               ["Injection Guide", "Subcutaneous injection site diagrams, rotation advice, and sterile technique."],
               ["Supplies Guide", "BAC water, insulin syringes, alcohol wipes, plus storage before and after reconstitution."],

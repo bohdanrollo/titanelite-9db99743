@@ -16,8 +16,10 @@ export const LIMITED_TABS = [
   "injection",
   "mystack",
   "calculator",
+  "labs",
   "peptalk",
 ] as const;
+
 
 export const FULL_ONLY_TABS = ["protocols", "messages"] as const;
 

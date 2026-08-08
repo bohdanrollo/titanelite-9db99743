@@ -8,9 +8,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Titan Elite — Peptide & Training Dashboard" },
-      { name: "description", content: "All-in-one client dashboard for peptide research and weightlifting: direct coach messaging, AI peptide answers, 50-compound library, dose calculator, stack tracker, injection guides, and a 100% custom educational peptide protocol with weight programming." },
+      { name: "description", content: "All-in-one client dashboard for peptide research and weightlifting: blood panel lab analysis, direct coach messaging, AI peptide answers, 50-compound library, dose calculator, stack tracker, and a 100% custom educational peptide protocol with weight programming." },
       { property: "og:title", content: "Titan Elite — Peptide & Training Dashboard" },
-      { property: "og:description", content: "All-in-one client dashboard for peptide research and weightlifting: direct coach messaging, AI peptide answers, 50-compound library, dose calculator, stack tracker, injection guides, and a 100% custom educational peptide protocol with weight programming." },
+      { property: "og:description", content: "All-in-one client dashboard for peptide research and weightlifting: blood panel lab analysis, direct coach messaging, AI peptide answers, 50-compound library, dose calculator, stack tracker, and a 100% custom educational peptide protocol with weight programming." },
       { property: "og:url", content: "/" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -42,7 +42,7 @@ function Hero() {
             & training.
           </h1>
           <p className="mt-8 max-w-xl text-base text-muted-foreground leading-relaxed">
-            Track your stack, calculate doses, message your coach directly, ask AI peptide questions, browse the 50-compound research library,
+            Upload your blood panel for an instant lab analysis, track your stack, calculate doses, message your coach directly, ask AI peptide questions, browse the 50-compound research library,
             and get step-by-step injection, reconstitution, and lifting guidance — all inside one client dashboard.
             Plus, every client receives a 100% custom educational peptide protocol and weight-programming plan built around their goals.
             No guesswork. No scattered tabs. Just the tools you need to research and train with precision.
@@ -63,7 +63,7 @@ function Hero() {
             {[
               { n: "50+", l: "Peptides catalogued" },
               { n: "AI", l: "Pep Talk assistant" },
-              { n: "10", l: "Dashboard tools" },
+              { n: "11", l: "Dashboard tools" },
             ].map((s) => (
               <div key={s.l}>
                 <div className="font-display text-3xl">{s.n}</div>

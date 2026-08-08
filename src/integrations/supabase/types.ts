@@ -426,6 +426,51 @@ export type Database = {
           },
         ]
       }
+      lab_analyses: {
+        Row: {
+          age: number | null
+          analysis: string | null
+          analyzed_at: string | null
+          created_at: string
+          file_paths: string[]
+          height: string | null
+          id: string
+          notes: string | null
+          sex: string | null
+          updated_at: string
+          user_id: string
+          weight: string | null
+        }
+        Insert: {
+          age?: number | null
+          analysis?: string | null
+          analyzed_at?: string | null
+          created_at?: string
+          file_paths?: string[]
+          height?: string | null
+          id?: string
+          notes?: string | null
+          sex?: string | null
+          updated_at?: string
+          user_id: string
+          weight?: string | null
+        }
+        Update: {
+          age?: number | null
+          analysis?: string | null
+          analyzed_at?: string | null
+          created_at?: string
+          file_paths?: string[]
+          height?: string | null
+          id?: string
+          notes?: string | null
+          sex?: string | null
+          updated_at?: string
+          user_id?: string
+          weight?: string | null
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           body: string
