@@ -130,7 +130,33 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  // Recover from transient script/CDN load failures (a chunk 500s or times out)
   useEffect(() => {
+    const key = "te_asset_reload";
+    const recover = () => {
+      const attempts = Number(sessionStorage.getItem(key) ?? "0");
+      if (attempts >= 2) return;
+      sessionStorage.setItem(key, String(attempts + 1));
+      window.location.reload();
+    };
+    const onPreloadError = (e: Event) => { e.preventDefault(); recover(); };
+    const onRejection = (e: PromiseRejectionEvent) => {
+      if (isLoadFailure(e.reason)) recover();
+    };
+    window.addEventListener("vite:preloadError", onPreloadError as EventListener);
+    window.addEventListener("unhandledrejection", onRejection);
+    // Successful load → clear the retry counter
+    const clear = setTimeout(() => sessionStorage.removeItem(key), 4000);
+    return () => {
+      window.removeEventListener("vite:preloadError", onPreloadError as EventListener);
+      window.removeEventListener("unhandledrejection", onRejection);
+      clearTimeout(clear);
+    };
+  }, []);
+
+  useEffect(() => {
+
     try {
       const params = new URLSearchParams(window.location.search);
       const ref = params.get("ref");
