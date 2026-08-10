@@ -31,11 +31,35 @@ function NotFoundComponent() {
   );
 }
 
+function isLoadFailure(error: unknown) {
+  const msg = String((error as Error)?.message ?? error ?? "");
+  return (
+    /Failed to fetch dynamically imported module/i.test(msg) ||
+    /error loading dynamically imported module/i.test(msg) ||
+    /Importing a module script failed/i.test(msg) ||
+    /Minified React error #(418|423|520|425)/.test(msg) ||
+    /ChunkLoadError|Loading chunk .* failed/i.test(msg)
+  );
+}
+
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
+
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
+  }, [error]);
+
+  // Transient asset/CDN failures: recover automatically (once) instead of
+  // showing an error screen to the visitor.
+  useEffect(() => {
+    if (typeof window === "undefined" || !isLoadFailure(error)) return;
+    const key = "te_asset_reload";
+    const attempts = Number(sessionStorage.getItem(key) ?? "0");
+    if (attempts >= 2) return;
+    sessionStorage.setItem(key, String(attempts + 1));
+    const t = setTimeout(() => window.location.reload(), 400);
+    return () => clearTimeout(t);
   }, [error]);
 
   return (
@@ -54,6 +78,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     </div>
   );
 }
+
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -105,7 +130,33 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  // Recover from transient script/CDN load failures (a chunk 500s or times out)
   useEffect(() => {
+    const key = "te_asset_reload";
+    const recover = () => {
+      const attempts = Number(sessionStorage.getItem(key) ?? "0");
+      if (attempts >= 2) return;
+      sessionStorage.setItem(key, String(attempts + 1));
+      window.location.reload();
+    };
+    const onPreloadError = (e: Event) => { e.preventDefault(); recover(); };
+    const onRejection = (e: PromiseRejectionEvent) => {
+      if (isLoadFailure(e.reason)) recover();
+    };
+    window.addEventListener("vite:preloadError", onPreloadError as EventListener);
+    window.addEventListener("unhandledrejection", onRejection);
+    // Successful load → clear the retry counter
+    const clear = setTimeout(() => sessionStorage.removeItem(key), 4000);
+    return () => {
+      window.removeEventListener("vite:preloadError", onPreloadError as EventListener);
+      window.removeEventListener("unhandledrejection", onRejection);
+      clearTimeout(clear);
+    };
+  }, []);
+
+  useEffect(() => {
+
     try {
       const params = new URLSearchParams(window.location.search);
       const ref = params.get("ref");
