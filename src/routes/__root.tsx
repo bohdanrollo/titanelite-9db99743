@@ -31,11 +31,35 @@ function NotFoundComponent() {
   );
 }
 
+function isLoadFailure(error: unknown) {
+  const msg = String((error as Error)?.message ?? error ?? "");
+  return (
+    /Failed to fetch dynamically imported module/i.test(msg) ||
+    /error loading dynamically imported module/i.test(msg) ||
+    /Importing a module script failed/i.test(msg) ||
+    /Minified React error #(418|423|520|425)/.test(msg) ||
+    /ChunkLoadError|Loading chunk .* failed/i.test(msg)
+  );
+}
+
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
+
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
+  }, [error]);
+
+  // Transient asset/CDN failures: recover automatically (once) instead of
+  // showing an error screen to the visitor.
+  useEffect(() => {
+    if (typeof window === "undefined" || !isLoadFailure(error)) return;
+    const key = "te_asset_reload";
+    const attempts = Number(sessionStorage.getItem(key) ?? "0");
+    if (attempts >= 2) return;
+    sessionStorage.setItem(key, String(attempts + 1));
+    const t = setTimeout(() => window.location.reload(), 400);
+    return () => clearTimeout(t);
   }, [error]);
 
   return (
@@ -54,6 +78,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     </div>
   );
 }
+
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
