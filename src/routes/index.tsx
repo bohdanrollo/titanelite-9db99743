@@ -74,7 +74,7 @@ function Hero() {
             >
               Get Dashboard Access <ArrowRight size={14} />
             </Link>
-            <Link to="/features" className="btn-ghost hover:bg-foreground hover:text-background">
+            <Link to="/features" className="btn-ghost text-[color:var(--foreground)] border-[color:color-mix(in_oklab,var(--foreground)_45%,transparent)] hover:bg-[color:var(--foreground)] hover:text-[color:var(--background)]">
               See Dashboard Tools
             </Link>
           </div>
