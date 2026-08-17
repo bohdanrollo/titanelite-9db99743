@@ -22,7 +22,7 @@ function About() {
       <SiteHeader />
       <section className="container-edge py-20 max-w-4xl">
         <div className="text-eyebrow">About</div>
-        <h1 className="mt-4 text-6xl lg:text-7xl">Coaching as a craft.</h1>
+        <h1 className="mt-4 text-6xl lg:text-7xl">Built from real results.</h1>
         <div className="mt-8 space-y-6 text-muted-foreground leading-relaxed">
           <p>
             I started Titan Elite after losing 95 pounds in 4 months with peptides. That experience changed my understanding of what focused, research-informed guidance can do — and it made me want to share what I’d learned with people who were serious about changing their bodies.
