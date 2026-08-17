@@ -25,22 +25,16 @@ function About() {
         <h1 className="mt-4 text-6xl lg:text-7xl">Coaching as a craft.</h1>
         <div className="mt-8 space-y-6 text-muted-foreground leading-relaxed">
           <p>
-            Titan Elite was built around one principle: serious clients deserve programming
-            that's actually designed for them. Not a template. Not a PDF someone bought once
-            and resold a thousand times. A real document built around your training history,
-            your goals, and your physiology.
+            I started Titan Elite after losing 95 pounds in 4 months with peptides. That experience changed my understanding of what focused, research-informed guidance can do — and it made me want to share what I’d learned with people who were serious about changing their bodies.
           </p>
           <p>
-            We've coached lifters and physique competitors for over a decade, and we've spent
-            the last several years studying the educational landscape around peptide
-            protocols — what's evidence-informed, what's hype, and how to think about it
-            responsibly. Every client receives a 100% custom educational peptide protocol and
-            weight-programming plan delivered as a PDF and attached to their dashboard.
+            I’ve been deep in the peptide research space for over three years, sorting through the evidence, the hype, and the practical questions that actually matter for dosing, safety, and results. Every client receives a 100% custom educational peptide protocol and weight-programming plan delivered as a PDF and attached to their dashboard.
           </p>
           <p>
-            Titan Elite does not prescribe, sell, or distribute peptides. Everything shared
-            is strictly educational and intended to inform conversations with your licensed
-            medical provider.
+            Our team of personal trainers has also transformed their own physiques with the same principles we teach — combining resistance training, nutrition, and responsible peptide education to build bodies that perform as well as they look.
+          </p>
+          <p>
+            Titan Elite does not prescribe, sell, or distribute peptides. Everything shared is strictly educational and intended to inform conversations with your licensed medical provider.
           </p>
         </div>
 
