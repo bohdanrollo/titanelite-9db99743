@@ -37,6 +37,8 @@
   --color-blood: var(--blood);
   --color-ink: var(--ink);
   --font-display: "Bebas Neue", "Oswald", "Impact", sans-serif;
+  --font-heavy: "Archivo Black", "Archivo", "Impact", sans-serif;
+  --font-body: "Hind", "Inter", system-ui, sans-serif;
   --font-serif: "Playfair Display", "Times New Roman", serif;
   --font-sans: "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
@@ -69,25 +71,28 @@
 }
 
 .dark {
-  --background: oklch(0.10 0 0);
-  --foreground: oklch(0.96 0.012 75);
-  --card: oklch(0.14 0 0);
-  --card-foreground: oklch(0.96 0.012 75);
-  --popover: oklch(0.14 0 0);
-  --popover-foreground: oklch(0.96 0.012 75);
-  --primary: oklch(0.60 0.22 25);
-  --primary-foreground: oklch(0.10 0 0);
-  --secondary: oklch(0.96 0.012 75);
-  --secondary-foreground: oklch(0.10 0 0);
-  --muted: oklch(0.18 0 0);
-  --muted-foreground: oklch(0.72 0.008 75);
-  --accent: oklch(0.60 0.22 25);
-  --accent-foreground: oklch(0.10 0 0);
-  --destructive: oklch(0.60 0.24 27);
-  --destructive-foreground: oklch(0.96 0.012 75);
-  --border: oklch(0.96 0.012 75 / 0.14);
-  --input: oklch(0.96 0.012 75 / 0.18);
-  --ring: oklch(0.60 0.22 25);
+  --background: oklch(0.145 0.004 285);    /* #0A0A0B */
+  --foreground: oklch(0.945 0.012 75);     /* #F2EDE6 */
+  --card: oklch(0.19 0.004 285);           /* #141416 */
+  --card-foreground: oklch(0.945 0.012 75);
+  --popover: oklch(0.19 0.004 285);
+  --popover-foreground: oklch(0.945 0.012 75);
+  --primary: oklch(0.52 0.216 27);         /* #C1121F */
+  --primary-foreground: oklch(0.97 0.012 75);
+  --secondary: oklch(0.945 0.012 75);
+  --secondary-foreground: oklch(0.145 0.004 285);
+  --muted: oklch(0.24 0.004 285);
+  --muted-foreground: oklch(0.70 0.008 75);
+  --accent: oklch(0.52 0.216 27);
+  --accent-foreground: oklch(0.97 0.012 75);
+  --destructive: oklch(0.56 0.24 27);
+  --destructive-foreground: oklch(0.97 0.012 75);
+  --border: oklch(0.945 0.012 75 / 0.12);
+  --input: oklch(0.945 0.012 75 / 0.18);
+  --ring: oklch(0.52 0.216 27);
+  --bone: oklch(0.945 0.012 75);
+  --blood: oklch(0.56 0.22 27);
+  --ink: oklch(0.11 0.004 285);
 }
 
 @layer base {
@@ -139,8 +144,8 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background: var(--color-blood);
-  color: var(--color-primary-foreground);
+  background: var(--blood);
+  color: var(--primary-foreground);
   font-family: var(--font-mono);
   text-transform: uppercase;
   letter-spacing: 0.14em;
@@ -161,14 +166,14 @@
   justify-content: center;
   gap: 0.5rem;
   background: transparent;
-  color: var(--color-foreground);
+  color: var(--foreground);
   font-family: var(--font-mono);
   text-transform: uppercase;
   letter-spacing: 0.14em;
   font-size: 0.78rem;
   font-weight: 700;
   padding: 0.95rem 1.5rem;
-  border: 1px solid var(--color-foreground);
+  border: 1px solid color-mix(in oklab, var(--foreground) 45%, transparent);
   cursor: pointer;
   transition: background 0.18s ease, color 0.18s ease;
 }
