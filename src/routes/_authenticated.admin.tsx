@@ -4,11 +4,12 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2, DollarSign, Check, X, Trash2, Lock, Video, MessagesSquare } from "lucide-react";
+import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2, DollarSign, Check, X, Trash2, Lock, Video, MessagesSquare, RefreshCw } from "lucide-react";
 import { generateProtocolDraft, saveProtocolDraft, sendProtocol, getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import { approveAffiliate, rejectAffiliate, deleteAffiliate, markAffiliatePaid, resendApprovedAffiliateEmails, setAffiliatePayoutRate } from "@/lib/affiliates.functions";
 import { grantFullAccessByEmail } from "@/lib/admin-access.functions";
 import { grantAccess, revokeAccess, listAccess } from "@/lib/admin-access.functions";
+import { syncStripeAccess } from "@/lib/stripe-sync.functions";
 import { adminListAffiliateVideos, reviewAffiliateVideo } from "@/lib/affiliate-videos.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { AdminMessages } from "@/components/Messaging";
@@ -109,6 +110,8 @@ function Clients() {
   const grantFn = useServerFn(grantAccess);
   const revokeFn = useServerFn(revokeAccess);
   const listFn = useServerFn(listAccess);
+  const syncFn = useServerFn(syncStripeAccess);
+  const [syncing, setSyncing] = useState(false);
 
   let env: "sandbox" | "live" = "sandbox";
   try { env = getStripeEnvironment(); } catch { /* keep default */ }
@@ -184,7 +187,28 @@ function Clients() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name or email…" className="w-full pl-10 pr-4 py-3 bg-background border border-foreground/20 focus:outline-none focus:border-blood" />
         </div>
-        <span className="text-eyebrow text-muted-foreground">Env: {env}</span>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={async () => {
+              setSyncing(true);
+              try {
+                const res = await syncFn({ data: { environment: env } });
+                await reload();
+                toast.success(
+                  `Synced ${res.scanned} subscriptions — ${res.granted} new, ${res.upgraded} updated${res.unmatched ? `, ${res.unmatched} unmatched` : ""}.`,
+                );
+              } catch (err) {
+                toast.error(err instanceof Error ? err.message : "Sync failed");
+              } finally { setSyncing(false); }
+            }}
+            disabled={syncing}
+            className="inline-flex items-center gap-2 px-4 py-2 border border-foreground/20 font-mono text-[11px] uppercase tracking-[0.14em] hover:border-blood hover:text-blood disabled:opacity-50"
+          >
+            {syncing ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
+            Sync payments
+          </button>
+          <span className="text-eyebrow text-muted-foreground">Env: {env}</span>
+        </div>
       </div>
 
       <div className="flex gap-2 mb-6 flex-wrap">
