@@ -30,6 +30,7 @@ function Dashboard() {
   const [navOpen, setNavOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const [intake, setIntake] = useState<{ id: string; status: string; submitted_at: string } | null>(null);
+  const [isAffiliate, setIsAffiliate] = useState(false);
 
   // If user has no access, keep them on paywall regardless of `tab` state.
   const hasAccess = isAdmin || tier === "limited" || tier === "full";
@@ -45,6 +46,7 @@ function Dashboard() {
   useEffect(() => {
     if (!user) return;
     supabase.from("intakes").select("id, status, submitted_at").eq("user_id", user.id).order("submitted_at", { ascending: false }).limit(1).maybeSingle().then(({ data }) => setIntake(data));
+    supabase.from("affiliates").select("id", { count: "exact", head: true }).eq("email", user.email ?? "").then(({ count }) => setIsAffiliate(!!count && count > 0));
   }, [user]);
 
   return (
@@ -63,17 +65,19 @@ function Dashboard() {
       <section className="container-edge py-8 sm:py-12">
         <div className="text-eyebrow">Client Dashboard</div>
         <h1 className="mt-4 text-3xl sm:text-5xl lg:text-6xl">Welcome back.</h1>
-        <p className="mt-3 text-sm text-muted-foreground">
-          <span className="inline-flex items-center gap-2 text-blood font-medium">
-            <CheckCircle size={14} />
-            Congrats! As a Titan Elite client you get 30% off of all peptides with code TITAN30
-          </span>
-          <span className="mx-2">·</span>
-          Order through{" "}
-          <a href="https://powerbuiltlabs.com/us?ref=TITAN30" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">
-            Powerbuilt Labs
-          </a>.
-        </p>
+        {!isAffiliate && (
+          <p className="mt-3 text-sm text-muted-foreground">
+            <span className="inline-flex items-center gap-2 text-blood font-medium">
+              <CheckCircle size={14} />
+              Congrats! As a Titan Elite client you get 30% off of all peptides with code TITAN30
+            </span>
+            <span className="mx-2">·</span>
+            Order through{" "}
+            <a href="https://powerbuiltlabs.com/us?ref=TITAN30" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">
+              Powerbuilt Labs
+            </a>.
+          </p>
+        )}
 
         {intake && (
           <div className="mt-8 flex flex-wrap items-center gap-4 sm:gap-6 border-y border-foreground/10 py-4 text-sm">
