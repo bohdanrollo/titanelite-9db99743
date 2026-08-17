@@ -181,12 +181,41 @@ function resolveSubTier(sub: Subscription): { tier: "limited" | "full"; priceLoo
   return best;
 }
 
+/**
+ * Subscriptions created outside our checkout (or migrated ones) may not carry
+ * userId metadata — fall back to the customer's metadata, then their email.
+ */
+async function resolveSubUserId(sub: Subscription, env: StripeEnv): Promise<string | null> {
+  if (sub.metadata?.userId) return sub.metadata.userId;
+  const customerId = typeof sub.customer === "string" ? sub.customer : sub.customer?.id ?? null;
+  if (!customerId) return null;
+  try {
+    const stripe = createStripeClient(env);
+    const customer = await stripe.customers.retrieve(customerId);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const c = customer as any;
+    if (c?.deleted) return null;
+    if (c?.metadata?.userId) return String(c.metadata.userId);
+    if (c?.email) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const supa = getSupabase() as any;
+      const { data: prof } = await supa
+        .from("profiles").select("id").ilike("email", c.email).maybeSingle();
+      if (prof?.id) return String(prof.id);
+    }
+  } catch (e) {
+    console.error("[webhook] failed to resolve subscription user", e);
+  }
+  return null;
+}
+
 async function handleSubscriptionChange(sub: Subscription, env: StripeEnv) {
-  const userId = sub.metadata?.userId;
+  const userId = await resolveSubUserId(sub, env);
   if (!userId) {
     console.error("[webhook] subscription missing userId metadata", sub.id);
     return;
   }
+
   const resolved = resolveSubTier(sub);
   const isActive = ACTIVE_SUB_STATUSES.has(sub.status);
   const customerId = typeof sub.customer === "string" ? sub.customer : sub.customer?.id ?? null;
