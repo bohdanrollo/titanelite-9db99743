@@ -37,6 +37,8 @@
   --color-blood: var(--blood);
   --color-ink: var(--ink);
   --font-display: "Bebas Neue", "Oswald", "Impact", sans-serif;
+  --font-heavy: "Archivo Black", "Archivo", "Impact", sans-serif;
+  --font-body: "Hind", "Inter", system-ui, sans-serif;
   --font-serif: "Playfair Display", "Times New Roman", serif;
   --font-sans: "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
