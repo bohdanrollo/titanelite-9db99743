@@ -74,7 +74,7 @@ function Hero() {
             >
               Get Dashboard Access <ArrowRight size={14} />
             </Link>
-            <Link to="/features" className="btn-ghost hover:bg-foreground hover:text-background">
+            <Link to="/features" className="btn-ghost border-foreground/40 text-foreground hover:bg-foreground hover:text-background">
               See Dashboard Tools
             </Link>
           </div>
@@ -96,7 +96,7 @@ function Hero() {
               <img
                 src={heroImg.url}
                 alt="Titan Elite logo"
-                className="w-full h-auto block opacity-90 mix-blend-screen"
+                className="w-full h-auto block"
                 width={1600}
                 height={1200}
               />
