@@ -133,7 +133,9 @@ function Hero() {
   );
 }
 
-const TILES = [
+type Tile = { icon: typeof FlaskConical; title: string; body: string; span: string; feature?: boolean };
+
+const TILES: Tile[] = [
   {
     icon: FileText,
     title: "Custom protocols",
@@ -150,7 +152,7 @@ const TILES = [
   { icon: GraduationCap, title: "Learning center", body: "Mini courses plus myth-vs-evidence breakdowns.", span: "" },
   { icon: Syringe, title: "Injection & reconstitution", body: "Step-by-step guides and the exact supplies you need.", span: "" },
   { icon: Dumbbell, title: "Lifting library", body: "Programming principles and technique cues that actually move the bar.", span: "md:col-span-2" },
-] as const;
+];
 
 function Bento() {
   return (
