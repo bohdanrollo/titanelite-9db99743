@@ -997,13 +997,13 @@ function VideoIncentivesAdmin() {
 
   async function onApprove(r: AdminVideoRow) {
     const raw = prompt(
-      `Verified view count for this video?\n${r.url}\n\nAffiliate claimed ${r.claimed_views.toLocaleString()} views. $5 is credited per full 1,000 views.`,
+      `Verified view count for this video?\n${r.url}\n\nAffiliate claimed ${r.claimed_views.toLocaleString()} views. $1 is credited per full 1,000 views.`,
       String(r.claimed_views || 0),
     );
     if (raw === null) return;
     const views = Math.max(0, Math.round(Number(raw)));
     if (isNaN(views)) { toast.error("Enter a valid number"); return; }
-    const payout = Math.floor(views / 1000) * 5;
+    const payout = Math.floor(views / 1000) * 1;
     if (!confirm(`Approve and credit $${payout.toFixed(2)} to ${r.affiliate_email ?? "this affiliate"}?`)) return;
     setBusy((b) => ({ ...b, [r.id]: true }));
     try {
@@ -1040,7 +1040,7 @@ function VideoIncentivesAdmin() {
         <div className="border border-foreground/15 p-4">
           <div className="text-eyebrow">Video payouts credited</div>
           <div className="mt-2 font-display text-3xl text-blood">${(approvedTotal / 100).toFixed(2)}</div>
-          <div className="mt-1 text-[10px] font-mono uppercase tracking-wider text-muted-foreground">$5 per 1,000 views</div>
+          <div className="mt-1 text-[10px] font-mono uppercase tracking-wider text-muted-foreground">$1 per 1,000 views</div>
         </div>
       </div>
 
