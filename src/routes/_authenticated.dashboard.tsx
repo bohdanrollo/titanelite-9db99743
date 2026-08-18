@@ -170,13 +170,13 @@ function Dashboard() {
                   )}
                 </div>
                 {/* Desktop: grouped compact tabs */}
-                <div className="hidden sm:flex items-start gap-6 lg:gap-8 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <div className="hidden sm:flex flex-wrap items-start gap-x-6 gap-y-4 lg:gap-x-8">
                   {groups.map((g) => (
-                    <div key={g} className="flex flex-col gap-1">
+                    <div key={g} className="flex flex-col gap-1 min-w-0">
                       <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-muted-foreground px-1">
                         {g}
                       </span>
-                      <div className="flex items-center">
+                      <div className="flex flex-wrap items-center">
                         {allTabs.filter((t) => t.g === g).map((t, idx, arr) => (
                           <button
                             key={t.k}
