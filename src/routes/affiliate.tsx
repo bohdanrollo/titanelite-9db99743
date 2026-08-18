@@ -505,15 +505,15 @@ function VideoIncentives({ affiliateId, videoOwed, lifetimeVideo }: { affiliateI
     <div className="max-w-5xl space-y-6">
       <div className="border border-blood p-6">
         <div className="text-eyebrow text-blood">Video incentive program</div>
-        <h3 className="mt-2 font-display text-3xl">Get paid $5 per 1,000 views.</h3>
+        <h3 className="mt-2 font-display text-3xl">Get paid $1 per 1,000 views.</h3>
         <p className="mt-3 text-sm text-muted-foreground">
           Make a video about Titan Elite — a review, a walkthrough of the client dashboard, your results, anything honest.
           Once it passes <span className="text-foreground font-semibold">1,000 views</span>, drop the link below.
-          We verify the view count and credit <span className="text-blood font-semibold">$5 for every 1,000 views</span> to your earnings.
+          We verify the view count and credit <span className="text-blood font-semibold">$1 for every 1,000 views</span> to your earnings.
         </p>
         <ul className="mt-4 space-y-1 text-xs text-muted-foreground font-mono">
           <li>· Videos under 1,000 views earn $0 — resubmit once you cross the threshold.</li>
-          <li>· Payout is rounded down per full 1,000 views (4,800 views = $20).</li>
+          <li>· Payout is rounded down per full 1,000 views (4,800 views = $4.80).</li>
           <li>· The video must clearly mention Titan Elite and stay publicly viewable.</li>
           <li>· Each video is reviewed and approved or declined manually.</li>
         </ul>
