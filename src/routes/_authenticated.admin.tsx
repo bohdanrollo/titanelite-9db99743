@@ -1170,7 +1170,7 @@ function ProductRequestsAdmin() {
         <div className="border border-foreground/15 p-4">
           <div className="text-eyebrow">Product granted</div>
           <div className="mt-2 font-display text-3xl text-blood">${(grantedTotal / 100).toFixed(2)}</div>
-          <div className="mt-1 text-[10px] font-mono uppercase tracking-wider text-muted-foreground">$100 per 15 driven signups</div>
+          <div className="mt-1 text-[10px] font-mono uppercase tracking-wider text-muted-foreground">$250 per 15 driven signups</div>
         </div>
       </div>
 
