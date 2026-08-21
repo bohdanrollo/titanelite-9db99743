@@ -8,7 +8,8 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { resolveRecruiterCode, getMyAffiliateStats } from "@/lib/affiliates.functions";
 import { submitAffiliateVideo, listMyAffiliateVideos } from "@/lib/affiliate-videos.functions";
-import { Copy, DollarSign, Users, Clock, CheckCircle2, XCircle, UserPlus, MousePointerClick, TrendingUp, Award, BarChart3, Video } from "lucide-react";
+import { getMyProductRewards, requestProductReward } from "@/lib/affiliate-rewards.functions";
+import { Copy, DollarSign, Users, Clock, CheckCircle2, XCircle, UserPlus, MousePointerClick, TrendingUp, Award, BarChart3, Video, Gift } from "lucide-react";
 
 export const Route = createFileRoute("/affiliate")({
   head: () => ({
@@ -150,7 +151,7 @@ function ApprovedDashboard({ affiliate }: { affiliate: Affiliate }) {
 
   const lifetimeTotal = ((affiliate.lifetime_earnings_cents + affiliate.lifetime_recruit_earnings_cents + (affiliate.lifetime_video_earnings_cents ?? 0)) / 100).toFixed(2);
 
-  const [tab, setTab] = useState<"overview" | "referrals" | "analytics" | "recruits" | "incentives">("overview");
+  const [tab, setTab] = useState<"overview" | "referrals" | "analytics" | "recruits" | "incentives" | "product">("overview");
   const [recruits, setRecruits] = useState<Recruit[]>([]);
   const [loadingRecruits, setLoadingRecruits] = useState(true);
   const statsFn = useServerFn(getMyAffiliateStats);
@@ -199,6 +200,7 @@ function ApprovedDashboard({ affiliate }: { affiliate: Affiliate }) {
           { k: "analytics", l: "Analytics", i: BarChart3 },
           { k: "recruits", l: `Recruits (${approvedRecruits.length})`, i: UserPlus },
           { k: "incentives", l: "Video incentives", i: Video },
+          { k: "product", l: "Free product", i: Gift },
         ] as const).map((t) => (
           <button key={t.k} onClick={() => setTab(t.k)}
             className={`px-5 py-3 font-mono text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 border-b-2 whitespace-nowrap transition ${tab === t.k ? "border-blood text-blood" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
@@ -420,6 +422,10 @@ function ApprovedDashboard({ affiliate }: { affiliate: Affiliate }) {
         </div>
       )}
 
+      {tab === "product" && (
+        <ProductRewards affiliateId={affiliate.id} />
+      )}
+
       {tab === "incentives" && (
         <VideoIncentives affiliateId={affiliate.id} videoOwed={videoEarnings} lifetimeVideo={((affiliate.lifetime_video_earnings_cents ?? 0) / 100).toFixed(2)} />
       )}
@@ -441,6 +447,147 @@ function ApprovedDashboard({ affiliate }: { affiliate: Affiliate }) {
         >
           JOIN DISCORD
         </a>
+      </div>
+    </div>
+  );
+}
+
+type ProductRequestRow = {
+  id: string;
+  amount_cents: number;
+  referral_count_at_request: number;
+  notes: string | null;
+  shipping_address: string | null;
+  status: "pending" | "approved" | "declined" | "fulfilled";
+  admin_notes: string | null;
+  reviewed_at: string | null;
+  fulfilled_at: string | null;
+  created_at: string;
+};
+
+function ProductRewards({ affiliateId }: { affiliateId: string }) {
+  const loadFn = useServerFn(getMyProductRewards);
+  const requestFn = useServerFn(requestProductReward);
+  const [data, setData] = useState<{ requests: ProductRequestRow[]; referralCount: number; earned: number; used: number; available: number; toNext: number } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [address, setAddress] = useState("");
+  const [notes, setNotes] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  function load() {
+    setLoading(true);
+    loadFn({ data: { affiliateId } })
+      .then((r) => setData(r as any))
+      .catch((e: unknown) => toast.error(e instanceof Error ? e.message : "Failed to load"))
+      .finally(() => setLoading(false));
+  }
+  useEffect(load, [affiliateId]);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (address.trim().length < 5) { toast.error("Enter a shipping address"); return; }
+    setBusy(true);
+    try {
+      await requestFn({ data: { affiliateId, shippingAddress: address.trim(), notes: notes.trim() || undefined } });
+      toast.success("Request submitted — we'll review it shortly");
+      setAddress(""); setNotes("");
+      load();
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Could not submit request");
+    } finally { setBusy(false); }
+  }
+
+  const available = data?.available ?? 0;
+  const progress = data ? ((data.referralCount % 15) / 15) * 100 : 0;
+
+  return (
+    <div className="space-y-8">
+      <div className="max-w-3xl border border-foreground/15 p-6">
+        <div className="text-eyebrow">Free product reward</div>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Every 15 driven signups earns you <span className="text-blood font-mono">$100 in free product from PBL</span>.
+          Once you hit a milestone, request it below and we'll approve and ship it out.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl">
+        <Stat icon={Users} label="Driven signups" value={(data?.referralCount ?? 0).toString()} />
+        <Stat icon={Award} label="Rewards earned" value={(data?.earned ?? 0).toString()} />
+        <Stat icon={Gift} label="Available to claim" value={`$${(available * 100).toFixed(0)}`} accent />
+        <Stat icon={Clock} label="Requests made" value={(data?.used ?? 0).toString()} />
+      </div>
+
+      <div className="max-w-5xl">
+        <div className="text-eyebrow">Progress to next $100 in product</div>
+        <div className="mt-3 h-2 bg-foreground/10 overflow-hidden">
+          <div className="h-full bg-blood transition-all" style={{ width: `${progress}%` }} />
+        </div>
+        <div className="mt-2 text-xs text-muted-foreground">
+          {data ? `${data.toNext} more driven signup${data.toNext === 1 ? "" : "s"} to your next $100 in free product.` : "…"}
+        </div>
+      </div>
+
+      <div className="max-w-3xl border border-foreground/15 p-6">
+        <div className="text-eyebrow">Request your free product</div>
+        {available <= 0 ? (
+          <p className="mt-3 text-sm text-muted-foreground">
+            You don't have a reward available yet. Hit 15 driven signups to unlock $100 in free product.
+          </p>
+        ) : (
+          <form onSubmit={submit} className="mt-4 space-y-3">
+            <textarea
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              rows={3}
+              placeholder="Shipping address (name, street, city, state, ZIP)"
+              className="w-full bg-transparent border border-foreground/20 px-3 py-2 text-sm focus:border-blood outline-none"
+            />
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={2}
+              placeholder="Product preferences / notes (optional)"
+              className="w-full bg-transparent border border-foreground/20 px-3 py-2 text-sm focus:border-blood outline-none"
+            />
+            <button type="submit" disabled={busy} className="btn-blood hover:btn-blood-hover disabled:opacity-40">
+              {busy ? "SUBMITTING…" : "REQUEST $100 IN PRODUCT"}
+            </button>
+          </form>
+        )}
+      </div>
+
+      <div className="max-w-5xl">
+        <div className="text-eyebrow mb-3">Your requests</div>
+        {loading ? (
+          <div className="text-sm text-muted-foreground">Loading…</div>
+        ) : (data?.requests.length ?? 0) === 0 ? (
+          <div className="border border-foreground/15 p-6 text-sm text-muted-foreground">No requests yet.</div>
+        ) : (
+          <div className="overflow-x-auto border border-foreground/15">
+            <table className="w-full text-sm">
+              <thead className="bg-foreground/5">
+                <tr className="text-left font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                  <th className="p-3">Requested</th>
+                  <th className="p-3">Value</th>
+                  <th className="p-3">Status</th>
+                  <th className="p-3">Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(data?.requests ?? []).map((r) => (
+                  <tr key={r.id} className="border-t border-foreground/10">
+                    <td className="p-3 font-mono text-xs">{new Date(r.created_at).toLocaleDateString()}</td>
+                    <td className="p-3 font-mono">${(r.amount_cents / 100).toFixed(2)}</td>
+                    <td className="p-3">
+                      <span className="inline-block px-2 py-0.5 border font-mono text-[9px] uppercase tracking-[0.18em] border-foreground/20 text-muted-foreground">{r.status}</span>
+                    </td>
+                    <td className="p-3 text-muted-foreground text-xs">{r.admin_notes || "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
