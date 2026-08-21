@@ -49,6 +49,59 @@ export type Database = {
           },
         ]
       }
+      affiliate_product_requests: {
+        Row: {
+          admin_notes: string | null
+          affiliate_id: string
+          amount_cents: number
+          created_at: string
+          fulfilled_at: string | null
+          id: string
+          notes: string | null
+          referral_count_at_request: number
+          reviewed_at: string | null
+          shipping_address: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          affiliate_id: string
+          amount_cents?: number
+          created_at?: string
+          fulfilled_at?: string | null
+          id?: string
+          notes?: string | null
+          referral_count_at_request?: number
+          reviewed_at?: string | null
+          shipping_address?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          affiliate_id?: string
+          amount_cents?: number
+          created_at?: string
+          fulfilled_at?: string | null
+          id?: string
+          notes?: string | null
+          referral_count_at_request?: number
+          reviewed_at?: string | null
+          shipping_address?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_product_requests_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       affiliate_referrals: {
         Row: {
           affiliate_id: string
