@@ -505,7 +505,7 @@ function ProductRewards({ affiliateId }: { affiliateId: string }) {
       <div className="max-w-3xl border border-foreground/15 p-6">
         <div className="text-eyebrow">Free product reward</div>
         <p className="mt-3 text-sm text-muted-foreground">
-          Every 15 driven signups earns you <span className="text-blood font-mono">$100 in free product from PBL</span>.
+          Every 15 driven signups earns you <span className="text-blood font-mono">$250 in free product from PBL</span>.
           Once you hit a milestone, request it below and we'll approve and ship it out.
         </p>
       </div>
@@ -513,17 +513,17 @@ function ProductRewards({ affiliateId }: { affiliateId: string }) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl">
         <Stat icon={Users} label="Driven signups" value={(data?.referralCount ?? 0).toString()} />
         <Stat icon={Award} label="Rewards earned" value={(data?.earned ?? 0).toString()} />
-        <Stat icon={Gift} label="Available to claim" value={`$${(available * 100).toFixed(0)}`} accent />
+        <Stat icon={Gift} label="Available to claim" value={`$${(available * 250).toFixed(0)}`} accent />
         <Stat icon={Clock} label="Requests made" value={(data?.used ?? 0).toString()} />
       </div>
 
       <div className="max-w-5xl">
-        <div className="text-eyebrow">Progress to next $100 in product</div>
+        <div className="text-eyebrow">Progress to next $250 in product</div>
         <div className="mt-3 h-2 bg-foreground/10 overflow-hidden">
           <div className="h-full bg-blood transition-all" style={{ width: `${progress}%` }} />
         </div>
         <div className="mt-2 text-xs text-muted-foreground">
-          {data ? `${data.toNext} more driven signup${data.toNext === 1 ? "" : "s"} to your next $100 in free product.` : "…"}
+          {data ? `${data.toNext} more driven signup${data.toNext === 1 ? "" : "s"} to your next $250 in free product.` : "…"}
         </div>
       </div>
 
@@ -531,7 +531,7 @@ function ProductRewards({ affiliateId }: { affiliateId: string }) {
         <div className="text-eyebrow">Request your free product</div>
         {available <= 0 ? (
           <p className="mt-3 text-sm text-muted-foreground">
-            You don't have a reward available yet. Hit 15 driven signups to unlock $100 in free product.
+            You don't have a reward available yet. Hit 15 driven signups to unlock $250 in free product.
           </p>
         ) : (
           <form onSubmit={submit} className="mt-4 space-y-3">
@@ -550,7 +550,7 @@ function ProductRewards({ affiliateId }: { affiliateId: string }) {
               className="w-full bg-transparent border border-foreground/20 px-3 py-2 text-sm focus:border-blood outline-none"
             />
             <button type="submit" disabled={busy} className="btn-blood hover:btn-blood-hover disabled:opacity-40">
-              {busy ? "SUBMITTING…" : "REQUEST $100 IN PRODUCT"}
+              {busy ? "SUBMITTING…" : "REQUEST $250 IN PRODUCT"}
             </button>
           </form>
         )}

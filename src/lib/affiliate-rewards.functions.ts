@@ -2,9 +2,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-/** Every 15 driven signups unlocks $100 in free product from PBL. */
+/** Every 15 driven signups unlocks $250 in free product from PBL. */
 export const SIGNUPS_PER_PRODUCT_REWARD = 15;
-export const PRODUCT_REWARD_CENTS = 10000;
+export const PRODUCT_REWARD_CENTS = 25000;
 
 async function assertAdmin(supabase: any, userId: string) {
   const { data } = await supabase
@@ -45,7 +45,7 @@ export const getMyProductRewards = createServerFn({ method: "POST" })
     return { requests, referralCount, earned, used, available, toNext };
   });
 
-/** Affiliate: request a $100 free product credit. */
+/** Affiliate: request a $250 free product credit. */
 export const requestProductReward = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) =>
@@ -73,7 +73,7 @@ export const requestProductReward = createServerFn({ method: "POST" })
 
     const earned = Math.floor((aff.referral_count ?? 0) / SIGNUPS_PER_PRODUCT_REWARD);
     const used = (rows ?? []).filter((r: any) => r.status !== "declined").length;
-    if (earned - used <= 0) throw new Error("No product credit available yet — 15 driven signups unlocks $100.");
+    if (earned - used <= 0) throw new Error("No product credit available yet — 15 driven signups unlocks $250.");
 
     const { error } = await (supabaseAdmin as any).from("affiliate_product_requests").insert({
       affiliate_id: data.affiliateId,
