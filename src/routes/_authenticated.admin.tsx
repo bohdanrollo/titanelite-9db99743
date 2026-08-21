@@ -4,13 +4,14 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2, DollarSign, Check, X, Trash2, Lock, Video, MessagesSquare, RefreshCw } from "lucide-react";
+import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2, DollarSign, Check, X, Trash2, Lock, Video, MessagesSquare, RefreshCw, Gift } from "lucide-react";
 import { generateProtocolDraft, saveProtocolDraft, sendProtocol, getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import { approveAffiliate, rejectAffiliate, deleteAffiliate, markAffiliatePaid, resendApprovedAffiliateEmails, setAffiliatePayoutRate } from "@/lib/affiliates.functions";
 import { grantFullAccessByEmail } from "@/lib/admin-access.functions";
 import { grantAccess, revokeAccess, listAccess } from "@/lib/admin-access.functions";
 import { syncStripeAccess } from "@/lib/stripe-sync.functions";
 import { adminListAffiliateVideos, reviewAffiliateVideo } from "@/lib/affiliate-videos.functions";
+import { adminListProductRequests, reviewProductRequest } from "@/lib/affiliate-rewards.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { AdminMessages } from "@/components/Messaging";
 
@@ -20,7 +21,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: Admin,
 });
 
-type Tab = "clients" | "intakes" | "protocols" | "messages" | "affiliates" | "videos";
+type Tab = "clients" | "intakes" | "protocols" | "messages" | "affiliates" | "videos" | "product";
 
 
 function Admin() {
@@ -73,6 +74,7 @@ function Admin() {
             { k: "messages", l: "Messages", i: MessagesSquare },
             { k: "affiliates", l: "Affiliates", i: DollarSign },
             { k: "videos", l: "Video incentives", i: Video },
+            { k: "product", l: "Free product", i: Gift },
           ] as const).map((t) => (
             <button
               key={t.k}
@@ -91,6 +93,7 @@ function Admin() {
           {tab === "messages" && user && <AdminMessages adminId={user.id} />}
           {tab === "affiliates" && <AffiliatesAdmin />}
           {tab === "videos" && <VideoIncentivesAdmin />}
+          {tab === "product" && <ProductRequestsAdmin />}
         </div>
       </section>
     </div>
@@ -1087,6 +1090,138 @@ function VideoIncentivesAdmin() {
                     <button onClick={() => onDecline(r)} disabled={busy[r.id]} className="border border-foreground/20 hover:border-blood text-xs px-4 py-2 flex items-center gap-1 disabled:opacity-40"><X size={12} /> Decline</button>
                   </div>
                 )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+type AdminProductRequest = {
+  id: string;
+  affiliate_id: string;
+  amount_cents: number;
+  referral_count_at_request: number;
+  notes: string | null;
+  shipping_address: string | null;
+  status: "pending" | "approved" | "declined" | "fulfilled";
+  admin_notes: string | null;
+  reviewed_at: string | null;
+  fulfilled_at: string | null;
+  created_at: string;
+  affiliate_name: string | null;
+  affiliate_email: string | null;
+  affiliate_code: string | null;
+  affiliate_referrals: number;
+};
+
+function ProductRequestsAdmin() {
+  const listFn = useServerFn(adminListProductRequests);
+  const reviewFn = useServerFn(reviewProductRequest);
+  const [rows, setRows] = useState<AdminProductRequest[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<"pending" | "approved" | "fulfilled" | "declined" | "all">("pending");
+  const [busy, setBusy] = useState<Record<string, boolean>>({});
+
+  function load() {
+    setLoading(true);
+    listFn()
+      .then((r) => setRows((r.requests as AdminProductRequest[]) ?? []))
+      .catch((e: unknown) => toast.error(e instanceof Error ? e.message : "Failed to load"))
+      .finally(() => setLoading(false));
+  }
+  useEffect(load, []);
+
+  const filtered = filter === "all" ? rows : rows.filter((r) => r.status === filter);
+  const pendingCount = rows.filter((r) => r.status === "pending").length;
+  const grantedTotal = rows.filter((r) => r.status === "approved" || r.status === "fulfilled").reduce((s, r) => s + r.amount_cents, 0);
+
+  async function act(r: AdminProductRequest, action: "approve" | "decline" | "fulfill") {
+    let notes: string | undefined;
+    if (action === "decline") {
+      const n = prompt("Reason for declining (optional, shown to the affiliate):", "");
+      if (n === null) return;
+      notes = n.trim() || undefined;
+    } else if (!confirm(action === "approve"
+      ? `Approve $${(r.amount_cents / 100).toFixed(2)} in free product for ${r.affiliate_email ?? "this affiliate"}?`
+      : "Mark this request as shipped/fulfilled?")) return;
+    setBusy((b) => ({ ...b, [r.id]: true }));
+    try {
+      await reviewFn({ data: { id: r.id, action, notes } });
+      toast.success(action === "approve" ? "Approved" : action === "fulfill" ? "Marked fulfilled" : "Declined");
+      load();
+    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
+    finally { setBusy((b) => { const n = { ...b }; delete n[r.id]; return n; }); }
+  }
+
+  return (
+    <div>
+      <div className="grid sm:grid-cols-3 gap-4 mb-6">
+        <div className="border border-foreground/15 p-4">
+          <div className="text-eyebrow">Pending requests</div>
+          <div className="mt-2 font-display text-3xl">{pendingCount}</div>
+        </div>
+        <div className="border border-foreground/15 p-4">
+          <div className="text-eyebrow">Total requests</div>
+          <div className="mt-2 font-display text-3xl">{rows.length}</div>
+        </div>
+        <div className="border border-foreground/15 p-4">
+          <div className="text-eyebrow">Product granted</div>
+          <div className="mt-2 font-display text-3xl text-blood">${(grantedTotal / 100).toFixed(2)}</div>
+          <div className="mt-1 text-[10px] font-mono uppercase tracking-wider text-muted-foreground">$100 per 15 driven signups</div>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-4">
+        {(["pending", "approved", "fulfilled", "declined", "all"] as const).map((f) => (
+          <button key={f} onClick={() => setFilter(f)}
+            className={`px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] border ${filter === f ? "border-blood text-blood" : "border-foreground/20 text-muted-foreground hover:text-foreground"}`}>
+            {f}
+          </button>
+        ))}
+      </div>
+
+      {loading ? (
+        <div className="text-eyebrow">Loading…</div>
+      ) : filtered.length === 0 ? (
+        <div className="text-muted-foreground text-sm">No product requests in this view.</div>
+      ) : (
+        <div className="space-y-3">
+          {filtered.map((r) => (
+            <div key={r.id} className="border border-foreground/15 p-5">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <div className="font-display text-xl">{r.affiliate_name || r.affiliate_email || "Unknown affiliate"}</div>
+                    <span className="inline-block px-2 py-0.5 border font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground border-foreground/20">{r.status}</span>
+                    {r.affiliate_code && <span className="font-mono text-xs text-blood tracking-wider">CODE: {r.affiliate_code}</span>}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground font-mono">{r.affiliate_email}</div>
+                  <div className="mt-3 flex gap-6 text-sm flex-wrap">
+                    <div><span className="text-muted-foreground">Value:</span> <span className="font-mono text-blood">${(r.amount_cents / 100).toFixed(2)}</span></div>
+                    <div><span className="text-muted-foreground">Signups at request:</span> <span className="font-mono">{r.referral_count_at_request}</span></div>
+                    <div><span className="text-muted-foreground">Signups now:</span> <span className="font-mono">{r.affiliate_referrals}</span></div>
+                    <div><span className="text-muted-foreground">Requested:</span> <span className="font-mono text-xs">{new Date(r.created_at).toLocaleDateString()}</span></div>
+                  </div>
+                  {r.shipping_address && (
+                    <div className="mt-3 text-sm"><span className="text-muted-foreground">Ship to:</span> <span className="whitespace-pre-wrap">{r.shipping_address}</span></div>
+                  )}
+                  {r.notes && <div className="mt-2 text-sm text-muted-foreground">Notes: {r.notes}</div>}
+                  {r.admin_notes && <div className="mt-2 text-xs text-muted-foreground">Admin note: {r.admin_notes}</div>}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {r.status === "pending" && (
+                    <>
+                      <button onClick={() => act(r, "approve")} disabled={busy[r.id]} className="btn-blood hover:btn-blood-hover text-xs px-4 py-2 flex items-center gap-1 disabled:opacity-40"><Check size={12} /> Approve</button>
+                      <button onClick={() => act(r, "decline")} disabled={busy[r.id]} className="border border-foreground/20 hover:border-blood text-xs px-4 py-2 flex items-center gap-1 disabled:opacity-40"><X size={12} /> Decline</button>
+                    </>
+                  )}
+                  {r.status === "approved" && (
+                    <button onClick={() => act(r, "fulfill")} disabled={busy[r.id]} className="border border-foreground/20 hover:border-blood text-xs px-4 py-2 flex items-center gap-1 disabled:opacity-40"><Check size={12} /> Mark fulfilled</button>
+                  )}
+                </div>
               </div>
             </div>
           ))}
