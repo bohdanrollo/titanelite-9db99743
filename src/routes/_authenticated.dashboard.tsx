@@ -19,7 +19,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 
-type Tab = "protocols" | "messages" | "peptalk" | "peptides" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning" | "myths" | "labs" | "nutrition";
+type Tab = "protocols" | "messages" | "peptalk" | "peptides" | "dosing" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning" | "myths" | "labs" | "nutrition";
 
 
 function Dashboard() {
