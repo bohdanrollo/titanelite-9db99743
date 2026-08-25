@@ -23,6 +23,8 @@ function Page() {
     { i: MessagesSquare, t: "Coach Messaging", d: "Message your coach directly from the dashboard and get replies in the same thread. Included with Full Access." },
     { i: MessageCircle, t: "Pep Talk AI", d: "Ask anything about peptide effects, dosing, timing, stacking, and safety — instant research answers." },
     { i: Beaker, t: "Top 50 Peptides", d: "A searchable research library covering the most popular compounds and what each is studied for." },
+    { i: Syringe, t: "Dosing Guide", d: "Typical research dosing ranges, escalation steps, cycling and weekly schedules for 21 compounds — with mechanism of action and what researchers observe over time. Included with Limited and Full Access." },
+
     { i: ListChecks, t: "My Stack", d: "Track every peptide, dose, unit, frequency, schedule, and notes in your personal dosing log." },
     { i: Droplets, t: "Supplies Guide", d: "BAC water, insulin syringes, alcohol wipes, plus storage techniques before and after reconstitution." },
     { i: FlaskConical, t: "Reconstitution", d: "Step-by-step mixing instructions: roll the vial gently in your hands until the powder dissolves — never shake." },
