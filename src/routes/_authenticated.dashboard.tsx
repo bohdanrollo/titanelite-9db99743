@@ -115,7 +115,9 @@ function Dashboard() {
               { k: "messages", l: "Messages", i: MessagesSquare, g: "Plan" },
               { k: "mystack", l: "My Stack", i: ListChecks, g: "Plan" },
               { k: "peptides", l: "Peptides", i: Beaker, g: "Research" },
+              { k: "dosing", l: "Dosing Guide", i: Syringe, g: "Research" },
               { k: "combos", l: "Combos", i: BookOpen, g: "Research" },
+
               { k: "lifting", l: "Lifting", i: Dumbbell, g: "Research" },
               { k: "learning", l: "Learning", i: GraduationCap, g: "Research" },
               { k: "myths", l: "Myth vs Evidence", i: Scale, g: "Research" },
