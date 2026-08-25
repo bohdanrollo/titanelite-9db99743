@@ -264,6 +264,8 @@ export default function DosingGuide() {
         )}
       </div>
 
+      <RequestPeptide />
+
       <div className="mt-8 border-t border-foreground/10 pt-5">
         <p className="text-eyebrow">Compliance notice</p>
         <p className="text-sm text-muted-foreground mt-2 max-w-3xl">{DOSING_COMPLIANCE}</p>
