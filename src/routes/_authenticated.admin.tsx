@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2, DollarSign, Check, X, Trash2, Lock, Video, MessagesSquare, RefreshCw, Gift } from "lucide-react";
+import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2, DollarSign, Check, X, Trash2, Lock, Video, MessagesSquare, RefreshCw, Gift, FlaskConical } from "lucide-react";
 import { generateProtocolDraft, saveProtocolDraft, sendProtocol, getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import { approveAffiliate, rejectAffiliate, deleteAffiliate, markAffiliatePaid, resendApprovedAffiliateEmails, setAffiliatePayoutRate } from "@/lib/affiliates.functions";
 import { grantFullAccessByEmail } from "@/lib/admin-access.functions";
@@ -12,6 +12,7 @@ import { grantAccess, revokeAccess, listAccess } from "@/lib/admin-access.functi
 import { syncStripeAccess } from "@/lib/stripe-sync.functions";
 import { adminListAffiliateVideos, reviewAffiliateVideo } from "@/lib/affiliate-videos.functions";
 import { adminListProductRequests, reviewProductRequest } from "@/lib/affiliate-rewards.functions";
+import { adminListPeptideRequests, reviewPeptideRequest, deletePeptideRequest } from "@/lib/peptide-requests.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { AdminMessages } from "@/components/Messaging";
 
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: Admin,
 });
 
-type Tab = "clients" | "intakes" | "protocols" | "messages" | "affiliates" | "videos" | "product";
+type Tab = "clients" | "intakes" | "protocols" | "messages" | "affiliates" | "videos" | "product" | "peptide-requests";
 
 
 function Admin() {
@@ -75,6 +76,7 @@ function Admin() {
             { k: "affiliates", l: "Affiliates", i: DollarSign },
             { k: "videos", l: "Video incentives", i: Video },
             { k: "product", l: "Free product", i: Gift },
+            { k: "peptide-requests", l: "Peptide requests", i: FlaskConical },
           ] as const).map((t) => (
             <button
               key={t.k}
@@ -94,6 +96,7 @@ function Admin() {
           {tab === "affiliates" && <AffiliatesAdmin />}
           {tab === "videos" && <VideoIncentivesAdmin />}
           {tab === "product" && <ProductRequestsAdmin />}
+          {tab === "peptide-requests" && <PeptideRequestsAdmin />}
         </div>
       </section>
     </div>
@@ -1221,6 +1224,129 @@ function ProductRequestsAdmin() {
                   {r.status === "approved" && (
                     <button onClick={() => act(r, "fulfill")} disabled={busy[r.id]} className="border border-foreground/20 hover:border-blood text-xs px-4 py-2 flex items-center gap-1 disabled:opacity-40"><Check size={12} /> Mark fulfilled</button>
                   )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+type AdminPeptideRequest = {
+  id: string;
+  peptide_name: string;
+  reason: string | null;
+  status: "new" | "added" | "declined";
+  admin_notes: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  client_name: string | null;
+  client_email: string | null;
+};
+
+function PeptideRequestsAdmin() {
+  const listFn = useServerFn(adminListPeptideRequests);
+  const reviewFn = useServerFn(reviewPeptideRequest);
+  const deleteFn = useServerFn(deletePeptideRequest);
+  const [rows, setRows] = useState<AdminPeptideRequest[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<"new" | "added" | "declined" | "all">("new");
+  const [busy, setBusy] = useState<Record<string, boolean>>({});
+
+  function load() {
+    setLoading(true);
+    listFn()
+      .then((r) => setRows((r.requests as AdminPeptideRequest[]) ?? []))
+      .catch((e: unknown) => toast.error(e instanceof Error ? e.message : "Failed to load"))
+      .finally(() => setLoading(false));
+  }
+  useEffect(load, []);
+
+  const filtered = filter === "all" ? rows : rows.filter((r) => r.status === filter);
+  const newCount = rows.filter((r) => r.status === "new").length;
+
+  async function act(r: AdminPeptideRequest, action: "added" | "declined") {
+    let notes: string | undefined;
+    if (action === "declined") {
+      const n = prompt("Reason for declining (optional, shown to the client):", "");
+      if (n === null) return;
+      notes = n.trim() || undefined;
+    }
+    setBusy((b) => ({ ...b, [r.id]: true }));
+    try {
+      await reviewFn({ data: { id: r.id, action, notes } });
+      toast.success(action === "added" ? "Marked added" : "Declined");
+      load();
+    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
+    finally { setBusy((b) => { const n = { ...b }; delete n[r.id]; return n; }); }
+  }
+
+  async function remove(r: AdminPeptideRequest) {
+    if (!confirm(`Delete the request for "${r.peptide_name}"?`)) return;
+    setBusy((b) => ({ ...b, [r.id]: true }));
+    try {
+      await deleteFn({ data: { id: r.id } });
+      load();
+    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
+    finally { setBusy((b) => { const n = { ...b }; delete n[r.id]; return n; }); }
+  }
+
+  return (
+    <div>
+      <div className="grid sm:grid-cols-3 gap-4 mb-6">
+        <div className="border border-foreground/15 p-4">
+          <div className="text-eyebrow">New requests</div>
+          <div className="mt-2 font-display text-3xl text-blood">{newCount}</div>
+        </div>
+        <div className="border border-foreground/15 p-4">
+          <div className="text-eyebrow">Total requests</div>
+          <div className="mt-2 font-display text-3xl">{rows.length}</div>
+        </div>
+        <div className="border border-foreground/15 p-4">
+          <div className="text-eyebrow">Added to guide</div>
+          <div className="mt-2 font-display text-3xl">{rows.filter((r) => r.status === "added").length}</div>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-4">
+        {(["new", "added", "declined", "all"] as const).map((f) => (
+          <button key={f} onClick={() => setFilter(f)}
+            className={`px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] border ${filter === f ? "border-blood text-blood" : "border-foreground/20 text-muted-foreground hover:text-foreground"}`}>
+            {f}
+          </button>
+        ))}
+      </div>
+
+      {loading ? (
+        <div className="text-eyebrow">Loading…</div>
+      ) : filtered.length === 0 ? (
+        <div className="text-muted-foreground text-sm">No peptide requests in this view.</div>
+      ) : (
+        <div className="space-y-3">
+          {filtered.map((r) => (
+            <div key={r.id} className="border border-foreground/15 p-5">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <div className="font-display text-xl">{r.peptide_name}</div>
+                    <span className="inline-block px-2 py-0.5 border font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground border-foreground/20">{r.status}</span>
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground font-mono">
+                    {r.client_name || "Client"} · {r.client_email ?? "—"} · {new Date(r.created_at).toLocaleDateString()}
+                  </div>
+                  {r.reason && <div className="mt-3 text-sm text-muted-foreground whitespace-pre-wrap">{r.reason}</div>}
+                  {r.admin_notes && <div className="mt-2 text-xs text-muted-foreground">Admin note: {r.admin_notes}</div>}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {r.status === "new" && (
+                    <>
+                      <button onClick={() => act(r, "added")} disabled={busy[r.id]} className="btn-blood hover:btn-blood-hover text-xs px-4 py-2 flex items-center gap-1 disabled:opacity-40"><Check size={12} /> Mark added</button>
+                      <button onClick={() => act(r, "declined")} disabled={busy[r.id]} className="border border-foreground/20 hover:border-blood text-xs px-4 py-2 flex items-center gap-1 disabled:opacity-40"><X size={12} /> Decline</button>
+                    </>
+                  )}
+                  <button onClick={() => remove(r)} disabled={busy[r.id]} className="border border-foreground/20 hover:border-blood text-xs px-4 py-2 flex items-center gap-1 disabled:opacity-40"><Trash2 size={12} /> Delete</button>
                 </div>
               </div>
             </div>
