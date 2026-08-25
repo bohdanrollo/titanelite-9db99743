@@ -147,6 +147,8 @@ const TILES: Tile[] = [
   { icon: Utensils, title: "Calorie tracker", body: "Search foods and drinks by brand, log macros, and keep every past day saved.", span: "" },
   { icon: Calculator, title: "Dose calculator", body: "A true-to-life 100-unit syringe that shows your exact draw.", span: "" },
   { icon: Layers, title: "My Stack", body: "Track every compound, dose, and cycle in one place.", span: "" },
+  { icon: Syringe, title: "Dosing guide", body: "Research dosing ranges, escalations, and weekly schedules for 21 compounds.", span: "md:col-span-2" },
+
   { icon: Bot, title: "Pep Talk AI", body: "Ask peptide questions and get answers on demand.", span: "" },
   { icon: MessageSquare, title: "Coach messaging", body: "Message your coach directly from the dashboard (Full Access).", span: "md:col-span-2" },
   { icon: GraduationCap, title: "Learning center", body: "Mini courses plus myth-vs-evidence breakdowns.", span: "" },

@@ -7,8 +7,10 @@ export type AccessTier = "limited" | "full" | null;
 
 export const LIMITED_TABS = [
   "peptides",
+  "dosing",
   "combos",
   "learning",
+
   "myths",
   "lifting",
   "supplies",

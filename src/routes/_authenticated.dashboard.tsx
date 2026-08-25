@@ -10,6 +10,8 @@ import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import ReactMarkdown from "react-markdown";
 import PeptideLibrary from "@/components/PeptideLibrary";
+import DosingGuide from "@/components/DosingGuide";
+
 import { ClientMessages } from "@/components/Messaging";
 import LabAnalysis from "@/components/LabAnalysis";
 import Nutrition from "@/components/Nutrition";
@@ -19,7 +21,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 
-type Tab = "protocols" | "messages" | "peptalk" | "peptides" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning" | "myths" | "labs" | "nutrition";
+type Tab = "protocols" | "messages" | "peptalk" | "peptides" | "dosing" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning" | "myths" | "labs" | "nutrition";
 
 
 function Dashboard() {
@@ -115,7 +117,9 @@ function Dashboard() {
               { k: "messages", l: "Messages", i: MessagesSquare, g: "Plan" },
               { k: "mystack", l: "My Stack", i: ListChecks, g: "Plan" },
               { k: "peptides", l: "Peptides", i: Beaker, g: "Research" },
+              { k: "dosing", l: "Dosing Guide", i: Syringe, g: "Research" },
               { k: "combos", l: "Combos", i: BookOpen, g: "Research" },
+
               { k: "lifting", l: "Lifting", i: Dumbbell, g: "Research" },
               { k: "learning", l: "Learning", i: GraduationCap, g: "Research" },
               { k: "myths", l: "Myth vs Evidence", i: Scale, g: "Research" },
@@ -204,6 +208,8 @@ function Dashboard() {
           {tab === "messages" && isTabAllowed("messages", tier, isAdmin) && user && <ClientMessages myId={user.id} />}
           {tab === "peptalk" && isTabAllowed("peptalk", tier, isAdmin) && <PepTalk />}
           {tab === "peptides" && isTabAllowed("peptides", tier, isAdmin) && <Peptides />}
+          {tab === "dosing" && isTabAllowed("dosing", tier, isAdmin) && <DosingGuide />}
+
           {tab === "mystack" && isTabAllowed("mystack", tier, isAdmin) && <MyStack />}
           {tab === "supplies" && isTabAllowed("supplies", tier, isAdmin) && <Supplies />}
           {tab === "reconstitution" && isTabAllowed("reconstitution", tier, isAdmin) && <Reconstitution />}
