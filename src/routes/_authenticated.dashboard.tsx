@@ -10,6 +10,8 @@ import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import ReactMarkdown from "react-markdown";
 import PeptideLibrary from "@/components/PeptideLibrary";
+import DosingGuide from "@/components/DosingGuide";
+
 import { ClientMessages } from "@/components/Messaging";
 import LabAnalysis from "@/components/LabAnalysis";
 import Nutrition from "@/components/Nutrition";
