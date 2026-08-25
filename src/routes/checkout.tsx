@@ -39,6 +39,8 @@ const PLANS: Plan[] = [
     features: [
       "Full client dashboard access",
       "Peptides research library",
+      "Dosing Guide with ranges & schedules",
+
       "Combos, Myths, Learning center",
       "My Stack dose tracker",
       "Peptide dose calculator",
