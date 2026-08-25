@@ -206,6 +206,8 @@ function Dashboard() {
           {tab === "messages" && isTabAllowed("messages", tier, isAdmin) && user && <ClientMessages myId={user.id} />}
           {tab === "peptalk" && isTabAllowed("peptalk", tier, isAdmin) && <PepTalk />}
           {tab === "peptides" && isTabAllowed("peptides", tier, isAdmin) && <Peptides />}
+          {tab === "dosing" && isTabAllowed("dosing", tier, isAdmin) && <DosingGuide />}
+
           {tab === "mystack" && isTabAllowed("mystack", tier, isAdmin) && <MyStack />}
           {tab === "supplies" && isTabAllowed("supplies", tier, isAdmin) && <Supplies />}
           {tab === "reconstitution" && isTabAllowed("reconstitution", tier, isAdmin) && <Reconstitution />}
