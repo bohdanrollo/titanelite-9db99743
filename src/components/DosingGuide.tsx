@@ -1,6 +1,110 @@
-import { useMemo, useState } from "react";
-import { Search, ChevronDown, Syringe, CalendarClock, Target, Microscope } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Search, ChevronDown, Syringe, CalendarClock, Target, Microscope, Plus, Loader2 } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
 import { DOSING_GUIDE, DOSING_CATEGORIES, DOSING_COMPLIANCE } from "@/lib/dosing-guide";
+import { submitPeptideRequest, listMyPeptideRequests } from "@/lib/peptide-requests.functions";
+
+type MyRequest = {
+  id: string;
+  peptide_name: string;
+  reason: string | null;
+  status: string;
+  admin_notes: string | null;
+  created_at: string;
+};
+
+function RequestPeptide() {
+  const submitFn = useServerFn(submitPeptideRequest);
+  const listFn = useServerFn(listMyPeptideRequests);
+  const [name, setName] = useState("");
+  const [reason, setReason] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [rows, setRows] = useState<MyRequest[]>([]);
+
+  function load() {
+    listFn()
+      .then((r) => setRows((r.requests as MyRequest[]) ?? []))
+      .catch(() => {});
+  }
+  useEffect(load, []);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (name.trim().length < 2) {
+      toast.error("Enter the peptide name");
+      return;
+    }
+    setBusy(true);
+    try {
+      await submitFn({ data: { peptideName: name.trim(), reason: reason.trim() || undefined } });
+      toast.success("Request sent — your coach will review it.");
+      setName("");
+      setReason("");
+      load();
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to send request");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="mt-10 border border-foreground/15 p-5 sm:p-6">
+      <p className="text-eyebrow text-blood">Missing something?</p>
+      <h4 className="font-display text-2xl sm:text-3xl mt-1">Request a peptide</h4>
+      <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
+        Don't see a compound in the guide? Send it over and it'll be reviewed and added with full research dosing
+        information.
+      </p>
+
+      <form onSubmit={submit} className="mt-5 grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_auto] sm:items-start">
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Peptide name"
+          className="w-full bg-background border border-foreground/15 px-4 py-3 text-sm focus:outline-none focus:border-blood"
+        />
+        <input
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          placeholder="Why you're interested (optional)"
+          className="w-full bg-background border border-foreground/15 px-4 py-3 text-sm focus:outline-none focus:border-blood"
+        />
+        <button type="submit" disabled={busy} className="btn-primary justify-center disabled:opacity-60">
+          {busy ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />} Send request
+        </button>
+      </form>
+
+      {rows.length > 0 && (
+        <div className="mt-6">
+          <p className="text-eyebrow">Your requests</p>
+          <ul className="mt-3 border border-foreground/10 divide-y divide-foreground/10">
+            {rows.map((r) => (
+              <li key={r.id} className="px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+                <span className="min-w-0">
+                  <span className="text-sm block truncate">{r.peptide_name}</span>
+                  {r.admin_notes && <span className="text-xs text-muted-foreground block mt-0.5">{r.admin_notes}</span>}
+                </span>
+                <span
+                  className={`font-mono text-[10px] uppercase tracking-[0.14em] border px-2 py-1 ${
+                    r.status === "added"
+                      ? "border-blood text-blood"
+                      : r.status === "declined"
+                        ? "border-foreground/20 text-muted-foreground"
+                        : "border-foreground/30"
+                  }`}
+                >
+                  {r.status === "new" ? "Pending" : r.status}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function DosingGuide() {
   const [query, setQuery] = useState("");
