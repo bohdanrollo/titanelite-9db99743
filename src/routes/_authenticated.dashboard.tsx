@@ -1344,6 +1344,11 @@ function MyStack() {
                     {item.frequency ? ` · ${item.frequency}` : ""}
                   </div>
                   {item.schedule && <div className="mt-1 text-xs text-muted-foreground">{item.schedule}</div>}
+                  <div className="mt-1 text-[11px] text-muted-foreground">
+                    {(item.time_slots?.length ? item.time_slots : ["morning"]).map((s) => s[0]!.toUpperCase() + s.slice(1)).join(" · ")}
+                    {" — "}
+                    {(item.days_of_week?.length ?? 7) === 7 ? "every day" : (item.days_of_week ?? []).map((d) => DAY_LABELS[d]).join(", ")}
+                  </div>
                 </div>
                 <div className="flex shrink-0 gap-1">
                   <button onClick={() => openEdit(item)} title="Edit" className="p-1.5 text-muted-foreground hover:text-foreground"><Pencil size={14} /></button>
