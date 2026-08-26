@@ -15,6 +15,7 @@ import DosingGuide from "@/components/DosingGuide";
 import { ClientMessages } from "@/components/Messaging";
 import LabAnalysis from "@/components/LabAnalysis";
 import Nutrition from "@/components/Nutrition";
+import DoseTracker, { SLOTS, DAY_LABELS, inferSchedule, type Slot } from "@/components/DoseTracker";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Client Dashboard — Titan Elite" }] }),
@@ -1075,6 +1076,8 @@ type StackItem = {
   notes: string | null;
   active: boolean;
   created_at: string;
+  time_slots: string[] | null;
+  days_of_week: number[] | null;
 };
 
 type StackFormState = {
@@ -1085,9 +1088,11 @@ type StackFormState = {
   schedule: string;
   notes: string;
   active: boolean;
+  time_slots: Slot[];
+  days_of_week: number[];
 };
 
-const EMPTY_STACK_FORM: StackFormState = { name: "", dose: "", unit: "mcg", frequency: "", schedule: "", notes: "", active: true };
+const EMPTY_STACK_FORM: StackFormState = { name: "", dose: "", unit: "mcg", frequency: "", schedule: "", notes: "", active: true, time_slots: ["morning"], days_of_week: [0, 1, 2, 3, 4, 5, 6] };
 
 function MyStack() {
   const { user } = useAuth();
@@ -1097,13 +1102,14 @@ function MyStack() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<StackFormState>(EMPTY_STACK_FORM);
   const [saving, setSaving] = useState(false);
+  const [slotsTouched, setSlotsTouched] = useState(false);
 
   async function load() {
     if (!user) return;
     setLoading(true);
     const { data, error } = await supabase
       .from("peptide_stacks")
-      .select("id, name, dose, unit, frequency, schedule, notes, active, created_at")
+      .select("id, name, dose, unit, frequency, schedule, notes, active, created_at, time_slots, days_of_week")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
     if (error) toast.error(error.message);
@@ -1116,6 +1122,7 @@ function MyStack() {
   function openNew() {
     setEditing(null);
     setForm(EMPTY_STACK_FORM);
+    setSlotsTouched(false);
     setShowForm(true);
   }
 
@@ -1129,14 +1136,29 @@ function MyStack() {
       schedule: item.schedule ?? "",
       notes: item.notes ?? "",
       active: item.active,
+      time_slots: (item.time_slots?.length ? item.time_slots : ["morning"]) as Slot[],
+      days_of_week: item.days_of_week?.length ? item.days_of_week : [0, 1, 2, 3, 4, 5, 6],
     });
+    setSlotsTouched(true);
     setShowForm(true);
+  }
+
+  /** Keep the tracker schedule in sync with what the client types, until they edit it manually. */
+  function updateTiming(next: { frequency?: string; schedule?: string }) {
+    setForm((prev) => {
+      const merged = { ...prev, ...next };
+      if (slotsTouched) return merged;
+      const guess = inferSchedule(merged.frequency, merged.schedule);
+      return { ...merged, time_slots: guess.slots, days_of_week: guess.days };
+    });
   }
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
     if (!user) return;
     if (!form.name.trim()) { toast.error("Peptide name is required"); return; }
+    if (form.time_slots.length === 0) { toast.error("Pick at least one time of day"); return; }
+    if (form.days_of_week.length === 0) { toast.error("Pick at least one day"); return; }
     setSaving(true);
     const payload = {
       user_id: user.id,
@@ -1147,6 +1169,8 @@ function MyStack() {
       schedule: form.schedule.trim() || null,
       notes: form.notes.trim() || null,
       active: form.active,
+      time_slots: form.time_slots,
+      days_of_week: form.days_of_week,
     };
     const { error } = editing
       ? await supabase.from("peptide_stacks").update(payload).eq("id", editing.id)
@@ -1181,7 +1205,8 @@ function MyStack() {
           <div className="text-eyebrow">Dosing & Stacks</div>
           <h2 className="mt-2 font-display text-2xl sm:text-3xl">My Stack</h2>
           <p className="mt-2 text-sm text-muted-foreground max-w-xl">
-            Track the peptides you're running, your doses, and your schedule. Everything saves to your account — edit or add anytime.
+            Track the peptides you're running, your doses, and your schedule. Anything you add here lands on your daily
+            tracker automatically — just tap to mark each injection done.
           </p>
         </div>
         {!showForm && (
@@ -1190,6 +1215,8 @@ function MyStack() {
           </button>
         )}
       </div>
+
+      {!loading && <DoseTracker items={items} />}
 
       {showForm && (
         <form onSubmit={save} className="border border-foreground/15 bg-foreground/[0.02] p-4 sm:p-6 space-y-4">
@@ -1217,12 +1244,70 @@ function MyStack() {
               </Field>
             </div>
             <Field label="Frequency">
-              <input value={form.frequency} onChange={(e) => setForm({ ...form, frequency: e.target.value })} placeholder="e.g. 2x daily" className="stack-input" />
+              <input value={form.frequency} onChange={(e) => updateTiming({ frequency: e.target.value })} placeholder="e.g. 2x daily" className="stack-input" />
             </Field>
             <Field label="When / Schedule">
-              <input value={form.schedule} onChange={(e) => setForm({ ...form, schedule: e.target.value })} placeholder="e.g. AM & PM, Mon–Fri" className="stack-input" />
+              <input value={form.schedule} onChange={(e) => updateTiming({ schedule: e.target.value })} placeholder="e.g. AM & PM, Mon–Fri" className="stack-input" />
             </Field>
           </div>
+
+          <div className="border border-foreground/10 p-3 sm:p-4 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="text-eyebrow">Daily tracker schedule</div>
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                {slotsTouched ? "Manual" : "Auto-filled from what you typed"}
+              </span>
+            </div>
+            <div>
+              <div className="mb-1.5 text-[10px] font-mono uppercase tracking-[0.14em] text-muted-foreground">Time of day</div>
+              <div className="flex flex-wrap gap-2">
+                {SLOTS.map(({ key, label, icon: Icon }) => {
+                  const on = form.time_slots.includes(key);
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => {
+                        setSlotsTouched(true);
+                        setForm((p) => ({ ...p, time_slots: on ? p.time_slots.filter((s) => s !== key) : [...p.time_slots, key] }));
+                      }}
+                      className={`inline-flex items-center gap-1.5 border px-3 py-1.5 text-xs transition ${on ? "border-blood text-blood bg-blood/10" : "border-foreground/15 text-muted-foreground hover:text-foreground"}`}
+                    >
+                      <Icon size={13} /> {label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div>
+              <div className="mb-1.5 text-[10px] font-mono uppercase tracking-[0.14em] text-muted-foreground">Days</div>
+              <div className="flex flex-wrap gap-1.5">
+                {DAY_LABELS.map((d, i) => {
+                  const on = form.days_of_week.includes(i);
+                  return (
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() => {
+                        setSlotsTouched(true);
+                        setForm((p) => ({ ...p, days_of_week: on ? p.days_of_week.filter((x) => x !== i) : [...p.days_of_week, i].sort((a, b) => a - b) }));
+                      }}
+                      className={`w-11 border py-1.5 text-[11px] transition ${on ? "border-blood text-blood bg-blood/10" : "border-foreground/15 text-muted-foreground hover:text-foreground"}`}
+                    >
+                      {d}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="mt-2 flex flex-wrap gap-3 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                <button type="button" onClick={() => { setSlotsTouched(true); setForm((p) => ({ ...p, days_of_week: [0, 1, 2, 3, 4, 5, 6] })); }} className="hover:text-blood">Every day</button>
+                <button type="button" onClick={() => { setSlotsTouched(true); setForm((p) => ({ ...p, days_of_week: [1, 2, 3, 4, 5] })); }} className="hover:text-blood">Weekdays</button>
+                <button type="button" onClick={() => { setSlotsTouched(true); setForm((p) => ({ ...p, days_of_week: [1, 3, 5] })); }} className="hover:text-blood">Mon/Wed/Fri</button>
+                <button type="button" onClick={() => { setSlotsTouched(true); setForm((p) => ({ ...p, days_of_week: [1] })); }} className="hover:text-blood">Weekly</button>
+              </div>
+            </div>
+          </div>
+
           <Field label="Notes">
             <textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={3} placeholder="Cycle length, stack context, how you're feeling…" className="stack-input" />
           </Field>
@@ -1259,6 +1344,11 @@ function MyStack() {
                     {item.frequency ? ` · ${item.frequency}` : ""}
                   </div>
                   {item.schedule && <div className="mt-1 text-xs text-muted-foreground">{item.schedule}</div>}
+                  <div className="mt-1 text-[11px] text-muted-foreground">
+                    {(item.time_slots?.length ? item.time_slots : ["morning"]).map((s) => s[0]!.toUpperCase() + s.slice(1)).join(" · ")}
+                    {" — "}
+                    {(item.days_of_week?.length ?? 7) === 7 ? "every day" : (item.days_of_week ?? []).map((d) => DAY_LABELS[d]).join(", ")}
+                  </div>
                 </div>
                 <div className="flex shrink-0 gap-1">
                   <button onClick={() => openEdit(item)} title="Edit" className="p-1.5 text-muted-foreground hover:text-foreground"><Pencil size={14} /></button>

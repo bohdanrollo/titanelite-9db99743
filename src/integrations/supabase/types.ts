@@ -632,6 +632,47 @@ export type Database = {
         }
         Relationships: []
       }
+      peptide_dose_log: {
+        Row: {
+          completed_at: string
+          created_at: string
+          dose_date: string
+          id: string
+          stack_id: string
+          time_slot: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          created_at?: string
+          dose_date: string
+          id?: string
+          stack_id: string
+          time_slot: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          created_at?: string
+          dose_date?: string
+          id?: string
+          stack_id?: string
+          time_slot?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "peptide_dose_log_stack_id_fkey"
+            columns: ["stack_id"]
+            isOneToOne: false
+            referencedRelation: "peptide_stacks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       peptide_requests: {
         Row: {
           admin_notes: string | null
@@ -672,12 +713,14 @@ export type Database = {
         Row: {
           active: boolean
           created_at: string
+          days_of_week: number[]
           dose: string | null
           frequency: string | null
           id: string
           name: string
           notes: string | null
           schedule: string | null
+          time_slots: string[]
           unit: string | null
           updated_at: string
           user_id: string
@@ -685,12 +728,14 @@ export type Database = {
         Insert: {
           active?: boolean
           created_at?: string
+          days_of_week?: number[]
           dose?: string | null
           frequency?: string | null
           id?: string
           name: string
           notes?: string | null
           schedule?: string | null
+          time_slots?: string[]
           unit?: string | null
           updated_at?: string
           user_id: string
@@ -698,12 +743,14 @@ export type Database = {
         Update: {
           active?: boolean
           created_at?: string
+          days_of_week?: number[]
           dose?: string | null
           frequency?: string | null
           id?: string
           name?: string
           notes?: string | null
           schedule?: string | null
+          time_slots?: string[]
           unit?: string | null
           updated_at?: string
           user_id?: string
