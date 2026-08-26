@@ -1107,7 +1107,7 @@ function MyStack() {
     setLoading(true);
     const { data, error } = await supabase
       .from("peptide_stacks")
-      .select("id, name, dose, unit, frequency, schedule, notes, active, created_at")
+      .select("id, name, dose, unit, frequency, schedule, notes, active, created_at, time_slots, days_of_week")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
     if (error) toast.error(error.message);
@@ -1120,6 +1120,7 @@ function MyStack() {
   function openNew() {
     setEditing(null);
     setForm(EMPTY_STACK_FORM);
+    setSlotsTouched(false);
     setShowForm(true);
   }
 
@@ -1133,14 +1134,29 @@ function MyStack() {
       schedule: item.schedule ?? "",
       notes: item.notes ?? "",
       active: item.active,
+      time_slots: (item.time_slots?.length ? item.time_slots : ["morning"]) as Slot[],
+      days_of_week: item.days_of_week?.length ? item.days_of_week : [0, 1, 2, 3, 4, 5, 6],
     });
+    setSlotsTouched(true);
     setShowForm(true);
+  }
+
+  /** Keep the tracker schedule in sync with what the client types, until they edit it manually. */
+  function updateTiming(next: { frequency?: string; schedule?: string }) {
+    setForm((prev) => {
+      const merged = { ...prev, ...next };
+      if (slotsTouched) return merged;
+      const guess = inferSchedule(merged.frequency, merged.schedule);
+      return { ...merged, time_slots: guess.slots, days_of_week: guess.days };
+    });
   }
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
     if (!user) return;
     if (!form.name.trim()) { toast.error("Peptide name is required"); return; }
+    if (form.time_slots.length === 0) { toast.error("Pick at least one time of day"); return; }
+    if (form.days_of_week.length === 0) { toast.error("Pick at least one day"); return; }
     setSaving(true);
     const payload = {
       user_id: user.id,
@@ -1151,6 +1167,8 @@ function MyStack() {
       schedule: form.schedule.trim() || null,
       notes: form.notes.trim() || null,
       active: form.active,
+      time_slots: form.time_slots,
+      days_of_week: form.days_of_week,
     };
     const { error } = editing
       ? await supabase.from("peptide_stacks").update(payload).eq("id", editing.id)
