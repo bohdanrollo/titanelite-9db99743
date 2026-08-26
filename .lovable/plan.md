@@ -1,114 +1,74 @@
-# Stripe + Emails + PDF Protocols — Build Plan
+# Discord notifications for paid referrals and approved sub-affiliates
 
-Three integrated systems wired into the existing intake → review → protocol flow.
+## What the code does today (verified)
 
----
+### Where a referral row is inserted
+Only one place in the whole app inserts into `public.affiliate_referrals`:
+`attributeAffiliateFromSession()` in `src/routes/api/public/payments/webhook.ts`.
 
-## 1. Stripe Checkout (Bring-your-own-key)
+Flow, on Stripe `checkout.session.completed` / `checkout.session.async_payment_succeeded`
+(skipped when `payment_status === "unpaid"`, so only paid checkouts count):
 
-**Setup**
-- Ask you for `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` via the secrets dialog.
-- You'll create three Stripe products/prices in your dashboard and paste the price IDs:
-  - Foundation — $59 one-time
-  - Elite — $199/month
-  - Apex — $399/month
-- Store IDs in `src/lib/stripe-config.ts` (just public references, no secrets).
+1. Requires `session.metadata.userId`.
+2. Re-retrieves the session from Stripe with `expand: ["discounts.promotion_code"]`.
+3. Builds a candidate code list: promo codes used at checkout, plus `metadata.refCode`
+   (the `?ref=` link code carried through checkout).
+4. For each code (normalized to A-Z0-9, max 20): looks up `affiliates` where
+   `code = ...` and `status = 'approved'`. Skips self-referrals (`aff.user_id === userId`).
+5. Inserts `{ affiliate_id, referred_user_id, code_used }` into `affiliate_referrals`,
+   using the service-role client. Duplicate/unique errors are swallowed; other errors
+   are logged. Then `return` — one affiliate per buyer.
 
-**Flow**
-1. User submits intake → `purchases` row created (status `pending`).
-2. Redirects to `/checkout?plan=elite` → "Pay now" button calls `createCheckoutSession` server fn.
-3. Server fn creates Stripe Checkout Session (mode: `payment` for Foundation, `subscription` for Elite/Apex), passes intake_id + user_id in metadata, returns URL.
-4. Browser redirects to Stripe-hosted checkout.
-5. Webhook at `/api/public/stripe-webhook` (signature-verified) handles:
-   - `checkout.session.completed` → mark `purchases.status = 'paid'`, fire welcome email + intake-received email, notify admin.
-   - `invoice.payment_succeeded` (subs) → fire renewal email (skip first invoice).
-   - `customer.subscription.deleted` → mark canceled.
-6. Success page `/checkout/success` confirms and links to dashboard.
+### Is it in a transaction?
+No application-level transaction. It's a single PostgREST insert over HTTP, so the only
+transaction is Postgres' implicit per-statement one. Inside that statement,
+the `AFTER INSERT` row trigger `trg_referrals_recompute` fires
+`recompute_affiliate_totals()`, which in the same implicit transaction:
+- increments `affiliates.referral_count`,
+- every 5th referral adds `payout_cents_per_5` (default 2500) to `earnings_cents`,
+- and, if the affiliate has a `recruiter_affiliate_id`, adds $5 (500 cents) to that
+  recruiter's `recruit_earnings_cents`.
 
----
+So: the insert plus all totals updates are atomic together; nothing else in the webhook is.
+`DELETE` decrements `referral_count` only.
 
-## 2. Email Automation (Lovable Emails)
+### Affiliate approval and recruiter assignment
+- Applications are inserted client-side in `src/routes/affiliate.tsx` (`status: 'pending'`),
+  and `recruiter_affiliate_id` is set at that moment from the `?recruit=<CODE>` query param,
+  resolved through the `resolveRecruiterCode` server function (approved affiliates only).
+  It is never assigned later.
+- Approval happens in `approveAffiliate` in `src/lib/affiliates.functions.ts`: admin-only,
+  validates/uniquifies the code, links `user_id` by email, sets
+  `status = 'approved'`, `code`, `approved_at`, then best-effort sends the
+  `affiliate-approved` email. A "sub-affiliate" is simply an approved affiliate whose
+  `recruiter_affiliate_id` is non-null.
 
-**Setup (you do once)**
-- I'll trigger the email setup dialog → you configure your sender domain & DNS.
-- I'll then call `setup_email_infra` + `scaffold_transactional_email` to provision queue, send route, unsubscribe page.
+## Plan
 
-**Templates** (`src/lib/email-templates/`) — branded with Titan Elite design tokens:
-1. `welcome.tsx` — sent on first paid checkout. "Welcome to Titan Elite. Here's what happens next."
-2. `intake-received.tsx` — sent immediately after intake submit. Confirms receipt + 48h review window.
-3. `protocol-ready.tsx` — sent when coach clicks "Send to client" in admin. Contains link to dashboard + PDF attachment link.
-4. `renewal.tsx` — sent on each successful subscription renewal (Elite/Apex). Receipt summary + next cycle date.
+### 1. Discord webhook secret
+Add a `DISCORD_WEBHOOK_URL` secret (asked for at implementation time). All posting is
+server-side only and best-effort — a Discord failure must never fail a Stripe webhook
+or an approval.
 
-All triggers use the queued `sendTransactionalEmail` helper with idempotency keys.
+### 2. Shared notifier
+New `src/lib/discord.server.ts` exporting `sendDiscordNotification({ title, description, fields, color })`,
+which POSTs an embed to the webhook URL, wrapped in try/catch with a short timeout and a
+`console.warn` on failure. Returns void, never throws.
 
----
+### 3. Notification 1 — newly credited paid referral
+In `attributeAffiliateFromSession`, immediately after an insert succeeds with no error
+(so duplicates never re-notify), fire the notifier with: affiliate name/email + code,
+the referred user's email (looked up from `profiles`), the plan/tier if resolvable from
+the session, the affiliate's new `referral_count`, and whether this referral crossed a
+5-signup payout milestone. `await` it but keep it inside the existing try/catch so the
+webhook still returns 200.
 
-## 3. AI-Drafted PDF Protocols
+### 4. Notification 2 — newly approved sub-affiliate
+In `approveAffiliate`, after the status update succeeds and only when the affiliate's
+`recruiter_affiliate_id` is non-null, look up the recruiter's name/code and post: new
+sub-affiliate name, email, assigned code, referral URL, and the recruiting parent
+affiliate. Best-effort, alongside the existing email send.
 
-**Generation**
-- Admin opens an intake in `/admin` → "Generate draft protocol" button.
-- Calls `generateProtocolDraft` server fn → Lovable AI Gateway (`google/gemini-3-flash-preview`) with structured output schema:
-  - `training_block` (weeks, split, key lifts, progression)
-  - `peptide_protocol` (educational, with disclaimer text)
-  - `nutrition_notes`
-  - `recovery_notes`
-- Saves draft JSON to `protocols.draft_content`.
-
-**Coach review**
-- Editable form in admin shows the draft fields, coach edits as needed.
-- "Save draft" updates the row. "Approve & send" does:
-  1. Render PDF server-side (pdf-lib, no native deps — Worker-safe) with Titan Elite branding.
-  2. Upload to `client-uploads` bucket at `protocols/{user_id}/{protocol_id}.pdf` (signed URL, 7-day expiry).
-  3. Update `protocols.status = 'delivered'`, `pdf_url`, `delivered_at`.
-  4. Fire `protocol-ready` email with the signed link.
-
-**Client view**
-- `/dashboard` shows delivered protocols with download buttons (signed URL regenerated server-side on click so links don't go stale).
-
----
-
-## Technical details
-
-**New files**
-- `src/lib/stripe.server.ts` — Stripe SDK init, helpers
-- `src/lib/stripe-config.ts` — public price ID map
-- `src/lib/checkout.functions.ts` — `createCheckoutSession` server fn
-- `src/routes/api/public/stripe-webhook.ts` — signature-verified webhook
-- `src/routes/checkout.success.tsx` — post-payment landing
-- `src/lib/email-templates/{welcome,intake-received,protocol-ready,renewal}.tsx`
-- `src/lib/email/send.ts` — thin client helper
-- `src/lib/protocols.functions.ts` — `generateProtocolDraft`, `sendProtocol`, `getProtocolDownloadUrl`
-- `src/lib/pdf.server.ts` — pdf-lib renderer
-- `src/lib/ai-gateway.server.ts` — Lovable AI provider helper
-
-**Schema changes** (one migration)
-- `purchases`: add `stripe_session_id`, `stripe_subscription_id`, `stripe_customer_id`, `amount_cents`, `currency`
-- `protocols`: add `draft_content jsonb`, `pdf_url text`, `delivered_at timestamptz`; widen `status` enum if needed
-- `intakes`: add `purchase_id uuid` link
-- RLS already in place; tighten policies for new columns
-
-**Edits**
-- `src/routes/intake.tsx` — on submit, create purchase row + redirect to `/checkout?plan=X`
-- `src/routes/checkout.tsx` — wire "Select" button → `createCheckoutSession`
-- `src/routes/_authenticated.admin.tsx` — add "Generate draft" + "Send to client" UI
-- `src/routes/_authenticated.dashboard.tsx` — show delivered protocols with download
-
-**Secrets needed from you**
-- `STRIPE_SECRET_KEY`
-- `STRIPE_WEBHOOK_SECRET`
-
-`LOVABLE_API_KEY` is already provisioned for AI Gateway. Email infra is auto-managed once domain is set.
-
----
-
-## Sequencing
-
-1. Run DB migration (schema changes).
-2. Trigger email domain setup dialog → wait for you to complete DNS.
-3. Ask you for Stripe secrets + price IDs.
-4. Build Stripe layer (server fn + webhook + checkout UI).
-5. Set up email infra + scaffold templates + wire triggers.
-6. Build AI draft + PDF renderer + admin/dashboard UI.
-7. Test end-to-end with a Stripe test card.
-
-This is one continuous build — I'll stop between (2) and (3) only because both need your input.
+### Notes
+- No database changes are needed; both hooks live in existing server code paths.
+- Regular (non-recruited) approvals stay silent per the request; easy to widen later.
