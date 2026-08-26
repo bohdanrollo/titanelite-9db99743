@@ -1205,7 +1205,8 @@ function MyStack() {
           <div className="text-eyebrow">Dosing & Stacks</div>
           <h2 className="mt-2 font-display text-2xl sm:text-3xl">My Stack</h2>
           <p className="mt-2 text-sm text-muted-foreground max-w-xl">
-            Track the peptides you're running, your doses, and your schedule. Everything saves to your account — edit or add anytime.
+            Track the peptides you're running, your doses, and your schedule. Anything you add here lands on your daily
+            tracker automatically — just tap to mark each injection done.
           </p>
         </div>
         {!showForm && (
@@ -1214,6 +1215,8 @@ function MyStack() {
           </button>
         )}
       </div>
+
+      {!loading && <DoseTracker items={items} />}
 
       {showForm && (
         <form onSubmit={save} className="border border-foreground/15 bg-foreground/[0.02] p-4 sm:p-6 space-y-4">
@@ -1241,12 +1244,70 @@ function MyStack() {
               </Field>
             </div>
             <Field label="Frequency">
-              <input value={form.frequency} onChange={(e) => setForm({ ...form, frequency: e.target.value })} placeholder="e.g. 2x daily" className="stack-input" />
+              <input value={form.frequency} onChange={(e) => updateTiming({ frequency: e.target.value })} placeholder="e.g. 2x daily" className="stack-input" />
             </Field>
             <Field label="When / Schedule">
-              <input value={form.schedule} onChange={(e) => setForm({ ...form, schedule: e.target.value })} placeholder="e.g. AM & PM, Mon–Fri" className="stack-input" />
+              <input value={form.schedule} onChange={(e) => updateTiming({ schedule: e.target.value })} placeholder="e.g. AM & PM, Mon–Fri" className="stack-input" />
             </Field>
           </div>
+
+          <div className="border border-foreground/10 p-3 sm:p-4 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="text-eyebrow">Daily tracker schedule</div>
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                {slotsTouched ? "Manual" : "Auto-filled from what you typed"}
+              </span>
+            </div>
+            <div>
+              <div className="mb-1.5 text-[10px] font-mono uppercase tracking-[0.14em] text-muted-foreground">Time of day</div>
+              <div className="flex flex-wrap gap-2">
+                {SLOTS.map(({ key, label, icon: Icon }) => {
+                  const on = form.time_slots.includes(key);
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => {
+                        setSlotsTouched(true);
+                        setForm((p) => ({ ...p, time_slots: on ? p.time_slots.filter((s) => s !== key) : [...p.time_slots, key] }));
+                      }}
+                      className={`inline-flex items-center gap-1.5 border px-3 py-1.5 text-xs transition ${on ? "border-blood text-blood bg-blood/10" : "border-foreground/15 text-muted-foreground hover:text-foreground"}`}
+                    >
+                      <Icon size={13} /> {label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div>
+              <div className="mb-1.5 text-[10px] font-mono uppercase tracking-[0.14em] text-muted-foreground">Days</div>
+              <div className="flex flex-wrap gap-1.5">
+                {DAY_LABELS.map((d, i) => {
+                  const on = form.days_of_week.includes(i);
+                  return (
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() => {
+                        setSlotsTouched(true);
+                        setForm((p) => ({ ...p, days_of_week: on ? p.days_of_week.filter((x) => x !== i) : [...p.days_of_week, i].sort((a, b) => a - b) }));
+                      }}
+                      className={`w-11 border py-1.5 text-[11px] transition ${on ? "border-blood text-blood bg-blood/10" : "border-foreground/15 text-muted-foreground hover:text-foreground"}`}
+                    >
+                      {d}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="mt-2 flex flex-wrap gap-3 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                <button type="button" onClick={() => { setSlotsTouched(true); setForm((p) => ({ ...p, days_of_week: [0, 1, 2, 3, 4, 5, 6] })); }} className="hover:text-blood">Every day</button>
+                <button type="button" onClick={() => { setSlotsTouched(true); setForm((p) => ({ ...p, days_of_week: [1, 2, 3, 4, 5] })); }} className="hover:text-blood">Weekdays</button>
+                <button type="button" onClick={() => { setSlotsTouched(true); setForm((p) => ({ ...p, days_of_week: [1, 3, 5] })); }} className="hover:text-blood">Mon/Wed/Fri</button>
+                <button type="button" onClick={() => { setSlotsTouched(true); setForm((p) => ({ ...p, days_of_week: [1] })); }} className="hover:text-blood">Weekly</button>
+              </div>
+            </div>
+          </div>
+
           <Field label="Notes">
             <textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={3} placeholder="Cycle length, stack context, how you're feeling…" className="stack-input" />
           </Field>
