@@ -15,6 +15,7 @@ import DosingGuide from "@/components/DosingGuide";
 import { ClientMessages } from "@/components/Messaging";
 import LabAnalysis from "@/components/LabAnalysis";
 import Nutrition from "@/components/Nutrition";
+import DoseTracker, { SLOTS, DAY_LABELS, inferSchedule, type Slot } from "@/components/DoseTracker";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Client Dashboard — Titan Elite" }] }),
