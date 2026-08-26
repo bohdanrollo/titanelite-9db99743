@@ -302,7 +302,7 @@ async function attributeAffiliateFromSession(session: CheckoutSession, env: Stri
       if (!code) continue;
       const { data: aff } = await supa
         .from("affiliates")
-        .select("id, user_id")
+        .select("id, user_id, code, full_name, email, referral_count, payout_cents_per_5")
         .eq("code", code)
         .eq("status", "approved")
         .maybeSingle();
@@ -315,8 +315,34 @@ async function attributeAffiliateFromSession(session: CheckoutSession, env: Stri
         console.error("[webhook] affiliate attribution insert failed", error);
       } else if (!error) {
         console.log("[webhook] affiliate credited for purchase", { code, userId });
+        // Best-effort Discord ping — never let it break the webhook.
+        try {
+          const { sendDiscordNotification } = await import("@/lib/discord.server");
+          const { data: prof } = await supa
+            .from("profiles").select("email, full_name").eq("id", userId).maybeSingle();
+          const newCount = (aff.referral_count ?? 0) + 1;
+          const milestone = newCount % 5 === 0;
+          const payout = ((aff.payout_cents_per_5 ?? 2500) / 100).toFixed(2);
+          await sendDiscordNotification({
+            title: "New paid affiliate referral",
+            description: milestone
+              ? `Milestone hit — $${payout} payout earned at ${newCount} signups.`
+              : undefined,
+            fields: [
+              { name: "Affiliate", value: `${aff.full_name ?? aff.email ?? "Unknown"} (${aff.code})`, inline: true },
+              { name: "Total signups", value: String(newCount), inline: true },
+              { name: "New client", value: prof?.email ?? userId, inline: false },
+              { name: "Code used", value: code, inline: true },
+              { name: "Environment", value: env, inline: true },
+            ],
+            color: milestone ? 0x22c55e : 0xc1121f,
+          });
+        } catch (e) {
+          console.warn("[webhook] discord referral notify failed", e);
+        }
       }
       return; // one affiliate per buyer
+
     }
   } catch (e) {
     console.error("[webhook] affiliate attribution failed", e);
