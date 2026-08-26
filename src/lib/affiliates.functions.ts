@@ -29,7 +29,7 @@ export const approveAffiliate = createServerFn({ method: "POST" })
     if (existing) throw new Error(`Code "${code}" is already in use`);
 
     // Load application to find matching user by email
-    const { data: app } = await supabaseAdmin.from("affiliates").select("email, user_id").eq("id", data.id).maybeSingle();
+    const { data: app } = await supabaseAdmin.from("affiliates").select("email, user_id, full_name, recruiter_affiliate_id").eq("id", data.id).maybeSingle();
     if (!app) throw new Error("Application not found");
 
     let userId = app.user_id as string | null;
@@ -43,6 +43,37 @@ export const approveAffiliate = createServerFn({ method: "POST" })
       .update({ status: "approved", code, user_id: userId, approved_at: new Date().toISOString() })
       .eq("id", data.id);
     if (error) throw error;
+
+    // Discord ping for newly approved sub-affiliates (best-effort)
+    const recruiterId = (app as any).recruiter_affiliate_id as string | null;
+    if (recruiterId) {
+      try {
+        const { sendDiscordNotification } = await import("@/lib/discord.server");
+        const { data: parent } = await supabaseAdmin
+          .from("affiliates")
+          .select("full_name, email, code")
+          .eq("id", recruiterId)
+          .maybeSingle();
+        await sendDiscordNotification({
+          title: "New sub-affiliate approved",
+          fields: [
+            { name: "Sub-affiliate", value: (app as any).full_name || app.email || "Unknown", inline: true },
+            { name: "Email", value: app.email ?? "—", inline: true },
+            { name: "Code", value: code, inline: true },
+            { name: "Referral link", value: `https://titanelite.org/?ref=${code}`, inline: false },
+            {
+              name: "Recruited by",
+              value: parent ? `${parent.full_name ?? parent.email ?? "Unknown"} (${parent.code ?? "—"})` : "Unknown",
+              inline: false,
+            },
+          ],
+          color: 0x3b82f6,
+        });
+      } catch (e) {
+        console.warn("[affiliate approve] discord notify failed", e);
+      }
+    }
+
 
     // Send approval email (best-effort)
     if (app.email) {
