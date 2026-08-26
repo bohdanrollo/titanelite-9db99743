@@ -1075,6 +1075,8 @@ type StackItem = {
   notes: string | null;
   active: boolean;
   created_at: string;
+  time_slots: string[] | null;
+  days_of_week: number[] | null;
 };
 
 type StackFormState = {
@@ -1085,9 +1087,11 @@ type StackFormState = {
   schedule: string;
   notes: string;
   active: boolean;
+  time_slots: Slot[];
+  days_of_week: number[];
 };
 
-const EMPTY_STACK_FORM: StackFormState = { name: "", dose: "", unit: "mcg", frequency: "", schedule: "", notes: "", active: true };
+const EMPTY_STACK_FORM: StackFormState = { name: "", dose: "", unit: "mcg", frequency: "", schedule: "", notes: "", active: true, time_slots: ["morning"], days_of_week: [0, 1, 2, 3, 4, 5, 6] };
 
 function MyStack() {
   const { user } = useAuth();
