@@ -1102,6 +1102,7 @@ function MyStack() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<StackFormState>(EMPTY_STACK_FORM);
   const [saving, setSaving] = useState(false);
+  const [slotsTouched, setSlotsTouched] = useState(false);
 
   async function load() {
     if (!user) return;
