@@ -42,10 +42,10 @@ function ManageSubscriptionButton() {
           setBusy(false);
         }
       }}
-      className="shrink-0 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood disabled:opacity-50"
+      className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground/50 hover:text-muted-foreground flex items-center gap-1.5 transition disabled:opacity-50"
     >
-      {busy ? <Loader2 size={14} className="animate-spin" /> : <CreditCard size={14} />}
-      <span className="hidden sm:inline">Manage subscription</span>
+      {busy ? <Loader2 size={12} className="animate-spin" /> : <CreditCard size={12} />}
+      <span>Billing</span>
     </button>
   );
 }
@@ -93,12 +93,9 @@ function Dashboard() {
             <span className="inline-block h-3 w-3 shrink-0 bg-blood" />
             <span className="font-display text-base sm:text-xl tracking-wider truncate">TITAN ELITE</span>
           </Link>
-          <div className="flex shrink-0 items-center gap-4">
-            {hasAccess && <ManageSubscriptionButton />}
-            <button onClick={signOut} className="shrink-0 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood">
-              <LogOut size={14} /> <span className="hidden sm:inline">Sign out</span>
-            </button>
-          </div>
+          <button onClick={signOut} className="shrink-0 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood">
+            <LogOut size={14} /> <span className="hidden sm:inline">Sign out</span>
+          </button>
         </div>
 
       </header>
@@ -268,6 +265,11 @@ function Dashboard() {
           {tab === "wellness" && isTabAllowed("wellness", tier, isAdmin) && <WellnessTracker />}
           {tab === "workouts" && isTabAllowed("workouts", tier, isAdmin) && <WorkoutLogger />}
           {tab === "stackbuilder" && isTabAllowed("stackbuilder", tier, isAdmin) && <StackBuilder />}
+          {hasAccess && (
+            <div className="mt-16 pt-6 border-t border-foreground/5 flex justify-center">
+              <ManageSubscriptionButton />
+            </div>
+          )}
         </div>
         </>
         )}
