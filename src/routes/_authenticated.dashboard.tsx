@@ -265,6 +265,11 @@ function Dashboard() {
           {tab === "wellness" && isTabAllowed("wellness", tier, isAdmin) && <WellnessTracker />}
           {tab === "workouts" && isTabAllowed("workouts", tier, isAdmin) && <WorkoutLogger />}
           {tab === "stackbuilder" && isTabAllowed("stackbuilder", tier, isAdmin) && <StackBuilder />}
+          {hasAccess && (
+            <div className="mt-16 pt-6 border-t border-foreground/5 flex justify-center">
+              <ManageSubscriptionButton />
+            </div>
+          )}
         </div>
         </>
         )}
