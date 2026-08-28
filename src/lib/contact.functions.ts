@@ -34,20 +34,6 @@ export const submitContactMessage = createServerFn({ method: "POST" })
     });
     if (error) throw new Error(error.message);
 
-    try {
-      const { sendDiscordNotification } = await import("@/lib/discord.server");
-      await sendDiscordNotification({
-        title: "New contact form message",
-        fields: [
-          { name: "Name", value: data.name, inline: true },
-          { name: "Email", value: data.email, inline: true },
-          { name: "Subject", value: data.subject || "—", inline: false },
-          { name: "Message", value: data.message.slice(0, 900), inline: false },
-        ],
-        color: 0xc1121f,
-      });
-    } catch { /* best-effort */ }
-
     return { ok: true };
   });
 
