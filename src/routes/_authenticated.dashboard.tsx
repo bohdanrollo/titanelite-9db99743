@@ -94,7 +94,7 @@ function Dashboard() {
             <span className="font-display text-base sm:text-xl tracking-wider truncate">TITAN ELITE</span>
           </Link>
           <div className="flex shrink-0 items-center gap-4">
-            {hasAccess && !isAdmin && <ManageSubscriptionButton />}
+            {hasAccess && <ManageSubscriptionButton />}
             <button onClick={signOut} className="shrink-0 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood">
               <LogOut size={14} /> <span className="hidden sm:inline">Sign out</span>
             </button>
