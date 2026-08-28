@@ -40,7 +40,7 @@ function About() {
 
         <div className="mt-16">
           <div className="text-eyebrow">The Dashboard</div>
-          <h2 className="mt-4 text-4xl lg:text-5xl">Twelve tools. One place.</h2>
+          <h2 className="mt-4 text-4xl lg:text-5xl">Sixteen tools. One place.</h2>
           <p className="mt-6 leading-relaxed">
             The dashboard is the product. When you become a client, you get access to every
             tool we've built for peptide research and training — no scattered notes, no

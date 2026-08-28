@@ -45,7 +45,7 @@ function Page() {
         <div className="container-edge">
           <div className="text-eyebrow">Built-In Tools</div>
           <h1 className="mt-4 text-5xl lg:text-7xl max-w-4xl">
-            Twelve tools. <span className="text-blood">One dashboard.</span>
+            Sixteen tools. <span className="text-blood">One dashboard.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-bone/70 leading-relaxed">
             No more scattered notes, calculators, or search tabs. The Titan Elite dashboard puts peptides, dosing, and training guidance in one place.
