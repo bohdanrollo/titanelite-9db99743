@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useAccess, isTabAllowed } from "@/lib/access";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, MessagesSquare, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, CheckCircle, Activity, Apple, TrendingUp, HeartPulse, NotebookPen, Sparkles } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, MessagesSquare, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, CheckCircle, Activity, Apple, TrendingUp, HeartPulse, NotebookPen, Sparkles, CreditCard } from "lucide-react";
 import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import ReactMarkdown from "react-markdown";
@@ -20,6 +20,35 @@ import ProgressTracker from "@/components/ProgressTracker";
 import WellnessTracker from "@/components/WellnessTracker";
 import WorkoutLogger from "@/components/WorkoutLogger";
 import StackBuilder from "@/components/StackBuilder";
+import { createPortalSession } from "@/lib/payments.functions";
+import { getStripeEnvironment } from "@/lib/stripe";
+
+function ManageSubscriptionButton() {
+  const openPortal = useServerFn(createPortalSession);
+  const [busy, setBusy] = useState(false);
+  return (
+    <button
+      disabled={busy}
+      onClick={async () => {
+        setBusy(true);
+        try {
+          const env = getStripeEnvironment();
+          const res = await openPortal({ data: { environment: env, returnUrl: window.location.href } });
+          if ("error" in res) throw new Error(res.error);
+          window.open(res.url, "_blank", "noopener,noreferrer");
+        } catch (e) {
+          toast.error(e instanceof Error ? e.message : "Could not open billing portal");
+        } finally {
+          setBusy(false);
+        }
+      }}
+      className="shrink-0 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood disabled:opacity-50"
+    >
+      {busy ? <Loader2 size={14} className="animate-spin" /> : <CreditCard size={14} />}
+      <span className="hidden sm:inline">Manage subscription</span>
+    </button>
+  );
+}
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Client Dashboard — Titan Elite" }] }),
@@ -64,10 +93,14 @@ function Dashboard() {
             <span className="inline-block h-3 w-3 shrink-0 bg-blood" />
             <span className="font-display text-base sm:text-xl tracking-wider truncate">TITAN ELITE</span>
           </Link>
-          <button onClick={signOut} className="shrink-0 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood">
-            <LogOut size={14} /> <span className="hidden sm:inline">Sign out</span>
-          </button>
+          <div className="flex shrink-0 items-center gap-4">
+            {hasAccess && !isAdmin && <ManageSubscriptionButton />}
+            <button onClick={signOut} className="shrink-0 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood">
+              <LogOut size={14} /> <span className="hidden sm:inline">Sign out</span>
+            </button>
+          </div>
         </div>
+
       </header>
       <section className="container-edge py-8 sm:py-12">
         <div className="text-eyebrow">Client Dashboard</div>
