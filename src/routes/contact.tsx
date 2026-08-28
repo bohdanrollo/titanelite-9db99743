@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { submitContactMessage } from "@/lib/contact.functions";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -19,6 +21,7 @@ export const Route = createFileRoute("/contact")({
 
 function Contact() {
   const [sending, setSending] = useState(false);
+  const submit = useServerFn(submitContactMessage);
   return (
     <div className="min-h-dvh bg-background">
       <SiteHeader />
@@ -45,14 +48,27 @@ function Contact() {
         </div>
         <form
           className="lg:col-span-7 space-y-5"
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
+            const form = e.currentTarget;
+            const fd = new FormData(form);
             setSending(true);
-            setTimeout(() => {
-              setSending(false);
+            try {
+              await submit({
+                data: {
+                  name: String(fd.get("name") ?? ""),
+                  email: String(fd.get("email") ?? ""),
+                  subject: String(fd.get("subject") ?? "") || undefined,
+                  message: String(fd.get("message") ?? ""),
+                },
+              });
               toast.success("Message received. We'll be in touch within 24 hours.");
-              (e.target as HTMLFormElement).reset();
-            }, 700);
+              form.reset();
+            } catch (err: unknown) {
+              toast.error(err instanceof Error ? err.message : "Could not send your message.");
+            } finally {
+              setSending(false);
+            }
           }}
         >
           <Field label="Name" name="name" required />
