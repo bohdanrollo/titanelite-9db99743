@@ -768,12 +768,17 @@ function AffiliatesAdmin() {
   }
 
   async function onGrantAccess(r: AffiliateRow) {
-    if (!confirm(`Grant Full Access to ${r.email}? They must have an account with this email.`)) return;
+    if (!confirm(`Grant Full Access to ${r.email}? An account will be created if they don't have one.`)) return;
     try {
-      await grantFn({ data: { email: r.email } });
-      toast.success(`Full Access granted to ${r.email}`);
+      const res = await grantFn({ data: { email: r.email } });
+      toast.success(
+        res.created
+          ? `Account created and Full Access granted to ${r.email} — they set a password via "Set / reset password".`
+          : `Full Access granted to ${r.email}`,
+      );
     } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed"); }
   }
+
 
   async function load() {
     setLoading(true);
