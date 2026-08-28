@@ -42,10 +42,10 @@ function ManageSubscriptionButton() {
           setBusy(false);
         }
       }}
-      className="shrink-0 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood disabled:opacity-50"
+      className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground/50 hover:text-muted-foreground flex items-center gap-1.5 transition disabled:opacity-50"
     >
-      {busy ? <Loader2 size={14} className="animate-spin" /> : <CreditCard size={14} />}
-      <span className="hidden sm:inline">Manage subscription</span>
+      {busy ? <Loader2 size={12} className="animate-spin" /> : <CreditCard size={12} />}
+      <span>Billing</span>
     </button>
   );
 }
