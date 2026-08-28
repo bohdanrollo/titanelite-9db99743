@@ -98,3 +98,53 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       return { error: getStripeErrorMessage(error) };
     }
   });
+
+type PortalSessionResult = { url: string } | { error: string };
+
+export const createPortalSession = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { returnUrl?: string; environment: StripeEnv }) => data)
+  .handler(async ({ data, context }): Promise<PortalSessionResult> => {
+    try {
+      const { supabase, userId } = context;
+
+      const { data: access } = await supabase
+        .from("user_access")
+        .select("stripe_customer_id")
+        .eq("user_id", userId)
+        .eq("environment", data.environment)
+        .not("stripe_customer_id", "is", null)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      const stripe = createStripeClient(data.environment);
+
+      let customerId = (access as { stripe_customer_id?: string } | null)?.stripe_customer_id;
+      if (!customerId) {
+        const { data: userRes } = await supabase.auth.getUser();
+        const email = userRes.user?.email ?? undefined;
+        const found = await stripe.customers.search({
+          query: `metadata['userId']:'${userId}'`,
+          limit: 1,
+        });
+        if (found.data.length) customerId = found.data[0].id;
+        else if (email) {
+          const existing = await stripe.customers.list({ email, limit: 1 });
+          if (existing.data.length) customerId = existing.data[0].id;
+        }
+      }
+
+      if (!customerId) {
+        return { error: "No billing account found for your login. Contact support if you believe this is an error." };
+      }
+
+      const portal = await stripe.billingPortal.sessions.create({
+        customer: customerId,
+        ...(data.returnUrl && { return_url: data.returnUrl }),
+      });
+      return { url: portal.url };
+    } catch (error) {
+      return { error: getStripeErrorMessage(error) };
+    }
+  });
