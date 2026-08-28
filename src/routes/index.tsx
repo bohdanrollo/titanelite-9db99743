@@ -11,6 +11,7 @@ import {
   Syringe,
   Dumbbell,
   FileText,
+  CalendarCheck,
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
