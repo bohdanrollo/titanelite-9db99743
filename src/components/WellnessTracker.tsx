@@ -51,9 +51,14 @@ export default function WellnessTracker() {
   const save = async () => {
     setSaving(true);
     const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) {
+      setSaving(false);
+      toast.error("Please sign in again.");
+      return;
+    }
     const { error } = await supabase.from("wellness_logs").upsert(
       {
-        user_id: userData.user?.id,
+        user_id: userData.user.id,
         log_date: today,
         water_oz: water.trim() ? Number.parseFloat(water) : 0,
         sleep_hours: sleep.trim() ? Number.parseFloat(sleep) : 0,

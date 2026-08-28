@@ -64,8 +64,13 @@ export default function WorkoutLogger() {
     }
     setSaving(true);
     const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) {
+      setSaving(false);
+      toast.error("Please sign in again.");
+      return;
+    }
     const { error } = await supabase.from("workout_sessions").insert({
-      user_id: userData.user?.id,
+      user_id: userData.user.id,
       name: name.trim() || "Workout",
       notes: notes.trim() || null,
       exercises: valid,

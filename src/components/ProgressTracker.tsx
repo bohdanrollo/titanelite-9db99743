@@ -43,8 +43,13 @@ export default function ProgressTracker() {
     }
     setSaving(true);
     const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) {
+      setSaving(false);
+      toast.error("Please sign in again.");
+      return;
+    }
     const { error } = await supabase.from("progress_updates").insert({
-      user_id: userData.user?.id,
+      user_id: userData.user.id,
       weight: w,
       body_fat: bf,
       notes: notes.trim() || null,
