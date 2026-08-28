@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useAccess, isTabAllowed } from "@/lib/access";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, MessagesSquare, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, CheckCircle, Activity, Apple } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, MessagesSquare, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, CheckCircle, Activity, Apple, TrendingUp, HeartPulse, NotebookPen, Sparkles } from "lucide-react";
 import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import ReactMarkdown from "react-markdown";
@@ -16,13 +16,17 @@ import { ClientMessages } from "@/components/Messaging";
 import LabAnalysis from "@/components/LabAnalysis";
 import Nutrition from "@/components/Nutrition";
 import DoseTracker, { SLOTS, DAY_LABELS, inferSchedule, type Slot } from "@/components/DoseTracker";
+import ProgressTracker from "@/components/ProgressTracker";
+import WellnessTracker from "@/components/WellnessTracker";
+import WorkoutLogger from "@/components/WorkoutLogger";
+import StackBuilder from "@/components/StackBuilder";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Client Dashboard — Titan Elite" }] }),
   component: Dashboard,
 });
 
-type Tab = "protocols" | "messages" | "peptalk" | "peptides" | "dosing" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning" | "myths" | "labs" | "nutrition";
+type Tab = "protocols" | "messages" | "peptalk" | "peptides" | "dosing" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning" | "myths" | "labs" | "nutrition" | "progress" | "wellness" | "workouts" | "stackbuilder";
 
 
 function Dashboard() {
@@ -117,6 +121,10 @@ function Dashboard() {
               { k: "protocols", l: "Protocols", i: FileText, g: "Plan" },
               { k: "messages", l: "Messages", i: MessagesSquare, g: "Plan" },
               { k: "mystack", l: "My Stack", i: ListChecks, g: "Plan" },
+              { k: "progress", l: "Progress", i: TrendingUp, g: "Track" },
+              { k: "workouts", l: "Workouts", i: NotebookPen, g: "Track" },
+              { k: "wellness", l: "Wellness", i: HeartPulse, g: "Track" },
+              { k: "stackbuilder", l: "Stack Builder", i: Sparkles, g: "Assistant" },
               { k: "peptides", l: "Peptides", i: Beaker, g: "Research" },
               { k: "dosing", l: "Dosing Guide", i: Syringe, g: "Research" },
               { k: "combos", l: "Combos", i: BookOpen, g: "Research" },
@@ -134,7 +142,7 @@ function Dashboard() {
               { k: "peptalk", l: "Pep Talk", i: MessageCircle, g: "Assistant" },
             ].map((t) => ({ ...t, locked: !isTabAllowed(t.k, tier, isAdmin) })) as Array<{ k: Tab; l: string; i: typeof FileText; g: string; locked: boolean }>;
             const active = allTabs.find((t) => t.k === tab) ?? allTabs[0];
-            const groups = ["Plan", "Research", "Tools", "Assistant"] as const;
+            const groups = ["Plan", "Track", "Research", "Tools", "Assistant"] as const;
             return (
               <>
                 {/* Mobile: compact dropdown */}
@@ -223,6 +231,10 @@ function Dashboard() {
           {tab === "combos" && isTabAllowed("combos", tier, isAdmin) && <Combos />}
           {tab === "learning" && isTabAllowed("learning", tier, isAdmin) && <Learning />}
           {tab === "myths" && isTabAllowed("myths", tier, isAdmin) && <Myths />}
+          {tab === "progress" && isTabAllowed("progress", tier, isAdmin) && <ProgressTracker />}
+          {tab === "wellness" && isTabAllowed("wellness", tier, isAdmin) && <WellnessTracker />}
+          {tab === "workouts" && isTabAllowed("workouts", tier, isAdmin) && <WorkoutLogger />}
+          {tab === "stackbuilder" && isTabAllowed("stackbuilder", tier, isAdmin) && <StackBuilder />}
         </div>
         </>
         )}

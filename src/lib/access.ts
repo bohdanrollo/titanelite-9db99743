@@ -21,10 +21,13 @@ export const LIMITED_TABS = [
   "labs",
   "nutrition",
   "peptalk",
+  "progress",
+  "wellness",
+  "workouts",
 ] as const;
 
 
-export const FULL_ONLY_TABS = ["protocols", "messages"] as const;
+export const FULL_ONLY_TABS = ["protocols", "messages", "stackbuilder"] as const;
 
 export function isTabAllowed(tab: string, tier: AccessTier, isAdmin: boolean): boolean {
   if (isAdmin || tier === "full") return true;
