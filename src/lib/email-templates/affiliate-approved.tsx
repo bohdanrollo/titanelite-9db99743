@@ -17,11 +17,12 @@ interface Props {
   name?: string
   code?: string
   referralUrl?: string
+  mustSetPassword?: boolean
 }
 
 const SITE_URL = 'https://titanelite.org'
 
-const AffiliateApprovedEmail = ({ name, code, referralUrl }: Props) => {
+const AffiliateApprovedEmail = ({ name, code, referralUrl, mustSetPassword }: Props) => {
   const greeting = name ? `${name},` : 'Partner,'
   const affiliateCode = code || 'YOURCODE'
   const link = referralUrl || `${SITE_URL}/?ref=${affiliateCode}`
