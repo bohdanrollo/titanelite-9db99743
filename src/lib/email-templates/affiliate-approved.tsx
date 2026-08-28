@@ -54,6 +54,17 @@ const AffiliateApprovedEmail = ({ name, code, referralUrl, mustSetPassword }: Pr
             </Text>
           </Section>
 
+          <Section>
+            <Text style={paragraph}>
+              We also set up a <strong>full-access client dashboard</strong> for this
+              email — protocols, peptide tools, lab analysis, calorie tracker and coach
+              messaging, on the house.
+              {mustSetPassword
+                ? ' Check your inbox for the "set your password" email (or use "Set / reset password" on the sign-in page), then sign in with this address.'
+                : ' Just sign in with this email as usual.'}
+            </Text>
+          </Section>
+
           <Section style={{ textAlign: 'center', margin: '32px 0' }}>
             <Button href={`${SITE_URL}/affiliate`} style={button}>
               Open Affiliate Dashboard
