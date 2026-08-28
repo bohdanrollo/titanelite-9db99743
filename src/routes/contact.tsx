@@ -21,6 +21,7 @@ export const Route = createFileRoute("/contact")({
 
 function Contact() {
   const [sending, setSending] = useState(false);
+  const submit = useServerFn(submitContactMessage);
   return (
     <div className="min-h-dvh bg-background">
       <SiteHeader />
