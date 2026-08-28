@@ -155,6 +155,7 @@ const TILES: Tile[] = [
   { icon: GraduationCap, title: "Learning center", body: "Mini courses plus myth-vs-evidence breakdowns.", span: "" },
   { icon: Syringe, title: "Injection & reconstitution", body: "Step-by-step guides and the exact supplies you need.", span: "" },
   { icon: Dumbbell, title: "Lifting library", body: "Programming principles and technique cues that actually move the bar.", span: "md:col-span-2" },
+  { icon: CalendarCheck, title: "Dose tracker", body: "A weekly calendar that builds itself from your stack — morning, afternoon, and evening doses, checked off as you take them.", span: "md:col-span-2" },
 ];
 
 function Bento() {
