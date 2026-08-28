@@ -40,6 +40,19 @@ export async function provisionAffiliateAccount(email: string, fullName?: string
 
   if (!userId) return { userId: null, created: false };
 
+  // A freshly created account has no password the user knows about — always
+  // email them a set-password link, otherwise sign-in fails silently for them.
+  if (created) {
+    try {
+      await admin.auth.resetPasswordForEmail(clean, {
+        redirectTo: "https://titanelite.org/reset-password",
+      });
+    } catch (e) {
+      console.warn("[affiliate provision] set-password email failed", e);
+    }
+  }
+
+
   for (const environment of ["sandbox", "live"] as const) {
     const { data: existing } = await admin
       .from("user_access")
