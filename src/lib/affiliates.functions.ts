@@ -44,6 +44,28 @@ export const approveAffiliate = createServerFn({ method: "POST" })
       .eq("id", data.id);
     if (error) throw error;
 
+    // Auto-provision a FULL access client dashboard account for the affiliate.
+    let mustSetPassword = false;
+    if (app.email) {
+      try {
+        const { provisionAffiliateAccount } = await import("@/lib/affiliate-provision.server");
+        const res = await provisionAffiliateAccount(app.email, (app as any).full_name);
+        mustSetPassword = res.created;
+        if (res.userId && !userId) {
+          userId = res.userId;
+          await supabaseAdmin.from("affiliates").update({ user_id: res.userId }).eq("id", data.id);
+        }
+        if (res.created) {
+          // Send a password-setup link so they can sign in.
+          await supabaseAdmin.auth.resetPasswordForEmail(app.email, {
+            redirectTo: "https://titanelite.org/reset-password",
+          });
+        }
+      } catch (e) {
+        console.warn("[affiliate approve] account provisioning failed", e);
+      }
+    }
+
     // Discord ping for newly approved sub-affiliates (best-effort)
     const recruiterId = (app as any).recruiter_affiliate_id as string | null;
     if (recruiterId) {
@@ -92,6 +114,7 @@ export const approveAffiliate = createServerFn({ method: "POST" })
             name: aff?.full_name || undefined,
             code,
             referralUrl: `https://titanelite.org/?ref=${code}`,
+            mustSetPassword,
           },
         });
       } catch (e) {

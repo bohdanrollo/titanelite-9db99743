@@ -98,6 +98,30 @@ function AuthPage() {
           <button disabled={busy} className="btn-blood hover:btn-blood-hover w-full">
             {busy ? "Working…" : mode === "signin" ? "Sign in" : "Create account"}
           </button>
+          {mode === "signin" && (
+            <button
+              type="button"
+              disabled={busy}
+              onClick={async () => {
+                if (!email) return toast.error("Enter your email first.");
+                setBusy(true);
+                try {
+                  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: `${window.location.origin}/reset-password`,
+                  });
+                  if (error) throw error;
+                  toast.success("Check your email for a link to set your password.");
+                } catch (err: unknown) {
+                  toast.error(err instanceof Error ? err.message : "Could not send email");
+                } finally {
+                  setBusy(false);
+                }
+              }}
+              className="text-blood font-mono uppercase tracking-[0.14em] text-xs hover:underline"
+            >
+              Set / reset password
+            </button>
+          )}
           <p className="text-xs text-muted-foreground">
             By continuing you agree to the{" "}
             <Link to="/terms" className="underline">Terms</Link>,{" "}
