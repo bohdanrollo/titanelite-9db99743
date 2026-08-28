@@ -93,6 +93,17 @@ export default function DoseTracker({ items }: { items: TrackedStackItem[] }) {
 
   useEffect(() => { loadLog(); }, [loadLog]);
 
+  // When browsing to another week, move the selected day into that week
+  // (same weekday) so the detail panel never shows a date outside the fetched range.
+  useEffect(() => {
+    const keys = weekDays.map(dateKey);
+    if (!keys.includes(selected)) {
+      const targetDow = new Date(`${selected}T12:00:00`).getDay();
+      const match = weekDays.find((d) => d.getDay() === targetDow) ?? weekDays[0]!;
+      setSelected(dateKey(match));
+    }
+  }, [weekDays, selected]);
+
   const active = useMemo(() => items.filter((i) => i.active), [items]);
 
   function dueOn(item: TrackedStackItem, d: Date) {
@@ -135,7 +146,12 @@ export default function DoseTracker({ items }: { items: TrackedStackItem[] }) {
         .select("id, stack_id, dose_date, time_slot")
         .single();
       setBusy(null);
-      if (error) { toast.error(error.message); return; }
+      if (error) {
+        // Unique-constraint race (already logged): just refresh instead of erroring.
+        if (error.code === "23505") { await loadLog(); return; }
+        toast.error(error.message);
+        return;
+      }
       setLog((p) => [...p, data as LogRow]);
     }
   }
