@@ -11,6 +11,7 @@ const exploreNav = [
 
 const nav = [
   
+  { to: "/pephub", label: "PepHub" },
   { to: "/about", label: "About" },
   { to: "/faq", label: "FAQ" },
   { to: "/affiliate", label: "Affiliate" },

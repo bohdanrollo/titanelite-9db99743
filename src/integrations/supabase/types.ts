@@ -665,6 +665,127 @@ export type Database = {
         }
         Relationships: []
       }
+      pephub_comments: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pephub_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "pephub_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pephub_follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+        }
+        Relationships: []
+      }
+      pephub_likes: {
+        Row: {
+          created_at: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pephub_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "pephub_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pephub_posts: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      pephub_profiles: {
+        Row: {
+          bio: string | null
+          created_at: string
+          display_name: string
+          handle: string
+          user_id: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          display_name: string
+          handle: string
+          user_id: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          display_name?: string
+          handle?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       peptide_dose_log: {
         Row: {
           completed_at: string
