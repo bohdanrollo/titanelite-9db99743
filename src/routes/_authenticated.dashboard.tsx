@@ -22,6 +22,7 @@ import WorkoutLogger from "@/components/WorkoutLogger";
 import StackBuilder from "@/components/StackBuilder";
 import { createPortalSession } from "@/lib/payments.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
+import { AddToHomeScreenButton } from "@/components/AddToHomeScreen";
 
 function ManageSubscriptionButton() {
   const openPortal = useServerFn(createPortalSession);
