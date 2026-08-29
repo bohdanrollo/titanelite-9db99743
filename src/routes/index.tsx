@@ -78,6 +78,9 @@ function Hero() {
             <Link to="/features" className="btn-ghost text-[color:var(--foreground)] border-[color:color-mix(in_oklab,var(--foreground)_45%,transparent)] hover:bg-[color:var(--foreground)] hover:text-[color:var(--background)]">
               See Dashboard Tools
             </Link>
+            <Link to="/pephub" className="btn-ghost text-blood border-blood/50 hover:bg-blood hover:text-bone">
+              Join PepHub — Free
+            </Link>
           </div>
           <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted-foreground">
             <span className="flex items-center gap-2">
