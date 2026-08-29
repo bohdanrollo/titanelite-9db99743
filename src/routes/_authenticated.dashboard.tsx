@@ -22,6 +22,7 @@ import WorkoutLogger from "@/components/WorkoutLogger";
 import StackBuilder from "@/components/StackBuilder";
 import { createPortalSession } from "@/lib/payments.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
+import { AddToHomeScreenButton } from "@/components/AddToHomeScreen";
 
 function ManageSubscriptionButton() {
   const openPortal = useServerFn(createPortalSession);
@@ -93,9 +94,12 @@ function Dashboard() {
             <span className="inline-block h-3 w-3 shrink-0 bg-blood" />
             <span className="font-display text-base sm:text-xl tracking-wider truncate">TITAN ELITE</span>
           </Link>
-          <button onClick={signOut} className="shrink-0 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood">
-            <LogOut size={14} /> <span className="hidden sm:inline">Sign out</span>
-          </button>
+          <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+            <AddToHomeScreenButton />
+            <button onClick={signOut} className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood">
+              <LogOut size={14} /> <span className="hidden sm:inline">Sign out</span>
+            </button>
+          </div>
         </div>
 
       </header>
