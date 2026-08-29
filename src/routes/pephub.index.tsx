@@ -97,7 +97,7 @@ function PepHub() {
     refresh();
   }, [channel]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Live updates + presence
+  // Live updates
   useEffect(() => {
     const ch = supabase
       .channel(`pephub-${channel}`)
@@ -110,6 +110,16 @@ function PepHub() {
         const old = payload.old as { id: string };
         setMessages((prev) => prev.filter((m) => m.id !== old.id));
       })
+      .subscribe();
+    return () => {
+      supabase.removeChannel(ch);
+    };
+  }, [channel, loadAuthors]);
+
+  // Online presence (site-wide across PepHub)
+  useEffect(() => {
+    const ch = supabase
+      .channel("pephub-online")
       .on("presence", { event: "sync" }, () => {
         setOnline(Object.keys(ch.presenceState()).length);
       })
@@ -121,7 +131,7 @@ function PepHub() {
     return () => {
       supabase.removeChannel(ch);
     };
-  }, [channel, loadAuthors]);
+  }, []);
 
   useEffect(() => {
     const el = scrollRef.current;
