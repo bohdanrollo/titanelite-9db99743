@@ -96,7 +96,7 @@ function PepHub() {
     refresh();
   }, [channel]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Live updates
+  // Live updates + presence
   useEffect(() => {
     const ch = supabase
       .channel(`pephub-${channel}`)
@@ -109,7 +109,14 @@ function PepHub() {
         const old = payload.old as { id: string };
         setMessages((prev) => prev.filter((m) => m.id !== old.id));
       })
-      .subscribe();
+      .on("presence", { event: "sync" }, () => {
+        setOnline(Object.keys(ch.presenceState()).length);
+      })
+      .subscribe(async (status) => {
+        if (status === "SUBSCRIBED") {
+          await ch.track({ at: new Date().toISOString() });
+        }
+      });
     return () => {
       supabase.removeChannel(ch);
     };
