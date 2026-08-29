@@ -52,6 +52,7 @@ function PepHub() {
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
   const [ready, setReady] = useState(false);
+  const [online, setOnline] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const active = CHANNELS.find((c) => c.id === channel) ?? CHANNELS[0];
@@ -115,6 +116,23 @@ function PepHub() {
     };
   }, [channel, loadAuthors]);
 
+  // Online presence (site-wide across PepHub)
+  useEffect(() => {
+    const ch = supabase
+      .channel("pephub-online")
+      .on("presence", { event: "sync" }, () => {
+        setOnline(Object.keys(ch.presenceState()).length);
+      })
+      .subscribe(async (status) => {
+        if (status === "SUBSCRIBED") {
+          await ch.track({ at: new Date().toISOString() });
+        }
+      });
+    return () => {
+      supabase.removeChannel(ch);
+    };
+  }, []);
+
   useEffect(() => {
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
@@ -170,6 +188,10 @@ function PepHub() {
               <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
                 Free chat rooms
               </div>
+              <div className="mt-2 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                {online} online
+              </div>
             </div>
             <div className="flex-1 overflow-y-auto py-3">
               <div className="px-4 pb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
@@ -210,6 +232,10 @@ function PepHub() {
               <Hash className="h-4 w-4 text-blood" />
               <div className="font-heavy text-lg leading-none">{active.label}</div>
               <div className="hidden truncate text-xs text-muted-foreground sm:block">{active.blurb}</div>
+              <div className="ml-auto flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                {online} online
+              </div>
             </header>
 
             {/* mobile channel picker */}
