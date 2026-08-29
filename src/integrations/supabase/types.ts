@@ -744,18 +744,21 @@ export type Database = {
       pephub_posts: {
         Row: {
           body: string
+          channel: string
           created_at: string
           id: string
           user_id: string
         }
         Insert: {
           body: string
+          channel?: string
           created_at?: string
           id?: string
           user_id: string
         }
         Update: {
           body?: string
+          channel?: string
           created_at?: string
           id?: string
           user_id?: string
