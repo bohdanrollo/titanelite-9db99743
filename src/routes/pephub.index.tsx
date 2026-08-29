@@ -23,9 +23,6 @@ export const Route = createFileRoute("/pephub/")({
 
 const CHANNELS = [
   { id: "general", label: "general", blurb: "Anything peptide related." },
-  { id: "protocols", label: "protocols", blurb: "Dosing, stacks and schedules." },
-  { id: "training", label: "training", blurb: "Lifting, programming, recovery." },
-  { id: "nutrition", label: "nutrition", blurb: "Food, macros, cutting and bulking." },
   { id: "progress", label: "progress", blurb: "Share wins and check-ins." },
   { id: "questions", label: "questions", blurb: "Ask the room anything." },
 ] as const;
