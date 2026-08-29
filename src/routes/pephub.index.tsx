@@ -52,6 +52,7 @@ function PepHub() {
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
   const [ready, setReady] = useState(false);
+  const [online, setOnline] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const active = CHANNELS.find((c) => c.id === channel) ?? CHANNELS[0];
