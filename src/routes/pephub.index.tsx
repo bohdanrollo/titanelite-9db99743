@@ -57,8 +57,10 @@ function PepHub() {
 
   const active = CHANNELS.find((c) => c.id === channel) ?? CHANNELS[0];
 
+  const authorsRef = useRef<Record<string, PepProfile>>({});
+  authorsRef.current = authors;
   const loadAuthors = useCallback(async (ids: string[]) => {
-    const missing = [...new Set(ids)].filter((id) => !authors[id]);
+    const missing = [...new Set(ids)].filter((id) => !authorsRef.current[id]);
     if (missing.length === 0) return;
     const { data } = await supabase
       .from("pephub_profiles")
@@ -71,7 +73,7 @@ function PepHub() {
         return next;
       });
     }
-  }, [authors]);
+  }, []);
 
   const refresh = useCallback(async () => {
     const { data } = await supabase
