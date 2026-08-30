@@ -11,6 +11,24 @@ function normalizeCode(raw: string) {
   return raw.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 20);
 }
 
+/** Any signed-in user: did they sign up under a given affiliate's code? */
+export const wasReferredByCode = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({ code: z.string().min(1).max(20) }).parse(input))
+  .handler(async ({ data, context }) => {
+    const code = normalizeCode(data.code);
+    if (!code) return false;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row } = await (supabaseAdmin as any)
+      .from("affiliate_referrals")
+      .select("id")
+      .eq("referred_user_id", context.userId)
+      .eq("code_used", code)
+      .limit(1)
+      .maybeSingle();
+    return !!row;
+  });
+
 /** Admin: approve an affiliate application, assign code, link user_id if exists */
 export const approveAffiliate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
