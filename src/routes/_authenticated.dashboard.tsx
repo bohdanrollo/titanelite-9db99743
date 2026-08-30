@@ -23,6 +23,7 @@ import StackBuilder from "@/components/StackBuilder";
 import { createPortalSession } from "@/lib/payments.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { AddToHomeScreenButton } from "@/components/AddToHomeScreen";
+import { wasReferredByCode } from "@/lib/affiliates.functions";
 
 function ManageSubscriptionButton() {
   const openPortal = useServerFn(createPortalSession);
@@ -68,6 +69,8 @@ function Dashboard() {
   const navRef = useRef<HTMLElement>(null);
   const [intake, setIntake] = useState<{ id: string; status: string; submitted_at: string } | null>(null);
   const [isAffiliate, setIsAffiliate] = useState(false);
+  const [referredByTammy, setReferredByTammy] = useState(false);
+  const checkTammyReferral = useServerFn(wasReferredByCode);
 
   // If user has no access, keep them on paywall regardless of `tab` state.
   const hasAccess = isAdmin || tier === "limited" || tier === "full";
