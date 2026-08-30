@@ -114,7 +114,9 @@ function Dashboard() {
           <p className="mt-3 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-2 text-blood font-medium">
               <CheckCircle size={14} />
-              Congrats! As a Titan Elite client you get 30% off of all peptides with code TITAN30
+              {referredByTammy
+                ? "Congrats! As a Titan Elite client you get 20% off of all peptides with code TITAN"
+                : "Congrats! As a Titan Elite client you get 30% off of all peptides with code TITAN30"}
             </span>
             <span className="mx-2">·</span>
             Order through{" "}
