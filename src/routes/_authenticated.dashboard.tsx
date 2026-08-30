@@ -23,6 +23,7 @@ import StackBuilder from "@/components/StackBuilder";
 import { createPortalSession } from "@/lib/payments.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { AddToHomeScreenButton } from "@/components/AddToHomeScreen";
+import { wasReferredByCode } from "@/lib/affiliates.functions";
 
 function ManageSubscriptionButton() {
   const openPortal = useServerFn(createPortalSession);
@@ -68,6 +69,8 @@ function Dashboard() {
   const navRef = useRef<HTMLElement>(null);
   const [intake, setIntake] = useState<{ id: string; status: string; submitted_at: string } | null>(null);
   const [isAffiliate, setIsAffiliate] = useState(false);
+  const [referredByTammy, setReferredByTammy] = useState(false);
+  const checkTammyReferral = useServerFn(wasReferredByCode);
 
   // If user has no access, keep them on paywall regardless of `tab` state.
   const hasAccess = isAdmin || tier === "limited" || tier === "full";
@@ -84,6 +87,7 @@ function Dashboard() {
     if (!user) return;
     supabase.from("intakes").select("id, status, submitted_at").eq("user_id", user.id).order("submitted_at", { ascending: false }).limit(1).maybeSingle().then(({ data }) => setIntake(data));
     supabase.from("affiliates").select("id", { count: "exact", head: true }).eq("email", user.email ?? "").then(({ count }) => setIsAffiliate(!!count && count > 0));
+    checkTammyReferral({ data: { code: "TAMMY" } }).then((r) => setReferredByTammy(!!r)).catch(() => {});
   }, [user]);
 
   return (
@@ -110,7 +114,9 @@ function Dashboard() {
           <p className="mt-3 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-2 text-blood font-medium">
               <CheckCircle size={14} />
-              Congrats! As a Titan Elite client you get 30% off of all peptides with code TITAN30
+              {referredByTammy
+                ? "Congrats! As a Titan Elite client you get 20% off of all peptides with code TITAN"
+                : "Congrats! As a Titan Elite client you get 30% off of all peptides with code TITAN30"}
             </span>
             <span className="mx-2">·</span>
             Order through{" "}
