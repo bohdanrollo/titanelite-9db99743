@@ -61,7 +61,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       if (!prices.data.length) throw new Error("Price not found");
       const primary = prices.data[0];
 
-      // Full plan: charge $49.99 initial fee on the first invoice alongside
+      // Full plan: charge $59.99 initial fee on the first invoice alongside
       // the recurring $10.99/month. Limited plan: recurring only.
       const lineItems: { price: string; quantity: number }[] = [
         { price: primary.id, quantity: 1 },
