@@ -47,11 +47,12 @@ function Home() {
 function Hero() {
   return (
     <section className="relative overflow-hidden border-b border-border">
-      {/* atmosphere */}
+      {/* warm atmosphere */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-0 h-[120%] w-[120%] -translate-x-1/2 bg-[radial-gradient(ellipse_at_top,color-mix(in_oklab,var(--color-blood)_22%,transparent)_0%,transparent_62%)]" />
-        <div className="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-blood/60 to-transparent" />
+        <div className="absolute left-1/2 top-0 h-[120%] w-[130%] -translate-x-1/2 bg-[radial-gradient(ellipse_at_top,color-mix(in_oklab,var(--color-blood)_12%,transparent)_0%,transparent_60%)]" />
+        <div className="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-blood/40 to-transparent" />
       </div>
+
 
       <div className="container-edge relative z-10 grid lg:grid-cols-12 gap-12 pt-20 pb-20 lg:pt-28 lg:pb-28">
         <div className="lg:col-span-7 flex flex-col justify-center">
