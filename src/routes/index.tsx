@@ -35,7 +35,7 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   return (
-    <div className="dark min-h-dvh bg-background text-foreground flex flex-col selection:bg-blood selection:text-bone">
+    <div className="min-h-dvh bg-background text-foreground flex flex-col selection:bg-blood selection:text-bone">
       <SiteHeader />
       <Hero />
       <Bento />
@@ -47,18 +47,19 @@ function Home() {
 function Hero() {
   return (
     <section className="relative overflow-hidden border-b border-border">
-      {/* atmosphere */}
+      {/* warm atmosphere */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-0 h-[120%] w-[120%] -translate-x-1/2 bg-[radial-gradient(ellipse_at_top,color-mix(in_oklab,var(--color-blood)_22%,transparent)_0%,transparent_62%)]" />
-        <div className="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-blood/60 to-transparent" />
+        <div className="absolute left-1/2 top-0 h-[120%] w-[130%] -translate-x-1/2 bg-[radial-gradient(ellipse_at_top,color-mix(in_oklab,var(--color-blood)_12%,transparent)_0%,transparent_60%)]" />
+        <div className="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-blood/40 to-transparent" />
       </div>
+
 
       <div className="container-edge relative z-10 grid lg:grid-cols-12 gap-12 pt-20 pb-20 lg:pt-28 lg:pb-28">
         <div className="lg:col-span-7 flex flex-col justify-center">
           <div className="text-eyebrow">Your complete research dashboard</div>
           <h1 className="mt-6 font-heavy text-5xl sm:text-6xl lg:text-8xl leading-[0.88] tracking-tight">
             Everything<br />
-            <span className="text-blood drop-shadow-[0_0_28px_color-mix(in_oklab,var(--color-blood)_55%,transparent)]">for peptides</span><br />
+            <span className="text-blood">for peptides</span><br />
             &amp; training.
           </h1>
           <p className="mt-8 max-w-xl font-body text-base text-muted-foreground leading-relaxed">
@@ -170,17 +171,17 @@ function Bento() {
           One login. <span className="text-blood">Every tool.</span>
         </h2>
 
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-px bg-border">
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4">
           {TILES.map((t) => {
             const Icon = t.icon;
             return (
               <div
                 key={t.title}
-                className={`group relative bg-card p-6 transition-colors duration-200 hover:bg-blood/[0.07] ${t.span} ${
-                  t.feature ? "md:p-10" : ""
+                className={`group relative card-soft p-6 transition duration-200 hover:-translate-y-1 hover:border-blood/40 ${t.span} ${
+                  t.feature ? "md:p-10 bg-accent" : ""
                 }`}
               >
-                <span className="pointer-events-none absolute inset-x-0 top-0 h-px scale-x-0 bg-blood transition-transform duration-300 group-hover:scale-x-100" />
+
                 <Icon size={t.feature ? 28 : 20} className="text-blood" />
                 <h3
                   className={`mt-5 font-heavy tracking-tight ${
@@ -205,17 +206,18 @@ function Bento() {
           })}
         </div>
 
-        <div className="mt-12 flex flex-wrap items-center justify-between gap-6 border border-border bg-card p-8">
+        <div className="mt-12 flex flex-wrap items-center justify-between gap-6 card-soft bg-accent p-8">
           <div>
             <div className="font-heavy text-2xl sm:text-3xl">Ready to train with precision?</div>
             <p className="mt-2 font-body text-sm text-muted-foreground">
-              Get dashboard access today. Cancel anytime.
+              Get dashboard access today. Cancel anytime — no long-term contract.
             </p>
           </div>
-          <Link to="/auth" className="btn-blood shadow-[0_0_24px_color-mix(in_oklab,var(--color-blood)_35%,transparent)] hover:btn-blood-hover">
+          <Link to="/auth" className="btn-blood hover:btn-blood-hover">
             Get Dashboard Access <ArrowRight size={14} />
           </Link>
         </div>
+
       </div>
     </section>
   );

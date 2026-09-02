@@ -191,7 +191,7 @@ function RootComponent() {
         <main>
           <Outlet />
         </main>
-        <Toaster theme="dark" position="top-right" />
+        <Toaster theme="light" position="top-right" richColors />
       </AuthProvider>
     </QueryClientProvider>
   );
