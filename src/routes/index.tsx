@@ -175,14 +175,12 @@ function Bento() {
         <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4">
           {TILES.map((t) => {
             const Icon = t.icon;
+            const Wrapper = t.tab ? Link : "div";
+            const wrapperProps = t.tab
+              ? { to: "/dashboard", search: { tab: t.tab }, className: `group relative card-soft p-6 block text-left transition duration-200 hover:-translate-y-1 hover:border-blood/40 hover:shadow-soft ${t.span} ${t.feature ? "md:p-10 bg-accent" : ""}` }
+              : { className: `group relative card-soft p-6 transition duration-200 hover:-translate-y-1 hover:border-blood/40 ${t.span} ${t.feature ? "md:p-10 bg-accent" : ""}` };
             return (
-              <div
-                key={t.title}
-                className={`group relative card-soft p-6 transition duration-200 hover:-translate-y-1 hover:border-blood/40 ${t.span} ${
-                  t.feature ? "md:p-10 bg-accent" : ""
-                }`}
-              >
-
+              <Wrapper key={t.title} {...wrapperProps}>
                 <Icon size={t.feature ? 28 : 20} className="text-blood" />
                 <h3
                   className={`mt-5 font-heavy tracking-tight ${
@@ -195,14 +193,11 @@ function Bento() {
                   {t.body}
                 </p>
                 {t.feature && (
-                  <Link
-                    to="/auth"
-                    className="mt-8 inline-flex items-center gap-2 font-mono text-[0.72rem] font-bold uppercase tracking-[0.14em] text-blood"
-                  >
+                  <span className="mt-8 inline-flex items-center gap-2 font-mono text-[0.72rem] font-bold uppercase tracking-[0.14em] text-blood">
                     Start now <ArrowRight size={14} />
-                  </Link>
+                  </span>
                 )}
-              </div>
+              </Wrapper>
             );
           })}
         </div>
