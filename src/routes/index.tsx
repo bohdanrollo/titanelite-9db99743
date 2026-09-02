@@ -206,17 +206,18 @@ function Bento() {
           })}
         </div>
 
-        <div className="mt-12 flex flex-wrap items-center justify-between gap-6 border border-border bg-card p-8">
+        <div className="mt-12 flex flex-wrap items-center justify-between gap-6 card-soft bg-accent p-8">
           <div>
             <div className="font-heavy text-2xl sm:text-3xl">Ready to train with precision?</div>
             <p className="mt-2 font-body text-sm text-muted-foreground">
-              Get dashboard access today. Cancel anytime.
+              Get dashboard access today. Cancel anytime — no long-term contract.
             </p>
           </div>
-          <Link to="/auth" className="btn-blood shadow-[0_0_24px_color-mix(in_oklab,var(--color-blood)_35%,transparent)] hover:btn-blood-hover">
+          <Link to="/auth" className="btn-blood hover:btn-blood-hover">
             Get Dashboard Access <ArrowRight size={14} />
           </Link>
         </div>
+
       </div>
     </section>
   );
