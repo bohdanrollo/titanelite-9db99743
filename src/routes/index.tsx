@@ -175,12 +175,8 @@ function Bento() {
         <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4">
           {TILES.map((t) => {
             const Icon = t.icon;
-            const Wrapper = t.tab ? Link : "div";
-            const wrapperProps = t.tab
-              ? { to: "/dashboard", search: { tab: t.tab }, className: `group relative card-soft p-6 block text-left transition duration-200 hover:-translate-y-1 hover:border-blood/40 hover:shadow-soft ${t.span} ${t.feature ? "md:p-10 bg-accent" : ""}` }
-              : { className: `group relative card-soft p-6 transition duration-200 hover:-translate-y-1 hover:border-blood/40 ${t.span} ${t.feature ? "md:p-10 bg-accent" : ""}` };
-            return (
-              <Wrapper key={t.title} {...wrapperProps}>
+            const inner = (
+              <>
                 <Icon size={t.feature ? 28 : 20} className="text-blood" />
                 <h3
                   className={`mt-5 font-heavy tracking-tight ${
@@ -197,7 +193,20 @@ function Bento() {
                     Start now <ArrowRight size={14} />
                   </span>
                 )}
-              </Wrapper>
+              </>
+            );
+            const base = `group relative card-soft p-6 block text-left transition duration-200 hover:-translate-y-1 hover:border-blood/40 hover:shadow-soft ${t.span} ${t.feature ? "md:p-10 bg-accent" : ""}`;
+            if (t.tab) {
+              return (
+                <Link key={t.title} to="/dashboard" search={{ tab: t.tab }} className={base}>
+                  {inner}
+                </Link>
+              );
+            }
+            return (
+              <div key={t.title} className={base}>
+                {inner}
+              </div>
             );
           })}
         </div>
