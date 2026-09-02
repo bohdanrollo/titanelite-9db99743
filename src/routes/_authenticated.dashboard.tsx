@@ -52,19 +52,26 @@ function ManageSubscriptionButton() {
   );
 }
 
+type Tab = "protocols" | "messages" | "peptalk" | "peptides" | "dosing" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning" | "myths" | "labs" | "nutrition" | "progress" | "wellness" | "workouts" | "stackbuilder";
+
+const VALID_TABS: Tab[] = ["protocols", "messages", "peptalk", "peptides", "dosing", "mystack", "supplies", "reconstitution", "injection", "calculator", "lifting", "combos", "learning", "myths", "labs", "nutrition", "progress", "wellness", "workouts", "stackbuilder"];
+
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Client Dashboard — Titan Elite" }] }),
+  validateSearch: (search: Record<string, unknown>): { tab?: Tab } => {
+    const t = typeof search.tab === "string" ? (search.tab as Tab) : undefined;
+    return t && VALID_TABS.includes(t) ? { tab: t } : {};
+  },
   component: Dashboard,
 });
-
-type Tab = "protocols" | "messages" | "peptalk" | "peptides" | "dosing" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning" | "myths" | "labs" | "nutrition" | "progress" | "wellness" | "workouts" | "stackbuilder";
 
 
 function Dashboard() {
   const { user, signOut } = useAuth();
   const { tier, loading: accessLoading, isAdmin } = useAccess();
   const nav = useNavigate();
-  const [tab, setTab] = useState<Tab>("peptides");
+  const routeSearch = Route.useSearch();
+  const [tab, setTab] = useState<Tab>(routeSearch.tab ?? "peptides");
   const [navOpen, setNavOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const [intake, setIntake] = useState<{ id: string; status: string; submitted_at: string } | null>(null);
