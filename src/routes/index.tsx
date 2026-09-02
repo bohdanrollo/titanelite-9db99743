@@ -138,7 +138,7 @@ function Hero() {
   );
 }
 
-type Tile = { icon: typeof FlaskConical; title: string; body: string; span: string; feature?: boolean };
+type Tile = { icon: typeof FlaskConical; title: string; body: string; span: string; tab?: string; feature?: boolean };
 
 const TILES: Tile[] = [
   {
@@ -146,20 +146,21 @@ const TILES: Tile[] = [
     title: "Custom protocols",
     body: "A 100% custom educational peptide protocol and weight-programming plan built around your goals — delivered straight to your dashboard.",
     span: "md:col-span-2 md:row-span-2",
+    tab: "protocols",
     feature: true,
   },
-  { icon: FlaskConical, title: "Lab analysis", body: "Upload your blood panel with your age, height, and weight for instant AI read-outs on what's off and how to fix it.", span: "md:col-span-2" },
-  { icon: Utensils, title: "Calorie tracker", body: "Search foods and drinks by brand, log macros, and keep every past day saved.", span: "" },
-  { icon: Calculator, title: "Dose calculator", body: "A true-to-life 100-unit syringe that shows your exact draw.", span: "" },
-  { icon: Layers, title: "My Stack", body: "Track every compound, dose, and cycle in one place.", span: "" },
-  { icon: Syringe, title: "Dosing guide", body: "Research dosing ranges, escalations, and weekly schedules for 21 compounds.", span: "md:col-span-2" },
+  { icon: FlaskConical, title: "Lab analysis", body: "Upload your blood panel with your age, height, and weight for instant AI read-outs on what's off and how to fix it.", span: "md:col-span-2", tab: "labs" },
+  { icon: Utensils, title: "Calorie tracker", body: "Search foods and drinks by brand, log macros, and keep every past day saved.", span: "", tab: "nutrition" },
+  { icon: Calculator, title: "Dose calculator", body: "A true-to-life 100-unit syringe that shows your exact draw.", span: "", tab: "calculator" },
+  { icon: Layers, title: "My Stack", body: "Track every compound, dose, and cycle in one place.", span: "", tab: "mystack" },
+  { icon: Syringe, title: "Dosing guide", body: "Research dosing ranges, escalations, and weekly schedules for 21 compounds.", span: "md:col-span-2", tab: "dosing" },
 
-  { icon: Bot, title: "Pep Talk AI", body: "Ask peptide questions and get answers on demand.", span: "" },
-  { icon: MessageSquare, title: "Coach messaging", body: "Message your coach directly from the dashboard (Full Access).", span: "md:col-span-2" },
-  { icon: GraduationCap, title: "Learning center", body: "Mini courses plus myth-vs-evidence breakdowns.", span: "" },
-  { icon: Syringe, title: "Injection & reconstitution", body: "Step-by-step guides and the exact supplies you need.", span: "" },
-  { icon: Dumbbell, title: "Lifting library", body: "Programming principles and technique cues that actually move the bar.", span: "md:col-span-2" },
-  { icon: CalendarCheck, title: "Dose tracker", body: "A weekly calendar that builds itself from your stack — morning, afternoon, and evening doses, checked off as you take them.", span: "md:col-span-2" },
+  { icon: Bot, title: "Pep Talk AI", body: "Ask peptide questions and get answers on demand.", span: "", tab: "peptalk" },
+  { icon: MessageSquare, title: "Coach messaging", body: "Message your coach directly from the dashboard (Full Access).", span: "md:col-span-2", tab: "messages" },
+  { icon: GraduationCap, title: "Learning center", body: "Mini courses plus myth-vs-evidence breakdowns.", span: "", tab: "learning" },
+  { icon: Syringe, title: "Injection & reconstitution", body: "Step-by-step guides and the exact supplies you need.", span: "", tab: "injection" },
+  { icon: Dumbbell, title: "Lifting library", body: "Programming principles and technique cues that actually move the bar.", span: "md:col-span-2", tab: "lifting" },
+  { icon: CalendarCheck, title: "Dose tracker", body: "A weekly calendar that builds itself from your stack — morning, afternoon, and evening doses, checked off as you take them.", span: "md:col-span-2", tab: "mystack" },
 ];
 
 function Bento() {
