@@ -176,13 +176,13 @@ function PepHub() {
   }
 
   return (
-    <div className="dark min-h-dvh bg-background text-foreground flex flex-col">
+    <div className="min-h-dvh bg-background text-foreground flex flex-col">
       <SiteHeader />
 
       <div className="container-edge flex-1 py-6">
-        <div className="grid h-[calc(100dvh-11rem)] min-h-[520px] grid-cols-1 border border-foreground/10 md:grid-cols-[220px_1fr]">
+        <div className="grid h-[calc(100dvh-11rem)] min-h-[520px] grid-cols-1 overflow-hidden rounded-3xl border border-foreground/10 bg-card shadow-soft md:grid-cols-[220px_1fr]">
           {/* Channel rail */}
-          <aside className="hidden flex-col border-r border-foreground/10 bg-card/40 md:flex">
+          <aside className="hidden flex-col border-r border-foreground/10 bg-background/60 md:flex">
             <div className="border-b border-foreground/10 px-4 py-4">
               <div className="font-heavy text-xl leading-none">
                 Pep<span className="text-blood">Hub</span>

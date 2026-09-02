@@ -45,7 +45,7 @@ function ProfilePage() {
   useEffect(() => { load(); }, [load]);
 
   return (
-    <div className="dark min-h-dvh bg-background text-foreground flex flex-col">
+    <div className="min-h-dvh bg-background text-foreground flex flex-col">
       <SiteHeader />
       <section className="container-edge flex-1 py-12">
         <Link to="/pephub" className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground hover:text-blood transition">
