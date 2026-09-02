@@ -59,7 +59,7 @@ function Hero() {
           <div className="text-eyebrow">Your complete research dashboard</div>
           <h1 className="mt-6 font-heavy text-5xl sm:text-6xl lg:text-8xl leading-[0.88] tracking-tight">
             Everything<br />
-            <span className="text-blood drop-shadow-[0_0_28px_color-mix(in_oklab,var(--color-blood)_55%,transparent)]">for peptides</span><br />
+            <span className="text-blood">for peptides</span><br />
             &amp; training.
           </h1>
           <p className="mt-8 max-w-xl font-body text-base text-muted-foreground leading-relaxed">
