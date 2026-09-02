@@ -35,7 +35,7 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   return (
-    <div className="dark min-h-dvh bg-background text-foreground flex flex-col selection:bg-blood selection:text-bone">
+    <div className="min-h-dvh bg-background text-foreground flex flex-col selection:bg-blood selection:text-bone">
       <SiteHeader />
       <Hero />
       <Bento />
