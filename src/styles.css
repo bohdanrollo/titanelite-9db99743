@@ -155,46 +155,58 @@
   color: var(--primary-foreground);
   font-family: var(--font-mono);
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   font-size: 0.78rem;
   font-weight: 700;
-  padding: 0.95rem 1.5rem;
+  padding: 0.95rem 1.6rem;
   border: none;
+  border-radius: 999px;
+  box-shadow: var(--shadow-blood, 0 12px 30px -16px rgba(0,0,0,0.4));
   cursor: pointer;
-  transition: transform 0.18s ease, background 0.18s ease;
+  transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
 }
 @utility btn-blood-hover {
-  background: oklch(0.48 0.22 25);
-  transform: translateY(-1px);
+  background: oklch(0.50 0.215 27);
+  transform: translateY(-2px);
 }
 @utility btn-ghost {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background: transparent;
+  background: var(--card);
   color: var(--foreground);
   font-family: var(--font-mono);
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   font-size: 0.78rem;
   font-weight: 700;
-  padding: 0.95rem 1.5rem;
-  border: 1px solid color-mix(in oklab, var(--foreground) 45%, transparent);
+  padding: 0.95rem 1.6rem;
+  border: 1px solid color-mix(in oklab, var(--foreground) 18%, transparent);
+  border-radius: 999px;
   cursor: pointer;
-  transition: background 0.18s ease, color 0.18s ease;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+@utility card-soft {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft, none);
 }
 @utility stack-input {
   width: 100%;
-  background: transparent;
-  border: 1px solid color-mix(in oklch, var(--color-foreground) 20%, transparent);
+  background: var(--card);
+  border: 1px solid color-mix(in oklch, var(--color-foreground) 16%, transparent);
+  border-radius: var(--radius-md);
   color: var(--color-foreground);
-  padding: 0.6rem 0.75rem;
+  padding: 0.65rem 0.85rem;
   font-size: 0.9rem;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .stack-input:focus {
-  border-color: oklch(0.55 0.22 25);
+  border-color: var(--blood);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--blood) 16%, transparent);
 }
+
