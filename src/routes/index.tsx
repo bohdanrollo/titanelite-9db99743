@@ -138,7 +138,9 @@ function Hero() {
   );
 }
 
-type Tile = { icon: typeof FlaskConical; title: string; body: string; span: string; feature?: boolean };
+type DashboardTab = "protocols" | "labs" | "nutrition" | "calculator" | "mystack" | "dosing" | "peptalk" | "messages" | "learning" | "injection" | "lifting";
+
+type Tile = { icon: typeof FlaskConical; title: string; body: string; span: string; tab?: DashboardTab; feature?: boolean };
 
 const TILES: Tile[] = [
   {
@@ -146,20 +148,21 @@ const TILES: Tile[] = [
     title: "Custom protocols",
     body: "A 100% custom educational peptide protocol and weight-programming plan built around your goals — delivered straight to your dashboard.",
     span: "md:col-span-2 md:row-span-2",
+    tab: "protocols",
     feature: true,
   },
-  { icon: FlaskConical, title: "Lab analysis", body: "Upload your blood panel with your age, height, and weight for instant AI read-outs on what's off and how to fix it.", span: "md:col-span-2" },
-  { icon: Utensils, title: "Calorie tracker", body: "Search foods and drinks by brand, log macros, and keep every past day saved.", span: "" },
-  { icon: Calculator, title: "Dose calculator", body: "A true-to-life 100-unit syringe that shows your exact draw.", span: "" },
-  { icon: Layers, title: "My Stack", body: "Track every compound, dose, and cycle in one place.", span: "" },
-  { icon: Syringe, title: "Dosing guide", body: "Research dosing ranges, escalations, and weekly schedules for 21 compounds.", span: "md:col-span-2" },
+  { icon: FlaskConical, title: "Lab analysis", body: "Upload your blood panel with your age, height, and weight for instant AI read-outs on what's off and how to fix it.", span: "md:col-span-2", tab: "labs" },
+  { icon: Utensils, title: "Calorie tracker", body: "Search foods and drinks by brand, log macros, and keep every past day saved.", span: "", tab: "nutrition" },
+  { icon: Calculator, title: "Dose calculator", body: "A true-to-life 100-unit syringe that shows your exact draw.", span: "", tab: "calculator" },
+  { icon: Layers, title: "My Stack", body: "Track every compound, dose, and cycle in one place.", span: "", tab: "mystack" },
+  { icon: Syringe, title: "Dosing guide", body: "Research dosing ranges, escalations, and weekly schedules for 21 compounds.", span: "md:col-span-2", tab: "dosing" },
 
-  { icon: Bot, title: "Pep Talk AI", body: "Ask peptide questions and get answers on demand.", span: "" },
-  { icon: MessageSquare, title: "Coach messaging", body: "Message your coach directly from the dashboard (Full Access).", span: "md:col-span-2" },
-  { icon: GraduationCap, title: "Learning center", body: "Mini courses plus myth-vs-evidence breakdowns.", span: "" },
-  { icon: Syringe, title: "Injection & reconstitution", body: "Step-by-step guides and the exact supplies you need.", span: "" },
-  { icon: Dumbbell, title: "Lifting library", body: "Programming principles and technique cues that actually move the bar.", span: "md:col-span-2" },
-  { icon: CalendarCheck, title: "Dose tracker", body: "A weekly calendar that builds itself from your stack — morning, afternoon, and evening doses, checked off as you take them.", span: "md:col-span-2" },
+  { icon: Bot, title: "Pep Talk AI", body: "Ask peptide questions and get answers on demand.", span: "", tab: "peptalk" },
+  { icon: MessageSquare, title: "Coach messaging", body: "Message your coach directly from the dashboard (Full Access).", span: "md:col-span-2", tab: "messages" },
+  { icon: GraduationCap, title: "Learning center", body: "Mini courses plus myth-vs-evidence breakdowns.", span: "", tab: "learning" },
+  { icon: Syringe, title: "Injection & reconstitution", body: "Step-by-step guides and the exact supplies you need.", span: "", tab: "injection" },
+  { icon: Dumbbell, title: "Lifting library", body: "Programming principles and technique cues that actually move the bar.", span: "md:col-span-2", tab: "lifting" },
+  { icon: CalendarCheck, title: "Dose tracker", body: "A weekly calendar that builds itself from your stack — morning, afternoon, and evening doses, checked off as you take them.", span: "md:col-span-2", tab: "mystack" },
 ];
 
 function Bento() {
@@ -174,14 +177,8 @@ function Bento() {
         <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4">
           {TILES.map((t) => {
             const Icon = t.icon;
-            return (
-              <div
-                key={t.title}
-                className={`group relative card-soft p-6 transition duration-200 hover:-translate-y-1 hover:border-blood/40 ${t.span} ${
-                  t.feature ? "md:p-10 bg-accent" : ""
-                }`}
-              >
-
+            const inner = (
+              <>
                 <Icon size={t.feature ? 28 : 20} className="text-blood" />
                 <h3
                   className={`mt-5 font-heavy tracking-tight ${
@@ -194,13 +191,23 @@ function Bento() {
                   {t.body}
                 </p>
                 {t.feature && (
-                  <Link
-                    to="/auth"
-                    className="mt-8 inline-flex items-center gap-2 font-mono text-[0.72rem] font-bold uppercase tracking-[0.14em] text-blood"
-                  >
+                  <span className="mt-8 inline-flex items-center gap-2 font-mono text-[0.72rem] font-bold uppercase tracking-[0.14em] text-blood">
                     Start now <ArrowRight size={14} />
-                  </Link>
+                  </span>
                 )}
+              </>
+            );
+            const base = `group relative card-soft p-6 block text-left transition duration-200 hover:-translate-y-1 hover:border-blood/40 hover:shadow-soft ${t.span} ${t.feature ? "md:p-10 bg-accent" : ""}`;
+            if (t.tab) {
+              return (
+                <Link key={t.title} to="/dashboard" search={{ tab: t.tab }} className={base}>
+                  {inner}
+                </Link>
+              );
+            }
+            return (
+              <div key={t.title} className={base}>
+                {inner}
               </div>
             );
           })}
