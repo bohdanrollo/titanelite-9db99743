@@ -171,17 +171,17 @@ function Bento() {
           One login. <span className="text-blood">Every tool.</span>
         </h2>
 
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-px bg-border">
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4">
           {TILES.map((t) => {
             const Icon = t.icon;
             return (
               <div
                 key={t.title}
-                className={`group relative bg-card p-6 transition-colors duration-200 hover:bg-blood/[0.07] ${t.span} ${
-                  t.feature ? "md:p-10" : ""
+                className={`group relative card-soft p-6 transition duration-200 hover:-translate-y-1 hover:border-blood/40 ${t.span} ${
+                  t.feature ? "md:p-10 bg-accent" : ""
                 }`}
               >
-                <span className="pointer-events-none absolute inset-x-0 top-0 h-px scale-x-0 bg-blood transition-transform duration-300 group-hover:scale-x-100" />
+
                 <Icon size={t.feature ? 28 : 20} className="text-blood" />
                 <h3
                   className={`mt-5 font-heavy tracking-tight ${
