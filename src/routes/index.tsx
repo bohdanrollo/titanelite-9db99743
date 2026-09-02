@@ -138,7 +138,9 @@ function Hero() {
   );
 }
 
-type Tile = { icon: typeof FlaskConical; title: string; body: string; span: string; tab?: string; feature?: boolean };
+type DashboardTab = "protocols" | "labs" | "nutrition" | "calculator" | "mystack" | "dosing" | "peptalk" | "messages" | "learning" | "injection" | "lifting";
+
+type Tile = { icon: typeof FlaskConical; title: string; body: string; span: string; tab?: DashboardTab; feature?: boolean };
 
 const TILES: Tile[] = [
   {
