@@ -131,7 +131,7 @@ export default function CoachCalls() {
         <div className="flex items-center gap-2 text-blood"><Phone size={16} /><span className="text-eyebrow">Book a coach call</span></div>
         <h2 className="mt-3 font-display text-2xl sm:text-3xl">Talk it through, 30 minutes.</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Weekdays, 8:00 AM – 8:00 PM. Requests must be made at least 48 hours ahead. Times shown in your local time zone.
+          Weekdays, 8:00 AM – 8:00 PM. Requests must be made at least 48 hours ahead. One accepted call per month. Times shown in your local time zone.
         </p>
 
         <form onSubmit={onSubmit} className="mt-6 space-y-5">
