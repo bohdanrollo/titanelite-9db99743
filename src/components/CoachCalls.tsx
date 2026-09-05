@@ -60,7 +60,9 @@ export default function CoachCalls() {
   const load = useServerFn(listMyCoachCalls);
   const submit = useServerFn(requestCoachCall);
   const cancel = useServerFn(cancelMyCoachCall);
+  const loadScheduled = useServerFn(listMyClientAppointments);
 
+  const [scheduled, setScheduled] = useState<Appointment[]>([]);
   const [calls, setCalls] = useState<CoachCall[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
