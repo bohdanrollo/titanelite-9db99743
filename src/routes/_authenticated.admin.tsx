@@ -17,7 +17,7 @@ import { adminListContactMessages, setContactMessageHandled, deleteContactMessag
 import { adminListCoachCalls, reviewCoachCall, deleteCoachCall, type AdminCoachCall } from "@/lib/coach-calls.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { AdminMessages } from "@/components/Messaging";
-import CoachingAdmin from "@/components/coaching/CoachingAdmin";
+import CoachingAdmin, { type SchedulePrefill } from "@/components/coaching/CoachingAdmin";
 
 
 export const Route = createFileRoute("/_authenticated/admin")({
