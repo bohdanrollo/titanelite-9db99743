@@ -1472,7 +1472,30 @@ function ContactMessagesAdmin() {
   );
 }
 
-function CoachCallsAdmin() {
+function CoachCallsTab() {
+  const [prefill, setPrefill] = useState<SchedulePrefill | null>(null);
+  const [reqKey, setReqKey] = useState(0);
+  return (
+    <div className="space-y-14">
+      <CoachingAdmin
+        prefill={prefill}
+        onPrefillHandled={() => { setPrefill(null); setReqKey((k) => k + 1); }}
+      />
+      <div>
+        <div className="text-eyebrow">Client call requests</div>
+        <p className="mt-2 text-sm text-muted-foreground max-w-2xl">
+          Requests submitted by clients from their dashboard. Approving one opens the scheduler with the details filled in —
+          once it's sent to a coach it moves onto the call calendar and leaves this list.
+        </p>
+        <div className="mt-5">
+          <CoachCallsAdmin key={reqKey} onApproved={setPrefill} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CoachCallsAdmin({ onApproved }: { onApproved: (p: SchedulePrefill) => void }) {
   const load = useServerFn(adminListCoachCalls);
   const review = useServerFn(reviewCoachCall);
   const remove = useServerFn(deleteCoachCall);
@@ -1485,7 +1508,8 @@ function CoachCallsAdmin() {
   const refresh = async () => {
     try {
       const res = await load({ data: {} as never });
-      setCalls(res.calls);
+      setCalls(res.calls.filter((c) => !c.scheduled));
+
       const t: Record<string, string> = {};
       res.calls.forEach((c) => {
         const d = new Date(c.approved_start ?? c.requested_start);
