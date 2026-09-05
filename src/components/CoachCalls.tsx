@@ -78,6 +78,10 @@ export default function CoachCalls() {
     try {
       const res = await load({ data: {} as never });
       setCalls(res.calls);
+      try {
+        const s = await loadScheduled({ data: {} as never });
+        setScheduled(s.appointments);
+      } catch { /* ignore */ }
     } catch {
       /* ignore */
     } finally {
