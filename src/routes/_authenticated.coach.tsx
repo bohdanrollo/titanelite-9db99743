@@ -322,7 +322,7 @@ function ProfileForm({ coach, onSaved }: { coach: Coach | null; onSaved: () => v
         <Field label="Last name" value={last} onChange={setLast} required />
       </div>
       <Field label="Phone" value={phone} onChange={setPhone} />
-      <Field label="Profile photo URL" value={photo} onChange={setPhoto} />
+
       <div>
         <Label>Coaching specialty</Label>
         <select value={specialty} onChange={(e) => setSpecialty(e.target.value as typeof specialty)} className="w-full bg-background border border-foreground/20 rounded-xl px-4 py-3">
