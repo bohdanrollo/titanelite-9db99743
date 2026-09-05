@@ -591,7 +591,8 @@ export const adminScheduleCall = createServerFn({ method: "POST" })
           },
         });
       }
-      if (client.email) {
+      if (client.email && !data.requestId) {
+
         await sendAppEmail({
           templateName: "call-approved",
           recipientEmail: client.email,
