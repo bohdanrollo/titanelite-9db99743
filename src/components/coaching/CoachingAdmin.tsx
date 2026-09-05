@@ -20,10 +20,19 @@ import {
 type AdminCoach = Coach & { availability: Availability[]; counts: Record<string, number> };
 type Sub = "overview" | "coaches" | "availability" | "calendar" | "calls" | "reports";
 
+export type SchedulePrefill = {
+  clientId?: string;
+  callType?: "fitness" | "peptide";
+  startIso?: string;
+  duration?: number;
+  notes?: string;
+  requestId?: string;
+};
+
 const DURATIONS = [15, 30, 45, 60, 90];
 const TZ_KEY = "titan_admin_tz";
 
-export default function CoachingAdmin() {
+export default function CoachingAdmin({ prefill, onPrefillHandled }: { prefill?: SchedulePrefill | null; onPrefillHandled?: () => void } = {}) {
   const loadCoaches = useServerFn(adminListCoaches);
   const loadAppts = useServerFn(adminListAppointments);
 
@@ -32,8 +41,13 @@ export default function CoachingAdmin() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Appointment | null>(null);
-  const [scheduling, setScheduling] = useState<{ coachId?: string } | null>(null);
+  const [scheduling, setScheduling] = useState<{ coachId?: string; prefill?: SchedulePrefill } | null>(null);
   const [tz, setTz] = useState(() => (typeof window !== "undefined" && localStorage.getItem(TZ_KEY)) || DEFAULT_TZ);
+
+  useEffect(() => {
+    if (prefill) setScheduling({ prefill });
+  }, [prefill]);
+
 
   const refresh = useCallback(async () => {
     try {
