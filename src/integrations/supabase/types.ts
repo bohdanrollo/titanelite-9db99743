@@ -288,6 +288,51 @@ export type Database = {
           },
         ]
       }
+      coach_calls: {
+        Row: {
+          admin_notes: string | null
+          approved_start: string | null
+          created_at: string
+          duration_minutes: number
+          id: string
+          notes: string
+          requested_start: string
+          reviewed_at: string | null
+          status: string
+          topic: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          approved_start?: string | null
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          notes?: string
+          requested_start: string
+          reviewed_at?: string | null
+          status?: string
+          topic?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          approved_start?: string | null
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          notes?: string
+          requested_start?: string
+          reviewed_at?: string | null
+          status?: string
+          topic?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string

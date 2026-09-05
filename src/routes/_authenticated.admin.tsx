@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2, DollarSign, Check, X, Trash2, Lock, Video, MessagesSquare, RefreshCw, Gift, FlaskConical, Mail } from "lucide-react";
+import { LogOut, Users, Inbox, FileText, ArrowLeft, Search, Sparkles, Send, Save, Download, Loader2, DollarSign, Check, X, Trash2, Lock, Video, MessagesSquare, RefreshCw, Gift, FlaskConical, Mail, Phone } from "lucide-react";
 import { generateProtocolDraft, saveProtocolDraft, sendProtocol, getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import { approveAffiliate, rejectAffiliate, deleteAffiliate, markAffiliatePaid, resendApprovedAffiliateEmails, setAffiliatePayoutRate } from "@/lib/affiliates.functions";
 import { grantFullAccessByEmail } from "@/lib/admin-access.functions";
@@ -14,6 +14,7 @@ import { adminListAffiliateVideos, reviewAffiliateVideo } from "@/lib/affiliate-
 import { adminListProductRequests, reviewProductRequest } from "@/lib/affiliate-rewards.functions";
 import { adminListPeptideRequests, reviewPeptideRequest, deletePeptideRequest } from "@/lib/peptide-requests.functions";
 import { adminListContactMessages, setContactMessageHandled, deleteContactMessage, type ContactMessage } from "@/lib/contact.functions";
+import { adminListCoachCalls, reviewCoachCall, deleteCoachCall, type AdminCoachCall } from "@/lib/coach-calls.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { AdminMessages } from "@/components/Messaging";
 
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: Admin,
 });
 
-type Tab = "clients" | "intakes" | "protocols" | "messages" | "affiliates" | "videos" | "product" | "peptide-requests" | "contact";
+type Tab = "clients" | "intakes" | "protocols" | "messages" | "affiliates" | "videos" | "product" | "peptide-requests" | "contact" | "calls";
 
 
 function Admin() {
@@ -78,6 +79,7 @@ function Admin() {
             { k: "videos", l: "Video incentives", i: Video },
             { k: "product", l: "Free product", i: Gift },
             { k: "peptide-requests", l: "Peptide requests", i: FlaskConical },
+            { k: "calls", l: "Coach calls", i: Phone },
             { k: "contact", l: "Contact form", i: Mail },
           ] as const).map((t) => (
             <button
@@ -99,6 +101,7 @@ function Admin() {
           {tab === "videos" && <VideoIncentivesAdmin />}
           {tab === "product" && <ProductRequestsAdmin />}
           {tab === "peptide-requests" && <PeptideRequestsAdmin />}
+          {tab === "calls" && <CoachCallsAdmin />}
           {tab === "contact" && <ContactMessagesAdmin />}
         </div>
       </section>
@@ -1463,6 +1466,129 @@ function ContactMessagesAdmin() {
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+function CoachCallsAdmin() {
+  const load = useServerFn(adminListCoachCalls);
+  const review = useServerFn(reviewCoachCall);
+  const remove = useServerFn(deleteCoachCall);
+  const [calls, setCalls] = useState<AdminCoachCall[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [times, setTimes] = useState<Record<string, string>>({});
+  const [notes, setNotes] = useState<Record<string, string>>({});
+  const [busy, setBusy] = useState<string | null>(null);
+
+  const refresh = async () => {
+    try {
+      const res = await load({ data: {} as never });
+      setCalls(res.calls);
+      const t: Record<string, string> = {};
+      res.calls.forEach((c) => {
+        const d = new Date(c.approved_start ?? c.requested_start);
+        const pad = (n: number) => String(n).padStart(2, "0");
+        t[c.id] = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      });
+      setTimes(t);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not load calls");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => { refresh(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, []);
+
+  async function act(id: string, action: "approved" | "declined" | "completed" | "pending") {
+    setBusy(id);
+    try {
+      await review({
+        data: {
+          id,
+          action,
+          approvedStartIso: times[id] ? new Date(times[id]).toISOString() : undefined,
+          notes: notes[id] ?? undefined,
+        },
+      });
+      toast.success(`Call ${action}`);
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not update call");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  if (loading) return <div className="text-eyebrow">Loading…</div>;
+  if (!calls.length) return <p className="text-sm text-muted-foreground">No call requests yet.</p>;
+
+  return (
+    <div className="space-y-4">
+      {calls.map((c) => {
+        const requested = new Date(c.requested_start);
+        return (
+          <div key={c.id} className="border border-foreground/15 p-5">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <div className="font-display text-xl">{c.client_name ?? "Client"}</div>
+                <div className="text-sm text-muted-foreground">{c.client_email ?? "—"}</div>
+                <div className="mt-2 text-sm">
+                  <span className="text-eyebrow">Topic</span> {c.topic === "peptides" ? "Peptides" : "Fitness"} · {c.duration_minutes} min
+                </div>
+                <div className="text-sm">
+                  <span className="text-eyebrow">Requested</span>{" "}
+                  {requested.toLocaleString(undefined, { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                </div>
+              </div>
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] border border-foreground/20 px-2 py-1">{c.status}</span>
+            </div>
+
+            {c.notes && <p className="mt-3 text-sm whitespace-pre-wrap">{c.notes}</p>}
+
+            <div className="mt-4 flex flex-wrap items-end gap-3">
+              <div>
+                <label className="text-eyebrow block">Confirmed time</label>
+                <input
+                  type="datetime-local"
+                  value={times[c.id] ?? ""}
+                  onChange={(e) => setTimes((p) => ({ ...p, [c.id]: e.target.value }))}
+                  className="mt-1 border border-foreground/20 bg-background px-3 py-2 text-sm"
+                />
+              </div>
+              <div className="flex-1 min-w-[220px]">
+                <label className="text-eyebrow block">Note to client</label>
+                <input
+                  value={notes[c.id] ?? c.admin_notes ?? ""}
+                  onChange={(e) => setNotes((p) => ({ ...p, [c.id]: e.target.value }))}
+                  placeholder="Optional"
+                  className="mt-1 w-full border border-foreground/20 bg-background px-3 py-2 text-sm"
+                />
+              </div>
+            </div>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              <button disabled={busy === c.id} onClick={() => act(c.id, "approved")} className="btn-blood hover:btn-blood-hover inline-flex items-center gap-1.5 disabled:opacity-50">
+                <Check size={14} /> Approve
+              </button>
+              <button disabled={busy === c.id} onClick={() => act(c.id, "declined")} className="btn-ghost inline-flex items-center gap-1.5 disabled:opacity-50">
+                <X size={14} /> Decline
+              </button>
+              <button disabled={busy === c.id} onClick={() => act(c.id, "completed")} className="btn-ghost disabled:opacity-50">Mark completed</button>
+              <button
+                disabled={busy === c.id}
+                onClick={async () => {
+                  if (!confirm("Delete this call request?")) return;
+                  try { await remove({ data: { id: c.id } }); toast.success("Deleted"); refresh(); }
+                  catch (e) { toast.error(e instanceof Error ? e.message : "Could not delete"); }
+                }}
+                className="btn-ghost inline-flex items-center gap-1.5 disabled:opacity-50"
+              >
+                <Trash2 size={14} /> Delete
+              </button>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

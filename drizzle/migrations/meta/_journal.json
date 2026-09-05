@@ -15,6 +15,13 @@
       "when": 1787962229587,
       "tag": "0001_pephub_chat_channels",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788575812608,
+      "tag": "0002_create_coach_calls",
+      "breakpoints": true
     }
   ]
 }

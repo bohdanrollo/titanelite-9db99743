@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useAccess, isTabAllowed } from "@/lib/access";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, MessagesSquare, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, CheckCircle, Activity, Apple, TrendingUp, HeartPulse, NotebookPen, Sparkles, CreditCard } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, MessagesSquare, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, CheckCircle, Activity, Apple, TrendingUp, HeartPulse, NotebookPen, Sparkles, CreditCard, Phone } from "lucide-react";
 import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import ReactMarkdown from "react-markdown";
@@ -24,6 +24,7 @@ import { createPortalSession } from "@/lib/payments.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { AddToHomeScreenButton } from "@/components/AddToHomeScreen";
 import { wasReferredByCode } from "@/lib/affiliates.functions";
+import CoachCalls from "@/components/CoachCalls";
 
 function ManageSubscriptionButton() {
   const openPortal = useServerFn(createPortalSession);
@@ -52,9 +53,9 @@ function ManageSubscriptionButton() {
   );
 }
 
-type Tab = "protocols" | "messages" | "peptalk" | "peptides" | "dosing" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning" | "myths" | "labs" | "nutrition" | "progress" | "wellness" | "workouts" | "stackbuilder";
+type Tab = "protocols" | "messages" | "calls" | "peptalk" | "peptides" | "dosing" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning" | "myths" | "labs" | "nutrition" | "progress" | "wellness" | "workouts" | "stackbuilder";
 
-const VALID_TABS: Tab[] = ["protocols", "messages", "peptalk", "peptides", "dosing", "mystack", "supplies", "reconstitution", "injection", "calculator", "lifting", "combos", "learning", "myths", "labs", "nutrition", "progress", "wellness", "workouts", "stackbuilder"];
+const VALID_TABS: Tab[] = ["protocols", "messages", "calls", "peptalk", "peptides", "dosing", "mystack", "supplies", "reconstitution", "injection", "calculator", "lifting", "combos", "learning", "myths", "labs", "nutrition", "progress", "wellness", "workouts", "stackbuilder"];
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Client Dashboard — Titan Elite" }] }),
@@ -167,6 +168,7 @@ function Dashboard() {
             const allTabs = [
               { k: "protocols", l: "Protocols", i: FileText, g: "Plan" },
               { k: "messages", l: "Messages", i: MessagesSquare, g: "Plan" },
+              { k: "calls", l: "Coach Calls", i: Phone, g: "Plan" },
               { k: "mystack", l: "My Stack", i: ListChecks, g: "Plan" },
               { k: "progress", l: "Progress", i: TrendingUp, g: "Track" },
               { k: "workouts", l: "Workouts", i: NotebookPen, g: "Track" },
@@ -262,6 +264,7 @@ function Dashboard() {
         <div className="mt-8">
           {tab === "protocols" && isTabAllowed("protocols", tier, isAdmin) && <Protocols />}
           {tab === "messages" && isTabAllowed("messages", tier, isAdmin) && user && <ClientMessages myId={user.id} />}
+          {tab === "calls" && isTabAllowed("calls", tier, isAdmin) && <CoachCalls />}
           {tab === "peptalk" && isTabAllowed("peptalk", tier, isAdmin) && <PepTalk />}
           {tab === "peptides" && isTabAllowed("peptides", tier, isAdmin) && <Peptides />}
           {tab === "dosing" && isTabAllowed("dosing", tier, isAdmin) && <DosingGuide />}
@@ -301,6 +304,7 @@ function LockedTabCard({ tab }: { tab: Tab }) {
     protocols: "Custom protocols",
     messages: "Coach messaging",
     stackbuilder: "Stack builder",
+    calls: "Coach calls",
   };
   return (
     <div className="border border-foreground/15 p-6 sm:p-10 text-center max-w-2xl mx-auto">
