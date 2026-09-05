@@ -3,6 +3,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Phone, Loader2, Trash2, CheckCircle, Clock, XCircle } from "lucide-react";
 import { listMyCoachCalls, requestCoachCall, cancelMyCoachCall, type CoachCall } from "@/lib/coach-calls.functions";
+import { listMyClientAppointments, type Appointment } from "@/lib/coaching.functions";
+import { CALL_TYPE_LABEL, STATUS_LABEL } from "@/lib/tz";
 
 const SLOTS: string[] = [];
 for (let m = 8 * 60; m <= 19 * 60 + 30; m += 30) {
@@ -60,7 +62,9 @@ export default function CoachCalls() {
   const load = useServerFn(listMyCoachCalls);
   const submit = useServerFn(requestCoachCall);
   const cancel = useServerFn(cancelMyCoachCall);
+  const loadScheduled = useServerFn(listMyClientAppointments);
 
+  const [scheduled, setScheduled] = useState<Appointment[]>([]);
   const [calls, setCalls] = useState<CoachCall[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -74,12 +78,16 @@ export default function CoachCalls() {
     try {
       const res = await load({ data: {} as never });
       setCalls(res.calls);
+      try {
+        const s = await loadScheduled({ data: {} as never });
+        setScheduled(s.appointments);
+      } catch { /* ignore */ }
     } catch {
       /* ignore */
     } finally {
       setLoading(false);
     }
-  }, [load]);
+  }, [load, loadScheduled]);
 
   useEffect(() => { refresh(); }, [refresh]);
 
@@ -197,8 +205,30 @@ export default function CoachCalls() {
         </form>
       </div>
 
+      {scheduled.length > 0 && (
+        <div>
+          <div className="text-eyebrow">Confirmed sessions with your coach</div>
+          <div className="mt-4 space-y-3">
+            {scheduled.map((a) => {
+              const when = new Date(a.start_time);
+              return (
+                <div key={a.id} className="border border-blood/25 bg-blood/5 p-4">
+                  <div className="font-display text-lg">
+                    {when.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })} · {when.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-0.5">
+                    {a.coach_name ? `With ${a.coach_name} · ` : ""}{CALL_TYPE_LABEL[a.call_type] ?? a.call_type} · {a.duration_minutes} min · {STATUS_LABEL[a.status] ?? a.status}
+                  </div>
+                  {a.notes && <p className="mt-2 text-sm text-muted-foreground whitespace-pre-wrap">{a.notes}</p>}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <div>
-        <div className="text-eyebrow">Your calls</div>
+        <div className="text-eyebrow">Your requests</div>
         {calls.length === 0 ? (
           <p className="mt-4 text-sm text-muted-foreground">No calls requested yet.</p>
         ) : (

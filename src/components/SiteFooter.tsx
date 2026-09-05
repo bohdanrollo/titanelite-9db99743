@@ -30,6 +30,7 @@ export function SiteFooter() {
             <li><Link to="/privacy" className="hover:text-blood">Privacy</Link></li>
             <li><Link to="/terms" className="hover:text-blood">Terms</Link></li>
             <li><Link to="/auth" className="hover:text-blood">Client Intake</Link></li>
+            <li><Link to="/coach" className="hover:text-blood">Coach Portal</Link></li>
           </ul>
         </div>
       </div>
