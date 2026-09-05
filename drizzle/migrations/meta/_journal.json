@@ -29,6 +29,13 @@
       "when": 1788641256624,
       "tag": "0003_create_coaching_system",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788642031459,
+      "tag": "0004_scope_member_policies_to_authenticated",
+      "breakpoints": true
     }
   ]
 }
