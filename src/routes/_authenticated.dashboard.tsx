@@ -296,6 +296,27 @@ function Dashboard() {
   );
 }
 
+function LockedTabCard({ tab }: { tab: Tab }) {
+  const labels: Partial<Record<Tab, string>> = {
+    protocols: "Custom protocols",
+    messages: "Coach messaging",
+    stackbuilder: "Stack builder",
+  };
+  return (
+    <div className="border border-foreground/15 p-6 sm:p-10 text-center max-w-2xl mx-auto">
+      <Lock size={40} className="mx-auto text-blood" />
+      <div className="text-eyebrow mt-4">Full Access feature</div>
+      <h2 className="mt-3 font-display text-3xl sm:text-4xl">{labels[tab] ?? "This tool"} is part of Full Access</h2>
+      <p className="mt-4 text-sm text-muted-foreground">
+        Upgrade to Full Access to unlock {labels[tab] ? labels[tab].toLowerCase() : "this tool"} along with every other dashboard tool. Cancel anytime.
+      </p>
+      <Link to="/checkout" className="mt-6 inline-flex btn-blood hover:btn-blood-hover">
+        Upgrade to Full Access
+      </Link>
+    </div>
+  );
+}
+
 function PaywallCard() {
   return (
     <div className="mt-10 border border-foreground/15 p-6 sm:p-10 text-center max-w-2xl mx-auto">
