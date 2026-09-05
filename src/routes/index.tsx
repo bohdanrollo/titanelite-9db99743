@@ -132,7 +132,7 @@ function Hero() {
           {[
             { n: "50+", l: "Peptides catalogued" },
             { n: "AI", l: "Pep Talk assistant" },
-            { n: "12", l: "Dashboard tools" },
+            { n: "21", l: "Dashboard tools" },
           ].map((s, i) => (
             <div key={s.l} className="text-center sm:text-left">
               <div className={`font-heavy text-3xl sm:text-4xl ${i % 2 === 0 ? "text-blood" : "text-foreground"}`}>
