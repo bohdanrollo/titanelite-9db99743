@@ -3,6 +3,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Phone, Loader2, Trash2, CheckCircle, Clock, XCircle } from "lucide-react";
 import { listMyCoachCalls, requestCoachCall, cancelMyCoachCall, type CoachCall } from "@/lib/coach-calls.functions";
+import { listMyClientAppointments, type Appointment } from "@/lib/coaching.functions";
+import { CALL_TYPE_LABEL, STATUS_LABEL } from "@/lib/tz";
 
 const SLOTS: string[] = [];
 for (let m = 8 * 60; m <= 19 * 60 + 30; m += 30) {
