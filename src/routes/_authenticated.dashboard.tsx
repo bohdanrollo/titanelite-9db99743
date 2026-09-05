@@ -167,6 +167,7 @@ function Dashboard() {
             const allTabs = [
               { k: "protocols", l: "Protocols", i: FileText, g: "Plan" },
               { k: "messages", l: "Messages", i: MessagesSquare, g: "Plan" },
+              { k: "calls", l: "Coach Calls", i: Phone, g: "Plan" },
               { k: "mystack", l: "My Stack", i: ListChecks, g: "Plan" },
               { k: "progress", l: "Progress", i: TrendingUp, g: "Track" },
               { k: "workouts", l: "Workouts", i: NotebookPen, g: "Track" },
