@@ -12,6 +12,13 @@ import {
   Dumbbell,
   FileText,
   CalendarCheck,
+  Sparkles,
+  Beaker,
+  BookOpen,
+  Phone,
+  TrendingUp,
+  NotebookPen,
+  HeartPulse,
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -138,7 +145,7 @@ function Hero() {
   );
 }
 
-type DashboardTab = "protocols" | "labs" | "nutrition" | "calculator" | "mystack" | "dosing" | "peptalk" | "messages" | "learning" | "injection" | "lifting";
+type DashboardTab = "protocols" | "labs" | "nutrition" | "calculator" | "mystack" | "dosing" | "peptalk" | "messages" | "learning" | "injection" | "lifting" | "calls" | "stackbuilder" | "peptides" | "combos" | "progress" | "workouts" | "wellness";
 
 type Tile = { icon: typeof FlaskConical; title: string; body: string; span: string; tab?: DashboardTab; feature?: boolean };
 
