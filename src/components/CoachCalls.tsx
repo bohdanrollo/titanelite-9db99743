@@ -87,7 +87,7 @@ export default function CoachCalls() {
     } finally {
       setLoading(false);
     }
-  }, [load]);
+  }, [load, loadScheduled]);
 
   useEffect(() => { refresh(); }, [refresh]);
 
