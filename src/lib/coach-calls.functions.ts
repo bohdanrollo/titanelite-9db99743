@@ -209,8 +209,40 @@ export const reviewCoachCall = createServerFn({ method: "POST" })
     }
     const { error } = await admin.from("coach_calls").update(patch).eq("id", data.id);
     if (error) throw new Error(error.message);
+
+    if (data.action === "approved") {
+      try {
+        const { data: row } = await admin
+          .from("coach_calls")
+          .select("user_id, topic, duration_minutes, approved_start, admin_notes")
+          .eq("id", data.id)
+          .maybeSingle();
+        const { data: profile } = row
+          ? await admin.from("profiles").select("full_name, email").eq("id", row.user_id).maybeSingle()
+          : { data: null };
+        if (profile?.email && row?.approved_start) {
+          const { sendAppEmail } = await import("@/lib/email/send.server");
+          const { formatDateTime, DEFAULT_TZ } = await import("@/lib/tz");
+          await sendAppEmail({
+            templateName: "call-approved",
+            recipientEmail: profile.email,
+            idempotencyKey: `call-approved-req-${data.id}-${row.approved_start}`,
+            templateData: {
+              name: profile.full_name ?? "",
+              when: `${formatDateTime(row.approved_start, DEFAULT_TZ)} (${DEFAULT_TZ})`,
+              callType: row.topic === "peptides" ? "Peptides" : "Fitness",
+              duration: row.duration_minutes,
+              adminNote: row.admin_notes ?? "",
+            },
+          });
+        }
+      } catch (e) {
+        console.warn("[coach-calls] approval email failed", e);
+      }
+    }
     return { ok: true };
   });
+
 
 /** Admin: delete a call request. */
 export const deleteCoachCall = createServerFn({ method: "POST" })
