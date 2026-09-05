@@ -205,8 +205,30 @@ export default function CoachCalls() {
         </form>
       </div>
 
+      {scheduled.length > 0 && (
+        <div>
+          <div className="text-eyebrow">Confirmed sessions with your coach</div>
+          <div className="mt-4 space-y-3">
+            {scheduled.map((a) => {
+              const when = new Date(a.start_time);
+              return (
+                <div key={a.id} className="border border-blood/25 bg-blood/5 p-4">
+                  <div className="font-display text-lg">
+                    {when.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })} · {when.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-0.5">
+                    {a.coach_name ? `With ${a.coach_name} · ` : ""}{CALL_TYPE_LABEL[a.call_type] ?? a.call_type} · {a.duration_minutes} min · {STATUS_LABEL[a.status] ?? a.status}
+                  </div>
+                  {a.notes && <p className="mt-2 text-sm text-muted-foreground whitespace-pre-wrap">{a.notes}</p>}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <div>
-        <div className="text-eyebrow">Your calls</div>
+        <div className="text-eyebrow">Your requests</div>
         {calls.length === 0 ? (
           <p className="mt-4 text-sm text-muted-foreground">No calls requested yet.</p>
         ) : (
