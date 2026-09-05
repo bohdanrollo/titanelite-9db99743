@@ -151,41 +151,24 @@ function Bento() {
           One login. <span className="text-blood">Every tool.</span>
         </h2>
 
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4">
           {TILES.map((t) => {
             const Icon = t.icon;
-            const inner = (
-              <>
-                <Icon size={t.feature ? 28 : 20} className="text-blood" />
-                <h3
-                  className={`mt-5 font-heavy tracking-tight ${
-                    t.feature ? "text-2xl sm:text-3xl" : "text-lg"
-                  }`}
-                >
+            return (
+              <Link
+                key={t.title}
+                to="/dashboard"
+                search={{ tab: t.tab }}
+                className={`group relative card-soft p-6 block text-left transition duration-200 hover:-translate-y-1 hover:border-blood/40 hover:shadow-soft ${t.span}`}
+              >
+                <Icon size={20} className="text-blood" />
+                <h3 className="mt-5 font-heavy tracking-tight text-lg">
                   {t.title}
                 </h3>
-                <p className={`mt-3 font-body text-muted-foreground leading-relaxed ${t.feature ? "text-base max-w-md" : "text-sm"}`}>
+                <p className="mt-3 font-body text-muted-foreground leading-relaxed text-sm">
                   {t.body}
                 </p>
-                {t.feature && (
-                  <span className="mt-8 inline-flex items-center gap-2 font-mono text-[0.72rem] font-bold uppercase tracking-[0.14em] text-blood">
-                    Start now <ArrowRight size={14} />
-                  </span>
-                )}
-              </>
-            );
-            const base = `group relative card-soft p-6 block text-left transition duration-200 hover:-translate-y-1 hover:border-blood/40 hover:shadow-soft ${t.span} ${t.feature ? "md:p-10 bg-accent" : ""}`;
-            if (t.tab) {
-              return (
-                <Link key={t.title} to="/dashboard" search={{ tab: t.tab }} className={base}>
-                  {inner}
-                </Link>
-              );
-            }
-            return (
-              <div key={t.title} className={base}>
-                {inner}
-              </div>
+              </Link>
             );
           })}
         </div>
