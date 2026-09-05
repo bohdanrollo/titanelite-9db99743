@@ -296,7 +296,6 @@ function ProfileForm({ coach, onSaved }: { coach: Coach | null; onSaved: () => v
   const [last, setLast] = useState(coach?.last_name ?? "");
   const [phone, setPhone] = useState(coach?.phone ?? "");
   const [bio, setBio] = useState(coach?.bio ?? "");
-  const [photo, setPhoto] = useState(coach?.profile_photo ?? "");
   const [specialty, setSpecialty] = useState(coach?.specialty ?? "fitness");
   const [tz, setTz] = useState(coach?.timezone ?? DEFAULT_TZ);
   const [busy, setBusy] = useState(false);
