@@ -19,6 +19,8 @@ import {
   TrendingUp,
   NotebookPen,
   HeartPulse,
+  Scale,
+  Package,
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -145,7 +147,7 @@ function Hero() {
   );
 }
 
-type DashboardTab = "protocols" | "labs" | "nutrition" | "calculator" | "mystack" | "dosing" | "peptalk" | "messages" | "learning" | "injection" | "lifting" | "calls" | "stackbuilder" | "peptides" | "combos" | "progress" | "workouts" | "wellness";
+type DashboardTab = "protocols" | "labs" | "nutrition" | "calculator" | "mystack" | "dosing" | "peptalk" | "messages" | "learning" | "injection" | "lifting" | "calls" | "stackbuilder" | "peptides" | "combos" | "progress" | "workouts" | "wellness" | "supplies" | "reconstitution" | "myths";
 
 type Tile = { icon: typeof FlaskConical; title: string; body: string; span: string; tab?: DashboardTab; feature?: boolean };
 
@@ -170,8 +172,11 @@ const TILES: Tile[] = [
   { icon: BookOpen, title: "Combo guides", body: "How compounds are commonly paired and what the research says.", span: "", tab: "combos" },
   { icon: MessageSquare, title: "Coach messaging", body: "Message your coach directly from the dashboard (Full Access).", span: "md:col-span-2", tab: "messages" },
   { icon: Phone, title: "Coach calls", body: "Book a 30-minute one-on-one call about fitness or peptides (Full Access).", span: "md:col-span-2", tab: "calls" },
-  { icon: GraduationCap, title: "Learning center", body: "Mini courses plus myth-vs-evidence breakdowns.", span: "", tab: "learning" },
-  { icon: Syringe, title: "Injection & reconstitution", body: "Step-by-step guides and the exact supplies you need.", span: "", tab: "injection" },
+  { icon: GraduationCap, title: "Learning center", body: "Mini courses on peptides, training, and nutrition fundamentals.", span: "", tab: "learning" },
+  { icon: Scale, title: "Myth vs Evidence", body: "Popular peptide claims weighed against what the research actually shows.", span: "", tab: "myths" },
+  { icon: Package, title: "Supplies checklist", body: "BAC water, syringes, alcohol wipes — everything you need, nothing you don't.", span: "", tab: "supplies" },
+  { icon: FlaskConical, title: "Reconstitution guide", body: "Step-by-step mixing instructions with exact water-to-peptide ratios.", span: "", tab: "reconstitution" },
+  { icon: Syringe, title: "Injection guide", body: "Safe injection technique, sites, and rotation walkthroughs.", span: "", tab: "injection" },
   { icon: Dumbbell, title: "Lifting library", body: "Programming principles and technique cues that actually move the bar.", span: "md:col-span-2", tab: "lifting" },
   { icon: TrendingUp, title: "Progress tracker", body: "Log weight, measurements, and milestones over time.", span: "", tab: "progress" },
   { icon: NotebookPen, title: "Workout logger", body: "Record sessions, sets, and PRs right in the dashboard.", span: "", tab: "workouts" },
