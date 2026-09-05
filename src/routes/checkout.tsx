@@ -55,8 +55,8 @@ const PLANS: Plan[] = [
   {
     id: "full_monthly",
     name: "Full Access",
-    price: "$59.99 then $10.99/mo",
-    tag: "Subscription",
+    price: "$69.99",
+    tag: "Per month",
     features: [
       "Everything in Limited Access",
       "Custom peptide + training protocols",
@@ -96,7 +96,7 @@ function CheckoutPage() {
         </h1>
         <p className="mt-4 max-w-2xl text-muted-foreground">
           {tier === "limited"
-            ? "You currently have Limited Access. Upgrade to Full Access for custom protocols — $59.99 first payment, then $10.99/month."
+            ? "You currently have Limited Access. Upgrade to Full Access for custom protocols — $69.99/month. Cancel anytime."
             : "Choose your plan. Promo codes supported at checkout. Cancel anytime."}
         </p>
 
