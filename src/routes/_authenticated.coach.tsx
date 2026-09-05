@@ -307,7 +307,7 @@ function ProfileForm({ coach, onSaved }: { coach: Coach | null; onSaved: () => v
         e.preventDefault();
         setBusy(true);
         try {
-          await save({ data: { first_name: first, last_name: last, phone, bio, specialty: specialty as "fitness", timezone: tz, profile_photo: photo || null } });
+          await save({ data: { first_name: first, last_name: last, phone, bio, specialty: specialty as "fitness", timezone: tz, profile_photo: null } });
           toast.success(coach ? "Profile updated." : "Profile submitted — an admin will review it.");
           onSaved();
         } catch (err) {
