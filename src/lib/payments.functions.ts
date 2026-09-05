@@ -61,17 +61,11 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       if (!prices.data.length) throw new Error("Price not found");
       const primary = prices.data[0];
 
-      // Full plan: charge $59.99 initial fee on the first invoice alongside
-      // the recurring $10.99/month. Limited plan: recurring only.
+      // Both plans are flat recurring subscriptions (full_monthly is
+      // $69.99/month; limited_monthly is $10.99/month) — no initial fee.
       const lineItems: { price: string; quantity: number }[] = [
         { price: primary.id, quantity: 1 },
       ];
-      if (data.priceId === "full_monthly") {
-        const feeLookup = await stripe.prices.list({ lookup_keys: ["full_initial_fee"] });
-        if (feeLookup.data.length) {
-          lineItems.push({ price: feeLookup.data[0].id, quantity: 1 });
-        }
-      }
 
       const refCode = (data.refCode ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 20);
 
