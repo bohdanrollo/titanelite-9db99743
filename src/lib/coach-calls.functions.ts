@@ -158,14 +158,22 @@ export const adminListCoachCalls = createServerFn({ method: "POST" })
       profiles = Object.fromEntries((ps ?? []).map((p: any) => [p.id, { full_name: p.full_name, email: p.email }]));
     }
 
+    const { data: appts } = await admin.from("coach_appointments").select("request_id");
+    const scheduled = new Set(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ((appts ?? []) as any[]).map((a) => a.request_id).filter(Boolean) as string[],
+    );
+
     return {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       calls: (rows ?? []).map((r: any) => ({
         ...r,
         client_name: profiles[r.user_id]?.full_name ?? null,
         client_email: profiles[r.user_id]?.email ?? null,
+        scheduled: scheduled.has(r.id),
       })) as AdminCoachCall[],
     };
+
   });
 
 /** Admin: approve (optionally at a different time), decline, or complete a call. */
