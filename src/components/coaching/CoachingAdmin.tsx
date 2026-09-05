@@ -551,20 +551,30 @@ function todayKeyLocal() {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-function SchedulerModal({ presetCoachId, tz, onClose, onDone }: { presetCoachId?: string; tz: string; onClose: () => void; onDone: () => void }) {
+function hhmmIn(iso: string, tz: string) {
+  const t = formatTime(iso, tz);
+  const [hm, ap] = t.split(" ");
+  const [h, m] = (hm ?? "0:0").split(":").map(Number);
+  const hour = ap === "PM" && h !== 12 ? (h ?? 0) + 12 : ap === "AM" && h === 12 ? 0 : (h ?? 0);
+  const mins = (m ?? 0) < 30 ? 0 : 30;
+  return `${String(hour).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
+}
+
+function SchedulerModal({ presetCoachId, prefill, tz, onClose, onDone }: { presetCoachId?: string; prefill?: SchedulePrefill; tz: string; onClose: () => void; onDone: () => void }) {
   const loadData = useServerFn(adminSchedulingData);
   const findCoaches = useServerFn(adminFindAvailableCoaches);
   const schedule = useServerFn(adminScheduleCall);
 
   const [clients, setClients] = useState<{ id: string; full_name: string | null; email: string | null }[]>([]);
-  const [clientId, setClientId] = useState("");
+  const [clientId, setClientId] = useState(prefill?.clientId ?? "");
   const [clientQ, setClientQ] = useState("");
-  const [callType, setCallType] = useState<"fitness" | "peptide">("fitness");
-  const [date, setDate] = useState(todayKeyLocal());
-  const [time, setTime] = useState("10:00");
-  const [duration, setDuration] = useState(30);
-  const [notes, setNotes] = useState("");
+  const [callType, setCallType] = useState<"fitness" | "peptide">(prefill?.callType ?? "fitness");
+  const [date, setDate] = useState(prefill?.startIso ? dateKey(new Date(prefill.startIso), tz) : todayKeyLocal());
+  const [time, setTime] = useState(prefill?.startIso ? hhmmIn(prefill.startIso, tz) : "10:00");
+  const [duration, setDuration] = useState(prefill?.duration ?? 30);
+  const [notes, setNotes] = useState(prefill?.notes ?? "");
   const [coachId, setCoachId] = useState(presetCoachId ?? "");
+
   const [eligible, setEligible] = useState<{ id: string; name: string; specialty: string; reason: string | null }[]>([]);
   const [checking, setChecking] = useState(false);
   const [busy, setBusy] = useState(false);
