@@ -101,7 +101,18 @@ function Admin() {
           {tab === "videos" && <VideoIncentivesAdmin />}
           {tab === "product" && <ProductRequestsAdmin />}
           {tab === "peptide-requests" && <PeptideRequestsAdmin />}
-          {tab === "calls" && <CoachCallsAdmin />}
+          {tab === "calls" && (
+            <div className="space-y-14">
+              <CoachingAdmin />
+              <div>
+                <div className="text-eyebrow">Client call requests</div>
+                <p className="mt-2 text-sm text-muted-foreground max-w-2xl">
+                  Requests submitted by clients from their dashboard. Approve one here, then schedule it with a coach above.
+                </p>
+                <div className="mt-5"><CoachCallsAdmin /></div>
+              </div>
+            </div>
+          )}
           {tab === "contact" && <ContactMessagesAdmin />}
         </div>
       </section>
