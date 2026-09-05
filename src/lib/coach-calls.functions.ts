@@ -51,8 +51,17 @@ export const listMyCoachCalls = createServerFn({ method: "POST" })
       .eq("user_id", userId)
       .order("requested_start", { ascending: false });
     if (error) throw new Error(error.message);
-    return { allowed: true as const, calls: (data ?? []) as CoachCall[] };
+    // Requests that have been turned into a scheduled session live on the calendar instead.
+    const { data: appts } = await supabase
+      .from("coach_appointments").select("request_id").eq("client_id", userId);
+    const scheduled = new Set(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ((appts ?? []) as any[]).map((a) => a.request_id).filter(Boolean) as string[],
+    );
+    const calls = ((data ?? []) as CoachCall[]).filter((c) => !scheduled.has(c.id));
+    return { allowed: true as const, calls };
   });
+
 
 /** Client: request a 30-minute coach call. */
 export const requestCoachCall = createServerFn({ method: "POST" })
