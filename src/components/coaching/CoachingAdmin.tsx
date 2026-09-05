@@ -142,11 +142,13 @@ export default function CoachingAdmin({ prefill, onPrefillHandled }: { prefill?:
       {scheduling && (
         <SchedulerModal
           presetCoachId={scheduling.coachId}
+          prefill={scheduling.prefill}
           tz={tz}
-          onClose={() => setScheduling(null)}
-          onDone={() => { setScheduling(null); refresh(); }}
+          onClose={() => { setScheduling(null); onPrefillHandled?.(); }}
+          onDone={() => { setScheduling(null); onPrefillHandled?.(); refresh(); }}
         />
       )}
+
     </div>
   );
 }
