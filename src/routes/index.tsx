@@ -1,26 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
-  FlaskConical,
-  Utensils,
   Calculator,
   Layers,
   Bot,
-  MessageSquare,
-  GraduationCap,
-  Syringe,
-  Dumbbell,
-  FileText,
-  CalendarCheck,
-  Sparkles,
   Beaker,
-  BookOpen,
-  Phone,
-  TrendingUp,
-  NotebookPen,
-  HeartPulse,
-  Scale,
-  Package,
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -147,41 +131,15 @@ function Hero() {
   );
 }
 
-type DashboardTab = "protocols" | "labs" | "nutrition" | "calculator" | "mystack" | "dosing" | "peptalk" | "messages" | "learning" | "injection" | "lifting" | "calls" | "stackbuilder" | "peptides" | "combos" | "progress" | "workouts" | "wellness" | "supplies" | "reconstitution" | "myths";
+type DashboardTab = "calculator" | "mystack" | "peptalk" | "peptides";
 
-type Tile = { icon: typeof FlaskConical; title: string; body: string; span: string; tab?: DashboardTab; feature?: boolean };
+type Tile = { icon: typeof Calculator; title: string; body: string; span: string; tab?: DashboardTab };
 
 const TILES: Tile[] = [
-  {
-    icon: FileText,
-    title: "Custom protocols",
-    body: "A 100% custom educational peptide protocol and weight-programming plan built around your goals — delivered straight to your dashboard.",
-    span: "md:col-span-2 md:row-span-2",
-    tab: "protocols",
-    feature: true,
-  },
-  { icon: FlaskConical, title: "Lab analysis", body: "Upload your blood panel with your age, height, and weight for instant AI read-outs on what's off and how to fix it.", span: "md:col-span-2", tab: "labs" },
-  { icon: Utensils, title: "Calorie tracker", body: "Search foods and drinks by brand, log macros, and keep every past day saved.", span: "", tab: "nutrition" },
   { icon: Calculator, title: "Dose calculator", body: "A true-to-life 100-unit syringe that shows your exact draw.", span: "", tab: "calculator" },
   { icon: Layers, title: "My Stack", body: "Track every compound, dose, and cycle in one place.", span: "", tab: "mystack" },
-  { icon: Syringe, title: "Dosing guide", body: "Research dosing ranges, escalations, and weekly schedules for 21 compounds.", span: "md:col-span-2", tab: "dosing" },
-
   { icon: Bot, title: "Pep Talk AI", body: "Ask peptide questions and get answers on demand.", span: "", tab: "peptalk" },
-  { icon: Sparkles, title: "Stack Builder", body: "AI-assisted stack planning that builds around your goals.", span: "", tab: "stackbuilder" },
   { icon: Beaker, title: "Peptide library", body: "60+ compounds with research notes, molecular profiles, and citations.", span: "", tab: "peptides" },
-  { icon: BookOpen, title: "Combo guides", body: "How compounds are commonly paired and what the research says.", span: "", tab: "combos" },
-  { icon: MessageSquare, title: "Coach messaging", body: "Message your coach directly from the dashboard (Full Access).", span: "md:col-span-2", tab: "messages" },
-  { icon: Phone, title: "Coach calls", body: "Book a 30-minute one-on-one call about fitness or peptides (Full Access).", span: "md:col-span-2", tab: "calls" },
-  { icon: GraduationCap, title: "Learning center", body: "Mini courses on peptides, training, and nutrition fundamentals.", span: "", tab: "learning" },
-  { icon: Scale, title: "Myth vs Evidence", body: "Popular peptide claims weighed against what the research actually shows.", span: "", tab: "myths" },
-  { icon: Package, title: "Supplies checklist", body: "BAC water, syringes, alcohol wipes — everything you need, nothing you don't.", span: "", tab: "supplies" },
-  { icon: FlaskConical, title: "Reconstitution guide", body: "Step-by-step mixing instructions with exact water-to-peptide ratios.", span: "", tab: "reconstitution" },
-  { icon: Syringe, title: "Injection guide", body: "Safe injection technique, sites, and rotation walkthroughs.", span: "", tab: "injection" },
-  { icon: Dumbbell, title: "Lifting library", body: "Programming principles and technique cues that actually move the bar.", span: "md:col-span-2", tab: "lifting" },
-  { icon: TrendingUp, title: "Progress tracker", body: "Log weight, measurements, and milestones over time.", span: "", tab: "progress" },
-  { icon: NotebookPen, title: "Workout logger", body: "Record sessions, sets, and PRs right in the dashboard.", span: "", tab: "workouts" },
-  { icon: HeartPulse, title: "Wellness tracker", body: "Track sleep, energy, and recovery day by day.", span: "", tab: "wellness" },
-  { icon: CalendarCheck, title: "Dose tracker", body: "A weekly calendar that builds itself from your stack — morning, afternoon, and evening doses, checked off as you take them.", span: "md:col-span-2", tab: "mystack" },
 ];
 
 function Bento() {
@@ -193,41 +151,24 @@ function Bento() {
           One login. <span className="text-blood">Every tool.</span>
         </h2>
 
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4">
           {TILES.map((t) => {
             const Icon = t.icon;
-            const inner = (
-              <>
-                <Icon size={t.feature ? 28 : 20} className="text-blood" />
-                <h3
-                  className={`mt-5 font-heavy tracking-tight ${
-                    t.feature ? "text-2xl sm:text-3xl" : "text-lg"
-                  }`}
-                >
+            return (
+              <Link
+                key={t.title}
+                to="/dashboard"
+                search={{ tab: t.tab }}
+                className={`group relative card-soft p-6 block text-left transition duration-200 hover:-translate-y-1 hover:border-blood/40 hover:shadow-soft ${t.span}`}
+              >
+                <Icon size={20} className="text-blood" />
+                <h3 className="mt-5 font-heavy tracking-tight text-lg">
                   {t.title}
                 </h3>
-                <p className={`mt-3 font-body text-muted-foreground leading-relaxed ${t.feature ? "text-base max-w-md" : "text-sm"}`}>
+                <p className="mt-3 font-body text-muted-foreground leading-relaxed text-sm">
                   {t.body}
                 </p>
-                {t.feature && (
-                  <span className="mt-8 inline-flex items-center gap-2 font-mono text-[0.72rem] font-bold uppercase tracking-[0.14em] text-blood">
-                    Start now <ArrowRight size={14} />
-                  </span>
-                )}
-              </>
-            );
-            const base = `group relative card-soft p-6 block text-left transition duration-200 hover:-translate-y-1 hover:border-blood/40 hover:shadow-soft ${t.span} ${t.feature ? "md:p-10 bg-accent" : ""}`;
-            if (t.tab) {
-              return (
-                <Link key={t.title} to="/dashboard" search={{ tab: t.tab }} className={base}>
-                  {inner}
-                </Link>
-              );
-            }
-            return (
-              <div key={t.title} className={base}>
-                {inner}
-              </div>
+              </Link>
             );
           })}
         </div>
