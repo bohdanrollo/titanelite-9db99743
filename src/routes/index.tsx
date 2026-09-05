@@ -158,10 +158,17 @@ const TILES: Tile[] = [
   { icon: Syringe, title: "Dosing guide", body: "Research dosing ranges, escalations, and weekly schedules for 21 compounds.", span: "md:col-span-2", tab: "dosing" },
 
   { icon: Bot, title: "Pep Talk AI", body: "Ask peptide questions and get answers on demand.", span: "", tab: "peptalk" },
+  { icon: Sparkles, title: "Stack Builder", body: "AI-assisted stack planning that builds around your goals.", span: "", tab: "stackbuilder" },
+  { icon: Beaker, title: "Peptide library", body: "60+ compounds with research notes, molecular profiles, and citations.", span: "", tab: "peptides" },
+  { icon: BookOpen, title: "Combo guides", body: "How compounds are commonly paired and what the research says.", span: "", tab: "combos" },
   { icon: MessageSquare, title: "Coach messaging", body: "Message your coach directly from the dashboard (Full Access).", span: "md:col-span-2", tab: "messages" },
+  { icon: Phone, title: "Coach calls", body: "Book a 30-minute one-on-one call about fitness or peptides (Full Access).", span: "md:col-span-2", tab: "calls" },
   { icon: GraduationCap, title: "Learning center", body: "Mini courses plus myth-vs-evidence breakdowns.", span: "", tab: "learning" },
   { icon: Syringe, title: "Injection & reconstitution", body: "Step-by-step guides and the exact supplies you need.", span: "", tab: "injection" },
   { icon: Dumbbell, title: "Lifting library", body: "Programming principles and technique cues that actually move the bar.", span: "md:col-span-2", tab: "lifting" },
+  { icon: TrendingUp, title: "Progress tracker", body: "Log weight, measurements, and milestones over time.", span: "", tab: "progress" },
+  { icon: NotebookPen, title: "Workout logger", body: "Record sessions, sets, and PRs right in the dashboard.", span: "", tab: "workouts" },
+  { icon: HeartPulse, title: "Wellness tracker", body: "Track sleep, energy, and recovery day by day.", span: "", tab: "wellness" },
   { icon: CalendarCheck, title: "Dose tracker", body: "A weekly calendar that builds itself from your stack — morning, afternoon, and evening doses, checked off as you take them.", span: "md:col-span-2", tab: "mystack" },
 ];
 
