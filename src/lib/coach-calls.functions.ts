@@ -87,6 +87,21 @@ export const requestCoachCall = createServerFn({ method: "POST" })
       .from("coach_calls").select("id").eq("user_id", userId).eq("status", "pending").limit(1);
     if (pending && pending.length) throw new Error("You already have a call request awaiting approval.");
 
+    // One accepted call per calendar month (based on the requested call's month).
+    const monthStart = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), 1));
+    const monthEnd = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth() + 1, 1));
+    const { data: accepted } = await supabase
+      .from("coach_calls")
+      .select("id")
+      .eq("user_id", userId)
+      .in("status", ["approved", "completed"])
+      .gte("requested_start", monthStart.toISOString())
+      .lt("requested_start", monthEnd.toISOString())
+      .limit(1);
+    if (accepted && accepted.length) {
+      throw new Error("You already have an accepted call this month. You can schedule your next call next month.");
+    }
+
     const { error } = await supabase.from("coach_calls").insert({
       user_id: userId,
       topic: data.topic,
