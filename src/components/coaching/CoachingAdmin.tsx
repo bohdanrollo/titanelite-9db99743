@@ -688,7 +688,7 @@ function SchedulerModal({ presetCoachId, prefill, tz, onClose, onDone }: { prese
               if (!coachId) return toast.error("Pick a coach.");
               setBusy(true);
               try {
-                await schedule({ data: { coachId, clientId, callType, startIso, duration, notes } });
+                await schedule({ data: { coachId, clientId, callType, startIso, duration, notes, requestId: prefill?.requestId } });
                 toast.success("Call scheduled — the coach has been notified.");
                 onDone();
               } catch (e) { toast.error(e instanceof Error ? e.message : "Could not schedule"); } finally { setBusy(false); }
