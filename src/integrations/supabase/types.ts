@@ -288,10 +288,118 @@ export type Database = {
           },
         ]
       }
+      coach_appointments: {
+        Row: {
+          call_type: string
+          client_id: string
+          coach_id: string
+          created_at: string
+          created_by: string | null
+          duration_minutes: number
+          end_time: string
+          id: string
+          notes: string
+          request_id: string | null
+          specialty: string
+          start_time: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          call_type?: string
+          client_id: string
+          coach_id: string
+          created_at?: string
+          created_by?: string | null
+          duration_minutes?: number
+          end_time: string
+          id?: string
+          notes?: string
+          request_id?: string | null
+          specialty?: string
+          start_time: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          call_type?: string
+          client_id?: string
+          coach_id?: string
+          created_at?: string
+          created_by?: string | null
+          duration_minutes?: number
+          end_time?: string
+          id?: string
+          notes?: string
+          request_id?: string | null
+          specialty?: string
+          start_time?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coach_appointments_coach_id_fkey"
+            columns: ["coach_id"]
+            isOneToOne: false
+            referencedRelation: "coaches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coach_appointments_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "coach_calls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coach_availability: {
+        Row: {
+          coach_id: string
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          is_available: boolean
+          start_time: string
+          updated_at: string
+        }
+        Insert: {
+          coach_id: string
+          created_at?: string
+          day_of_week: number
+          end_time?: string
+          id?: string
+          is_available?: boolean
+          start_time?: string
+          updated_at?: string
+        }
+        Update: {
+          coach_id?: string
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          is_available?: boolean
+          start_time?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coach_availability_coach_id_fkey"
+            columns: ["coach_id"]
+            isOneToOne: false
+            referencedRelation: "coaches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coach_calls: {
         Row: {
           admin_notes: string | null
           approved_start: string | null
+          coach_id: string | null
           created_at: string
           duration_minutes: number
           id: string
@@ -306,6 +414,7 @@ export type Database = {
         Insert: {
           admin_notes?: string | null
           approved_start?: string | null
+          coach_id?: string | null
           created_at?: string
           duration_minutes?: number
           id?: string
@@ -320,6 +429,7 @@ export type Database = {
         Update: {
           admin_notes?: string | null
           approved_start?: string | null
+          coach_id?: string | null
           created_at?: string
           duration_minutes?: number
           id?: string
@@ -328,6 +438,62 @@ export type Database = {
           reviewed_at?: string | null
           status?: string
           topic?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coach_calls_coach_id_fkey"
+            columns: ["coach_id"]
+            isOneToOne: false
+            referencedRelation: "coaches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coaches: {
+        Row: {
+          bio: string
+          created_at: string
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          phone: string
+          profile_photo: string | null
+          specialty: string
+          status: string
+          timezone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bio?: string
+          created_at?: string
+          email: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          phone?: string
+          profile_photo?: string | null
+          specialty?: string
+          status?: string
+          timezone?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bio?: string
+          created_at?: string
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          phone?: string
+          profile_photo?: string | null
+          specialty?: string
+          status?: string
+          timezone?: string
           updated_at?: string
           user_id?: string
         }
@@ -676,6 +842,50 @@ export type Database = {
           sender_id?: string
         }
         Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          read: boolean
+          related_call_id: string | null
+          send_after: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message?: string
+          read?: boolean
+          related_call_id?: string | null
+          send_after?: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          read?: boolean
+          related_call_id?: string | null
+          send_after?: string
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_related_call_id_fkey"
+            columns: ["related_call_id"]
+            isOneToOne: false
+            referencedRelation: "coach_appointments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       nutrition_goals: {
         Row: {
