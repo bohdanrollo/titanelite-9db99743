@@ -19,6 +19,8 @@ import {
   TrendingUp,
   NotebookPen,
   HeartPulse,
+  Scale,
+  Package,
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
