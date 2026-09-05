@@ -52,9 +52,9 @@ function ManageSubscriptionButton() {
   );
 }
 
-type Tab = "protocols" | "messages" | "peptalk" | "peptides" | "dosing" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning" | "myths" | "labs" | "nutrition" | "progress" | "wellness" | "workouts" | "stackbuilder";
+type Tab = "protocols" | "messages" | "calls" | "peptalk" | "peptides" | "dosing" | "mystack" | "supplies" | "reconstitution" | "injection" | "calculator" | "lifting" | "combos" | "learning" | "myths" | "labs" | "nutrition" | "progress" | "wellness" | "workouts" | "stackbuilder";
 
-const VALID_TABS: Tab[] = ["protocols", "messages", "peptalk", "peptides", "dosing", "mystack", "supplies", "reconstitution", "injection", "calculator", "lifting", "combos", "learning", "myths", "labs", "nutrition", "progress", "wellness", "workouts", "stackbuilder"];
+const VALID_TABS: Tab[] = ["protocols", "messages", "calls", "peptalk", "peptides", "dosing", "mystack", "supplies", "reconstitution", "injection", "calculator", "lifting", "combos", "learning", "myths", "labs", "nutrition", "progress", "wellness", "workouts", "stackbuilder"];
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Client Dashboard — Titan Elite" }] }),
