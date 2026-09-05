@@ -566,8 +566,51 @@ export const adminScheduleCall = createServerFn({ method: "POST" })
       },
       ...(created?.id ? reminderRows(coach.user_id, created.id, start, label) : []),
     ]);
+
+    // Email the coach, and the client (their requested call is now confirmed).
+    try {
+      const { sendAppEmail } = await import("@/lib/email/send.server");
+      const { formatDateTime, CALL_TYPE_LABEL } = await import("@/lib/tz");
+      const coachTz: string = coach.timezone || DEFAULT_TZ;
+      const typeLabel = CALL_TYPE_LABEL[data.callType] ?? data.callType;
+      const coachName = `${coach.first_name ?? ""} ${coach.last_name ?? ""}`.trim();
+      const { data: coachRow } = await db.from("coaches").select("email").eq("id", data.coachId).maybeSingle();
+      if (coachRow?.email) {
+        await sendAppEmail({
+          templateName: "coach-call-scheduled",
+          recipientEmail: coachRow.email,
+          idempotencyKey: `coach-call-scheduled-${created?.id ?? data.startIso}`,
+          templateData: {
+            coachName: coach.first_name ?? "",
+            clientName: client.full_name ?? "",
+            clientEmail: client.email ?? "",
+            when: `${formatDateTime(start, coachTz)} (${coachTz})`,
+            callType: typeLabel,
+            duration: data.duration,
+            notes: data.notes,
+          },
+        });
+      }
+      if (client.email) {
+        await sendAppEmail({
+          templateName: "call-approved",
+          recipientEmail: client.email,
+          idempotencyKey: `call-approved-${created?.id ?? data.startIso}`,
+          templateData: {
+            name: client.full_name ?? "",
+            when: `${formatDateTime(start, coachTz)} (${coachTz})`,
+            callType: typeLabel,
+            duration: data.duration,
+            coachName,
+          },
+        });
+      }
+    } catch (e) {
+      console.warn("[coaching] call emails failed", e);
+    }
     return { ok: true, id: created?.id };
   });
+
 
 export const adminUpdateCall = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
