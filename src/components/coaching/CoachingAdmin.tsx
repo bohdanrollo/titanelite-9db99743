@@ -604,7 +604,7 @@ function SchedulerModal({ presetCoachId, prefill, tz, onClose, onDone }: { prese
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 overflow-y-auto" onClick={onClose}>
       <div className="bg-card border border-foreground/12 rounded-2xl w-full max-w-2xl shadow-xl my-8" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-foreground/10">
-          <div className="font-display text-2xl">Schedule a call</div>
+          <div className="font-display text-2xl">{prefill?.requestId ? "Assign this request to a coach" : "Schedule a call"}</div>
           <button onClick={onClose} className="p-2 hover:bg-muted rounded-lg"><X size={16} /></button>
         </div>
         <div className="px-6 py-5 space-y-4 text-sm">
