@@ -18,7 +18,9 @@ export type AdminCoachCall = CoachCall & {
   user_id: string;
   client_name: string | null;
   client_email: string | null;
+  scheduled: boolean;
 };
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function isAdmin(supabase: any, userId: string) {
