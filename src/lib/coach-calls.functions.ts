@@ -18,7 +18,9 @@ export type AdminCoachCall = CoachCall & {
   user_id: string;
   client_name: string | null;
   client_email: string | null;
+  scheduled: boolean;
 };
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function isAdmin(supabase: any, userId: string) {
@@ -49,8 +51,17 @@ export const listMyCoachCalls = createServerFn({ method: "POST" })
       .eq("user_id", userId)
       .order("requested_start", { ascending: false });
     if (error) throw new Error(error.message);
-    return { allowed: true as const, calls: (data ?? []) as CoachCall[] };
+    // Requests that have been turned into a scheduled session live on the calendar instead.
+    const { data: appts } = await supabase
+      .from("coach_appointments").select("request_id").eq("client_id", userId);
+    const scheduled = new Set(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ((appts ?? []) as any[]).map((a) => a.request_id).filter(Boolean) as string[],
+    );
+    const calls = ((data ?? []) as CoachCall[]).filter((c) => !scheduled.has(c.id));
+    return { allowed: true as const, calls };
   });
+
 
 /** Client: request a 30-minute coach call. */
 export const requestCoachCall = createServerFn({ method: "POST" })
@@ -147,14 +158,22 @@ export const adminListCoachCalls = createServerFn({ method: "POST" })
       profiles = Object.fromEntries((ps ?? []).map((p: any) => [p.id, { full_name: p.full_name, email: p.email }]));
     }
 
+    const { data: appts } = await admin.from("coach_appointments").select("request_id");
+    const scheduled = new Set(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ((appts ?? []) as any[]).map((a) => a.request_id).filter(Boolean) as string[],
+    );
+
     return {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       calls: (rows ?? []).map((r: any) => ({
         ...r,
         client_name: profiles[r.user_id]?.full_name ?? null,
         client_email: profiles[r.user_id]?.email ?? null,
+        scheduled: scheduled.has(r.id),
       })) as AdminCoachCall[],
     };
+
   });
 
 /** Admin: approve (optionally at a different time), decline, or complete a call. */

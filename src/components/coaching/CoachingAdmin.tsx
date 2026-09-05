@@ -20,10 +20,19 @@ import {
 type AdminCoach = Coach & { availability: Availability[]; counts: Record<string, number> };
 type Sub = "overview" | "coaches" | "availability" | "calendar" | "calls" | "reports";
 
+export type SchedulePrefill = {
+  clientId?: string;
+  callType?: "fitness" | "peptide";
+  startIso?: string;
+  duration?: number;
+  notes?: string;
+  requestId?: string;
+};
+
 const DURATIONS = [15, 30, 45, 60, 90];
 const TZ_KEY = "titan_admin_tz";
 
-export default function CoachingAdmin() {
+export default function CoachingAdmin({ prefill, onPrefillHandled }: { prefill?: SchedulePrefill | null; onPrefillHandled?: () => void } = {}) {
   const loadCoaches = useServerFn(adminListCoaches);
   const loadAppts = useServerFn(adminListAppointments);
 
@@ -32,8 +41,13 @@ export default function CoachingAdmin() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Appointment | null>(null);
-  const [scheduling, setScheduling] = useState<{ coachId?: string } | null>(null);
+  const [scheduling, setScheduling] = useState<{ coachId?: string; prefill?: SchedulePrefill } | null>(null);
   const [tz, setTz] = useState(() => (typeof window !== "undefined" && localStorage.getItem(TZ_KEY)) || DEFAULT_TZ);
+
+  useEffect(() => {
+    if (prefill) setScheduling({ prefill });
+  }, [prefill]);
+
 
   const refresh = useCallback(async () => {
     try {
@@ -128,11 +142,13 @@ export default function CoachingAdmin() {
       {scheduling && (
         <SchedulerModal
           presetCoachId={scheduling.coachId}
+          prefill={scheduling.prefill}
           tz={tz}
-          onClose={() => setScheduling(null)}
-          onDone={() => { setScheduling(null); refresh(); }}
+          onClose={() => { setScheduling(null); onPrefillHandled?.(); }}
+          onDone={() => { setScheduling(null); onPrefillHandled?.(); refresh(); }}
         />
       )}
+
     </div>
   );
 }
@@ -535,20 +551,30 @@ function todayKeyLocal() {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-function SchedulerModal({ presetCoachId, tz, onClose, onDone }: { presetCoachId?: string; tz: string; onClose: () => void; onDone: () => void }) {
+function hhmmIn(iso: string, tz: string) {
+  const t = formatTime(iso, tz);
+  const [hm, ap] = t.split(" ");
+  const [h, m] = (hm ?? "0:0").split(":").map(Number);
+  const hour = ap === "PM" && h !== 12 ? (h ?? 0) + 12 : ap === "AM" && h === 12 ? 0 : (h ?? 0);
+  const mins = (m ?? 0) < 30 ? 0 : 30;
+  return `${String(hour).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
+}
+
+function SchedulerModal({ presetCoachId, prefill, tz, onClose, onDone }: { presetCoachId?: string; prefill?: SchedulePrefill; tz: string; onClose: () => void; onDone: () => void }) {
   const loadData = useServerFn(adminSchedulingData);
   const findCoaches = useServerFn(adminFindAvailableCoaches);
   const schedule = useServerFn(adminScheduleCall);
 
   const [clients, setClients] = useState<{ id: string; full_name: string | null; email: string | null }[]>([]);
-  const [clientId, setClientId] = useState("");
+  const [clientId, setClientId] = useState(prefill?.clientId ?? "");
   const [clientQ, setClientQ] = useState("");
-  const [callType, setCallType] = useState<"fitness" | "peptide">("fitness");
-  const [date, setDate] = useState(todayKeyLocal());
-  const [time, setTime] = useState("10:00");
-  const [duration, setDuration] = useState(30);
-  const [notes, setNotes] = useState("");
+  const [callType, setCallType] = useState<"fitness" | "peptide">(prefill?.callType ?? "fitness");
+  const [date, setDate] = useState(prefill?.startIso ? dateKey(new Date(prefill.startIso), tz) : todayKeyLocal());
+  const [time, setTime] = useState(prefill?.startIso ? hhmmIn(prefill.startIso, tz) : "10:00");
+  const [duration, setDuration] = useState(prefill?.duration ?? 30);
+  const [notes, setNotes] = useState(prefill?.notes ?? "");
   const [coachId, setCoachId] = useState(presetCoachId ?? "");
+
   const [eligible, setEligible] = useState<{ id: string; name: string; specialty: string; reason: string | null }[]>([]);
   const [checking, setChecking] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -578,7 +604,7 @@ function SchedulerModal({ presetCoachId, tz, onClose, onDone }: { presetCoachId?
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 overflow-y-auto" onClick={onClose}>
       <div className="bg-card border border-foreground/12 rounded-2xl w-full max-w-2xl shadow-xl my-8" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-foreground/10">
-          <div className="font-display text-2xl">Schedule a call</div>
+          <div className="font-display text-2xl">{prefill?.requestId ? "Assign this request to a coach" : "Schedule a call"}</div>
           <button onClick={onClose} className="p-2 hover:bg-muted rounded-lg"><X size={16} /></button>
         </div>
         <div className="px-6 py-5 space-y-4 text-sm">
@@ -662,7 +688,7 @@ function SchedulerModal({ presetCoachId, tz, onClose, onDone }: { presetCoachId?
               if (!coachId) return toast.error("Pick a coach.");
               setBusy(true);
               try {
-                await schedule({ data: { coachId, clientId, callType, startIso, duration, notes } });
+                await schedule({ data: { coachId, clientId, callType, startIso, duration, notes, requestId: prefill?.requestId } });
                 toast.success("Call scheduled — the coach has been notified.");
                 onDone();
               } catch (e) { toast.error(e instanceof Error ? e.message : "Could not schedule"); } finally { setBusy(false); }
