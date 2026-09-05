@@ -1527,17 +1527,32 @@ function CoachCallsAdmin({ onApproved }: { onApproved: (p: SchedulePrefill) => v
 
   async function act(id: string, action: "approved" | "declined" | "completed" | "pending") {
     setBusy(id);
+    const startIso = times[id] ? new Date(times[id]).toISOString() : undefined;
     try {
       await review({
         data: {
           id,
           action,
-          approvedStartIso: times[id] ? new Date(times[id]).toISOString() : undefined,
+          approvedStartIso: startIso,
           notes: notes[id] ?? undefined,
         },
       });
       toast.success(`Call ${action}`);
+      if (action === "approved") {
+        const call = calls.find((c) => c.id === id);
+        if (call) {
+          onApproved({
+            clientId: call.user_id,
+            callType: call.topic === "peptides" ? "peptide" : "fitness",
+            startIso: startIso ?? call.requested_start,
+            duration: call.duration_minutes,
+            notes: call.notes,
+            requestId: call.id,
+          });
+        }
+      }
       refresh();
+
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not update call");
     } finally {
