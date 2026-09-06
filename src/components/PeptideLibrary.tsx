@@ -30,107 +30,169 @@ function wrapLabel(label: string, maxChars: number, maxLines: number) {
   return lines;
 }
 
-/** Unbranded research vial illustration — no vendor labels. */
+/** Titan Elite–branded research vial illustration. */
 function Vial({ label }: { label: string }) {
-  const maxChars = 13;
-  const lines = wrapLabel(label, maxChars, 3);
-  const fontSize = lines.some((l) => l.length > 10) ? 6.4 : 7.6;
-  const lineHeight = fontSize + 2.6;
-  const startY = 78 - ((lines.length - 1) * lineHeight) / 2;
+  const uid = label.replace(/[^a-zA-Z0-9]/g, "");
+  const maxChars = 12;
+  const lines = wrapLabel(label, maxChars, 2);
+  const fontSize = lines.some((l) => l.length > 9) ? 6.6 : 7.8;
+  const lineHeight = fontSize + 2.4;
+  const nameStartY = 76 - ((lines.length - 1) * lineHeight) / 2;
 
   return (
     <div className="relative aspect-square w-full overflow-hidden bg-muted flex items-center justify-center">
-      <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "radial-gradient(currentColor 1px, transparent 1px)", backgroundSize: "14px 14px" }} />
-      <svg viewBox="0 0 120 160" className="relative h-[82%] w-auto" role="img" aria-label={`${label} research vial illustration`}>
+      <div
+        className="absolute inset-0 opacity-[0.05]"
+        style={{ backgroundImage: "radial-gradient(currentColor 1px, transparent 1px)", backgroundSize: "14px 14px" }}
+      />
+      {/* soft backdrop glow behind the vial */}
+      <div
+        className="absolute left-1/2 top-1/2 h-[70%] w-[70%] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-30"
+        style={{ background: "radial-gradient(closest-side, color-mix(in oklab, var(--blood) 25%, transparent), transparent)" }}
+      />
+      <svg viewBox="0 0 120 168" className="relative h-[86%] w-auto drop-shadow-[0_10px_14px_rgba(0,0,0,0.25)]" role="img" aria-label={`Titan Elite ${label} research vial`}>
         <defs>
-          <linearGradient id="glassG" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="currentColor" stopOpacity="0.22" />
-            <stop offset="14%" stopColor="currentColor" stopOpacity="0.06" />
-            <stop offset="42%" stopColor="currentColor" stopOpacity="0.02" />
-            <stop offset="78%" stopColor="currentColor" stopOpacity="0.08" />
-            <stop offset="100%" stopColor="currentColor" stopOpacity="0.2" />
+          {/* glass shading across the cylinder */}
+          <linearGradient id={`glass-${uid}`} x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#fff" stopOpacity="0.55" />
+            <stop offset="8%" stopColor="#fff" stopOpacity="0.12" />
+            <stop offset="30%" stopColor="#dfe9f2" stopOpacity="0.05" />
+            <stop offset="55%" stopColor="#c8d6e2" stopOpacity="0.10" />
+            <stop offset="80%" stopColor="#fff" stopOpacity="0.06" />
+            <stop offset="94%" stopColor="#8fa4b5" stopOpacity="0.18" />
+            <stop offset="100%" stopColor="#5a6b7a" stopOpacity="0.28" />
           </linearGradient>
-          <linearGradient id="capG" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#000" stopOpacity="0.35" />
-            <stop offset="22%" stopColor="#fff" stopOpacity="0.28" />
-            <stop offset="55%" stopColor="#fff" stopOpacity="0.04" />
-            <stop offset="100%" stopColor="#000" stopOpacity="0.4" />
+          {/* neck glass */}
+          <linearGradient id={`neck-${uid}`} x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#fff" stopOpacity="0.4" />
+            <stop offset="50%" stopColor="#c8d6e2" stopOpacity="0.08" />
+            <stop offset="100%" stopColor="#5a6b7a" stopOpacity="0.25" />
           </linearGradient>
-          <linearGradient id="liqG" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="currentColor" stopOpacity="0.26" />
-            <stop offset="100%" stopColor="currentColor" stopOpacity="0.42" />
+          {/* metallic aluminum crimp cap */}
+          <linearGradient id={`cap-${uid}`} x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#5c5f66" />
+            <stop offset="12%" stopColor="#e8eaee" />
+            <stop offset="28%" stopColor="#b7bac2" />
+            <stop offset="48%" stopColor="#7d8088" />
+            <stop offset="70%" stopColor="#c9ccd2" />
+            <stop offset="88%" stopColor="#9b9ea6" />
+            <stop offset="100%" stopColor="#4a4d54" />
           </linearGradient>
-          <linearGradient id="labelG" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#000" stopOpacity="0.14" />
-            <stop offset="20%" stopColor="#fff" stopOpacity="0.1" />
-            <stop offset="80%" stopColor="#fff" stopOpacity="0.04" />
-            <stop offset="100%" stopColor="#000" stopOpacity="0.16" />
+          <linearGradient id={`capTop-${uid}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#f4f5f8" />
+            <stop offset="100%" stopColor="#a9acb4" />
           </linearGradient>
-          <clipPath id="bodyClip">
-            <path d="M34 52 Q34 44 42 40 L42 38 L78 38 L78 40 Q86 44 86 52 L86 141 Q86 148 79 148 L41 148 Q34 148 34 141 Z" />
+          {/* red flip-off center */}
+          <radialGradient id={`flip-${uid}`} cx="0.35" cy="0.3" r="0.9">
+            <stop offset="0%" stopColor="oklch(0.68 0.2 27)" />
+            <stop offset="70%" stopColor="oklch(0.5 0.21 27)" />
+            <stop offset="100%" stopColor="oklch(0.38 0.18 27)" />
+          </radialGradient>
+          {/* clear solution */}
+          <linearGradient id={`liq-${uid}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#bcd6e6" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#9db9cc" stopOpacity="0.55" />
+          </linearGradient>
+          {/* paper label */}
+          <linearGradient id={`paper-${uid}`} x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#d9d2c4" />
+            <stop offset="10%" stopColor="#fdfbf6" />
+            <stop offset="50%" stopColor="#f6f2e9" />
+            <stop offset="88%" stopColor="#efe9dc" />
+            <stop offset="100%" stopColor="#cfc7b6" />
+          </linearGradient>
+          <clipPath id={`bodyClip-${uid}`}>
+            <path d="M34 54 Q34 46 42 42 L42 40 L78 40 L78 42 Q86 46 86 54 L86 143 Q86 150 79 150 L41 150 Q34 150 34 143 Z" />
           </clipPath>
         </defs>
 
-        <g className="text-foreground">
-          {/* shadow */}
-          <ellipse cx="60" cy="151" rx="27" ry="4" fill="currentColor" opacity="0.12" />
+        {/* ground shadow */}
+        <ellipse cx="60" cy="154" rx="26" ry="4.5" fill="#000" opacity="0.22" />
+        <ellipse cx="60" cy="153" rx="18" ry="3" fill="#000" opacity="0.16" />
 
-          {/* rubber stopper */}
-          <rect x="47" y="16" width="26" height="12" rx="2" fill="currentColor" opacity="0.5" />
-
-          {/* crimp cap */}
-          <rect x="42" y="10" width="36" height="20" rx="2.5" className="fill-blood" />
-          <rect x="42" y="10" width="36" height="20" rx="2.5" fill="url(#capG)" />
-          {/* cap flip-top ring */}
-          <ellipse cx="60" cy="11.5" rx="10" ry="3" fill="#000" opacity="0.28" />
-          {/* crimp ridges */}
-          {[46, 50, 54, 58, 62, 66, 70, 74].map((x) => (
-            <rect key={x} x={x} y="19" width="1" height="11" fill="#000" opacity="0.18" />
-          ))}
-          {/* crimp skirt over neck */}
-          <path d="M44 30 L76 30 L74 36 L46 36 Z" className="fill-blood" />
-          <path d="M44 30 L76 30 L74 36 L46 36 Z" fill="url(#capG)" />
-
-          {/* glass body with shoulders */}
-          <path
-            d="M34 52 Q34 44 42 40 L42 36 L78 36 L78 40 Q86 44 86 52 L86 141 Q86 148 79 148 L41 148 Q34 148 34 141 Z"
-            fill="url(#glassG)"
-            stroke="currentColor"
-            strokeOpacity="0.35"
-            strokeWidth="1.1"
-          />
-
-          {/* liquid */}
-          <g clipPath="url(#bodyClip)">
-            <path d="M34 112 Q60 107 86 112 L86 149 L34 149 Z" fill="url(#liqG)" className="text-blood" />
-            <path d="M34 112 Q60 107 86 112" stroke="currentColor" strokeOpacity="0.3" fill="none" strokeWidth="1" />
-          </g>
-
-          {/* label plate */}
-          <g clipPath="url(#bodyClip)">
-            <rect x="34" y="60" width="52" height="40" fill="currentColor" opacity="0.08" />
-            <rect x="34" y="60" width="52" height="40" fill="url(#labelG)" />
-            <line x1="34" y1="60" x2="86" y2="60" stroke="currentColor" strokeOpacity="0.22" />
-            <line x1="34" y1="100" x2="86" y2="100" stroke="currentColor" strokeOpacity="0.22" />
-            <line x1="41" y1="94" x2="79" y2="94" stroke="currentColor" strokeOpacity="0.16" strokeWidth="0.7" />
-          </g>
-
-          {/* glass highlights */}
-          <rect x="38.5" y="50" width="3" height="88" rx="1.5" fill="#fff" opacity="0.14" />
-          <rect x="79" y="56" width="2" height="78" rx="1" fill="#fff" opacity="0.07" />
+        {/* glass body with shoulders */}
+        <path
+          d="M34 54 Q34 46 42 42 L42 38 L78 38 L78 42 Q86 46 86 54 L86 143 Q86 150 79 150 L41 150 Q34 150 34 143 Z"
+          fill={`url(#glass-${uid})`}
+          stroke="#3d4a57"
+          strokeOpacity="0.35"
+          strokeWidth="1"
+        />
+        {/* thick glass base */}
+        <g clipPath={`url(#bodyClip-${uid})`}>
+          <rect x="34" y="140" width="52" height="10" fill="#8fa4b5" opacity="0.3" />
+          <line x1="36" y1="141" x2="84" y2="141" stroke="#fff" strokeOpacity="0.35" strokeWidth="1" />
         </g>
 
+        {/* solution */}
+        <g clipPath={`url(#bodyClip-${uid})`}>
+          <path d="M34 108 Q60 103 86 108 L86 151 L34 151 Z" fill={`url(#liq-${uid})`} />
+          <ellipse cx="60" cy="106" rx="26" ry="3.4" fill="#d9ecf7" opacity="0.5" />
+          <ellipse cx="60" cy="106.4" rx="25" ry="2.8" fill="#7fa3ba" opacity="0.25" />
+        </g>
+
+        {/* neck */}
+        <rect x="46" y="30" width="28" height="9" fill={`url(#neck-${uid})`} stroke="#3d4a57" strokeOpacity="0.25" strokeWidth="0.8" />
+
+        {/* rubber stopper under cap */}
+        <rect x="48" y="24" width="24" height="7" rx="2" fill="#4a4a4e" />
+        <rect x="48" y="24" width="24" height="3" rx="1.5" fill="#63636a" />
+
+        {/* aluminum crimp cap */}
+        <rect x="42" y="14" width="36" height="16" rx="2" fill={`url(#cap-${uid})`} />
+        <ellipse cx="60" cy="14.5" rx="18" ry="3.2" fill={`url(#capTop-${uid})`} />
+        {/* red flip-off button */}
+        <ellipse cx="60" cy="14.5" rx="9.5" ry="2.4" fill={`url(#flip-${uid})`} />
+        <ellipse cx="57" cy="13.6" rx="3.4" ry="0.9" fill="#fff" opacity="0.4" />
+        {/* crimp ridges */}
+        {[44, 48, 52, 56, 60, 64, 68, 72].map((x) => (
+          <rect key={x} x={x} y="20" width="1.1" height="9" fill="#000" opacity="0.16" />
+        ))}
+        {[44, 48, 52, 56, 60, 64, 68, 72].map((x) => (
+          <rect key={`h${x}`} x={x + 1.1} y="20" width="0.7" height="9" fill="#fff" opacity="0.2" />
+        ))}
+        {/* crimp skirt over neck */}
+        <path d="M43 30 L77 30 L75 38 L45 38 Z" fill={`url(#cap-${uid})`} />
+
+        {/* Titan Elite label */}
+        <g clipPath={`url(#bodyClip-${uid})`}>
+          <rect x="34" y="56" width="52" height="48" fill={`url(#paper-${uid})`} />
+          <line x1="34" y1="56" x2="86" y2="56" stroke="#000" strokeOpacity="0.2" strokeWidth="0.6" />
+          <line x1="34" y1="104" x2="86" y2="104" stroke="#000" strokeOpacity="0.2" strokeWidth="0.6" />
+          {/* blood-red brand bar */}
+          <rect x="34" y="56" width="52" height="9.5" className="fill-blood" />
+          {/* batch fine print */}
+          <line x1="40" y1="98.5" x2="80" y2="98.5" stroke="#000" strokeOpacity="0.25" strokeWidth="0.5" />
+          <line x1="44" y1="100.8" x2="76" y2="100.8" stroke="#000" strokeOpacity="0.15" strokeWidth="0.5" />
+        </g>
         <text
           textAnchor="middle"
-          className="fill-foreground"
-          style={{ fontFamily: "var(--font-mono)", fontSize, letterSpacing: "0.05em" }}
+          className="fill-primary-foreground"
+          style={{ fontFamily: "var(--font-display)", fontSize: "7px", letterSpacing: "0.14em" }}
+        >
+          <tspan x="60" y="63.4">TITAN ELITE</tspan>
+        </text>
+        <text
+          textAnchor="middle"
+          style={{ fontFamily: "var(--font-mono)", fontSize, fontWeight: 700, letterSpacing: "0.04em", fill: "#221d18" }}
         >
           {lines.map((l, i) => (
-            <tspan key={l + i} x="60" y={startY + i * lineHeight}>
+            <tspan key={l + i} x="60" y={nameStartY + i * lineHeight}>
               {l}
             </tspan>
           ))}
         </text>
+        <text
+          textAnchor="middle"
+          style={{ fontFamily: "var(--font-mono)", fontSize: "4.6px", letterSpacing: "0.1em", fill: "#221d18", opacity: 0.7 }}
+        >
+          <tspan x="60" y="92.5">RESEARCH USE ONLY · 10MG</tspan>
+        </text>
+
+        {/* glass specular highlights */}
+        <rect x="37.5" y="46" width="4" height="96" rx="2" fill="#fff" opacity="0.5" />
+        <rect x="43" y="50" width="1.6" height="86" rx="0.8" fill="#fff" opacity="0.22" />
+        <rect x="78.5" y="52" width="2.4" height="88" rx="1.2" fill="#fff" opacity="0.28" />
       </svg>
     </div>
   );
