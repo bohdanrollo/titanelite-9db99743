@@ -90,6 +90,114 @@ async function fetchPage(url: string): Promise<{ text: string; status: number }>
   }
 }
 
+/**
+ * Many vendor storefronts render their banners in the browser, so the raw HTML
+ * carries no sale copy. Pull readable strings out of embedded app data
+ * (Next.js flight payloads, __NEXT_DATA__, JSON-LD, Shopify bootstraps).
+ */
+function extractEmbeddedData(html: string): string {
+  const chunks: string[] = [];
+  const scripts = html.match(/<script[\s\S]*?<\/script>/gi) ?? [];
+  for (const script of scripts.slice(0, 200)) {
+    const inner = script.replace(/^<script[^>]*>/i, "").replace(/<\/script>$/i, "");
+    if (inner.length < 40 || inner.length > 300000) continue;
+    // Keep human-readable string literals only.
+    const strings = inner.match(/"((?:[^"\\]|\\.){6,200})"/g) ?? [];
+    for (const raw of strings) {
+      const value = raw.slice(1, -1).replace(/\\u0026/g, "&").replace(/\\"/g, '"').replace(/\\n/g, " ");
+      if (!/[a-z]{3}/i.test(value)) continue;
+      if (/^(https?:\/\/|\/|[a-f0-9]{16,}$)/i.test(value)) continue;
+      if (/[{}<>]/.test(value)) continue;
+      chunks.push(value);
+    }
+  }
+  return chunks.join(" | ").replace(/\s+/g, " ").slice(0, 20000);
+}
+
+const SALE_HINT = /(sale|deal|promo|discount|coupon|% ?off|save \d|bogo|black friday|labor day|memorial day|cyber monday|holiday)/i;
+
+/** Same-origin links whose URL or anchor text looks promotion related. */
+function findSaleLinks(html: string, baseUrl: string): string[] {
+  const out: string[] = [];
+  const base = new URL(baseUrl);
+  const anchors = html.match(/<a\b[^>]*href=["'][^"']+["'][^>]*>[\s\S]{0,160}?<\/a>/gi) ?? [];
+  for (const a of anchors) {
+    const href = a.match(/href=["']([^"']+)["']/i)?.[1];
+    if (!href) continue;
+    const label = stripHtml(a);
+    if (!SALE_HINT.test(href) && !SALE_HINT.test(label)) continue;
+    try {
+      const abs = new URL(href, base);
+      if (abs.origin !== base.origin) continue;
+      abs.hash = "";
+      if (!out.includes(abs.toString())) out.push(abs.toString());
+    } catch {
+      /* ignore malformed href */
+    }
+  }
+  return out.slice(0, 3);
+}
+
+/**
+ * Browser-style read: renders the page (JavaScript included) through a public
+ * reader service and returns plain text. Best-effort — returns null on failure.
+ */
+async function fetchRendered(url: string): Promise<string | null> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 45000);
+  try {
+    const res = await fetch(`https://r.jina.ai/${url}`, {
+      headers: { "User-Agent": UA, Accept: "text/plain", "X-Return-Format": "text" },
+      signal: controller.signal,
+    });
+    if (!res.ok) return null;
+    const text = (await res.text()).replace(/\s+/g, " ").trim();
+    return text.length > 200 ? text.slice(0, 20000) : null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/** Collect everything a visitor would see: page text, embedded app data, sale pages, rendered view. */
+async function collectSourceText(
+  url: string,
+  html: string,
+): Promise<{ text: string; rendered: boolean }> {
+  const parts: string[] = [];
+  const visible = stripHtml(html);
+  if (visible) parts.push(`HOMEPAGE TEXT: ${visible.slice(0, 12000)}`);
+
+  const embedded = extractEmbeddedData(html);
+  if (embedded && SALE_HINT.test(embedded)) parts.push(`EMBEDDED PAGE DATA: ${embedded}`);
+
+  for (const link of findSaleLinks(html, url)) {
+    try {
+      const sub = await fetchPage(link);
+      if (sub.status >= 400) continue;
+      const subText = stripHtml(sub.text);
+      if (subText.length > 100) parts.push(`PAGE ${link}: ${subText.slice(0, 6000)}`);
+    } catch {
+      /* skip unreachable sub-page */
+    }
+  }
+
+  const joined = parts.join("\n\n");
+  const needsRender = visible.length < 1500 || !SALE_HINT.test(joined);
+  let rendered = false;
+  if (needsRender) {
+    const renderedText = await fetchRendered(url);
+    if (renderedText) {
+      rendered = true;
+      parts.unshift(`BROWSER-RENDERED PAGE (what a visitor sees): ${renderedText}`);
+    }
+  }
+
+  return { text: parts.join("\n\n").slice(0, 30000), rendered };
+}
+
+
 async function detectSale(sourceName: string, url: string, pageText: string): Promise<Detection> {
   const apiKey = process.env.LOVABLE_API_KEY;
   if (!apiKey) throw new Error("AI monitoring is not configured");
