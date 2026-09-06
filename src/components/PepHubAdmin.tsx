@@ -103,7 +103,16 @@ export default function PepHubAdmin() {
           ...(promo.trim() ? { promoCode: promo.trim() } : {}),
         },
       });
-      toast.success(`Queued ${res.sent} of ${res.total} emails`);
+      if (res.total === 0) {
+        toast.warning("No subscribed PepHub members to email yet");
+      } else if (res.sent < res.total) {
+        toast.warning(
+          `Sent to ${res.sent} of ${res.total} members (${res.total - res.sent} unsubscribed or blocked)`,
+        );
+      } else {
+        toast.success(`Sale alert emailed to ${res.sent} member${res.sent === 1 ? "" : "s"}`);
+      }
+
       setHeadline(""); setDetails(""); setPromo("");
       load();
     } catch (err) {
