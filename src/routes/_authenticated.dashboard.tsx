@@ -372,10 +372,19 @@ function Protocols() {
         {intake ? "Intake submitted" : "Want a custom protocol?"}
       </div>
       {intake ? (
-        <p className="text-sm text-muted-foreground mt-2">
-          Status: <span className="font-medium text-foreground">{intake.status}</span> · Submitted {new Date(intake.submitted_at).toLocaleDateString()}. Your coach will deliver your protocol here when ready.
-        </p>
+        <>
+          <p className="text-sm text-muted-foreground mt-2">
+            Status: <span className="font-medium text-foreground">{intake.status}</span> · Submitted {new Date(intake.submitted_at).toLocaleDateString()}. Your coach will deliver your protocol here when ready.
+          </p>
+          {canIntake && (
+            <>
+              <p className="text-sm text-muted-foreground mt-3">Things changed? Submit an updated intake and your coach will see the newest version.</p>
+              <Link to="/intake" className="mt-4 inline-flex btn-blood hover:btn-blood-hover">Submit updated intake</Link>
+            </>
+          )}
+        </>
       ) : canIntake ? (
+
         <>
           <p className="text-sm text-muted-foreground mt-2">Fill out your intake and your coach will build a personalized peptide + training plan, delivered right here.</p>
           <Link to="/intake" className="mt-4 inline-flex btn-blood hover:btn-blood-hover">Begin Intake</Link>
