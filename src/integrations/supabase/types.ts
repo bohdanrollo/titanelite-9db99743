@@ -1343,21 +1343,28 @@ export type Database = {
           description: string | null
           discount_code: string | null
           expert_verified: boolean
+          facebook_url: string | null
           failure_count: number
           id: string
+          instagram_url: string | null
           is_active: boolean
           last_checked_at: string | null
           last_sale_detected_at: string | null
           last_successful_check_at: string | null
           logo_url: string | null
+          monitor_socials: boolean
           monitoring_enabled: boolean
           monitoring_error: string | null
           monitoring_frequency: string
           monitoring_status: string
           name: string
+          other_social_url: string | null
+          reddit_url: string | null
           sort_order: number
+          telegram_url: string | null
           updated_at: string
           url: string
+          x_url: string | null
         }
         Insert: {
           affiliate_url?: string | null
@@ -1366,21 +1373,28 @@ export type Database = {
           description?: string | null
           discount_code?: string | null
           expert_verified?: boolean
+          facebook_url?: string | null
           failure_count?: number
           id?: string
+          instagram_url?: string | null
           is_active?: boolean
           last_checked_at?: string | null
           last_sale_detected_at?: string | null
           last_successful_check_at?: string | null
           logo_url?: string | null
+          monitor_socials?: boolean
           monitoring_enabled?: boolean
           monitoring_error?: string | null
           monitoring_frequency?: string
           monitoring_status?: string
           name: string
+          other_social_url?: string | null
+          reddit_url?: string | null
           sort_order?: number
+          telegram_url?: string | null
           updated_at?: string
           url: string
+          x_url?: string | null
         }
         Update: {
           affiliate_url?: string | null
@@ -1389,21 +1403,28 @@ export type Database = {
           description?: string | null
           discount_code?: string | null
           expert_verified?: boolean
+          facebook_url?: string | null
           failure_count?: number
           id?: string
+          instagram_url?: string | null
           is_active?: boolean
           last_checked_at?: string | null
           last_sale_detected_at?: string | null
           last_successful_check_at?: string | null
           logo_url?: string | null
+          monitor_socials?: boolean
           monitoring_enabled?: boolean
           monitoring_error?: string | null
           monitoring_frequency?: string
           monitoring_status?: string
           name?: string
+          other_social_url?: string | null
+          reddit_url?: string | null
           sort_order?: number
+          telegram_url?: string | null
           updated_at?: string
           url?: string
+          x_url?: string | null
         }
         Relationships: []
       }

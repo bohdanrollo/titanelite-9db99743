@@ -71,6 +71,13 @@
       "when": 1788716080996,
       "tag": "0009_pephub_sources_expert_verified",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1788725524524,
+      "tag": "0010_pephub_source_socials",
+      "breakpoints": true
     }
   ]
 }
