@@ -35,6 +35,10 @@ const emptyForm = {
   reddit_url: "",
   other_social_url: "",
   monitor_socials: true,
+  newsletter_signup_url: "",
+  newsletter_email_domains: "",
+  newsletter_subscribed: false,
+
   is_active: true,
   expert_verified: false,
   sort_order: 0,
