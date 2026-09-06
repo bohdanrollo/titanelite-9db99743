@@ -84,6 +84,14 @@ function PepHub() {
             <div className="flex items-center gap-2 text-eyebrow">
               <ShieldCheck size={14} className="text-blood" /> The list
             </div>
+            <p className="mt-3 max-w-xl text-sm text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5 align-middle rounded-full border border-blood/30 bg-blood/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em] text-blood">
+                <ShieldCheck size={10} /> Expert Verified
+              </span>{" "}
+              means our team has personally checked this source for product quality, reliable shipping,
+              responsive customer service, and transparent business practices. Not every listed source
+              carries this badge — only the ones that meet our standards.
+            </p>
 
             {ready && sources.length === 0 && (
               <div className="mt-6 rounded-2xl border border-foreground/10 bg-card p-8 shadow-sm">
