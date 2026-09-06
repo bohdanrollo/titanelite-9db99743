@@ -160,6 +160,21 @@ async function fetchRendered(url: string): Promise<string | null> {
   }
 }
 
+/** Read a vendor social profile: raw fetch first, rendered reader as fallback. */
+async function fetchSocialText(url: string): Promise<string | null> {
+  try {
+    const res = await fetchPage(url);
+    if (res.status < 400 && !looksBlocked(res.text, res.status)) {
+      const text = stripHtml(res.text);
+      if (text.length > 300) return text.slice(0, 6000);
+    }
+  } catch {
+    /* fall through to rendered read */
+  }
+  const rendered = await fetchRendered(url);
+  return rendered ? rendered.slice(0, 6000) : null;
+}
+
 /** Collect everything a visitor would see: page text, embedded app data, sale pages, rendered view. */
 async function collectSourceText(
   url: string,
@@ -290,7 +305,7 @@ export async function monitorSource(
 
   const { data: source } = await supabaseAdmin
     .from("pephub_sources")
-    .select("id, name, url, affiliate_url, discount_code")
+    .select("id, name, url, affiliate_url, discount_code, instagram_url, x_url, facebook_url, telegram_url, reddit_url, other_social_url, monitor_socials")
     .eq("id", sourceId)
     .maybeSingle();
   if (!source) return { salesFound: 0, status: "error", error: "Source not found" };
@@ -379,6 +394,23 @@ export async function monitorSource(
   }
 
   const collected = await collectSourceText(source.url, page.text);
+
+  // Vendors often announce sales on social media before their storefront.
+  if (source.monitor_socials !== false) {
+    const socials = [
+      source.instagram_url,
+      source.x_url,
+      source.facebook_url,
+      source.telegram_url,
+      source.reddit_url,
+      source.other_social_url,
+    ].filter((u): u is string => Boolean(u && /^https?:\/\//i.test(u)));
+    for (const link of socials) {
+      const socialText = await fetchSocialText(link);
+      if (socialText) collected.text += `\n\nSOCIAL PROFILE ${link}: ${socialText}`;
+    }
+    collected.text = collected.text.slice(0, 40000);
+  }
   if (collected.text.length < 200) {
     return bumpFailure("Monitoring unavailable — no readable public page content.", "unavailable");
   }
