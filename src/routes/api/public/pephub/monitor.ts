@@ -17,7 +17,14 @@ export const Route = createFileRoute("/api/public/pephub/monitor")({
         try {
           const { runDueMonitoring } = await import("@/lib/pephub-monitor.server");
           const result = await runDueMonitoring({ triggeredBy: "cron" });
-          return Response.json({ ok: true, ...result });
+          let inbox: unknown = null;
+          try {
+            const { scanVendorInbox } = await import("@/lib/pephub-inbox.server");
+            inbox = await scanVendorInbox("cron");
+          } catch (err) {
+            console.error("[pephub-inbox] scan failed", err);
+          }
+          return Response.json({ ok: true, ...result, inbox });
         } catch (err) {
           console.error("[pephub-monitor] run failed", err);
           return Response.json(

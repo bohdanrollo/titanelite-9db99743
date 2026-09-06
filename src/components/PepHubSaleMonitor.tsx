@@ -11,6 +11,9 @@ import {
   adminRejectPromotion,
   adminSendTestSaleEmail,
   adminPromotionEmailLog,
+  adminScanVendorInbox,
+  adminListInboxMessages,
+  type InboxMessage,
   type MonitorSettings,
   type MonitorSource,
   type Promotion,
@@ -66,6 +69,38 @@ export default function PepHubSaleMonitor() {
   const reject = useServerFn(adminRejectPromotion);
   const sendTest = useServerFn(adminSendTestSaleEmail);
   const loadLog = useServerFn(adminPromotionEmailLog);
+  const scanInbox = useServerFn(adminScanVendorInbox);
+  const listInbox = useServerFn(adminListInboxMessages);
+  const [inbox, setInbox] = useState<InboxMessage[]>([]);
+  const [scanning, setScanning] = useState(false);
+
+  const loadInbox = useCallback(async () => {
+    try {
+      const res = await listInbox({ data: { limit: 40 } });
+      setInbox(res.messages);
+    } catch {
+      /* inbox list is optional */
+    }
+  }, [listInbox]);
+
+  useEffect(() => { loadInbox(); }, [loadInbox]);
+
+  async function runInboxScan() {
+    setScanning(true);
+    try {
+      const res = await scanInbox({});
+      toast.success(
+        res.salesFound > 0
+          ? `Found ${res.salesFound} new sale email${res.salesFound === 1 ? "" : "s"}`
+          : `Checked ${res.scanned} new email${res.scanned === 1 ? "" : "s"} — no new sales`,
+      );
+      await Promise.all([load(), loadInbox()]);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Inbox scan failed");
+    } finally {
+      setScanning(false);
+    }
+  }
 
   const load = useCallback(async () => {
     try {
@@ -173,9 +208,44 @@ export default function PepHubSaleMonitor() {
         <button className="btn-primary" disabled={running} onClick={() => run()}>
           {running ? <Loader2 className="animate-spin" size={14} /> : <RefreshCw size={14} />} Run monitoring now
         </button>
+        <button className="btn-ghost" disabled={scanning} onClick={runInboxScan}>
+          {scanning ? <Loader2 className="animate-spin" size={14} /> : <Mail size={14} />} Check vendor inbox
+        </button>
         <span className="text-sm text-muted-foreground">
           Last run: {lastRun ? ago(lastRun.started_at) : "never"}
         </span>
+      </div>
+
+      {/* Vendor newsletter inbox */}
+      <div className={card}>
+        <h3 className="text-xl">Vendor newsletter inbox</h3>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Emails from vendors in the shared PepHub deals inbox. Sale emails become promotions you can
+          review and send. Add a vendor's signup page and sending domains on the Sources tab.
+        </p>
+        {inbox.length === 0 ? (
+          <p className="mt-4 text-sm text-muted-foreground">No vendor emails read yet.</p>
+        ) : (
+          <div className="mt-4 divide-y divide-foreground/10">
+            {inbox.map((m) => (
+              <div key={m.id} className="flex flex-wrap items-start justify-between gap-3 py-3">
+                <div className="min-w-0">
+                  <div className="truncate text-sm">{m.subject || "(no subject)"}</div>
+                  <div className="mt-0.5 truncate font-mono text-[11px] text-muted-foreground">
+                    {m.from_name ? `${m.from_name} · ` : ""}{m.from_email}
+                  </div>
+                  {m.notes && <div className="mt-1 text-xs text-muted-foreground">{m.notes}</div>}
+                </div>
+                <div className="shrink-0 text-right">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.16em]">
+                    {m.sale_detected ? "🔥 Sale" : m.matched ? "✅ Vendor" : "⚪ Unmatched"}
+                  </div>
+                  <div className="mt-0.5 text-xs text-muted-foreground">{ago(m.received_at)}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Settings */}
