@@ -170,6 +170,7 @@ export default function PeptideLibrary() {
             <TitanVial name={p.name} strength={vialStrength(p)} lot={vialLot(p)} />
             <div className="p-4 flex flex-col gap-1 grow">
               <h4 className="font-display text-lg leading-tight">{p.name}</h4>
+              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-blood">{vialStrength(p)} · Peptide</p>
               <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">{p.category}</p>
             </div>
             <div className="p-4 pt-0">
