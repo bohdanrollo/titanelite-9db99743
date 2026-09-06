@@ -19,13 +19,17 @@ export const Route = createFileRoute("/features")({
 
 function Page() {
   const items = [
-    { i: FileText, t: "Custom Protocols", d: "Receive a 100% custom educational peptide protocol and weight-programming plan built from your intake, delivered as a PDF." },
+    { i: FileText, t: "Custom Protocols", d: "Receive a 100% custom educational peptide protocol and weight-programming plan built from your intake, delivered as a PDF. Full Access only." },
     { i: MessagesSquare, t: "Coach Messaging", d: "Message your coach directly from the dashboard and get replies in the same thread. Included with Full Access." },
+    { i: Phone, t: "Coach Calls", d: "Book a 30-minute call with your coach on fitness or peptides — pick a weekday slot between 8 AM and 8 PM, at least 48 hours ahead. Full Access only." },
     { i: MessageCircle, t: "Pep Talk AI", d: "Ask anything about peptide effects, dosing, timing, stacking, and safety — instant research answers." },
     { i: Beaker, t: "Top 50 Peptides", d: "A searchable research library covering the most popular compounds and what each is studied for." },
+    { i: Layers, t: "Combo Guides", d: "Research-informed breakdowns of popular peptide combinations — pathways, overlap, and the questions to ask before stacking." },
     { i: Syringe, t: "Dosing Guide", d: "Typical research dosing ranges, escalation steps, cycling and weekly schedules for 21 compounds — with mechanism of action and what researchers observe over time. Included with Limited and Full Access." },
 
-    { i: ListChecks, t: "My Stack", d: "Track every peptide, dose, unit, frequency, schedule, and notes in your personal dosing log." },
+    { i: ListChecks, t: "My Stack & Dose Tracker", d: "Track every peptide, dose, unit, frequency, schedule, and notes — with a weekly calendar that auto-fills morning, afternoon, and evening doses you can check off each day." },
+    { i: BookOpen, t: "Learning Center", d: "Foundational guides like Peptides 101 — what peptides are, how they signal in the body, and how to source and handle them responsibly." },
+    { i: Scale, t: "Myths vs Evidence", d: "Common peptide claims weighed against what the research actually shows, so you can separate hype from signal." },
     { i: Droplets, t: "Supplies Guide", d: "BAC water, insulin syringes, alcohol wipes, plus storage techniques before and after reconstitution." },
     { i: FlaskConical, t: "Reconstitution", d: "Step-by-step mixing instructions: roll the vial gently in your hands until the powder dissolves — never shake." },
     { i: Syringe, t: "Injection Guide", d: "Subcutaneous injection site diagrams, rotation advice, and sterile technique walkthroughs." },
