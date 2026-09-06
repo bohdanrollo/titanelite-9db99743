@@ -53,14 +53,30 @@ export default function PepHubAdmin() {
   const listAlerts = useServerFn(adminListDealAlerts);
 
   const load = useCallback(async () => {
-    try {
-      const [s, m, a] = await Promise.all([listSources({}), listMembers({}), listAlerts({})]);
-      setSources(s.sources);
-      setMembers(m.members);
-      setAlerts(a.alerts);
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to load PepHub data");
+    // Each request is fetched independently with one retry: a transient server
+    // hiccup on one of them should not blank out the whole PepHub panel.
+    async function attempt<T>(fn: () => Promise<T>): Promise<T | null> {
+      for (let i = 0; i < 2; i++) {
+        try {
+          return await fn();
+        } catch {
+          if (i === 1) return null;
+          await new Promise((r) => setTimeout(r, 600));
+        }
+      }
+      return null;
     }
+
+    const [s, m, a] = await Promise.all([
+      attempt(() => listSources({})),
+      attempt(() => listMembers({})),
+      attempt(() => listAlerts({})),
+    ]);
+
+    if (s) setSources(s.sources);
+    if (m) setMembers(m.members);
+    if (a) setAlerts(a.alerts);
+    if (!s || !m || !a) toast.error("Some PepHub data failed to load. Try refreshing.");
   }, [listSources, listMembers, listAlerts]);
 
   useEffect(() => { load(); }, [load]);
