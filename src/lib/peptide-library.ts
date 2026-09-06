@@ -23,6 +23,8 @@ export type PeptideEntry = {
   molecularFormula?: string;
   molecularWeight?: string;
   sequence?: string;
+  /** Vial strength printed on the product label, e.g. "10MG" */
+  strength?: string;
   /** For blends — what's actually in the vial */
   contains?: string[];
   target?: string;
@@ -429,3 +431,16 @@ export const PEPTIDE_GENERAL_SOURCES: PeptideSource[] = [
   { label: "PubChem — Compound database", url: "https://pubchem.ncbi.nlm.nih.gov/" },
   { label: "DrugBank", url: "https://go.drugbank.com/" },
 ];
+
+/** Strength printed on the Titan Elite vial label for a peptide. */
+export function vialStrength(p: Pick<PeptideEntry, "name" | "strength">): string {
+  return (p.strength ?? "10MG").toUpperCase();
+}
+
+/** Deterministic Titan Elite lot number derived from the compound name. */
+export function vialLot(p: Pick<PeptideEntry, "name">): string {
+  const digits = p.name.replace(/\D/g, "");
+  const letters = p.name.toUpperCase().replace(/[^A-Z]/g, "");
+  const suffix = digits.length >= 3 ? digits.slice(-3) : (letters.slice(0, 3) || "TEL");
+  return `TE-2024-${suffix}`;
+}
