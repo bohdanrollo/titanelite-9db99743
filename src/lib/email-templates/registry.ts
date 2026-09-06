@@ -21,11 +21,13 @@ import { template as protocolReadyTemplate } from './protocol-ready'
 import { template as affiliateApprovedTemplate } from './affiliate-approved'
 import { template as coachCallScheduledTemplate } from './coach-call-scheduled'
 import { template as callApprovedTemplate } from './call-approved'
+import { template as pephubDealTemplate } from './pephub-deal'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'protocol-ready': protocolReadyTemplate,
   'affiliate-approved': affiliateApprovedTemplate,
   'coach-call-scheduled': coachCallScheduledTemplate,
   'call-approved': callApprovedTemplate,
+  'pephub-deal': pephubDealTemplate,
 }
 
