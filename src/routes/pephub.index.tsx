@@ -42,7 +42,7 @@ function PepHub() {
     (async () => {
       const { data } = await supabase
         .from("pephub_sources")
-        .select("id, name, url, affiliate_url, description, category, discount_code, logo_url, instagram_url, x_url, facebook_url, telegram_url, reddit_url, other_social_url, monitor_socials, newsletter_signup_url, newsletter_email_domains, newsletter_subscribed, is_active, expert_verified, sort_order, created_at")
+        .select("id, name, url, affiliate_url, description, category, discount_code, logo_url, instagram_url, x_url, facebook_url, telegram_url, reddit_url, other_social_url, monitor_socials, newsletter_signup_url, newsletter_email_domains, newsletter_subscribed, is_active, expert_verified, listing_category, sort_order, created_at")
         .eq("is_active", true)
         .order("sort_order", { ascending: true })
         .order("created_at", { ascending: true });
@@ -50,6 +50,10 @@ function PepHub() {
       setReady(true);
     })();
   }, []);
+
+  const featured = sources.filter((s) => s.listing_category === "featured");
+  const trusted = sources.filter((s) => s.listing_category === "trusted");
+  const more = sources.filter((s) => s.listing_category === "more");
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -103,55 +107,14 @@ function PepHub() {
               </div>
             )}
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {sources.map((s) => (
-                <a
-                  key={s.id}
-                  href={s.url}
-                  target="_blank"
-                  rel="noopener noreferrer nofollow"
-                  className="group rounded-2xl border border-foreground/10 bg-card p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-blood/40 hover:shadow-md"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-start gap-3">
-                      {s.logo_url && (
-                        <img
-                          src={s.logo_url}
-                          alt={`${s.name} logo`}
-                          loading="lazy"
-                          className="h-12 w-12 shrink-0 rounded-lg border border-foreground/10 bg-background object-contain p-1"
-                        />
-                      )}
-                      <div>
-                      <div className="flex items-center gap-2">
-                        <BadgeCheck size={16} className="text-blood" />
-                        <h3 className="text-xl">{s.name}</h3>
-                      </div>
-                      {s.expert_verified && (
-                        <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-blood/30 bg-blood/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-blood">
-                          <ShieldCheck size={12} /> Expert Verified
-                        </div>
-                      )}
-                      {s.category && (
-                        <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                          {s.category}
-                        </div>
-                      )}
-                      </div>
-                    </div>
-                    <ExternalLink size={15} className="mt-1 text-muted-foreground group-hover:text-blood" />
-                  </div>
-                  {s.description && (
-                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{s.description}</p>
-                  )}
-                  {s.discount_code && (
-                    <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-blood/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.16em] text-blood">
-                      <Tag size={12} /> Code {s.discount_code}
-                    </div>
-                  )}
-                </a>
-              ))}
-            </div>
+            <SourceGroup
+              title="Featured sources"
+              blurb="Our top picks — the sources we recommend first."
+              sources={featured}
+              prominent
+            />
+            <SourceGroup title="Trusted sources" sources={trusted} />
+            <SourceGroup title="More sources" sources={more} />
 
             <p className="mt-8 max-w-2xl text-xs leading-relaxed text-muted-foreground">
               Titan Elite does not sell, ship, or supply any product. These are independent
@@ -215,5 +178,87 @@ function PepHub() {
 
       <SiteFooter />
     </div>
+  );
+}
+
+function SourceGroup({
+  title,
+  blurb,
+  sources,
+  prominent = false,
+}: {
+  title: string;
+  blurb?: string;
+  sources: PepSource[];
+  prominent?: boolean;
+}) {
+  if (sources.length === 0) return null;
+  return (
+    <div className={prominent ? "mt-6" : "mt-10 border-t border-foreground/10 pt-8"}>
+      <div className={`text-eyebrow ${prominent ? "text-blood" : ""}`}>{title}</div>
+      {blurb && <p className="mt-2 max-w-xl text-sm text-muted-foreground">{blurb}</p>}
+      <div className={`mt-5 grid gap-4 ${prominent ? "" : "sm:grid-cols-2"}`}>
+        {sources.map((s) => (
+          <SourceCard key={s.id} source={s} prominent={prominent} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SourceCard({ source: s, prominent }: { source: PepSource; prominent: boolean }) {
+  return (
+    <a
+      href={s.url}
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+      className={`group rounded-2xl bg-card transition hover:-translate-y-0.5 hover:border-blood/40 hover:shadow-md ${
+        prominent
+          ? "border-2 border-blood/30 p-8 shadow-md"
+          : "border border-foreground/10 p-6 shadow-sm"
+      }`}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start gap-3">
+          {s.logo_url && (
+            <img
+              src={s.logo_url}
+              alt={`${s.name} logo`}
+              loading="lazy"
+              className={`shrink-0 rounded-lg border border-foreground/10 bg-background object-contain p-1 ${
+                prominent ? "h-16 w-16" : "h-12 w-12"
+              }`}
+            />
+          )}
+          <div>
+            <div className="flex items-center gap-2">
+              <BadgeCheck size={16} className="text-blood" />
+              <h3 className={prominent ? "text-2xl" : "text-xl"}>{s.name}</h3>
+            </div>
+            {s.expert_verified && (
+              <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-blood/30 bg-blood/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-blood">
+                <ShieldCheck size={12} /> Expert Verified
+              </div>
+            )}
+            {s.category && (
+              <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                {s.category}
+              </div>
+            )}
+          </div>
+        </div>
+        <ExternalLink size={15} className="mt-1 text-muted-foreground group-hover:text-blood" />
+      </div>
+      {s.description && (
+        <p className={`mt-3 leading-relaxed text-muted-foreground ${prominent ? "text-base" : "text-sm"}`}>
+          {s.description}
+        </p>
+      )}
+      {s.discount_code && (
+        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-blood/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.16em] text-blood">
+          <Tag size={12} /> Code {s.discount_code}
+        </div>
+      )}
+    </a>
   );
 }

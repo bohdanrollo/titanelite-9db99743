@@ -1414,6 +1414,7 @@ export type Database = {
           last_checked_at: string | null
           last_sale_detected_at: string | null
           last_successful_check_at: string | null
+          listing_category: string
           logo_url: string | null
           monitor_socials: boolean
           monitoring_enabled: boolean
@@ -1448,6 +1449,7 @@ export type Database = {
           last_checked_at?: string | null
           last_sale_detected_at?: string | null
           last_successful_check_at?: string | null
+          listing_category?: string
           logo_url?: string | null
           monitor_socials?: boolean
           monitoring_enabled?: boolean
@@ -1482,6 +1484,7 @@ export type Database = {
           last_checked_at?: string | null
           last_sale_detected_at?: string | null
           last_successful_check_at?: string | null
+          listing_category?: string
           logo_url?: string | null
           monitor_socials?: boolean
           monitoring_enabled?: boolean

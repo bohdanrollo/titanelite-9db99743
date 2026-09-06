@@ -41,6 +41,7 @@ const emptyForm = {
 
   is_active: true,
   expert_verified: false,
+  listing_category: "trusted" as "featured" | "trusted" | "more",
   sort_order: 0,
 };
 
@@ -122,6 +123,7 @@ export default function PepHubAdmin() {
           newsletter_subscribed: form.newsletter_subscribed,
           is_active: form.is_active,
           expert_verified: form.expert_verified,
+          listing_category: form.listing_category,
           sort_order: Number(form.sort_order) || 0,
         },
       });
@@ -322,6 +324,18 @@ export default function PepHubAdmin() {
                   <input className={input} value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
                 </div>
                 <div>
+                  <label className="text-eyebrow">Listing section</label>
+                  <select
+                    className={input}
+                    value={form.listing_category}
+                    onChange={(e) => setForm({ ...form, listing_category: e.target.value as "featured" | "trusted" | "more" })}
+                  >
+                    <option value="featured">Featured (top, prominent)</option>
+                    <option value="trusted">Trusted sources</option>
+                    <option value="more">More sources (bottom)</option>
+                  </select>
+                </div>
+                <div>
                   <label className="text-eyebrow">Discount code</label>
                   <input className={input} value={form.discount_code} onChange={(e) => setForm({ ...form, discount_code: e.target.value })} />
                 </div>
@@ -379,7 +393,9 @@ export default function PepHubAdmin() {
                         newsletter_signup_url: s.newsletter_signup_url ?? "",
                         newsletter_email_domains: s.newsletter_email_domains ?? "",
                         newsletter_subscribed: s.newsletter_subscribed ?? false,
-                        is_active: s.is_active, expert_verified: s.expert_verified, sort_order: s.sort_order,
+                        is_active: s.is_active, expert_verified: s.expert_verified,
+                        listing_category: s.listing_category ?? "trusted",
+                        sort_order: s.sort_order,
 
                       })}
                     >Edit</button>
