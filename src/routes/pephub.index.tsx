@@ -103,55 +103,14 @@ function PepHub() {
               </div>
             )}
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {sources.map((s) => (
-                <a
-                  key={s.id}
-                  href={s.url}
-                  target="_blank"
-                  rel="noopener noreferrer nofollow"
-                  className="group rounded-2xl border border-foreground/10 bg-card p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-blood/40 hover:shadow-md"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-start gap-3">
-                      {s.logo_url && (
-                        <img
-                          src={s.logo_url}
-                          alt={`${s.name} logo`}
-                          loading="lazy"
-                          className="h-12 w-12 shrink-0 rounded-lg border border-foreground/10 bg-background object-contain p-1"
-                        />
-                      )}
-                      <div>
-                      <div className="flex items-center gap-2">
-                        <BadgeCheck size={16} className="text-blood" />
-                        <h3 className="text-xl">{s.name}</h3>
-                      </div>
-                      {s.expert_verified && (
-                        <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-blood/30 bg-blood/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-blood">
-                          <ShieldCheck size={12} /> Expert Verified
-                        </div>
-                      )}
-                      {s.category && (
-                        <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                          {s.category}
-                        </div>
-                      )}
-                      </div>
-                    </div>
-                    <ExternalLink size={15} className="mt-1 text-muted-foreground group-hover:text-blood" />
-                  </div>
-                  {s.description && (
-                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{s.description}</p>
-                  )}
-                  {s.discount_code && (
-                    <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-blood/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.16em] text-blood">
-                      <Tag size={12} /> Code {s.discount_code}
-                    </div>
-                  )}
-                </a>
-              ))}
-            </div>
+            <SourceGroup
+              title="Featured sources"
+              blurb="Our top picks — the sources we recommend first."
+              sources={featured}
+              prominent
+            />
+            <SourceGroup title="Trusted sources" sources={trusted} />
+            <SourceGroup title="More sources" sources={more} />
 
             <p className="mt-8 max-w-2xl text-xs leading-relaxed text-muted-foreground">
               Titan Elite does not sell, ship, or supply any product. These are independent
