@@ -18,7 +18,17 @@ function wrapLabel(label: string, maxChars: number, maxLines: number) {
       cur = next;
     } else {
       if (cur) lines.push(cur);
-      cur = w.length > maxChars ? `${w.slice(0, maxChars - 1)}…` : w;
+      if (w.length > maxChars) {
+        // split long words across lines instead of truncating mid-word
+        for (let i = 0; i < w.length; i += maxChars) {
+          const chunk = w.slice(i, i + maxChars);
+          if (i + maxChars < w.length) lines.push(chunk);
+          else cur = chunk;
+        }
+        if (w.length % maxChars === 0) cur = "";
+      } else {
+        cur = w;
+      }
     }
   }
   if (cur) lines.push(cur);
