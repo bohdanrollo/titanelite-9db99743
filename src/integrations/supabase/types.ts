@@ -970,6 +970,69 @@ export type Database = {
         }
         Relationships: []
       }
+      pephub_inbox_messages: {
+        Row: {
+          created_at: string
+          from_email: string
+          from_name: string | null
+          gmail_message_id: string
+          id: string
+          matched: boolean
+          notes: string | null
+          promotion_id: string | null
+          received_at: string | null
+          sale_detected: boolean
+          snippet: string | null
+          source_id: string | null
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          from_email?: string
+          from_name?: string | null
+          gmail_message_id: string
+          id?: string
+          matched?: boolean
+          notes?: string | null
+          promotion_id?: string | null
+          received_at?: string | null
+          sale_detected?: boolean
+          snippet?: string | null
+          source_id?: string | null
+          subject?: string
+        }
+        Update: {
+          created_at?: string
+          from_email?: string
+          from_name?: string | null
+          gmail_message_id?: string
+          id?: string
+          matched?: boolean
+          notes?: string | null
+          promotion_id?: string | null
+          received_at?: string | null
+          sale_detected?: boolean
+          snippet?: string | null
+          source_id?: string | null
+          subject?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pephub_inbox_messages_promotion_id_fkey"
+            columns: ["promotion_id"]
+            isOneToOne: false
+            referencedRelation: "pephub_promotions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pephub_inbox_messages_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "pephub_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pephub_likes: {
         Row: {
           created_at: string
@@ -1358,6 +1421,10 @@ export type Database = {
           monitoring_frequency: string
           monitoring_status: string
           name: string
+          newsletter_email_domains: string | null
+          newsletter_signup_url: string | null
+          newsletter_subscribed: boolean
+          newsletter_subscribed_at: string | null
           other_social_url: string | null
           reddit_url: string | null
           sort_order: number
@@ -1388,6 +1455,10 @@ export type Database = {
           monitoring_frequency?: string
           monitoring_status?: string
           name: string
+          newsletter_email_domains?: string | null
+          newsletter_signup_url?: string | null
+          newsletter_subscribed?: boolean
+          newsletter_subscribed_at?: string | null
           other_social_url?: string | null
           reddit_url?: string | null
           sort_order?: number
@@ -1418,6 +1489,10 @@ export type Database = {
           monitoring_frequency?: string
           monitoring_status?: string
           name?: string
+          newsletter_email_domains?: string | null
+          newsletter_signup_url?: string | null
+          newsletter_subscribed?: boolean
+          newsletter_subscribed_at?: string | null
           other_social_url?: string | null
           reddit_url?: string | null
           sort_order?: number

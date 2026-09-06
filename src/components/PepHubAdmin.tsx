@@ -35,6 +35,10 @@ const emptyForm = {
   reddit_url: "",
   other_social_url: "",
   monitor_socials: true,
+  newsletter_signup_url: "",
+  newsletter_email_domains: "",
+  newsletter_subscribed: false,
+
   is_active: true,
   expert_verified: false,
   sort_order: 0,
@@ -113,6 +117,9 @@ export default function PepHubAdmin() {
           reddit_url: form.reddit_url.trim() || null,
           other_social_url: form.other_social_url.trim() || null,
           monitor_socials: form.monitor_socials,
+          newsletter_signup_url: form.newsletter_signup_url.trim() || null,
+          newsletter_email_domains: form.newsletter_email_domains.trim() || null,
+          newsletter_subscribed: form.newsletter_subscribed,
           is_active: form.is_active,
           expert_verified: form.expert_verified,
           sort_order: Number(form.sort_order) || 0,
@@ -268,6 +275,42 @@ export default function PepHubAdmin() {
                   />
                   Watch these accounts for sales and discount codes
                 </label>
+
+                <div className="mt-5 border-t border-foreground/10 pt-4">
+                  <div className="text-eyebrow">Vendor newsletter</div>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Sign this vendor's newsletter up with the shared PepHub deals inbox, then paste the
+                    signup page here. Their sale emails are read automatically and turned into alerts.
+                  </p>
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <label className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Newsletter signup page</label>
+                      <input
+                        className={input}
+                        placeholder="https://vendor.com/newsletter"
+                        value={form.newsletter_signup_url}
+                        onChange={(e) => setForm({ ...form, newsletter_signup_url: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Extra sending domains</label>
+                      <input
+                        className={input}
+                        placeholder="mail.vendor.com, vendormail.net"
+                        value={form.newsletter_email_domains}
+                        onChange={(e) => setForm({ ...form, newsletter_email_domains: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                  <label className="mt-3 flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={form.newsletter_subscribed}
+                      onChange={(e) => setForm({ ...form, newsletter_subscribed: e.target.checked })}
+                    />
+                    I've signed the shared inbox up for this vendor's emails
+                  </label>
+                </div>
               </div>
               <div>
                 <label className="text-eyebrow">Description</label>
@@ -332,7 +375,12 @@ export default function PepHubAdmin() {
                         discount_code: s.discount_code ?? "", logo_url: s.logo_url ?? "",
                         instagram_url: s.instagram_url ?? "", x_url: s.x_url ?? "", facebook_url: s.facebook_url ?? "",
                         telegram_url: s.telegram_url ?? "", reddit_url: s.reddit_url ?? "", other_social_url: s.other_social_url ?? "",
-                        monitor_socials: s.monitor_socials ?? true, is_active: s.is_active, expert_verified: s.expert_verified, sort_order: s.sort_order,
+                        monitor_socials: s.monitor_socials ?? true,
+                        newsletter_signup_url: s.newsletter_signup_url ?? "",
+                        newsletter_email_domains: s.newsletter_email_domains ?? "",
+                        newsletter_subscribed: s.newsletter_subscribed ?? false,
+                        is_active: s.is_active, expert_verified: s.expert_verified, sort_order: s.sort_order,
+
                       })}
                     >Edit</button>
                     <button

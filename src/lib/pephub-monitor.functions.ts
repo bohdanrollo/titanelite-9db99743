@@ -247,3 +247,42 @@ export const adminPromotionEmailLog = createServerFn({ method: "POST" })
       log: (rows ?? []).map((r) => ({ ...r, email: mask(r.email) })),
     };
   });
+
+export type InboxMessage = {
+  id: string;
+  source_id: string | null;
+  from_email: string;
+  from_name: string | null;
+  subject: string;
+  snippet: string | null;
+  received_at: string | null;
+  matched: boolean;
+  sale_detected: boolean;
+  notes: string | null;
+};
+
+/** Admin: scan the shared vendor newsletter inbox for new sales/discounts. */
+export const adminScanVendorInbox = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await requireAdmin(context.supabase, context.userId);
+    const { scanVendorInbox } = await import("@/lib/pephub-inbox.server");
+    return await scanVendorInbox("admin");
+  });
+
+/** Admin: recent vendor emails seen in the shared inbox. */
+export const adminListInboxMessages = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ limit: z.number().int().min(1).max(200).default(40) }).parse(d ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    await requireAdmin(context.supabase, context.userId);
+    const { data: rows, error } = await context.supabase
+      .from("pephub_inbox_messages")
+      .select("id, source_id, from_email, from_name, subject, snippet, received_at, matched, sale_detected, notes")
+      .order("received_at", { ascending: false })
+      .limit(data.limit);
+    if (error) throw new Error(error.message);
+    return { messages: (rows ?? []) as InboxMessage[] };
+  });

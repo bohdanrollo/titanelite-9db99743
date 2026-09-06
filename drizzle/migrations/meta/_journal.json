@@ -78,6 +78,13 @@
       "when": 1788725524524,
       "tag": "0010_pephub_source_socials",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1788726447855,
+      "tag": "0011_pephub_vendor_inbox",
+      "breakpoints": true
     }
   ]
 }
