@@ -219,7 +219,7 @@ export async function monitorSource(
       patch["failure_count"] = 0;
       if (salesFound > 0) patch["last_sale_detected_at"] = new Date().toISOString();
     }
-    await supabaseAdmin.from("pephub_sources").update(patch).eq("id", sourceId);
+    await supabaseAdmin.from("pephub_sources").update(patch as never).eq("id", sourceId);
   };
 
   const bumpFailure = async (message: string, monitoringStatus: string) => {

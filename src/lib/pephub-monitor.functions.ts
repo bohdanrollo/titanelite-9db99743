@@ -138,7 +138,7 @@ export const adminUpdateMonitorSettings = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const patch = { ...data } as Record<string, any>;
     if (patch["admin_notify_email"] === "") patch["admin_notify_email"] = null;
-    const { error } = await supabaseAdmin.from("pephub_monitor_settings").update(patch).eq("id", 1);
+    const { error } = await supabaseAdmin.from("pephub_monitor_settings").update(patch as never).eq("id", 1);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
@@ -165,7 +165,7 @@ export const adminUpdateSourceMonitoring = createServerFn({ method: "POST" })
       if (data.monitoring_enabled) patch["monitoring_error"] = null;
     }
     if (data.monitoring_frequency) patch["monitoring_frequency"] = data.monitoring_frequency;
-    const { error } = await supabaseAdmin.from("pephub_sources").update(patch).eq("id", data.id);
+    const { error } = await supabaseAdmin.from("pephub_sources").update(patch as never).eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
