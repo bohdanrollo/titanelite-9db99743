@@ -8,6 +8,7 @@ import {
   adminListSources,
   adminSaveSource,
   adminDeleteSource,
+  adminUploadSourceLogo,
   adminSendDealAlert,
   adminListDealAlerts,
   type PepAlert,
@@ -26,6 +27,7 @@ const emptyForm = {
   description: "",
   category: "",
   discount_code: "",
+  logo_url: "",
   is_active: true,
   expert_verified: false,
   sort_order: 0,
@@ -50,6 +52,7 @@ export default function PepHubAdmin() {
   const delSource = useServerFn(adminDeleteSource);
   const listMembers = useServerFn(adminListPepHubMembers);
   const delMember = useServerFn(adminDeletePepHubMember);
+  const uploadLogo = useServerFn(adminUploadSourceLogo);
   const sendAlert = useServerFn(adminSendDealAlert);
   const listAlerts = useServerFn(adminListDealAlerts);
 
@@ -95,6 +98,7 @@ export default function PepHubAdmin() {
           description: form.description.trim() || null,
           category: form.category.trim() || null,
           discount_code: form.discount_code.trim() || null,
+          logo_url: form.logo_url.trim() || null,
           is_active: form.is_active,
           expert_verified: form.expert_verified,
           sort_order: Number(form.sort_order) || 0,
@@ -105,6 +109,24 @@ export default function PepHubAdmin() {
       load();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Save failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function pickLogo(file: File) {
+    setBusy(true);
+    try {
+      const buf = new Uint8Array(await file.arrayBuffer());
+      let bin = "";
+      for (const b of buf) bin += String.fromCharCode(b);
+      const res = await uploadLogo({
+        data: { filename: file.name, contentType: file.type || "image/png", dataBase64: btoa(bin) },
+      });
+      setForm((f) => ({ ...f, logo_url: res.url }));
+      toast.success("Logo uploaded");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Upload failed");
     } finally {
       setBusy(false);
     }
@@ -182,6 +204,24 @@ export default function PepHubAdmin() {
                 <input className={input} value={form.affiliate_url} placeholder="https://" onChange={(e) => setForm({ ...form, affiliate_url: e.target.value })} />
               </div>
               <div>
+                <label className="text-eyebrow">Logo</label>
+                <div className="mt-1 flex items-center gap-3">
+                  {form.logo_url && (
+                    <img src={form.logo_url} alt="Logo preview" className="h-12 w-12 rounded-lg border border-foreground/10 object-contain p-1" />
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="text-xs"
+                    onChange={(e) => { const f = e.target.files?.[0]; if (f) pickLogo(f); }}
+                  />
+                  {form.logo_url && (
+                    <button type="button" className="text-xs underline" onClick={() => setForm({ ...form, logo_url: "" })}>Remove</button>
+                  )}
+                </div>
+                <input className={input} value={form.logo_url} placeholder="or paste an image URL" onChange={(e) => setForm({ ...form, logo_url: e.target.value })} />
+              </div>
+              <div>
                 <label className="text-eyebrow">Description</label>
                 <textarea className={input} rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
               </div>
@@ -241,7 +281,7 @@ export default function PepHubAdmin() {
                       onClick={() => setForm({
                         id: s.id, name: s.name, url: s.url, affiliate_url: s.affiliate_url ?? "",
                         description: s.description ?? "", category: s.category ?? "",
-                        discount_code: s.discount_code ?? "", is_active: s.is_active, expert_verified: s.expert_verified, sort_order: s.sort_order,
+                        discount_code: s.discount_code ?? "", logo_url: s.logo_url ?? "", is_active: s.is_active, expert_verified: s.expert_verified, sort_order: s.sort_order,
                       })}
                     >Edit</button>
                     <button
