@@ -1,7 +1,10 @@
 import { useMemo, useState } from "react";
 import { Search, X, FileText, ChevronRight } from "lucide-react";
+import TitanVial from "@/components/TitanVial";
 import {
   PEPTIDE_LIBRARY,
+  vialStrength,
+  vialLot,
   PEPTIDE_CATEGORIES,
   PEPTIDE_GENERAL_SOURCES,
   type PeptideEntry,
@@ -365,7 +368,7 @@ export default function PeptideLibrary() {
             key={p.name}
             className={`border flex flex-col transition ${selected === p.name ? "border-blood" : "border-foreground/10 hover:border-blood"}`}
           >
-            <Vial label={p.name} />
+            <TitanVial name={p.name} strength={vialStrength(p)} lot={vialLot(p)} />
             <div className="p-4 flex flex-col gap-1 grow">
               <h4 className="font-display text-lg leading-tight">{p.name}</h4>
               <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">{p.category}</p>

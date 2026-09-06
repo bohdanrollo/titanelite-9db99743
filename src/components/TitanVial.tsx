@@ -23,7 +23,7 @@ export default function TitanVial({
   const veryLong = display.length > 16;
 
   return (
-    <div className={`relative aspect-square w-full overflow-hidden bg-white ${className}`}>
+    <div className={`relative aspect-square w-full overflow-hidden bg-white [container-type:inline-size] ${className}`}>
       {/* master photograph, cropped square around the centered vial */}
       <div className="absolute left-1/2 top-1/2 h-full w-[135.4%] -translate-x-1/2 -translate-y-1/2">
         <img
@@ -51,14 +51,14 @@ export default function TitanVial({
             className="mx-auto flex items-center justify-center border border-[#c8102e]"
             style={{
               width: "88%",
-              minHeight: "3.4cqw",
-              padding: "0.5cqw 0.3cqw",
+              minHeight: "6cqw",
+              padding: "0.9cqw 0.5cqw",
             }}
           >
             <span
               className="font-bold leading-[1.05] text-[#c8102e]"
               style={{
-                fontSize: veryLong ? "1.5cqw" : long ? "2cqw" : "2.7cqw",
+                fontSize: veryLong ? "2.7cqw" : long ? "3.6cqw" : "4.9cqw",
                 letterSpacing: "-0.01em",
                 wordBreak: "break-word",
               }}
@@ -68,23 +68,23 @@ export default function TitanVial({
           </div>
 
           <div
-            className="mt-[0.5cqw] font-medium text-[#333]"
-            style={{ fontSize: "1.25cqw", letterSpacing: "0.08em" }}
+            className="mt-[0.9cqw] font-medium text-[#333]"
+            style={{ fontSize: "2.2cqw", letterSpacing: "0.08em" }}
           >
             PEPTIDE
           </div>
 
           {/* strength badge */}
           <div
-            className="mx-auto mt-[1cqw] bg-[#c8102e] font-bold text-white"
-            style={{ width: "52%", padding: "0.45cqw 0", fontSize: "2cqw", letterSpacing: "0.02em" }}
+            className="mx-auto mt-[1.6cqw] bg-[#c8102e] font-bold text-white"
+            style={{ width: "52%", padding: "0.7cqw 0", fontSize: "4.5cqw", letterSpacing: "0.02em" }}
           >
             {strength}
           </div>
 
           <div
-            className="mt-[1.1cqw] font-semibold leading-[1.35] text-[#1a1a1a]"
-            style={{ fontSize: "1.02cqw", letterSpacing: "0.01em" }}
+            className="mt-[1.8cqw] font-semibold leading-[1.35] text-[#1a1a1a]"
+            style={{ fontSize: "1.85cqw", letterSpacing: "0.01em" }}
           >
             FOR RESEARCH USE ONLY
             <br />
@@ -100,7 +100,7 @@ export default function TitanVial({
             left: "38.6%",
             width: "22.6%",
             top: "82.1%",
-            fontSize: "1.15cqw",
+            fontSize: "2cqw",
             letterSpacing: "0.04em",
             transform: "rotate(-0.4deg)",
             fontFamily: "'Helvetica Neue', Arial, sans-serif",
