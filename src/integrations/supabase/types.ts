@@ -996,6 +996,36 @@ export type Database = {
           },
         ]
       }
+      pephub_members: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          subscribed: boolean
+          unsubscribed_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          subscribed?: boolean
+          unsubscribed_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          subscribed?: boolean
+          unsubscribed_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pephub_posts: {
         Row: {
           body: string
@@ -1041,6 +1071,83 @@ export type Database = {
           display_name?: string
           handle?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      pephub_source_alerts: {
+        Row: {
+          details: string | null
+          headline: string
+          id: string
+          promo_code: string | null
+          recipients: number
+          sent_at: string
+          source_id: string | null
+        }
+        Insert: {
+          details?: string | null
+          headline: string
+          id?: string
+          promo_code?: string | null
+          recipients?: number
+          sent_at?: string
+          source_id?: string | null
+        }
+        Update: {
+          details?: string | null
+          headline?: string
+          id?: string
+          promo_code?: string | null
+          recipients?: number
+          sent_at?: string
+          source_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pephub_source_alerts_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "pephub_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pephub_sources: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          discount_code: string | null
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          discount_code?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          discount_code?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+          updated_at?: string
+          url?: string
         }
         Relationships: []
       }
