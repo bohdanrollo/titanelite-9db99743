@@ -11,6 +11,13 @@ export type PepSource = {
   category: string | null;
   discount_code: string | null;
   logo_url: string | null;
+  instagram_url: string | null;
+  x_url: string | null;
+  facebook_url: string | null;
+  telegram_url: string | null;
+  reddit_url: string | null;
+  other_social_url: string | null;
+  monitor_socials: boolean;
   is_active: boolean;
   expert_verified: boolean;
   sort_order: number;
@@ -99,7 +106,7 @@ export const adminListSources = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
       .from("pephub_sources")
-      .select("id, name, url, affiliate_url, description, category, discount_code, logo_url, is_active, expert_verified, sort_order, created_at")
+      .select("id, name, url, affiliate_url, description, category, discount_code, logo_url, instagram_url, x_url, facebook_url, telegram_url, reddit_url, other_social_url, monitor_socials, is_active, expert_verified, sort_order, created_at")
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: true });
     if (error) throw new Error(error.message);
@@ -115,6 +122,13 @@ const sourceInput = z.object({
   category: z.string().trim().max(80).optional().nullable(),
   discount_code: z.string().trim().max(60).optional().nullable(),
   logo_url: z.string().trim().max(500).optional().nullable(),
+  instagram_url: z.string().trim().max(500).optional().nullable(),
+  x_url: z.string().trim().max(500).optional().nullable(),
+  facebook_url: z.string().trim().max(500).optional().nullable(),
+  telegram_url: z.string().trim().max(500).optional().nullable(),
+  reddit_url: z.string().trim().max(500).optional().nullable(),
+  other_social_url: z.string().trim().max(500).optional().nullable(),
+  monitor_socials: z.boolean().default(true),
   is_active: z.boolean().default(true),
   expert_verified: z.boolean().default(false),
   sort_order: z.number().int().min(0).max(9999).default(0),
@@ -135,6 +149,13 @@ export const adminSaveSource = createServerFn({ method: "POST" })
       category: data.category || null,
       discount_code: data.discount_code || null,
       logo_url: data.logo_url || null,
+      instagram_url: data.instagram_url || null,
+      x_url: data.x_url || null,
+      facebook_url: data.facebook_url || null,
+      telegram_url: data.telegram_url || null,
+      reddit_url: data.reddit_url || null,
+      other_social_url: data.other_social_url || null,
+      monitor_socials: data.monitor_socials,
       is_active: data.is_active,
       expert_verified: data.expert_verified,
       sort_order: data.sort_order,
