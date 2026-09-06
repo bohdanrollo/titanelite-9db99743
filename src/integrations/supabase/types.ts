@@ -1026,6 +1026,83 @@ export type Database = {
         }
         Relationships: []
       }
+      pephub_monitor_runs: {
+        Row: {
+          completed_at: string | null
+          error_message: string | null
+          id: string
+          sales_found: number
+          source_id: string | null
+          started_at: string
+          status: string
+          triggered_by: string
+        }
+        Insert: {
+          completed_at?: string | null
+          error_message?: string | null
+          id?: string
+          sales_found?: number
+          source_id?: string | null
+          started_at?: string
+          status?: string
+          triggered_by?: string
+        }
+        Update: {
+          completed_at?: string | null
+          error_message?: string | null
+          id?: string
+          sales_found?: number
+          source_id?: string | null
+          started_at?: string
+          status?: string
+          triggered_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pephub_monitor_runs_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "pephub_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pephub_monitor_settings: {
+        Row: {
+          admin_notify_email: string | null
+          automatic_sending: boolean
+          default_frequency: string
+          id: number
+          minimum_confidence: string
+          monitoring_enabled: boolean
+          require_admin_approval: boolean
+          sale_alerts_enabled: boolean
+          updated_at: string
+        }
+        Insert: {
+          admin_notify_email?: string | null
+          automatic_sending?: boolean
+          default_frequency?: string
+          id?: number
+          minimum_confidence?: string
+          monitoring_enabled?: boolean
+          require_admin_approval?: boolean
+          sale_alerts_enabled?: boolean
+          updated_at?: string
+        }
+        Update: {
+          admin_notify_email?: string | null
+          automatic_sending?: boolean
+          default_frequency?: string
+          id?: number
+          minimum_confidence?: string
+          monitoring_enabled?: boolean
+          require_admin_approval?: boolean
+          sale_alerts_enabled?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pephub_posts: {
         Row: {
           body: string
@@ -1074,6 +1151,152 @@ export type Database = {
         }
         Relationships: []
       }
+      pephub_promotions: {
+        Row: {
+          confidence_level: string
+          confidence_score: number
+          coupon_code: string | null
+          created_at: string
+          description: string | null
+          discount_type: string | null
+          discount_value: string | null
+          email_sent_at: string | null
+          end_date: string | null
+          evidence: string | null
+          fingerprint: string
+          first_detected_at: string
+          id: string
+          last_verified_at: string
+          missing_since: string | null
+          promotion_url: string | null
+          recipients: number
+          source_id: string
+          start_date: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          confidence_level?: string
+          confidence_score?: number
+          coupon_code?: string | null
+          created_at?: string
+          description?: string | null
+          discount_type?: string | null
+          discount_value?: string | null
+          email_sent_at?: string | null
+          end_date?: string | null
+          evidence?: string | null
+          fingerprint: string
+          first_detected_at?: string
+          id?: string
+          last_verified_at?: string
+          missing_since?: string | null
+          promotion_url?: string | null
+          recipients?: number
+          source_id: string
+          start_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          confidence_level?: string
+          confidence_score?: number
+          coupon_code?: string | null
+          created_at?: string
+          description?: string | null
+          discount_type?: string | null
+          discount_value?: string | null
+          email_sent_at?: string | null
+          end_date?: string | null
+          evidence?: string | null
+          fingerprint?: string
+          first_detected_at?: string
+          id?: string
+          last_verified_at?: string
+          missing_since?: string | null
+          promotion_url?: string | null
+          recipients?: number
+          source_id?: string
+          start_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pephub_promotions_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "pephub_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pephub_sale_emails: {
+        Row: {
+          clicked_at: string | null
+          created_at: string
+          delivered_at: string | null
+          email: string
+          error_message: string | null
+          id: string
+          member_id: string | null
+          opened_at: string | null
+          promotion_id: string
+          provider_message_id: string | null
+          sent_at: string | null
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          clicked_at?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          email: string
+          error_message?: string | null
+          id?: string
+          member_id?: string | null
+          opened_at?: string | null
+          promotion_id: string
+          provider_message_id?: string | null
+          sent_at?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          clicked_at?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          email?: string
+          error_message?: string | null
+          id?: string
+          member_id?: string | null
+          opened_at?: string | null
+          promotion_id?: string
+          provider_message_id?: string | null
+          sent_at?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pephub_sale_emails_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "pephub_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pephub_sale_emails_promotion_id_fkey"
+            columns: ["promotion_id"]
+            isOneToOne: false
+            referencedRelation: "pephub_promotions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pephub_source_alerts: {
         Row: {
           details: string | null
@@ -1114,36 +1337,66 @@ export type Database = {
       }
       pephub_sources: {
         Row: {
+          affiliate_url: string | null
           category: string | null
           created_at: string
           description: string | null
           discount_code: string | null
+          failure_count: number
           id: string
           is_active: boolean
+          last_checked_at: string | null
+          last_sale_detected_at: string | null
+          last_successful_check_at: string | null
+          logo_url: string | null
+          monitoring_enabled: boolean
+          monitoring_error: string | null
+          monitoring_frequency: string
+          monitoring_status: string
           name: string
           sort_order: number
           updated_at: string
           url: string
         }
         Insert: {
+          affiliate_url?: string | null
           category?: string | null
           created_at?: string
           description?: string | null
           discount_code?: string | null
+          failure_count?: number
           id?: string
           is_active?: boolean
+          last_checked_at?: string | null
+          last_sale_detected_at?: string | null
+          last_successful_check_at?: string | null
+          logo_url?: string | null
+          monitoring_enabled?: boolean
+          monitoring_error?: string | null
+          monitoring_frequency?: string
+          monitoring_status?: string
           name: string
           sort_order?: number
           updated_at?: string
           url: string
         }
         Update: {
+          affiliate_url?: string | null
           category?: string | null
           created_at?: string
           description?: string | null
           discount_code?: string | null
+          failure_count?: number
           id?: string
           is_active?: boolean
+          last_checked_at?: string | null
+          last_sale_detected_at?: string | null
+          last_successful_check_at?: string | null
+          logo_url?: string | null
+          monitoring_enabled?: boolean
+          monitoring_error?: string | null
+          monitoring_frequency?: string
+          monitoring_status?: string
           name?: string
           sort_order?: number
           updated_at?: string

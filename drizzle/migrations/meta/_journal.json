@@ -57,6 +57,13 @@
       "when": 1788705593366,
       "tag": "0007_create_pephub_sources_and_members",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1788707032227,
+      "tag": "0008_pephub_sale_monitoring",
+      "breakpoints": true
     }
   ]
 }
