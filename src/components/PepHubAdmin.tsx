@@ -28,6 +28,13 @@ const emptyForm = {
   category: "",
   discount_code: "",
   logo_url: "",
+  instagram_url: "",
+  x_url: "",
+  facebook_url: "",
+  telegram_url: "",
+  reddit_url: "",
+  other_social_url: "",
+  monitor_socials: true,
   is_active: true,
   expert_verified: false,
   sort_order: 0,
@@ -99,6 +106,13 @@ export default function PepHubAdmin() {
           category: form.category.trim() || null,
           discount_code: form.discount_code.trim() || null,
           logo_url: form.logo_url.trim() || null,
+          instagram_url: form.instagram_url.trim() || null,
+          x_url: form.x_url.trim() || null,
+          facebook_url: form.facebook_url.trim() || null,
+          telegram_url: form.telegram_url.trim() || null,
+          reddit_url: form.reddit_url.trim() || null,
+          other_social_url: form.other_social_url.trim() || null,
+          monitor_socials: form.monitor_socials,
           is_active: form.is_active,
           expert_verified: form.expert_verified,
           sort_order: Number(form.sort_order) || 0,
@@ -221,6 +235,40 @@ export default function PepHubAdmin() {
                 </div>
                 <input className={input} value={form.logo_url} placeholder="or paste an image URL" onChange={(e) => setForm({ ...form, logo_url: e.target.value })} />
               </div>
+              <div className="rounded-xl border border-foreground/10 p-4">
+                <label className="text-eyebrow">Social media (watched for sales)</label>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Paste the vendor's profile links. Enabled accounts are checked for promo codes and sales alongside their website.
+                </p>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  {([
+                    ["instagram_url", "Instagram"],
+                    ["x_url", "X / Twitter"],
+                    ["facebook_url", "Facebook"],
+                    ["telegram_url", "Telegram"],
+                    ["reddit_url", "Reddit"],
+                    ["other_social_url", "Other"],
+                  ] as const).map(([k, label]) => (
+                    <div key={k}>
+                      <label className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">{label}</label>
+                      <input
+                        className={input}
+                        value={form[k]}
+                        placeholder="https://"
+                        onChange={(e) => setForm({ ...form, [k]: e.target.value })}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <label className="mt-3 flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={form.monitor_socials}
+                    onChange={(e) => setForm({ ...form, monitor_socials: e.target.checked })}
+                  />
+                  Watch these accounts for sales and discount codes
+                </label>
+              </div>
               <div>
                 <label className="text-eyebrow">Description</label>
                 <textarea className={input} rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
@@ -281,7 +329,10 @@ export default function PepHubAdmin() {
                       onClick={() => setForm({
                         id: s.id, name: s.name, url: s.url, affiliate_url: s.affiliate_url ?? "",
                         description: s.description ?? "", category: s.category ?? "",
-                        discount_code: s.discount_code ?? "", logo_url: s.logo_url ?? "", is_active: s.is_active, expert_verified: s.expert_verified, sort_order: s.sort_order,
+                        discount_code: s.discount_code ?? "", logo_url: s.logo_url ?? "",
+                        instagram_url: s.instagram_url ?? "", x_url: s.x_url ?? "", facebook_url: s.facebook_url ?? "",
+                        telegram_url: s.telegram_url ?? "", reddit_url: s.reddit_url ?? "", other_social_url: s.other_social_url ?? "",
+                        monitor_socials: s.monitor_socials ?? true, is_active: s.is_active, expert_verified: s.expert_verified, sort_order: s.sort_order,
                       })}
                     >Edit</button>
                     <button
