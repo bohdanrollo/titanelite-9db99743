@@ -26,7 +26,6 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
-import { Route as VialTestRouteImport } from './routes/vial-test'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
 import { Route as AuthenticatedCoachRouteImport } from './routes/_authenticated.coach'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
@@ -127,11 +126,6 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VialTestRoute = VialTestRouteImport.update({
-  id: '/vial-test',
-  path: '/vial-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -229,7 +223,6 @@ export interface FileRoutesByFullPath {
   '/results': typeof ResultsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/vial-test': typeof VialTestRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/coach': typeof AuthenticatedCoachRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -263,7 +256,6 @@ export interface FileRoutesByTo {
   '/results': typeof ResultsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/vial-test': typeof VialTestRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/coach': typeof AuthenticatedCoachRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -299,7 +291,6 @@ export interface FileRoutesById {
   '/results': typeof ResultsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/vial-test': typeof VialTestRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/coach': typeof AuthenticatedCoachRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -335,7 +326,6 @@ export interface FileRouteTypes {
     | '/results'
     | '/sitemap.xml'
     | '/terms'
-    | '/vial-test'
     | '/admin'
     | '/coach'
     | '/dashboard'
@@ -369,7 +359,6 @@ export interface FileRouteTypes {
     | '/results'
     | '/sitemap.xml'
     | '/terms'
-    | '/vial-test'
     | '/admin'
     | '/coach'
     | '/dashboard'
@@ -404,7 +393,6 @@ export interface FileRouteTypes {
     | '/results'
     | '/sitemap.xml'
     | '/terms'
-    | '/vial-test'
     | '/_authenticated/admin'
     | '/_authenticated/coach'
     | '/_authenticated/dashboard'
@@ -440,7 +428,6 @@ export interface RootRouteChildren {
   ResultsRoute: typeof ResultsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
-  VialTestRoute: typeof VialTestRoute
   ApiPepTalkRoute: typeof ApiPepTalkRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   PephubIndexRoute: typeof PephubIndexRoute
@@ -573,13 +560,6 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/vial-test': {
-      id: '/vial-test'
-      path: '/vial-test'
-      fullPath: '/vial-test'
-      preLoaderRoute: typeof VialTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -736,7 +716,6 @@ const rootRouteChildren: RootRouteChildren = {
   ResultsRoute: ResultsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
-  VialTestRoute: VialTestRoute,
   ApiPepTalkRoute: ApiPepTalkRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   PephubIndexRoute: PephubIndexRoute,
