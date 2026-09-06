@@ -6,6 +6,7 @@ export type PepSource = {
   id: string;
   name: string;
   url: string;
+  affiliate_url: string | null;
   description: string | null;
   category: string | null;
   discount_code: string | null;
@@ -96,7 +97,7 @@ export const adminListSources = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
       .from("pephub_sources")
-      .select("id, name, url, description, category, discount_code, is_active, sort_order, created_at")
+      .select("id, name, url, affiliate_url, description, category, discount_code, is_active, sort_order, created_at")
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: true });
     if (error) throw new Error(error.message);
@@ -107,6 +108,7 @@ const sourceInput = z.object({
   id: z.string().uuid().optional(),
   name: z.string().trim().min(1).max(120),
   url: z.string().trim().url().max(500),
+  affiliate_url: z.string().trim().url().max(500).optional().nullable().or(z.literal("")),
   description: z.string().trim().max(2000).optional().nullable(),
   category: z.string().trim().max(80).optional().nullable(),
   discount_code: z.string().trim().max(60).optional().nullable(),
@@ -124,6 +126,7 @@ export const adminSaveSource = createServerFn({ method: "POST" })
     const row = {
       name: data.name,
       url: data.url,
+      affiliate_url: data.affiliate_url || null,
       description: data.description || null,
       category: data.category || null,
       discount_code: data.discount_code || null,

@@ -14,13 +14,15 @@ import {
   type PepMember,
   type PepSource,
 } from "@/lib/pephub.functions";
+import PepHubSaleMonitor from "@/components/PepHubSaleMonitor";
 
-type SubTab = "sources" | "members" | "alerts";
+type SubTab = "sources" | "monitor" | "members" | "alerts";
 
 const emptyForm = {
   id: "",
   name: "",
   url: "",
+  affiliate_url: "",
   description: "",
   category: "",
   discount_code: "",
@@ -72,6 +74,7 @@ export default function PepHubAdmin() {
           ...(form.id ? { id: form.id } : {}),
           name: form.name.trim(),
           url: form.url.trim(),
+          affiliate_url: form.affiliate_url.trim(),
           description: form.description.trim() || null,
           category: form.category.trim() || null,
           discount_code: form.discount_code.trim() || null,
@@ -129,6 +132,7 @@ export default function PepHubAdmin() {
       <div className="flex flex-wrap gap-2">
         {([
           { k: "sources", l: `Sources (${sources.length})` },
+          { k: "monitor", l: "Sale monitor" },
           { k: "members", l: `Members (${members.length})` },
           { k: "alerts", l: "Sale alerts" },
         ] as const).map((t) => (
@@ -154,6 +158,10 @@ export default function PepHubAdmin() {
               <div>
                 <label className="text-eyebrow">URL</label>
                 <input className={input} value={form.url} required placeholder="https://" onChange={(e) => setForm({ ...form, url: e.target.value })} />
+              </div>
+              <div>
+                <label className="text-eyebrow">Affiliate URL (optional)</label>
+                <input className={input} value={form.affiliate_url} placeholder="https://" onChange={(e) => setForm({ ...form, affiliate_url: e.target.value })} />
               </div>
               <div>
                 <label className="text-eyebrow">Description</label>
@@ -208,7 +216,7 @@ export default function PepHubAdmin() {
                     <button
                       className="btn-ghost"
                       onClick={() => setForm({
-                        id: s.id, name: s.name, url: s.url,
+                        id: s.id, name: s.name, url: s.url, affiliate_url: s.affiliate_url ?? "",
                         description: s.description ?? "", category: s.category ?? "",
                         discount_code: s.discount_code ?? "", is_active: s.is_active, sort_order: s.sort_order,
                       })}
@@ -228,6 +236,8 @@ export default function PepHubAdmin() {
           </div>
         </div>
       )}
+
+      {sub === "monitor" && <PepHubSaleMonitor />}
 
       {sub === "members" && (
         <div className="mt-6 overflow-x-auto rounded-2xl border border-foreground/10 bg-card shadow-sm">
