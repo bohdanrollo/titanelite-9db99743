@@ -42,7 +42,7 @@ function PepHub() {
     (async () => {
       const { data } = await supabase
         .from("pephub_sources")
-        .select("id, name, url, affiliate_url, description, category, discount_code, is_active, sort_order, created_at")
+        .select("id, name, url, affiliate_url, description, category, discount_code, is_active, expert_verified, sort_order, created_at")
         .eq("is_active", true)
         .order("sort_order", { ascending: true })
         .order("created_at", { ascending: true });
@@ -110,6 +110,11 @@ function PepHub() {
                         <BadgeCheck size={16} className="text-blood" />
                         <h3 className="text-xl">{s.name}</h3>
                       </div>
+                      {s.expert_verified && (
+                        <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-blood/30 bg-blood/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-blood">
+                          <ShieldCheck size={12} /> Expert Verified
+                        </div>
+                      )}
                       {s.category && (
                         <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
                           {s.category}

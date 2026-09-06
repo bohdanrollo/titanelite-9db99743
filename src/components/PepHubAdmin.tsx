@@ -27,6 +27,7 @@ const emptyForm = {
   category: "",
   discount_code: "",
   is_active: true,
+  expert_verified: false,
   sort_order: 0,
 };
 
@@ -95,6 +96,7 @@ export default function PepHubAdmin() {
           category: form.category.trim() || null,
           discount_code: form.discount_code.trim() || null,
           is_active: form.is_active,
+          expert_verified: form.expert_verified,
           sort_order: Number(form.sort_order) || 0,
         },
       });
@@ -202,6 +204,10 @@ export default function PepHubAdmin() {
                   <input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} />
                   Visible on PepHub
                 </label>
+                <label className="flex items-center gap-2 pb-2 text-sm">
+                  <input type="checkbox" checked={form.expert_verified} onChange={(e) => setForm({ ...form, expert_verified: e.target.checked })} />
+                  Expert verified
+                </label>
               </div>
               <div className="flex gap-2">
                 <button disabled={busy} className="btn-primary">
@@ -223,6 +229,7 @@ export default function PepHubAdmin() {
                     <div className="flex items-center gap-2">
                       <h4 className="text-lg">{s.name}</h4>
                       {!s.is_active && <span className="rounded-full bg-foreground/10 px-2 py-0.5 font-mono text-[10px] uppercase">Hidden</span>}
+                      {s.expert_verified && <span className="rounded-full bg-blood/10 px-2 py-0.5 font-mono text-[10px] uppercase text-blood">Expert Verified</span>}
                     </div>
                     <a href={s.url} target="_blank" rel="noreferrer" className="font-mono text-[11px] text-muted-foreground hover:text-blood">{s.url}</a>
                     {s.description && <p className="mt-2 text-sm text-muted-foreground">{s.description}</p>}
@@ -234,7 +241,7 @@ export default function PepHubAdmin() {
                       onClick={() => setForm({
                         id: s.id, name: s.name, url: s.url, affiliate_url: s.affiliate_url ?? "",
                         description: s.description ?? "", category: s.category ?? "",
-                        discount_code: s.discount_code ?? "", is_active: s.is_active, sort_order: s.sort_order,
+                        discount_code: s.discount_code ?? "", is_active: s.is_active, expert_verified: s.expert_verified, sort_order: s.sort_order,
                       })}
                     >Edit</button>
                     <button
