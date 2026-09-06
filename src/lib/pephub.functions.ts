@@ -208,7 +208,7 @@ export const adminSendDealAlert = createServerFn({ method: "POST" })
 
     const { data: source, error: srcErr } = await supabaseAdmin
       .from("pephub_sources")
-      .select("id, name, url, discount_code")
+      .select("id, name, url, affiliate_url, discount_code")
       .eq("id", data.sourceId)
       .maybeSingle();
     if (srcErr) throw new Error(srcErr.message);
@@ -231,7 +231,7 @@ export const adminSendDealAlert = createServerFn({ method: "POST" })
         templateData: {
           name: m.name,
           sourceName: source.name,
-          sourceUrl: source.url,
+          sourceUrl: source.affiliate_url || source.url,
           headline: data.headline,
           details: data.details ?? "",
           promoCode: promo ?? "",
