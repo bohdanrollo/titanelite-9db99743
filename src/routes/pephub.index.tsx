@@ -42,7 +42,7 @@ function PepHub() {
     (async () => {
       const { data } = await supabase
         .from("pephub_sources")
-        .select("id, name, url, affiliate_url, description, category, discount_code, is_active, expert_verified, sort_order, created_at")
+        .select("id, name, url, affiliate_url, description, category, discount_code, logo_url, is_active, expert_verified, sort_order, created_at")
         .eq("is_active", true)
         .order("sort_order", { ascending: true })
         .order("created_at", { ascending: true });
@@ -113,7 +113,16 @@ function PepHub() {
                   className="group rounded-2xl border border-foreground/10 bg-card p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-blood/40 hover:shadow-md"
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <div>
+                    <div className="flex items-start gap-3">
+                      {s.logo_url && (
+                        <img
+                          src={s.logo_url}
+                          alt={`${s.name} logo`}
+                          loading="lazy"
+                          className="h-12 w-12 shrink-0 rounded-lg border border-foreground/10 bg-background object-contain p-1"
+                        />
+                      )}
+                      <div>
                       <div className="flex items-center gap-2">
                         <BadgeCheck size={16} className="text-blood" />
                         <h3 className="text-xl">{s.name}</h3>
@@ -128,6 +137,7 @@ function PepHub() {
                           {s.category}
                         </div>
                       )}
+                      </div>
                     </div>
                     <ExternalLink size={15} className="mt-1 text-muted-foreground group-hover:text-blood" />
                   </div>
