@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Dumbbell, FlaskConical, FileText, MessageCircle, MessagesSquare, Beaker, Apple, ListChecks, Droplets, Syringe, Calculator, Activity, TrendingUp, HeartPulse, NotebookPen, Sparkles } from "lucide-react";
+import { Dumbbell, FlaskConical, FileText, MessageCircle, MessagesSquare, Beaker, Apple, ListChecks, Droplets, Syringe, Calculator, Activity, TrendingUp, HeartPulse, NotebookPen, Sparkles, Phone, Layers, BookOpen, Scale } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
@@ -7,9 +7,9 @@ export const Route = createFileRoute("/features")({
   head: () => ({
     meta: [
       { title: "Dashboard Features — Titan Elite" },
-      { name: "description", content: "Sixteen tools inside the Titan Elite client dashboard: blood panel lab analysis, a calorie and macro tracker, progress and workout logging, an AI stack builder, custom protocols, coach messaging, Pep Talk AI, Top 50 Peptides library, dose calculator, stack tracker, and more." },
+      { name: "description", content: "Twenty-one tools inside the Titan Elite client dashboard: blood panel lab analysis, calorie and macro tracker, progress and workout logging, wellness tracking, AI stack builder, custom protocols, coach messaging and calls, Pep Talk AI, peptide library, combos, dosing guide, dose calculator, stack tracker, learning center, and more." },
       { property: "og:title", content: "Dashboard Features — Titan Elite" },
-      { property: "og:description", content: "Sixteen tools inside the Titan Elite client dashboard: blood panel lab analysis, a calorie and macro tracker, progress and workout logging, an AI stack builder, custom protocols, coach messaging, Pep Talk AI, Top 50 Peptides library, dose calculator, stack tracker, and more." },
+      { property: "og:description", content: "Twenty-one tools inside the Titan Elite client dashboard: blood panel lab analysis, calorie and macro tracker, progress and workout logging, wellness tracking, AI stack builder, custom protocols, coach messaging and calls, Pep Talk AI, peptide library, combos, dosing guide, dose calculator, stack tracker, learning center, and more." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
