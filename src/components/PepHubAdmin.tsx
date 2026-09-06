@@ -41,6 +41,7 @@ const emptyForm = {
 
   is_active: true,
   expert_verified: false,
+  listing_category: "trusted" as "featured" | "trusted" | "more",
   sort_order: 0,
 };
 
@@ -122,6 +123,7 @@ export default function PepHubAdmin() {
           newsletter_subscribed: form.newsletter_subscribed,
           is_active: form.is_active,
           expert_verified: form.expert_verified,
+          listing_category: form.listing_category,
           sort_order: Number(form.sort_order) || 0,
         },
       });
