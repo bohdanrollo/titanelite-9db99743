@@ -209,7 +209,7 @@ export async function monitorSource(
         })
         .eq("id", run.id);
     }
-    const patch: Record<string, unknown> = {
+    const patch: Record<string, any> = {
       last_checked_at: new Date().toISOString(),
       monitoring_status: monitoringStatus,
       monitoring_error: errorMessage,
