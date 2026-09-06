@@ -1,19 +1,27 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Hash, Send, Trash2 } from "lucide-react";
+import { BadgeCheck, ExternalLink, Mail, ShieldCheck, Tag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/lib/auth";
 import { SiteHeader } from "@/components/SiteHeader";
-import { getMyProfile, slugifyHandle, type PepProfile } from "@/lib/pephub";
+import { SiteFooter } from "@/components/SiteFooter";
+import { joinPepHub, type PepSource } from "@/lib/pephub.functions";
 
 export const Route = createFileRoute("/pephub/")({
   head: () => ({
     meta: [
-      { title: "PepHub Chat — Free Peptide Chat Rooms | Titan Elite" },
-      { name: "description", content: "PepHub is a free live chat community for peptide talk. Join channels, ask questions in real time, and share your journey with other members." },
-      { property: "og:title", content: "PepHub — Live Peptide Chat Rooms" },
-      { property: "og:description", content: "Free live chat channels for peptide questions, protocols, training and progress." },
+      { title: "PepHub — Trusted Peptide Sources & Sale Alerts | Titan Elite" },
+      {
+        name: "description",
+        content:
+          "PepHub is a free, vetted list of trusted peptide sources. Sign up with your name and email to get notified whenever a listed source runs a sale or discount.",
+      },
+      { property: "og:title", content: "PepHub — Trusted Peptide Sources" },
+      {
+        property: "og:description",
+        content: "A vetted list of trusted peptide sources, plus free email alerts when they run sales or discounts.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -21,392 +29,168 @@ export const Route = createFileRoute("/pephub/")({
   component: PepHub,
 });
 
-const CHANNELS = [
-  { id: "general", label: "general", blurb: "Anything peptide related." },
-  { id: "progress", label: "progress", blurb: "Share wins and check-ins." },
-  { id: "questions", label: "questions", blurb: "Ask the room anything." },
-] as const;
-
-type ChatMsg = {
-  id: string;
-  user_id: string;
-  body: string;
-  created_at: string;
-  channel: string;
-};
-
-function timeOf(iso: string) {
-  return new Date(iso).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-}
-
-function dayOf(iso: string) {
-  return new Date(iso).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
-}
-
 function PepHub() {
-  const { user, loading } = useAuth();
-  const [profile, setProfile] = useState<PepProfile | null>(null);
-  const [channel, setChannel] = useState<string>("general");
-  const [messages, setMessages] = useState<ChatMsg[]>([]);
-  const [authors, setAuthors] = useState<Record<string, PepProfile>>({});
-  const [body, setBody] = useState("");
-  const [busy, setBusy] = useState(false);
+  const [sources, setSources] = useState<PepSource[]>([]);
   const [ready, setReady] = useState(false);
-  const [online, setOnline] = useState(0);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [joined, setJoined] = useState(false);
+  const join = useServerFn(joinPepHub);
 
-  const active = CHANNELS.find((c) => c.id === channel) ?? CHANNELS[0];
-
-  const authorsRef = useRef<Record<string, PepProfile>>({});
-  authorsRef.current = authors;
-  const loadAuthors = useCallback(async (ids: string[]) => {
-    const missing = [...new Set(ids)].filter((id) => !authorsRef.current[id]);
-    if (missing.length === 0) return;
-    const { data } = await supabase
-      .from("pephub_profiles")
-      .select("user_id, handle, display_name, bio, created_at")
-      .in("user_id", missing);
-    if (data?.length) {
-      setAuthors((prev) => {
-        const next = { ...prev };
-        for (const p of data) next[p.user_id] = p as PepProfile;
-        return next;
-      });
-    }
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("pephub_sources")
+        .select("id, name, url, description, category, discount_code, is_active, sort_order, created_at")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: true });
+      setSources((data ?? []) as PepSource[]);
+      setReady(true);
+    })();
   }, []);
 
-  const refresh = useCallback(async () => {
-    const { data } = await supabase
-      .from("pephub_posts")
-      .select("id, user_id, body, created_at, channel")
-      .eq("channel", channel)
-      .order("created_at", { ascending: false })
-      .limit(200);
-    const rows = ((data ?? []) as ChatMsg[]).slice().reverse();
-    setMessages(rows);
-    setReady(true);
-    loadAuthors(rows.map((r) => r.user_id));
-  }, [channel, loadAuthors]);
-
-  useEffect(() => {
-    if (loading) return;
-    if (user) getMyProfile(user.id).then(setProfile);
-    else setProfile(null);
-  }, [user, loading]);
-
-  useEffect(() => {
-    setReady(false);
-    refresh();
-  }, [channel]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Live updates
-  useEffect(() => {
-    const ch = supabase
-      .channel(`pephub-${channel}`)
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "pephub_posts", filter: `channel=eq.${channel}` }, (payload) => {
-        const row = payload.new as ChatMsg;
-        setMessages((prev) => (prev.some((m) => m.id === row.id) ? prev : [...prev, row]));
-        loadAuthors([row.user_id]);
-      })
-      .on("postgres_changes", { event: "DELETE", schema: "public", table: "pephub_posts" }, (payload) => {
-        const old = payload.old as { id: string };
-        setMessages((prev) => prev.filter((m) => m.id !== old.id));
-      })
-      .subscribe();
-    return () => {
-      supabase.removeChannel(ch);
-    };
-  }, [channel, loadAuthors]);
-
-  // Online presence (site-wide across PepHub)
-  useEffect(() => {
-    const ch = supabase
-      .channel("pephub-online")
-      .on("presence", { event: "sync" }, () => {
-        setOnline(Object.keys(ch.presenceState()).length);
-      })
-      .subscribe(async (status) => {
-        if (status === "SUBSCRIBED") {
-          await ch.track({ at: new Date().toISOString() });
-        }
-      });
-    return () => {
-      supabase.removeChannel(ch);
-    };
-  }, []);
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
-  }, [messages, ready]);
-
-  const grouped = useMemo(() => {
-    const out: { msg: ChatMsg; showHeader: boolean; daySep: string | null }[] = [];
-    messages.forEach((m, i) => {
-      const prev = messages[i - 1];
-      const daySep = !prev || dayOf(prev.created_at) !== dayOf(m.created_at) ? dayOf(m.created_at) : null;
-      const sameAuthor =
-        prev &&
-        prev.user_id === m.user_id &&
-        new Date(m.created_at).getTime() - new Date(prev.created_at).getTime() < 5 * 60 * 1000;
-      out.push({ msg: m, showHeader: !sameAuthor || !!daySep, daySep });
-    });
-    return out;
-  }, [messages]);
-
-  async function send(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!user || !profile || !body.trim() || busy) return;
+    if (!name.trim() || !email.trim()) return;
     setBusy(true);
-    const text = body.trim();
-    setBody("");
-    const { error } = await supabase.from("pephub_posts").insert({ user_id: user.id, body: text, channel });
-    setBusy(false);
-    if (error) {
-      setBody(text);
-      return toast.error(error.message);
+    try {
+      await join({ data: { name: name.trim(), email: email.trim() } });
+      setJoined(true);
+      toast.success("You're on the PepHub list.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setBusy(false);
     }
-    refresh();
-  }
-
-  async function remove(id: string) {
-    const { error } = await supabase.from("pephub_posts").delete().eq("id", id);
-    if (error) return toast.error(error.message);
-    setMessages((prev) => prev.filter((m) => m.id !== id));
   }
 
   return (
     <div className="min-h-dvh bg-background text-foreground flex flex-col">
       <SiteHeader />
 
-      <div className="container-edge flex-1 py-6">
-        <div className="grid h-[calc(100dvh-11rem)] min-h-[520px] grid-cols-1 overflow-hidden rounded-3xl border border-foreground/10 bg-card shadow-soft md:grid-cols-[220px_1fr]">
-          {/* Channel rail */}
-          <aside className="hidden flex-col border-r border-foreground/10 bg-background/60 md:flex">
-            <div className="border-b border-foreground/10 px-4 py-4">
-              <div className="font-heavy text-xl leading-none">
-                Pep<span className="text-blood">Hub</span>
-              </div>
-              <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                Free chat rooms
-              </div>
-              <div className="mt-2 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-                {online} online
-              </div>
+      <section className="container-edge flex-1 py-14">
+        <div className="text-eyebrow">PepHub — Free</div>
+        <h1 className="mt-4 max-w-3xl text-5xl lg:text-6xl">Trusted peptide sources, in one place.</h1>
+        <p className="mt-5 max-w-2xl text-muted-foreground">
+          We keep a short, vetted list of sources we actually trust. Sign up with your name and email
+          and we'll let you know whenever one of them runs a sale or drops a discount code.
+        </p>
+
+        <div className="mt-12 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
+          {/* Sources */}
+          <div>
+            <div className="flex items-center gap-2 text-eyebrow">
+              <ShieldCheck size={14} className="text-blood" /> The list
             </div>
-            <div className="flex-1 overflow-y-auto py-3">
-              <div className="px-4 pb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                Channels
-              </div>
-              {CHANNELS.map((c) => (
-                <button
-                  key={c.id}
-                  onClick={() => setChannel(c.id)}
-                  className={`flex w-full items-center gap-2 px-4 py-2 text-left text-sm transition ${
-                    channel === c.id
-                      ? "bg-blood/15 text-foreground"
-                      : "text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
-                  }`}
-                >
-                  <Hash className="h-3.5 w-3.5 text-blood" />
-                  {c.label}
-                </button>
-              ))}
-            </div>
-            {profile && (
-              <div className="border-t border-foreground/10 px-4 py-3">
-                <div className="truncate text-sm">{profile.display_name}</div>
-                <Link
-                  to="/pephub/u/$handle"
-                  params={{ handle: profile.handle }}
-                  className="font-mono text-[10px] uppercase tracking-[0.18em] text-blood hover:underline"
-                >
-                  @{profile.handle}
-                </Link>
+
+            {ready && sources.length === 0 && (
+              <div className="mt-6 rounded-2xl border border-foreground/10 bg-card p-8 shadow-sm">
+                <h2 className="text-2xl">Sources coming soon.</h2>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  We're finalizing the first round of vetted sources. Join the list on the right and
+                  you'll be the first to see them — and the first to hear about their sales.
+                </p>
               </div>
             )}
-          </aside>
 
-          {/* Chat column */}
-          <section className="flex min-h-0 flex-col">
-            <header className="flex items-center gap-3 border-b border-foreground/10 px-4 py-3">
-              <Hash className="h-4 w-4 text-blood" />
-              <div className="font-heavy text-lg leading-none">{active.label}</div>
-              <div className="hidden truncate text-xs text-muted-foreground sm:block">{active.blurb}</div>
-              <div className="ml-auto flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-                {online} online
-              </div>
-            </header>
-
-            {/* mobile channel picker */}
-            <div className="flex gap-2 overflow-x-auto border-b border-foreground/10 px-3 py-2 md:hidden">
-              {CHANNELS.map((c) => (
-                <button
-                  key={c.id}
-                  onClick={() => setChannel(c.id)}
-                  className={`whitespace-nowrap px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] ${
-                    channel === c.id ? "bg-blood/20 text-foreground" : "text-muted-foreground"
-                  }`}
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              {sources.map((s) => (
+                <a
+                  key={s.id}
+                  href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                  className="group rounded-2xl border border-foreground/10 bg-card p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-blood/40 hover:shadow-md"
                 >
-                  #{c.label}
-                </button>
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <BadgeCheck size={16} className="text-blood" />
+                        <h3 className="text-xl">{s.name}</h3>
+                      </div>
+                      {s.category && (
+                        <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                          {s.category}
+                        </div>
+                      )}
+                    </div>
+                    <ExternalLink size={15} className="mt-1 text-muted-foreground group-hover:text-blood" />
+                  </div>
+                  {s.description && (
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{s.description}</p>
+                  )}
+                  {s.discount_code && (
+                    <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-blood/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.16em] text-blood">
+                      <Tag size={12} /> Code {s.discount_code}
+                    </div>
+                  )}
+                </a>
               ))}
             </div>
 
-            <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4">
-              {!ready && <p className="text-sm text-muted-foreground">Connecting…</p>}
-              {ready && messages.length === 0 && (
-                <p className="text-sm text-muted-foreground">
-                  Nothing in #{active.label} yet. Say something.
-                </p>
-              )}
-              <div className="space-y-0.5">
-                {grouped.map(({ msg, showHeader, daySep }) => {
-                  const author = authors[msg.user_id];
-                  return (
-                    <div key={msg.id}>
-                      {daySep && (
-                        <div className="my-4 flex items-center gap-3">
-                          <div className="h-px flex-1 bg-foreground/10" />
-                          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                            {daySep}
-                          </div>
-                          <div className="h-px flex-1 bg-foreground/10" />
-                        </div>
-                      )}
-                      <div className={`group flex gap-3 px-2 py-0.5 hover:bg-foreground/5 ${showHeader ? "mt-3" : ""}`}>
-                        <div className="w-9 shrink-0">
-                          {showHeader ? (
-                            <div className="flex h-9 w-9 items-center justify-center bg-blood/20 font-heavy text-sm text-blood">
-                              {(author?.display_name ?? "?").slice(0, 1).toUpperCase()}
-                            </div>
-                          ) : (
-                            <div className="pt-1 text-right font-mono text-[9px] text-muted-foreground opacity-0 group-hover:opacity-100">
-                              {timeOf(msg.created_at)}
-                            </div>
-                          )}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          {showHeader && (
-                            <div className="flex items-baseline gap-2">
-                              {author ? (
-                                <Link
-                                  to="/pephub/u/$handle"
-                                  params={{ handle: author.handle }}
-                                  className="font-heavy text-sm hover:text-blood"
-                                >
-                                  {author.display_name}
-                                </Link>
-                              ) : (
-                                <span className="font-heavy text-sm text-muted-foreground">Member</span>
-                              )}
-                              <span className="font-mono text-[10px] text-muted-foreground">{timeOf(msg.created_at)}</span>
-                            </div>
-                          )}
-                          <p className="whitespace-pre-wrap break-words text-sm text-foreground/90">{msg.body}</p>
-                        </div>
-                        {user?.id === msg.user_id && (
-                          <button
-                            onClick={() => remove(msg.id)}
-                            className="shrink-0 self-start text-muted-foreground opacity-0 transition hover:text-blood group-hover:opacity-100"
-                            aria-label="Delete message"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            <p className="mt-8 max-w-2xl text-xs leading-relaxed text-muted-foreground">
+              Titan Elite does not sell, ship, or supply any product. These are independent
+              third-party sources listed for research purposes only. Nothing here is medical advice.
+            </p>
+          </div>
 
-            <div className="border-t border-foreground/10 p-3">
-              {!user && (
-                <div className="flex flex-wrap items-center justify-between gap-3 border border-blood/40 bg-blood/5 px-4 py-3">
-                  <p className="text-sm text-muted-foreground">Create a free account to chat in PepHub.</p>
-                  <Link to="/auth" className="btn-blood hover:btn-blood-hover">Sign up free</Link>
-                </div>
-              )}
-              {user && !profile && <ProfileSetup userId={user.id} onDone={setProfile} />}
-              {user && profile && (
-                <form onSubmit={send} className="flex items-end gap-2">
-                  <textarea
-                    value={body}
-                    onChange={(e) => setBody(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        send(e as unknown as React.FormEvent);
-                      }
-                    }}
-                    rows={1}
-                    maxLength={2000}
-                    placeholder={`Message #${active.label}`}
-                    className="max-h-32 min-h-[44px] flex-1 resize-none border border-foreground/20 bg-background px-4 py-3 text-sm focus:border-blood focus:outline-none"
-                  />
-                  <button
-                    disabled={busy || !body.trim()}
-                    className="btn-blood hover:btn-blood-hover flex h-[44px] w-[44px] items-center justify-center p-0 disabled:opacity-40"
-                    aria-label="Send message"
-                  >
-                    <Send className="h-4 w-4" />
+          {/* Signup */}
+          <div className="lg:sticky lg:top-24 h-fit rounded-2xl border border-foreground/10 bg-card p-7 shadow-sm">
+            {joined ? (
+              <>
+                <Mail className="text-blood" size={22} />
+                <h2 className="mt-4 text-2xl">You're on the list.</h2>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  We'll email {email} whenever a trusted source runs a sale or discount. Nothing else,
+                  no spam.
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="text-eyebrow">Get sale alerts</div>
+                <h2 className="mt-3 text-2xl">Join PepHub free.</h2>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Name and email — that's it. No account, no card.
+                </p>
+                <form onSubmit={submit} className="mt-6 space-y-4">
+                  <div>
+                    <label className="text-eyebrow" htmlFor="ph-name">Name</label>
+                    <input
+                      id="ph-name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                      maxLength={120}
+                      className="mt-2 w-full rounded-xl border border-foreground/15 bg-background px-4 py-3 text-sm outline-none focus:border-blood"
+                      placeholder="Your name"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-eyebrow" htmlFor="ph-email">Email</label>
+                    <input
+                      id="ph-email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      maxLength={200}
+                      className="mt-2 w-full rounded-xl border border-foreground/15 bg-background px-4 py-3 text-sm outline-none focus:border-blood"
+                      placeholder="you@email.com"
+                    />
+                  </div>
+                  <button type="submit" disabled={busy} className="btn-primary w-full justify-center">
+                    {busy ? "Signing you up…" : "Get sale alerts"}
                   </button>
                 </form>
-              )}
-              <p className="mt-2 px-1 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
-                Educational talk only — no sourcing, sales, or medical advice.
-              </p>
-            </div>
-          </section>
+              </>
+            )}
+          </div>
         </div>
-      </div>
+      </section>
+
+      <SiteFooter />
     </div>
-  );
-}
-
-function ProfileSetup({ userId, onDone }: { userId: string; onDone: (p: PepProfile) => void }) {
-  const [handle, setHandle] = useState("");
-  const [name, setName] = useState("");
-  const [busy, setBusy] = useState(false);
-
-  async function save(e: React.FormEvent) {
-    e.preventDefault();
-    const h = slugifyHandle(handle);
-    if (h.length < 3) return toast.error("Handle must be at least 3 characters (letters, numbers, underscore).");
-    if (!name.trim()) return toast.error("Add a display name.");
-    setBusy(true);
-    const { data, error } = await supabase
-      .from("pephub_profiles")
-      .insert({ user_id: userId, handle: h, display_name: name.trim() })
-      .select("user_id, handle, display_name, bio, created_at")
-      .single();
-    setBusy(false);
-    if (error) return toast.error(error.message.includes("duplicate") ? "That handle is taken." : error.message);
-    toast.success("You're in.");
-    onDone(data as PepProfile);
-  }
-
-  return (
-    <form onSubmit={save} className="flex flex-wrap items-center gap-2 border border-blood/40 bg-blood/5 p-3">
-      <div className="w-full font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-        Pick a name to start chatting
-      </div>
-      <input
-        value={handle}
-        onChange={(e) => setHandle(e.target.value)}
-        placeholder="handle"
-        className="min-w-[140px] flex-1 border border-foreground/20 bg-background px-3 py-2 text-sm focus:border-blood focus:outline-none"
-      />
-      <input
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Display name"
-        className="min-w-[140px] flex-1 border border-foreground/20 bg-background px-3 py-2 text-sm focus:border-blood focus:outline-none"
-      />
-      <button disabled={busy} className="btn-blood hover:btn-blood-hover">{busy ? "Saving…" : "Join chat"}</button>
-    </form>
   );
 }

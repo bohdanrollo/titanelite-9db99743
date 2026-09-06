@@ -18,6 +18,7 @@ import { adminListCoachCalls, reviewCoachCall, deleteCoachCall, type AdminCoachC
 import { getStripeEnvironment } from "@/lib/stripe";
 import { AdminMessages } from "@/components/Messaging";
 import CoachingAdmin, { type SchedulePrefill } from "@/components/coaching/CoachingAdmin";
+import PepHubAdmin from "@/components/PepHubAdmin";
 
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -25,7 +26,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: Admin,
 });
 
-type Tab = "clients" | "intakes" | "protocols" | "messages" | "affiliates" | "videos" | "product" | "peptide-requests" | "contact" | "calls";
+type Tab = "clients" | "intakes" | "protocols" | "messages" | "affiliates" | "videos" | "product" | "peptide-requests" | "contact" | "calls" | "pephub";
 
 
 function Admin() {
@@ -82,6 +83,7 @@ function Admin() {
             { k: "peptide-requests", l: "Peptide requests", i: FlaskConical },
             { k: "calls", l: "Coach calls", i: Phone },
             { k: "contact", l: "Contact form", i: Mail },
+            { k: "pephub", l: "PepHub", i: Users },
           ] as const).map((t) => (
             <button
               key={t.k}
@@ -105,6 +107,7 @@ function Admin() {
           {tab === "calls" && <CoachCallsTab />}
 
           {tab === "contact" && <ContactMessagesAdmin />}
+          {tab === "pephub" && <PepHubAdmin />}
         </div>
       </section>
     </div>

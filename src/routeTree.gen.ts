@@ -34,7 +34,6 @@ import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as PephubIndexRouteImport } from './routes/pephub.index'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
-import { Route as PephubUHandleRouteImport } from './routes/pephub.u.$handle'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
@@ -166,11 +165,6 @@ const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
   path: '/lovable/email/suppression',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PephubUHandleRoute = PephubUHandleRouteImport.update({
-  id: '/pephub/u/$handle',
-  path: '/pephub/u/$handle',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -231,7 +225,6 @@ export interface FileRoutesByFullPath {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/pephub/': typeof PephubIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
-  '/pephub/u/$handle': typeof PephubUHandleRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -264,7 +257,6 @@ export interface FileRoutesByTo {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/pephub': typeof PephubIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
-  '/pephub/u/$handle': typeof PephubUHandleRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -299,7 +291,6 @@ export interface FileRoutesById {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/pephub/': typeof PephubIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
-  '/pephub/u/$handle': typeof PephubUHandleRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -334,7 +325,6 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/pephub/'
     | '/lovable/email/suppression'
-    | '/pephub/u/$handle'
     | '/api/public/payments/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -367,7 +357,6 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/pephub'
     | '/lovable/email/suppression'
-    | '/pephub/u/$handle'
     | '/api/public/payments/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -401,7 +390,6 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/pephub/'
     | '/lovable/email/suppression'
-    | '/pephub/u/$handle'
     | '/api/public/payments/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -432,7 +420,6 @@ export interface RootRouteChildren {
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   PephubIndexRoute: typeof PephubIndexRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
-  PephubUHandleRoute: typeof PephubUHandleRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -618,13 +605,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailSuppressionRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/pephub/u/$handle': {
-      id: '/pephub/u/$handle'
-      path: '/pephub/u/$handle'
-      fullPath: '/pephub/u/$handle'
-      preLoaderRoute: typeof PephubUHandleRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -720,7 +700,6 @@ const rootRouteChildren: RootRouteChildren = {
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   PephubIndexRoute: PephubIndexRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
-  PephubUHandleRoute: PephubUHandleRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
