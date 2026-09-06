@@ -366,10 +366,21 @@ function Intakes() {
               const pStatus = protoMap[r.id];
               const sent = pStatus === "delivered" || pStatus === "sent" || pStatus === "viewed";
               const inProgress = pStatus && !sent;
+              const userRows = rows.filter((x) => x.user_id === r.user_id);
+              const isLatest = userRows[0]?.id === r.id;
+              const versionNo = userRows.length - userRows.findIndex((x) => x.id === r.id);
               return (
                 <tr key={r.id} className="border-t border-foreground/10 hover:bg-muted/40">
-                  <td className="p-3 font-mono text-xs">{new Date(r.submitted_at).toLocaleString()}</td>
+                  <td className="p-3 font-mono text-xs">
+                    {new Date(r.submitted_at).toLocaleString()}
+                    {userRows.length > 1 && (
+                      <span className={`ml-2 rounded px-1.5 py-0.5 text-[10px] uppercase tracking-[0.14em] ${isLatest ? "bg-blood/10 text-blood" : "bg-muted text-muted-foreground"}`}>
+                        {isLatest ? `Latest · v${versionNo}` : `v${versionNo}`}
+                      </span>
+                    )}
+                  </td>
                   <td className="p-3 font-mono text-xs">{r.user_id.slice(0, 8)}…</td>
+
                   <td className="p-3">
                     {sent ? (
                       <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-emerald-600">
