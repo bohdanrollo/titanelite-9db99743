@@ -51,6 +51,10 @@ function PepHub() {
     })();
   }, []);
 
+  const featured = sources.filter((s) => s.listing_category === "featured");
+  const trusted = sources.filter((s) => s.listing_category === "trusted");
+  const more = sources.filter((s) => s.listing_category === "more");
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim() || !email.trim()) return;
