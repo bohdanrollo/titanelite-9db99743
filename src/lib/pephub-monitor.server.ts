@@ -378,14 +378,15 @@ export async function monitorSource(
     return bumpFailure(`Unable to retrieve public promotion information (HTTP ${page.status}).`, "error");
   }
 
-  const text = stripHtml(page.text);
-  if (text.length < 200) {
+  const collected = await collectSourceText(source.url, page.text);
+  if (collected.text.length < 200) {
     return bumpFailure("Monitoring unavailable — no readable public page content.", "unavailable");
   }
 
   let detection: Detection;
   try {
-    detection = await detectSale(source.name, source.url, text);
+    detection = await detectSale(source.name, source.url, collected.text);
+
   } catch (err) {
     return bumpFailure(
       `Detection failed: ${err instanceof Error ? err.message : "unknown error"}`,
