@@ -204,9 +204,9 @@ async function detectSale(sourceName: string, url: string, pageText: string): Pr
   const provider = createLovableAiGatewayProvider(apiKey);
 
   const today = new Date().toISOString().slice(0, 10);
-  const prompt = `Today is ${today}. Below is the visible text of the public homepage of the vendor "${sourceName}" (${url}).
+  const prompt = `Today is ${today}. Below is public content collected from the vendor "${sourceName}" (${url}). It may include the browser-rendered page a visitor sees, the raw homepage text, embedded page data used to render banners, and any sale/deal pages linked from the site.
 
-Decide whether the page clearly advertises an ACTIVE sale or promotion right now. The mere presence of the word "sale" (e.g. a "Sale" nav link, "final sale" policy text, or a permanent clearance category) is NOT a promotion.
+Decide whether the vendor clearly advertises an ACTIVE sale or promotion right now. The mere presence of the word "sale" (e.g. a "Sale" nav link, "final sale" policy text, or a permanent clearance category) is NOT a promotion. Named seasonal events (Labor Day, Black Friday, holiday sales) with a discount or code DO count.
 
 Return STRICT JSON only, no markdown:
 {
@@ -225,8 +225,9 @@ Return STRICT JSON only, no markdown:
 
 Scoring guide: 80-100 = an explicit, clearly current discount with concrete value and/or code; 55-79 = promotional language with unclear dates or value; below 55 = ambiguous, cached, or generic. Use evidence to quote the exact sale text you relied on. If no promotion, set has_sale false and confidence_score 0.
 
-PAGE TEXT:
-"""${pageText.slice(0, 12000)}"""`;
+COLLECTED CONTENT:
+"""${pageText.slice(0, 24000)}"""`;
+
 
   const { text } = await generateText({
     model: provider("google/gemini-2.5-flash"),
