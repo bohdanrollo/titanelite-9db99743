@@ -148,8 +148,11 @@ function Bento() {
       <div className="container-edge">
         <div className="text-eyebrow">Inside the dashboard</div>
         <h2 className="mt-4 font-heavy text-4xl sm:text-5xl lg:text-6xl leading-[0.9] max-w-3xl">
-          One login. <span className="text-blood">Every tool.</span>
+          Our most popular tools
         </h2>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Press a box to go straight to the tool
+        </p>
 
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4">
           {TILES.map((t) => {
