@@ -36,6 +36,13 @@
       "when": 1788642031459,
       "tag": "0004_scope_member_policies_to_authenticated",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1788705051166,
+      "tag": "0005_bind_affiliate_insert_user_id",
+      "breakpoints": true
     }
   ]
 }
