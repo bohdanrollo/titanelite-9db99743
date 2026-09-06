@@ -42,7 +42,7 @@ function PepHub() {
     (async () => {
       const { data } = await supabase
         .from("pephub_sources")
-        .select("id, name, url, description, category, discount_code, is_active, sort_order, created_at")
+        .select("id, name, url, affiliate_url, description, category, discount_code, is_active, sort_order, created_at")
         .eq("is_active", true)
         .order("sort_order", { ascending: true })
         .order("created_at", { ascending: true });
