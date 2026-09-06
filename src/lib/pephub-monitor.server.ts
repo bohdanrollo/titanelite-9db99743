@@ -213,7 +213,7 @@ async function collectSourceText(
 }
 
 
-async function detectSale(sourceName: string, url: string, pageText: string): Promise<Detection> {
+export async function detectSale(sourceName: string, url: string, pageText: string): Promise<Detection> {
   const apiKey = process.env.LOVABLE_API_KEY;
   if (!apiKey) throw new Error("AI monitoring is not configured");
   const provider = createLovableAiGatewayProvider(apiKey);
