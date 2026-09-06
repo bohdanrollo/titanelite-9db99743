@@ -34,7 +34,7 @@ function wrapLabel(label: string, maxChars: number, maxLines: number) {
   if (cur) lines.push(cur);
   if (lines.length > maxLines) {
     const trimmed = lines.slice(0, maxLines);
-    trimmed[maxLines - 1] = `${trimmed[maxLines - 1].slice(0, maxChars - 1)}…`;
+    trimmed[maxLines - 1] = trimmed[maxLines - 1].slice(0, maxChars);
     return trimmed;
   }
   return lines;
