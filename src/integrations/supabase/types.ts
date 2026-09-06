@@ -1342,6 +1342,7 @@ export type Database = {
           created_at: string
           description: string | null
           discount_code: string | null
+          expert_verified: boolean
           failure_count: number
           id: string
           is_active: boolean
@@ -1364,6 +1365,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           discount_code?: string | null
+          expert_verified?: boolean
           failure_count?: number
           id?: string
           is_active?: boolean
@@ -1386,6 +1388,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           discount_code?: string | null
+          expert_verified?: boolean
           failure_count?: number
           id?: string
           is_active?: boolean
