@@ -18,6 +18,9 @@ export type PepSource = {
   reddit_url: string | null;
   other_social_url: string | null;
   monitor_socials: boolean;
+  newsletter_signup_url: string | null;
+  newsletter_email_domains: string | null;
+  newsletter_subscribed: boolean;
   is_active: boolean;
   expert_verified: boolean;
   sort_order: number;
@@ -106,7 +109,7 @@ export const adminListSources = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
       .from("pephub_sources")
-      .select("id, name, url, affiliate_url, description, category, discount_code, logo_url, instagram_url, x_url, facebook_url, telegram_url, reddit_url, other_social_url, monitor_socials, is_active, expert_verified, sort_order, created_at")
+      .select("id, name, url, affiliate_url, description, category, discount_code, logo_url, instagram_url, x_url, facebook_url, telegram_url, reddit_url, other_social_url, monitor_socials, newsletter_signup_url, newsletter_email_domains, newsletter_subscribed, is_active, expert_verified, sort_order, created_at")
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: true });
     if (error) throw new Error(error.message);
@@ -129,6 +132,9 @@ const sourceInput = z.object({
   reddit_url: z.string().trim().max(500).optional().nullable(),
   other_social_url: z.string().trim().max(500).optional().nullable(),
   monitor_socials: z.boolean().default(true),
+  newsletter_signup_url: z.string().trim().max(500).optional().nullable(),
+  newsletter_email_domains: z.string().trim().max(500).optional().nullable(),
+  newsletter_subscribed: z.boolean().default(false),
   is_active: z.boolean().default(true),
   expert_verified: z.boolean().default(false),
   sort_order: z.number().int().min(0).max(9999).default(0),
@@ -156,6 +162,9 @@ export const adminSaveSource = createServerFn({ method: "POST" })
       reddit_url: data.reddit_url || null,
       other_social_url: data.other_social_url || null,
       monitor_socials: data.monitor_socials,
+      newsletter_signup_url: data.newsletter_signup_url || null,
+      newsletter_email_domains: data.newsletter_email_domains || null,
+      newsletter_subscribed: data.newsletter_subscribed,
       is_active: data.is_active,
       expert_verified: data.expert_verified,
       sort_order: data.sort_order,
