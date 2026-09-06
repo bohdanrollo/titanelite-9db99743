@@ -336,7 +336,12 @@ export default function PepHubAdmin() {
                         discount_code: s.discount_code ?? "", logo_url: s.logo_url ?? "",
                         instagram_url: s.instagram_url ?? "", x_url: s.x_url ?? "", facebook_url: s.facebook_url ?? "",
                         telegram_url: s.telegram_url ?? "", reddit_url: s.reddit_url ?? "", other_social_url: s.other_social_url ?? "",
-                        monitor_socials: s.monitor_socials ?? true, is_active: s.is_active, expert_verified: s.expert_verified, sort_order: s.sort_order,
+                        monitor_socials: s.monitor_socials ?? true,
+                        newsletter_signup_url: s.newsletter_signup_url ?? "",
+                        newsletter_email_domains: s.newsletter_email_domains ?? "",
+                        newsletter_subscribed: s.newsletter_subscribed ?? false,
+                        is_active: s.is_active, expert_verified: s.expert_verified, sort_order: s.sort_order,
+
                       })}
                     >Edit</button>
                     <button
