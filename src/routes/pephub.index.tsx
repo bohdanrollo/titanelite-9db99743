@@ -2,11 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { BadgeCheck, ExternalLink, Mail, ShieldCheck, Tag } from "lucide-react";
+import { BadgeCheck, ExternalLink, Mail, ShieldCheck, Tag, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { joinPepHub, type PepSource } from "@/lib/pephub.functions";
+import zeerowLogoAsset from "@/assets/zeerow-logo.jpeg.asset.json";
 
 export const Route = createFileRoute("/pephub/")({
   head: () => ({
