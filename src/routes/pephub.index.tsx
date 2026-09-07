@@ -148,8 +148,35 @@ function PepHub() {
               carries this badge — only the ones that meet our standards.
             </p>
 
+            {ready && sources.length === 0 && (
+              <div className="mt-6 rounded-2xl border border-foreground/10 bg-card p-8 shadow-sm">
+                <h2 className="text-2xl">Sources coming soon.</h2>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  We're finalizing the first round of vetted sources. Join the list on the right and
+                  you'll be the first to see them — and the first to hear about their sales.
+                </p>
+              </div>
+            )}
+
+            <SourceGroup
+              title="Featured sources"
+              blurb="Our top picks — the sources we recommend first."
+              sources={featured}
+              prominent
+            />
+            <SourceGroup title="Trusted sources" sources={trusted} />
+            <SourceGroup title="More sources" sources={more} />
+
+            <p className="mt-8 max-w-2xl text-xs leading-relaxed text-muted-foreground">
+              Titan Elite does not sell, ship, or supply any product. These are independent
+              third-party sources listed for research purposes only. Nothing here is medical advice.
+            </p>
+          </div>
+
+          {/* Signup */}
+          <div className="space-y-6">
             {showZeerowPopup && (
-              <div className="animate-enter relative mt-6 overflow-hidden rounded-2xl border border-blood/30 bg-card p-5 shadow-lg">
+              <div className="animate-enter relative overflow-hidden rounded-2xl border border-blood/30 bg-card p-5 shadow-lg">
                 <button
                   type="button"
                   onClick={closeZeerowPopup}
@@ -177,7 +204,7 @@ function PepHub() {
                     <h3 className="mt-2 text-lg font-semibold leading-tight">
                       Payments made simple for high-risk merchants.
                     </h3>
-                    <p className="mt-1 max-w-md text-sm text-muted-foreground">
+                    <p className="mt-1 text-sm text-muted-foreground">
                       Zeerow is a payment processor built for high-risk businesses. Put in an application today and get instant approval.
                     </p>
 
@@ -196,33 +223,7 @@ function PepHub() {
               </div>
             )}
 
-            {ready && sources.length === 0 && (
-              <div className="mt-6 rounded-2xl border border-foreground/10 bg-card p-8 shadow-sm">
-                <h2 className="text-2xl">Sources coming soon.</h2>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  We're finalizing the first round of vetted sources. Join the list on the right and
-                  you'll be the first to see them — and the first to hear about their sales.
-                </p>
-              </div>
-            )}
-
-            <SourceGroup
-              title="Featured sources"
-              blurb="Our top picks — the sources we recommend first."
-              sources={featured}
-              prominent
-            />
-            <SourceGroup title="Trusted sources" sources={trusted} />
-            <SourceGroup title="More sources" sources={more} />
-
-            <p className="mt-8 max-w-2xl text-xs leading-relaxed text-muted-foreground">
-              Titan Elite does not sell, ship, or supply any product. These are independent
-              third-party sources listed for research purposes only. Nothing here is medical advice.
-            </p>
-          </div>
-
-          {/* Signup */}
-          <div className="lg:sticky lg:top-24 h-fit rounded-2xl border border-foreground/10 bg-card p-7 shadow-sm">
+            <div className="lg:sticky lg:top-24 h-fit rounded-2xl border border-foreground/10 bg-card p-7 shadow-sm">
             {joined ? (
               <>
                 <Mail className="text-blood" size={22} />
@@ -271,6 +272,7 @@ function PepHub() {
                 </form>
               </>
             )}
+          </div>
           </div>
         </div>
       </section>
