@@ -6,7 +6,6 @@ import { useAuth } from "@/lib/auth";
 const exploreNav = [
   { to: "/how-it-works", label: "How It Works" },
   { to: "/features", label: "Dashboard Features" },
-  { to: "/results", label: "Client Results" },
 ];
 
 const nav = [
