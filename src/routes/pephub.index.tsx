@@ -37,6 +37,7 @@ function PepHub() {
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [joined, setJoined] = useState(false);
+  const [showZeerowPopup, setShowZeerowPopup] = useState(false);
   const join = useServerFn(joinPepHub);
 
   useEffect(() => {
@@ -51,6 +52,21 @@ function PepHub() {
       setReady(true);
     })();
   }, []);
+
+  useEffect(() => {
+    try {
+      if (localStorage.getItem("zeerow_popup_closed") === "1") return;
+    } catch { /* ignore */ }
+    const timer = setTimeout(() => setShowZeerowPopup(true), 2500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  function closeZeerowPopup() {
+    setShowZeerowPopup(false);
+    try {
+      localStorage.setItem("zeerow_popup_closed", "1");
+    } catch { /* ignore */ }
+  }
 
   const featured = sources.filter((s) => s.listing_category === "featured");
   const trusted = sources.filter((s) => s.listing_category === "trusted");
