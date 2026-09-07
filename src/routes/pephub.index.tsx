@@ -149,6 +149,54 @@ function PepHub() {
               carries this badge — only the ones that meet our standards.
             </p>
 
+            {showZeerowPopup && (
+              <div className="animate-enter relative mt-6 overflow-hidden rounded-2xl border border-blood/30 bg-card p-5 shadow-lg">
+                <button
+                  type="button"
+                  onClick={closeZeerowPopup}
+                  className="absolute right-3 top-3 z-10 rounded-full p-1.5 text-muted-foreground transition hover:bg-foreground/10 hover:text-foreground"
+                  aria-label="Close Zeerow promo"
+                >
+                  <X size={16} />
+                </button>
+
+                <div className="flex items-start gap-4">
+                  <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border border-foreground/10 shadow">
+                    <img
+                      src={zeerowLogoAsset.url}
+                      alt="Zeerow logo"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="inline-flex items-center gap-1.5 rounded-full border border-blood/30 bg-blood/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em] text-blood">
+                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-blood" />
+                      RUO Processor
+                    </div>
+
+                    <h3 className="mt-2 text-lg font-semibold leading-tight">
+                      Payments made simple for high-risk merchants.
+                    </h3>
+                    <p className="mt-1 max-w-md text-sm text-muted-foreground">
+                      Zeerow is a payment processor built for high-risk businesses. Put in an application today and get instant approval.
+                    </p>
+
+                    <a
+                      href="https://zeerow.io/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-primary mt-4 inline-flex"
+                      onClick={closeZeerowPopup}
+                    >
+                      Apply now at Zeerow
+                      <ExternalLink size={14} className="ml-2" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {ready && sources.length === 0 && (
               <div className="mt-6 rounded-2xl border border-foreground/10 bg-card p-8 shadow-sm">
                 <h2 className="text-2xl">Sources coming soon.</h2>
@@ -229,60 +277,6 @@ function PepHub() {
       </section>
 
       <SiteFooter />
-
-      {showZeerowPopup && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-4 sm:items-center">
-          <div className="animate-enter relative w-full max-w-md overflow-hidden rounded-3xl border border-blood/30 bg-card shadow-2xl">
-            <button
-              type="button"
-              onClick={closeZeerowPopup}
-              className="absolute right-3 top-3 z-10 rounded-full p-2 text-muted-foreground transition hover:bg-foreground/10 hover:text-foreground"
-              aria-label="Close Zeerow popup"
-            >
-              <X size={18} />
-            </button>
-
-            <div className="flex flex-col items-center p-8 text-center">
-              <div className="relative h-28 w-28 overflow-hidden rounded-2xl border border-foreground/10 shadow-lg">
-                <img
-                  src={zeerowLogoAsset.url}
-                  alt="Zeerow logo"
-                  className="h-full w-full object-cover"
-                />
-              </div>
-
-              <div className="mt-5 inline-flex items-center gap-1.5 rounded-full border border-blood/30 bg-blood/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-blood">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-blood" />
-                RUO Processor
-              </div>
-
-              <h2 className="mt-4 text-2xl font-semibold">Payments made simple for high-risk merchants.</h2>
-              <p className="mt-3 max-w-xs text-sm text-muted-foreground">
-                Zeerow is a payment processor built for high-risk businesses. Put in an application today and get instant approval.
-              </p>
-
-              <a
-                href="https://zeerow.io/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary mt-6 w-full justify-center"
-                onClick={closeZeerowPopup}
-              >
-                Apply now at Zeerow
-                <ExternalLink size={14} className="ml-2" />
-              </a>
-
-              <button
-                type="button"
-                onClick={closeZeerowPopup}
-                className="mt-4 text-xs text-muted-foreground underline decoration-foreground/30 underline-offset-2 transition hover:text-foreground"
-              >
-                No thanks
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
