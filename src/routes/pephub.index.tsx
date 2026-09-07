@@ -125,21 +125,21 @@ function PepHub() {
         </span>
       </a>
 
-      <section className="container-edge flex-1 py-14">
+      <section className="container-edge flex-1 py-10 lg:py-14">
         <div className="text-eyebrow">PepHub — Free</div>
-        <h1 className="mt-4 max-w-3xl text-5xl lg:text-6xl">Trusted peptide sources, in one place.</h1>
+        <h1 className="mt-4 max-w-3xl text-4xl sm:text-5xl lg:text-6xl">Trusted peptide sources, in one place.</h1>
         <p className="mt-5 max-w-2xl text-muted-foreground">
           We keep a short, vetted list of sources we actually trust. Sign up with your name and email
           and we'll let you know whenever one of them runs a sale or drops a discount code.
         </p>
 
-        <div className="mt-12 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
+        <div className="mt-10 grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:gap-10">
           {/* Sources */}
           <div>
             <div className="flex items-center gap-2 text-eyebrow">
               <ShieldCheck size={14} className="text-blood" /> The list
             </div>
-            <p className="mt-3 max-w-xl text-sm text-muted-foreground">
+            <p className="mt-2 max-w-xl text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-1.5 align-middle rounded-full border border-blood/30 bg-blood/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em] text-blood">
                 <ShieldCheck size={10} /> Expert Verified
               </span>{" "}
