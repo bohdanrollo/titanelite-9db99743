@@ -295,10 +295,10 @@ function SourceGroup({
 }) {
   if (sources.length === 0) return null;
   return (
-    <div className={prominent ? "mt-6" : "mt-10 border-t border-foreground/10 pt-8"}>
+    <div className={prominent ? "mt-6" : "mt-8 border-t border-foreground/10 pt-6"}>
       <div className={`text-eyebrow ${prominent ? "text-blood" : ""}`}>{title}</div>
       {blurb && <p className="mt-2 max-w-xl text-sm text-muted-foreground">{blurb}</p>}
-      <div className={`mt-5 grid gap-4 ${prominent ? "" : "sm:grid-cols-2"}`}>
+      <div className={`mt-4 grid gap-3 ${prominent ? "sm:gap-4" : "sm:grid-cols-2 sm:gap-4"}`}>
         {sources.map((s) => (
           <SourceCard key={s.id} source={s} prominent={prominent} />
         ))}
