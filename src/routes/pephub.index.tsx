@@ -174,7 +174,56 @@ function PepHub() {
           </div>
 
           {/* Signup */}
-          <div className="lg:sticky lg:top-24 h-fit rounded-2xl border border-foreground/10 bg-card p-7 shadow-sm">
+          <div className="space-y-6">
+            {showZeerowPopup && (
+              <div className="animate-enter relative overflow-hidden rounded-2xl border border-blood/30 bg-card p-5 shadow-lg">
+                <button
+                  type="button"
+                  onClick={closeZeerowPopup}
+                  className="absolute right-3 top-3 z-10 rounded-full p-1.5 text-muted-foreground transition hover:bg-foreground/10 hover:text-foreground"
+                  aria-label="Close Zeerow promo"
+                >
+                  <X size={16} />
+                </button>
+
+                <div className="flex items-start gap-4">
+                  <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border border-foreground/10 shadow">
+                    <img
+                      src={zeerowLogoAsset.url}
+                      alt="Zeerow logo"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="inline-flex items-center gap-1.5 rounded-full border border-blood/30 bg-blood/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em] text-blood">
+                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-blood" />
+                      RUO Processor
+                    </div>
+
+                    <h3 className="mt-2 text-lg font-semibold leading-tight">
+                      Payments made simple for high-risk merchants.
+                    </h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Zeerow is a payment processor built for high-risk businesses. Put in an application today and get instant approval.
+                    </p>
+
+                    <a
+                      href="https://zeerow.io/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-primary mt-4 inline-flex"
+                      onClick={closeZeerowPopup}
+                    >
+                      Apply now at Zeerow
+                      <ExternalLink size={14} className="ml-2" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="lg:sticky lg:top-24 h-fit rounded-2xl border border-foreground/10 bg-card p-7 shadow-sm">
             {joined ? (
               <>
                 <Mail className="text-blood" size={22} />
