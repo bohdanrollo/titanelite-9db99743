@@ -78,26 +78,34 @@ function PepHub() {
         href="https://zeerow.io/"
         target="_blank"
         rel="noopener noreferrer"
-        className="block w-full border-b border-blood/30 bg-blood/10 px-4 py-2.5 text-center transition hover:bg-blood/15"
+        className="group block w-full border-b border-blood/30 bg-blood/10 px-4 py-2.5 text-center transition hover:bg-blood/15"
       >
-        <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-blood">
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-blood" />
-          Payments for peptide vendors — powered by Zeerow
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="12"
-            height="12"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="opacity-70"
-          >
-            <path d="M7 7h10v10" />
-            <path d="M7 17 17 7" />
-          </svg>
+        <span className="inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 font-mono text-[11px] uppercase tracking-[0.16em] text-blood">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-blood/30 bg-blood/10 px-2 py-0.5">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-blood" />
+            RUO Processor
+          </span>
+          <span className="text-foreground/80">
+            Zeerow is a payment processor for high-risk merchants.
+          </span>
+          <span className="inline-flex items-center gap-1 underline decoration-blood/50 underline-offset-2 transition group-hover:decoration-blood">
+            Put in an application today and get instant approval
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="opacity-70"
+            >
+              <path d="M7 7h10v10" />
+              <path d="M7 17 17 7" />
+            </svg>
+          </span>
         </span>
       </a>
 
