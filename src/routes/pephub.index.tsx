@@ -57,8 +57,7 @@ function PepHub() {
     try {
       if (localStorage.getItem("zeerow_popup_closed") === "1") return;
     } catch { /* ignore */ }
-    const timer = setTimeout(() => setShowZeerowPopup(true), 2500);
-    return () => clearTimeout(timer);
+    setShowZeerowPopup(true);
   }, []);
 
   function closeZeerowPopup() {
