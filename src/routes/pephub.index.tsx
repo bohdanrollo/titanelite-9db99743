@@ -125,21 +125,21 @@ function PepHub() {
         </span>
       </a>
 
-      <section className="container-edge flex-1 py-14">
+      <section className="container-edge flex-1 py-10 lg:py-14">
         <div className="text-eyebrow">PepHub — Free</div>
-        <h1 className="mt-4 max-w-3xl text-5xl lg:text-6xl">Trusted peptide sources, in one place.</h1>
+        <h1 className="mt-4 max-w-3xl text-4xl sm:text-5xl lg:text-6xl">Trusted peptide sources, in one place.</h1>
         <p className="mt-5 max-w-2xl text-muted-foreground">
           We keep a short, vetted list of sources we actually trust. Sign up with your name and email
           and we'll let you know whenever one of them runs a sale or drops a discount code.
         </p>
 
-        <div className="mt-12 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
+        <div className="mt-10 grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:gap-10">
           {/* Sources */}
           <div>
             <div className="flex items-center gap-2 text-eyebrow">
               <ShieldCheck size={14} className="text-blood" /> The list
             </div>
-            <p className="mt-3 max-w-xl text-sm text-muted-foreground">
+            <p className="mt-2 max-w-xl text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-1.5 align-middle rounded-full border border-blood/30 bg-blood/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em] text-blood">
                 <ShieldCheck size={10} /> Expert Verified
               </span>{" "}
@@ -295,10 +295,10 @@ function SourceGroup({
 }) {
   if (sources.length === 0) return null;
   return (
-    <div className={prominent ? "mt-6" : "mt-10 border-t border-foreground/10 pt-8"}>
+    <div className={prominent ? "mt-6" : "mt-8 border-t border-foreground/10 pt-6"}>
       <div className={`text-eyebrow ${prominent ? "text-blood" : ""}`}>{title}</div>
       {blurb && <p className="mt-2 max-w-xl text-sm text-muted-foreground">{blurb}</p>}
-      <div className={`mt-5 grid gap-4 ${prominent ? "" : "sm:grid-cols-2"}`}>
+      <div className={`mt-4 grid gap-3 ${prominent ? "sm:gap-4" : "sm:grid-cols-2 sm:gap-4"}`}>
         {sources.map((s) => (
           <SourceCard key={s.id} source={s} prominent={prominent} />
         ))}
@@ -315,26 +315,28 @@ function SourceCard({ source: s, prominent }: { source: PepSource; prominent: bo
       rel="noopener noreferrer nofollow"
       className={`group rounded-2xl bg-card transition hover:-translate-y-0.5 hover:border-blood/40 hover:shadow-md ${
         prominent
-          ? "border-2 border-blood/30 p-8 shadow-md"
-          : "border border-foreground/10 p-6 shadow-sm"
+          ? "border-2 border-blood/30 p-5 shadow-md sm:p-8"
+          : "border border-foreground/10 p-4 shadow-sm sm:p-6"
       }`}
     >
       <div className="flex items-start justify-between gap-3">
-        <div className="flex items-start gap-3">
+        <div className="flex min-w-0 items-start gap-3">
           {s.logo_url && (
             <img
               src={s.logo_url}
               alt={`${s.name} logo`}
               loading="lazy"
               className={`shrink-0 rounded-lg border border-foreground/10 bg-background object-contain p-1 ${
-                prominent ? "h-16 w-16" : "h-12 w-12"
+                prominent ? "h-14 w-14 sm:h-16 sm:w-16" : "h-10 w-10 sm:h-12 sm:w-12"
               }`}
             />
           )}
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <BadgeCheck size={16} className="text-blood" />
-              <h3 className={prominent ? "text-2xl" : "text-xl"}>{s.name}</h3>
+              <BadgeCheck size={16} className="shrink-0 text-blood" />
+              <h3 className={`truncate font-semibold ${prominent ? "text-xl sm:text-2xl" : "text-lg sm:text-xl"}`}>
+                {s.name}
+              </h3>
             </div>
             {s.expert_verified && (
               <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-blood/30 bg-blood/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-blood">
@@ -348,10 +350,10 @@ function SourceCard({ source: s, prominent }: { source: PepSource; prominent: bo
             )}
           </div>
         </div>
-        <ExternalLink size={15} className="mt-1 text-muted-foreground group-hover:text-blood" />
+        <ExternalLink size={15} className="mt-1 shrink-0 text-muted-foreground group-hover:text-blood" />
       </div>
       {s.description && (
-        <p className={`mt-3 leading-relaxed text-muted-foreground ${prominent ? "text-base" : "text-sm"}`}>
+        <p className={`mt-3 leading-relaxed text-muted-foreground ${prominent ? "text-sm sm:text-base" : "text-sm"}`}>
           {s.description}
         </p>
       )}
