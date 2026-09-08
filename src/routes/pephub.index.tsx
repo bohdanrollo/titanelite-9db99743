@@ -63,7 +63,7 @@ function PepHub() {
 
   useEffect(() => {
     try {
-      if (localStorage.getItem("legalshield_popup_closed") === "1") return;
+      if (localStorage.getItem("legalshield_popup_closed_v2") === "1") return;
     } catch { /* ignore */ }
     setShowLegalShieldPopup(true);
   }, []);
@@ -78,7 +78,7 @@ function PepHub() {
   function closeLegalShieldPopup() {
     setShowLegalShieldPopup(false);
     try {
-      localStorage.setItem("legalshield_popup_closed", "1");
+      localStorage.setItem("legalshield_popup_closed_v2", "1");
     } catch { /* ignore */ }
   }
 
