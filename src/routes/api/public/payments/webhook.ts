@@ -49,6 +49,8 @@ interface CheckoutSession {
   payment_intent: string | { id: string } | null;
   metadata?: { userId?: string; tier?: string; refCode?: string } | null;
   payment_status?: string;
+  customer_details?: { email?: string | null } | null;
+  customer_email?: string | null;
 }
 
 interface Charge {
