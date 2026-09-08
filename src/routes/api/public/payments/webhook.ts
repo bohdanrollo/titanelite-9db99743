@@ -49,6 +49,8 @@ interface CheckoutSession {
   payment_intent: string | { id: string } | null;
   metadata?: { userId?: string; tier?: string; refCode?: string } | null;
   payment_status?: string;
+  customer_details?: { email?: string | null } | null;
+  customer_email?: string | null;
 }
 
 interface Charge {
@@ -59,11 +61,86 @@ interface Charge {
   amount?: number;
 }
 
+/**
+ * Match a Stripe payer to an app user when checkout metadata is missing
+ * (payment links, billing portal, manually created subscriptions).
+ * Order: customer metadata.userId -> profiles email (case-insensitive) -> auth users email.
+ */
+async function resolveUserIdByCustomer(
+  customerId: string | null,
+  fallbackEmail: string | null,
+  env: StripeEnv,
+): Promise<string | null> {
+  let email = fallbackEmail;
+  if (customerId) {
+    try {
+      const stripe = createStripeClient(env);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const c = (await stripe.customers.retrieve(customerId)) as any;
+      if (!c?.deleted) {
+        if (c?.metadata?.userId) return String(c.metadata.userId);
+        if (c?.email) email = String(c.email);
+      }
+    } catch (e) {
+      console.error("[webhook] customer lookup failed", e);
+    }
+  }
+  if (!email) return null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supa = getSupabase() as any;
+  const { data: prof } = await supa
+    .from("profiles").select("id").ilike("email", email).maybeSingle();
+  if (prof?.id) return String(prof.id);
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: list } = await (supa.auth.admin as any).listUsers({ page: 1, perPage: 200 });
+    const match = list?.users?.find(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (u: any) => (u.email ?? "").toLowerCase() === email!.toLowerCase(),
+    );
+    if (match?.id) return String(match.id);
+  } catch (e) {
+    console.error("[webhook] auth user lookup failed", e);
+  }
+  return null;
+}
+
+async function resolveSessionTier(
+  session: CheckoutSession,
+  env: StripeEnv,
+): Promise<string | null> {
+  if (session.metadata?.tier) return session.metadata.tier;
+  try {
+    const stripe = createStripeClient(env);
+    const items = await stripe.checkout.sessions.listLineItems(session.id, { expand: ["data.price"] });
+    for (const it of items.data) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const price = it.price as any;
+      const lk = price?.lookup_key || price?.metadata?.lovable_external_id;
+      if (lk && TIER_BY_PRICE[lk]) return String(lk);
+    }
+  } catch (e) {
+    console.error("[webhook] line item tier lookup failed", e);
+  }
+  return null;
+}
+
 async function handleCheckoutCompleted(session: CheckoutSession, env: StripeEnv) {
-  const userId = session.metadata?.userId;
-  const priceLookup = session.metadata?.tier;
+  const sessionCustomerId =
+    typeof session.customer === "string" ? session.customer : session.customer?.id ?? null;
+  const userId =
+    session.metadata?.userId ??
+    (await resolveUserIdByCustomer(
+      sessionCustomerId,
+      session.customer_details?.email ?? session.customer_email ?? null,
+      env,
+    ));
+  const priceLookup = await resolveSessionTier(session, env);
   if (!userId || !priceLookup) {
-    console.error("[webhook] missing userId or tier metadata on session", session.id);
+    console.error("[webhook] could not resolve user or tier for session", session.id, {
+      hasUser: Boolean(userId),
+      priceLookup,
+    });
     return;
   }
   const tier = TIER_BY_PRICE[priceLookup];
@@ -188,25 +265,7 @@ function resolveSubTier(sub: Subscription): { tier: "limited" | "full"; priceLoo
 async function resolveSubUserId(sub: Subscription, env: StripeEnv): Promise<string | null> {
   if (sub.metadata?.userId) return sub.metadata.userId;
   const customerId = typeof sub.customer === "string" ? sub.customer : sub.customer?.id ?? null;
-  if (!customerId) return null;
-  try {
-    const stripe = createStripeClient(env);
-    const customer = await stripe.customers.retrieve(customerId);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const c = customer as any;
-    if (c?.deleted) return null;
-    if (c?.metadata?.userId) return String(c.metadata.userId);
-    if (c?.email) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const supa = getSupabase() as any;
-      const { data: prof } = await supa
-        .from("profiles").select("id").ilike("email", c.email).maybeSingle();
-      if (prof?.id) return String(prof.id);
-    }
-  } catch (e) {
-    console.error("[webhook] failed to resolve subscription user", e);
-  }
-  return null;
+  return resolveUserIdByCustomer(customerId, null, env);
 }
 
 async function handleSubscriptionChange(sub: Subscription, env: StripeEnv) {
