@@ -38,6 +38,7 @@ function PepHub() {
   const [busy, setBusy] = useState(false);
   const [joined, setJoined] = useState(false);
   const [showZeerowPopup, setShowZeerowPopup] = useState(false);
+  const [showLegalShieldPopup, setShowLegalShieldPopup] = useState(false);
   const join = useServerFn(joinPepHub);
 
   useEffect(() => {
@@ -60,10 +61,24 @@ function PepHub() {
     setShowZeerowPopup(true);
   }, []);
 
+  useEffect(() => {
+    try {
+      if (localStorage.getItem("legalshield_popup_closed") === "1") return;
+    } catch { /* ignore */ }
+    setShowLegalShieldPopup(true);
+  }, []);
+
   function closeZeerowPopup() {
     setShowZeerowPopup(false);
     try {
       localStorage.setItem("zeerow_popup_closed", "1");
+    } catch { /* ignore */ }
+  }
+
+  function closeLegalShieldPopup() {
+    setShowLegalShieldPopup(false);
+    try {
+      localStorage.setItem("legalshield_popup_closed", "1");
     } catch { /* ignore */ }
   }
 
