@@ -273,7 +273,6 @@ function PepHub() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn-primary mt-4 inline-flex"
-                      onClick={closeLegalShieldPopup}
                     >
                       Get LegalShield
                       <ExternalLink size={14} className="ml-2" />
