@@ -238,6 +238,51 @@ function PepHub() {
               </div>
             )}
 
+            {showLegalShieldPopup && (
+              <div className="animate-enter relative overflow-hidden rounded-2xl border border-blood/30 bg-card p-5 shadow-lg">
+                <button
+                  type="button"
+                  onClick={closeLegalShieldPopup}
+                  className="absolute right-3 top-3 z-10 rounded-full p-1.5 text-muted-foreground transition hover:bg-foreground/10 hover:text-foreground"
+                  aria-label="Close LegalShield promo"
+                >
+                  <X size={16} />
+                </button>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-xl border border-foreground/10 bg-blood/10 shadow">
+                    <ShieldCheck size={30} className="text-blood" />
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="inline-flex items-center gap-1.5 rounded-full border border-blood/30 bg-blood/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em] text-blood">
+                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-blood" />
+                      Meta Rep
+                    </div>
+
+                    <h3 className="mt-2 text-lg font-semibold leading-tight">
+                      LegalShield for content creator accounts.
+                    </h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Get legal protection and Meta representation for your content creator accounts —
+                      account issues, appeals, contracts, and more, backed by real attorneys.
+                    </p>
+
+                    <a
+                      href="https://bohdanrollo.legalshieldassociate.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-primary mt-4 inline-flex"
+                      onClick={closeLegalShieldPopup}
+                    >
+                      Get LegalShield
+                      <ExternalLink size={14} className="ml-2" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="lg:sticky lg:top-24 h-fit rounded-2xl border border-foreground/10 bg-card p-7 shadow-sm">
             {joined ? (
               <>
