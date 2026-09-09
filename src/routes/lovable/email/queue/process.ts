@@ -267,15 +267,11 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
               })
 
               if (isRateLimited(error)) {
-                await supabase.from('email_send_log').insert({
-                  message_id: payload.message_id,
-                  template_name: payload.label || queue,
-                  recipient_email: payload.to,
-                  status: 'failed',
-                  error_message: errorMsg.slice(0, 1000),
-                })
-
+                // Provider rate limits are transient and not this message's fault.
+                // Do NOT log a 'failed' attempt here: the retry budget is derived
+                // from failed rows, so counting 429s would DLQ deliverable emails.
                 const retryAfterSecs = getRetryAfterSeconds(error)
+
                 await supabase
                   .from('email_send_state')
                   .update({
