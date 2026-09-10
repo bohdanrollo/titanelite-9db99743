@@ -167,6 +167,12 @@ async function handleCheckoutCompleted(session: CheckoutSession, env: StripeEnv)
       hasUser: Boolean(userId),
       priceLookup,
     });
+    await alertUnmatchedPayer(
+      "checkout",
+      session.id,
+      env,
+      session.customer_details?.email ?? session.customer_email ?? null,
+    );
     return;
   }
   const tier = TIER_BY_PRICE[priceLookup];
