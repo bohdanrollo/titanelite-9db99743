@@ -8,7 +8,7 @@ export const Route = createFileRoute("/terms")({
       { title: "Terms of Service — Titan Elite" },
       { name: "description", content: "Terms governing use of Titan Elite coaching services." },
       { property: "og:title", content: "Terms of Service — Titan Elite" },
-      { property: "og:description", content: "Service terms." },
+      { property: "og:description", content: "The terms covering Titan Elite accounts, coaching services, educational peptide protocols, eligibility, liability, and intellectual property." },
     ],
   }),
   component: Terms,

@@ -6,7 +6,7 @@ export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "About — Titan Elite" },
-      { name: "description", content: "Titan Elite is an all-in-one peptide research and training dashboard: custom educational protocols, Pep Talk AI, a 50-compound library, dose calculator, stack tracker, and injection guides." },
+      { name: "description", content: "How Titan Elite began, and what's inside the peptide research and training dashboard: custom protocols, Pep Talk AI, and daily tools." },
       { property: "og:title", content: "About — Titan Elite" },
       { property: "og:description", content: "Titan Elite is an all-in-one peptide research and training dashboard with custom educational protocols and twelve built-in tools." },
       { property: "og:type", content: "website" },

@@ -93,9 +93,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Titan Elite — Peptide & Training Dashboard" },
       { property: "og:title", content: "Titan Elite — Peptide & Training Dashboard" },
       { name: "twitter:title", content: "Titan Elite — Peptide & Training Dashboard" },
-      { name: "description", content: "All-in-one client dashboard for peptide research and weightlifting: AI peptide answers, 50-compound library, dose calculator, stack tracker, injection guides, and custom protocols." },
-      { property: "og:description", content: "All-in-one client dashboard for peptide research and weightlifting: AI peptide answers, 50-compound library, dose calculator, stack tracker, injection guides, and custom protocols." },
-      { name: "twitter:description", content: "All-in-one client dashboard for peptide research and weightlifting: AI peptide answers, 50-compound library, dose calculator, stack tracker, injection guides, and custom protocols." },
+      { name: "description", content: "Client dashboard for peptide research and weightlifting: AI answers, compound library, dose calculator, stack tracker, and custom protocols." },
+      { property: "og:description", content: "Client dashboard for peptide research and weightlifting: AI answers, compound library, dose calculator, stack tracker, and custom protocols." },
+      { name: "twitter:description", content: "Client dashboard for peptide research and weightlifting: AI answers, compound library, dose calculator, stack tracker, and custom protocols." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/jI2511rt3aQLGHuXuXGbQ3aWYwN2/social-images/social-1780854871864-IMG_9914.webp" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/jI2511rt3aQLGHuXuXGbQ3aWYwN2/social-images/social-1780854871864-IMG_9914.webp" },
     ],
@@ -109,6 +109,32 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Hind:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Playfair+Display:wght@400;700&display=swap",
+      },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://titanelite.org/#organization",
+              name: "Titan Elite",
+              url: "https://titanelite.org",
+              email: "titanelitee@gmail.com",
+              description:
+                "Titan Elite provides custom educational peptide protocols and weightlifting programming through an all-in-one client dashboard.",
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://titanelite.org/#website",
+              name: "Titan Elite",
+              url: "https://titanelite.org",
+              publisher: { "@id": "https://titanelite.org/#organization" },
+            },
+          ],
+        }),
       },
     ],
   }),
