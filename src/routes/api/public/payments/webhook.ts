@@ -298,8 +298,12 @@ async function handleSubscriptionChange(sub: Subscription, env: StripeEnv) {
   const userId = await resolveSubUserId(sub, env);
   if (!userId) {
     console.error("[webhook] subscription missing userId metadata", sub.id);
+    if (ACTIVE_SUB_STATUSES.has(sub.status)) {
+      await alertUnmatchedPayer("subscription", sub.id, env, null);
+    }
     return;
   }
+
 
   const resolved = resolveSubTier(sub);
   const isActive = ACTIVE_SUB_STATUSES.has(sub.status);
