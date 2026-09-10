@@ -91,18 +91,44 @@ async function resolveUserIdByCustomer(
   const { data: prof } = await supa
     .from("profiles").select("id").ilike("email", email).maybeSingle();
   if (prof?.id) return String(prof.id);
+  const target = email.toLowerCase();
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: list } = await (supa.auth.admin as any).listUsers({ page: 1, perPage: 200 });
-    const match = list?.users?.find(
+    // Paginate the full auth user list — a single 200-row page silently
+    // missed users once the project grew past that.
+    for (let page = 1; page <= 25; page++) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (u: any) => (u.email ?? "").toLowerCase() === email!.toLowerCase(),
-    );
-    if (match?.id) return String(match.id);
+      const { data: list } = await (supa.auth.admin as any).listUsers({ page, perPage: 200 });
+      const users = list?.users ?? [];
+      const match = users.find(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (u: any) => (u.email ?? "").toLowerCase() === target,
+      );
+      if (match?.id) return String(match.id);
+      if (users.length < 200) break;
+    }
   } catch (e) {
     console.error("[webhook] auth user lookup failed", e);
   }
   return null;
+}
+
+/** Alert the admin when a paid Stripe event can't be matched to an account. */
+async function alertUnmatchedPayer(kind: string, id: string, env: StripeEnv, email: string | null) {
+  try {
+    const { sendDiscordNotification } = await import("@/lib/discord.server");
+    await sendDiscordNotification({
+      title: "Payment could not be matched to an account",
+      description: `A ${kind} was paid but no matching user was found. Grant access manually.`,
+      fields: [
+        { name: "Stripe ID", value: id, inline: true },
+        { name: "Environment", value: env, inline: true },
+        { name: "Email", value: email ?? "unknown", inline: false },
+      ],
+      color: 0xef4444,
+    });
+  } catch (e) {
+    console.warn("[webhook] unmatched payer alert failed", e);
+  }
 }
 
 async function resolveSessionTier(
