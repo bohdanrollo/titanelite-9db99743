@@ -111,6 +111,32 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Hind:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Playfair+Display:wght@400;700&display=swap",
       },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://titanelite.org/#organization",
+              name: "Titan Elite",
+              url: "https://titanelite.org",
+              email: "titanelitee@gmail.com",
+              description:
+                "Titan Elite provides custom educational peptide protocols and weightlifting programming through an all-in-one client dashboard.",
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://titanelite.org/#website",
+              name: "Titan Elite",
+              url: "https://titanelite.org",
+              publisher: { "@id": "https://titanelite.org/#organization" },
+            },
+          ],
+        }),
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
