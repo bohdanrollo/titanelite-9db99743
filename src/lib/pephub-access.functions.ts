@@ -13,14 +13,15 @@ export const pephubAccess = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const email = (context.claims?.email as string | undefined)?.toLowerCase() ?? null;
 
-    let row: { id: string; subscribed: boolean; user_id: string | null } | null = null;
+    type SubRow = { id: string; subscribed: boolean; user_id: string | null };
+    let row: SubRow | null = null;
 
     const byUser = await supabaseAdmin
       .from("marketing_subscribers")
       .select("id, subscribed, user_id")
       .eq("user_id", context.userId)
       .maybeSingle();
-    row = (byUser.data as typeof row) ?? null;
+    row = (byUser.data as SubRow | null) ?? null;
 
     if (!row && email) {
       const byEmail = await supabaseAdmin
@@ -28,7 +29,7 @@ export const pephubAccess = createServerFn({ method: "POST" })
         .select("id, subscribed, user_id")
         .ilike("email", email)
         .maybeSingle();
-      row = (byEmail.data as typeof row) ?? null;
+      row = (byEmail.data as SubRow | null) ?? null;
       // Link the existing subscriber record to this account.
       if (row && !row.user_id) {
         await supabaseAdmin
