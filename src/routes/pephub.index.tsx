@@ -130,8 +130,12 @@ function PepHub() {
           toast.error("Name, email and a password of at least 8 characters are required.");
           return;
         }
+        if (!age21 || !researchUse) {
+          toast.error("Please check both confirmation boxes to create your account.");
+          return;
+        }
         const res = await signup({
-          data: { name: name.trim(), email: email.trim(), password },
+          data: { name: name.trim(), email: email.trim(), password, age21: true, researchUse: true },
         });
         const { error } = await supabase.auth.signInWithPassword({
           email: email.trim().toLowerCase(),
@@ -167,9 +171,15 @@ function PepHub() {
   }
 
   async function optIn() {
+    if (!age21 || !researchUse) {
+      toast.error("Please check both confirmation boxes to unlock PepHub.");
+      return;
+    }
     setBusy(true);
     try {
-      await subscribeMe({ data: { name: name.trim() || undefined } });
+      await subscribeMe({
+        data: { name: name.trim() || undefined, age21: true, researchUse: true },
+      });
       toast.success("You're on the PepHub list.");
       await refreshAccess();
     } catch (err) {
