@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth";
 import { sendWelcomeEmail } from "@/lib/welcome-email.functions";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SignupAcknowledgements } from "@/components/SignupAcknowledgements";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Sign in — Titan Elite" }] }),
@@ -19,6 +20,8 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [age21, setAge21] = useState(false);
+  const [researchUse, setResearchUse] = useState(false);
   const nav = useNavigate();
   const { user, role } = useAuth();
   const sendWelcome = useServerFn(sendWelcomeEmail);
@@ -29,6 +32,10 @@ function AuthPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (mode === "signup" && (!age21 || !researchUse)) {
+      toast.error("Please check both confirmation boxes to create your account.");
+      return;
+    }
     setBusy(true);
     try {
       if (mode === "signup") {
@@ -36,7 +43,7 @@ function AuthPage() {
           email,
           password,
           options: {
-            data: { full_name: name },
+            data: { full_name: name, age_21_confirmed: true, research_use_confirmed: true },
             emailRedirectTo: `${window.location.origin}/dashboard`,
           },
         });
@@ -44,7 +51,7 @@ function AuthPage() {
         // Referral codes are kept in localStorage and only credited to the
         // affiliate once the client actually pays for a plan (at checkout).
         try {
-          await sendWelcome({ data: { name } });
+          await sendWelcome({ data: { name, age21: true, researchUse: true } });
         } catch (mailErr) {
           console.warn("[welcome] send failed", mailErr);
         }
