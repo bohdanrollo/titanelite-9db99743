@@ -266,7 +266,13 @@ export async function sendWelcomeEmailTo(
   }
 }
 
-/** Called by the signup page right after the account is created. */
+/**
+ * Called by the signup page right after a NEW account is created.
+ *
+ * This no longer renders or sends any email content from here — it triggers the
+ * existing Resend Automation `titanelite.signup` for the authenticated user's
+ * own email only. Resend owns the email design and content.
+ */
 export const sendWelcomeEmail = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
@@ -277,5 +283,12 @@ export const sendWelcomeEmail = createServerFn({ method: "POST" })
     if (!email) return { outcome: "skipped" as const };
     const fallbackName =
       (context.claims?.["user_metadata"] as { full_name?: string } | undefined)?.full_name ?? null;
-    return sendWelcomeEmailTo(email, data.name ?? fallbackName, context.userId);
+    const { triggerTitanEliteWelcome } = await import("@/lib/titanelite-welcome.server");
+    console.info("[titanelite welcome] signup trigger requested", { userId: context.userId });
+    return triggerTitanEliteWelcome({
+      email,
+      name: data.name ?? fallbackName,
+      userId: context.userId,
+      isNewSignup: true,
+    });
   });

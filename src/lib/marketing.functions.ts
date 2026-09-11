@@ -26,6 +26,12 @@ export type MarketingSubscriber = {
   pephub_welcome_error: string | null;
   pephub_welcome_attempts: number;
   pephub_welcome_last_attempt_at: string | null;
+  titanelite_welcome_status: string;
+  titanelite_welcome_triggered_at: string | null;
+  titanelite_welcome_event_name: string | null;
+  titanelite_welcome_error: string | null;
+  titanelite_welcome_attempts: number;
+  titanelite_welcome_last_attempt_at: string | null;
 };
 
 export type SyncReport = {
@@ -159,7 +165,7 @@ export const adminMarketingOverview = createServerFn({ method: "POST" })
     const { data, error } = await supabaseAdmin
       .from("marketing_subscribers")
       .select(
-        "id, user_id, email, first_name, last_name, subscribed, source, resend_contact_id, resend_sync_status, resend_sync_error, resend_last_synced_at, migrated_to_resend, created_at, welcome_email_status, welcome_email_sent_at, welcome_broadcast_id, welcome_email_error, pephub_welcome_status, pephub_welcome_triggered_at, pephub_welcome_event_name, pephub_welcome_error, pephub_welcome_attempts, pephub_welcome_last_attempt_at",
+        "id, user_id, email, first_name, last_name, subscribed, source, resend_contact_id, resend_sync_status, resend_sync_error, resend_last_synced_at, migrated_to_resend, created_at, welcome_email_status, welcome_email_sent_at, welcome_broadcast_id, welcome_email_error, pephub_welcome_status, pephub_welcome_triggered_at, pephub_welcome_event_name, pephub_welcome_error, pephub_welcome_attempts, pephub_welcome_last_attempt_at, titanelite_welcome_status, titanelite_welcome_triggered_at, titanelite_welcome_event_name, titanelite_welcome_error, titanelite_welcome_attempts, titanelite_welcome_last_attempt_at",
       )
       .order("created_at", { ascending: false })
       .limit(5000);
@@ -384,4 +390,29 @@ export const adminRetryPepHubWelcome = createServerFn({ method: "POST" })
     }
     const { triggerPepHubWelcome } = await import("@/lib/pephub-welcome.server");
     return triggerPepHubWelcome({ subscriberId: subscriber.id, userId: subscriber.user_id });
+  });
+
+/** Admin: safely retry one definitively failed Titan Elite Automation event. */
+export const adminRetryTitanEliteWelcome = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ subscriberId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await requireAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: subscriber } = await supabaseAdmin
+      .from("marketing_subscribers")
+      .select("id, email, first_name, last_name, user_id, titanelite_welcome_status")
+      .eq("id", data.subscriberId)
+      .maybeSingle();
+    if (!subscriber) throw new Error("Subscriber not found.");
+    if (subscriber.titanelite_welcome_status !== "failed") {
+      return { outcome: "already_triggered" as const };
+    }
+    const { triggerTitanEliteWelcome } = await import("@/lib/titanelite-welcome.server");
+    console.info("[titanelite welcome] admin retry", { subscriberId: subscriber.id });
+    return triggerTitanEliteWelcome({
+      email: subscriber.email,
+      name: [subscriber.first_name, subscriber.last_name].filter(Boolean).join(" "),
+      userId: subscriber.user_id,
+    });
   });
