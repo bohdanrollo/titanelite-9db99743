@@ -816,6 +816,63 @@ export type Database = {
         }
         Relationships: []
       }
+      marketing_subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          legacy_pephub_member_id: string | null
+          migrated_to_resend: boolean
+          resend_contact_id: string | null
+          resend_last_synced_at: string | null
+          resend_sync_error: string | null
+          resend_sync_status: string
+          source: string
+          subscribed: boolean
+          unsubscribed_at: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          legacy_pephub_member_id?: string | null
+          migrated_to_resend?: boolean
+          resend_contact_id?: string | null
+          resend_last_synced_at?: string | null
+          resend_sync_error?: string | null
+          resend_sync_status?: string
+          source?: string
+          subscribed?: boolean
+          unsubscribed_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          legacy_pephub_member_id?: string | null
+          migrated_to_resend?: boolean
+          resend_contact_id?: string | null
+          resend_last_synced_at?: string | null
+          resend_sync_error?: string | null
+          resend_sync_status?: string
+          source?: string
+          subscribed?: boolean
+          unsubscribed_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           body: string
