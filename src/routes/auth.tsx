@@ -21,6 +21,7 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
   const nav = useNavigate();
   const { user, role } = useAuth();
+  const sendWelcome = useServerFn(sendWelcomeEmail);
 
   if (user) {
     nav({ to: role === "admin" ? "/admin" : "/dashboard" });
