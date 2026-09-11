@@ -9,6 +9,7 @@ import {
   adminSendTestWelcome,
   adminWelcomeConfig,
   adminRetryPepHubWelcome,
+  adminRetryTitanEliteWelcome,
   type MarketingSubscriber,
   type SyncReport,
 } from "@/lib/marketing.functions";
