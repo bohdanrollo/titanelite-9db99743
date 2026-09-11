@@ -56,6 +56,7 @@ export default function EmailMarketing() {
   const sendTest = useServerFn(adminSendTestWelcome);
   const welcomeConfig = useServerFn(adminWelcomeConfig);
   const retryPepHubWelcome = useServerFn(adminRetryPepHubWelcome);
+  const retryTitanWelcome = useServerFn(adminRetryTitanEliteWelcome);
 
   const load = useCallback(async () => {
     try {
