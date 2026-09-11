@@ -165,7 +165,7 @@ export const adminMarketingOverview = createServerFn({ method: "POST" })
     const { data, error } = await supabaseAdmin
       .from("marketing_subscribers")
       .select(
-        "id, user_id, email, first_name, last_name, subscribed, source, resend_contact_id, resend_sync_status, resend_sync_error, resend_last_synced_at, migrated_to_resend, created_at, welcome_email_status, welcome_email_sent_at, welcome_broadcast_id, welcome_email_error, pephub_welcome_status, pephub_welcome_triggered_at, pephub_welcome_event_name, pephub_welcome_error, pephub_welcome_attempts, pephub_welcome_last_attempt_at",
+        "id, user_id, email, first_name, last_name, subscribed, source, resend_contact_id, resend_sync_status, resend_sync_error, resend_last_synced_at, migrated_to_resend, created_at, welcome_email_status, welcome_email_sent_at, welcome_broadcast_id, welcome_email_error, pephub_welcome_status, pephub_welcome_triggered_at, pephub_welcome_event_name, pephub_welcome_error, pephub_welcome_attempts, pephub_welcome_last_attempt_at, titanelite_welcome_status, titanelite_welcome_triggered_at, titanelite_welcome_event_name, titanelite_welcome_error, titanelite_welcome_attempts, titanelite_welcome_last_attempt_at",
       )
       .order("created_at", { ascending: false })
       .limit(5000);
