@@ -109,7 +109,19 @@ function AuthPage() {
           )}
           <Field label="Email" type="email" value={email} onChange={setEmail} required />
           <Field label="Password" type="password" value={password} onChange={setPassword} required minLength={6} />
-          <button disabled={busy} className="btn-blood hover:btn-blood-hover w-full">
+          {mode === "signup" && (
+            <SignupAcknowledgements
+              idPrefix="auth-signup"
+              age21={age21}
+              researchUse={researchUse}
+              onAge21={setAge21}
+              onResearchUse={setResearchUse}
+            />
+          )}
+          <button
+            disabled={busy || (mode === "signup" && (!age21 || !researchUse))}
+            className="btn-blood hover:btn-blood-hover w-full disabled:opacity-50"
+          >
             {busy ? "Working…" : mode === "signin" ? "Sign in" : "Create account"}
           </button>
           {mode === "signin" && (
