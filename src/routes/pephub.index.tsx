@@ -42,6 +42,8 @@ function PepHub() {
   const [checking, setChecking] = useState(true);
   const [signedIn, setSignedIn] = useState(false);
   const [hasAccess, setHasAccess] = useState(false);
+  const [age21, setAge21] = useState(false);
+  const [researchUse, setResearchUse] = useState(false);
   const [showZeerowPopup, setShowZeerowPopup] = useState(false);
   const [showLegalShieldPopup, setShowLegalShieldPopup] = useState(false);
   const signup = useServerFn(pephubSignup);
