@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import { sendWelcomeEmail } from "@/lib/welcome-email.functions";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
@@ -20,6 +21,7 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
   const nav = useNavigate();
   const { user, role } = useAuth();
+  const sendWelcome = useServerFn(sendWelcomeEmail);
 
   if (user) {
     nav({ to: role === "admin" ? "/admin" : "/dashboard" });
@@ -41,6 +43,11 @@ function AuthPage() {
         if (error) throw error;
         // Referral codes are kept in localStorage and only credited to the
         // affiliate once the client actually pays for a plan (at checkout).
+        try {
+          await sendWelcome({ data: { name } });
+        } catch (mailErr) {
+          console.warn("[welcome] send failed", mailErr);
+        }
         toast.success("Account created. You're signed in.");
         nav({ to: "/dashboard" });
       } else {
