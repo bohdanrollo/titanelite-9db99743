@@ -116,3 +116,31 @@ export async function upsertContact(input: {
   if (!id) throw new Error(`Resend contact create returned no id: ${res.raw}`);
   return { contactId: id, action: "created" };
 }
+
+/** Send a one-off transactional email through Resend (verified domain). */
+export async function sendEmail(input: {
+  to: string;
+  subject: string;
+  html: string;
+  text?: string;
+  from?: string;
+  replyTo?: string;
+}): Promise<{ id: string }> {
+  const res = await call("/emails", {
+    method: "POST",
+    body: {
+      from: input.from ?? "Titan Elite <noreply@titanelite.org>",
+      to: [input.to],
+      subject: input.subject,
+      html: input.html,
+      text: input.text,
+      reply_to: input.replyTo,
+    },
+  });
+  if (!res.ok) throw new Error(`Resend send failed [${res.status}]: ${res.raw}`);
+  const id = (res.body?.["id"] ?? (res.body?.["data"] as { id?: string } | undefined)?.id) as
+    | string
+    | undefined;
+  if (!id) throw new Error(`Resend send returned no id: ${res.raw}`);
+  return { id };
+}
