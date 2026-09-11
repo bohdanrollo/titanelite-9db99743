@@ -409,7 +409,10 @@ export const adminRetryTitanEliteWelcome = createServerFn({ method: "POST" })
       .eq("id", data.subscriberId)
       .maybeSingle();
     if (!subscriber) throw new Error("Subscriber not found.");
-    if (subscriber.titanelite_welcome_status !== "failed") {
+    if (
+      subscriber.titanelite_welcome_status !== "failed" &&
+      subscriber.titanelite_welcome_status !== "pending"
+    ) {
       return { outcome: "already_triggered" as const };
     }
     const { triggerTitanEliteWelcome } = await import("@/lib/titanelite-welcome.server");
