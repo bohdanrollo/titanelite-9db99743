@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { type PepSource } from "@/lib/pephub.functions";
-import { subscribeMarketing } from "@/lib/marketing.functions";
+import { pephubAccess, pephubSignup, pephubSubscribeCurrentUser } from "@/lib/pephub-access.functions";
 import zeerowLogoAsset from "@/assets/zeerow-logo.jpeg.asset.json";
 
 export const Route = createFileRoute("/pephub/")({
@@ -36,13 +36,45 @@ function PepHub() {
   const [ready, setReady] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [mode, setMode] = useState<"signup" | "login">("signup");
   const [busy, setBusy] = useState(false);
-  const [joined, setJoined] = useState(false);
+  const [checking, setChecking] = useState(true);
+  const [signedIn, setSignedIn] = useState(false);
+  const [hasAccess, setHasAccess] = useState(false);
   const [showZeerowPopup, setShowZeerowPopup] = useState(false);
   const [showLegalShieldPopup, setShowLegalShieldPopup] = useState(false);
-  const join = useServerFn(subscribeMarketing);
+  const signup = useServerFn(pephubSignup);
+  const checkAccess = useServerFn(pephubAccess);
+  const subscribeMe = useServerFn(pephubSubscribeCurrentUser);
+
+  async function refreshAccess() {
+    setChecking(true);
+    try {
+      const { data } = await supabase.auth.getUser();
+      if (!data.user) {
+        setSignedIn(false);
+        setHasAccess(false);
+        return;
+      }
+      setSignedIn(true);
+      const res = await checkAccess({ data: undefined });
+      setHasAccess(Boolean(res.subscribed));
+    } catch {
+      setSignedIn(false);
+      setHasAccess(false);
+    } finally {
+      setChecking(false);
+    }
+  }
 
   useEffect(() => {
+    void refreshAccess();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!hasAccess) return;
     (async () => {
       const { data } = await supabase
         .from("pephub_sources")
@@ -53,7 +85,7 @@ function PepHub() {
       setSources((data ?? []) as PepSource[]);
       setReady(true);
     })();
-  }, []);
+  }, [hasAccess]);
 
   useEffect(() => {
     try {
@@ -89,12 +121,55 @@ function PepHub() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim() || !email.trim()) return;
     setBusy(true);
     try {
-      await join({ data: { name: name.trim(), email: email.trim(), source: "pephub" } });
-      setJoined(true);
+      if (mode === "signup") {
+        if (!name.trim() || !email.trim() || password.length < 8) {
+          toast.error("Name, email and a password of at least 8 characters are required.");
+          return;
+        }
+        const res = await signup({
+          data: { name: name.trim(), email: email.trim(), password },
+        });
+        const { error } = await supabase.auth.signInWithPassword({
+          email: email.trim().toLowerCase(),
+          password,
+        });
+        if (error) {
+          toast.error(
+            res.existingAccount
+              ? "That email already has an account — sign in with your existing password."
+              : error.message,
+          );
+          if (res.existingAccount) setMode("login");
+          return;
+        }
+        toast.success("You're in — welcome to PepHub.");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: email.trim().toLowerCase(),
+          password,
+        });
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
+      }
+      setPassword("");
+      await refreshAccess();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function optIn() {
+    setBusy(true);
+    try {
+      await subscribeMe({ data: { name: name.trim() || undefined } });
       toast.success("You're on the PepHub list.");
+      await refreshAccess();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -149,7 +224,111 @@ function PepHub() {
           and we'll let you know whenever one of them runs a sale or drops a discount code.
         </p>
 
-        <div className="mt-10 grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:gap-10">
+        {checking && (
+          <div className="mt-10 rounded-2xl border border-foreground/10 bg-card p-8 text-sm text-muted-foreground shadow-sm">
+            Checking your access…
+          </div>
+        )}
+
+        {!checking && !hasAccess && (
+          <div className="mt-10 max-w-xl rounded-2xl border border-foreground/10 bg-card p-7 shadow-sm">
+            {signedIn ? (
+              <>
+                <Mail className="text-blood" size={22} />
+                <h2 className="mt-4 text-2xl">One last step.</h2>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  PepHub is free, but it's for members of our sale-alert list. Turn on email alerts
+                  to unlock the full list of trusted sources.
+                </p>
+                <button
+                  type="button"
+                  onClick={optIn}
+                  disabled={busy}
+                  className="btn-primary mt-6 w-full justify-center"
+                >
+                  {busy ? "Turning on alerts…" : "Turn on sale alerts & unlock PepHub"}
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="text-eyebrow">Members only — free</div>
+                <h2 className="mt-3 text-2xl">
+                  {mode === "signup" ? "Create your free account." : "Welcome back."}
+                </h2>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {mode === "signup"
+                    ? "Sign up with your name, email and a password. You'll join our sale-alert emails and get instant access to the trusted source list."
+                    : "Sign in to see the trusted source list."}
+                </p>
+                <form onSubmit={submit} className="mt-6 space-y-4">
+                  {mode === "signup" && (
+                    <div>
+                      <label className="text-eyebrow" htmlFor="ph-name">Name</label>
+                      <input
+                        id="ph-name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                        maxLength={120}
+                        className="mt-2 w-full rounded-xl border border-foreground/15 bg-background px-4 py-3 text-sm outline-none focus:border-blood"
+                        placeholder="Your name"
+                      />
+                    </div>
+                  )}
+                  <div>
+                    <label className="text-eyebrow" htmlFor="ph-email">Email</label>
+                    <input
+                      id="ph-email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      maxLength={200}
+                      className="mt-2 w-full rounded-xl border border-foreground/15 bg-background px-4 py-3 text-sm outline-none focus:border-blood"
+                      placeholder="you@email.com"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-eyebrow" htmlFor="ph-password">Password</label>
+                    <input
+                      id="ph-password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      minLength={8}
+                      maxLength={200}
+                      className="mt-2 w-full rounded-xl border border-foreground/15 bg-background px-4 py-3 text-sm outline-none focus:border-blood"
+                      placeholder={mode === "signup" ? "At least 8 characters" : "Your password"}
+                    />
+                  </div>
+                  <button type="submit" disabled={busy} className="btn-primary w-full justify-center">
+                    {busy
+                      ? "Just a second…"
+                      : mode === "signup"
+                        ? "Create account & unlock PepHub"
+                        : "Sign in"}
+                  </button>
+                </form>
+                <button
+                  type="button"
+                  onClick={() => setMode(mode === "signup" ? "login" : "signup")}
+                  className="mt-4 text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground"
+                >
+                  {mode === "signup"
+                    ? "Already have an account? Sign in"
+                    : "New here? Create a free account"}
+                </button>
+                <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+                  By creating an account you agree to receive PepHub sale-alert emails. You can
+                  unsubscribe at any time from any email.
+                </p>
+              </>
+            )}
+          </div>
+        )}
+
+        <div className={`mt-10 grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:gap-10 ${!hasAccess ? "hidden" : ""}`}>
           {/* Sources */}
           <div>
             <div className="flex items-center gap-2 text-eyebrow">
@@ -284,55 +463,13 @@ function PepHub() {
             )}
 
             <div className="lg:sticky lg:top-24 h-fit rounded-2xl border border-foreground/10 bg-card p-7 shadow-sm">
-            {joined ? (
-              <>
-                <Mail className="text-blood" size={22} />
-                <h2 className="mt-4 text-2xl">You're on the list.</h2>
-                <p className="mt-3 text-sm text-muted-foreground">
-                  We'll email {email} whenever a trusted source runs a sale or discount. Nothing else,
-                  no spam.
-                </p>
-              </>
-            ) : (
-              <>
-                <div className="text-eyebrow">Get sale alerts</div>
-                <h2 className="mt-3 text-2xl">Join PepHub free.</h2>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Name and email — that's it. No account, no card.
-                </p>
-                <form onSubmit={submit} className="mt-6 space-y-4">
-                  <div>
-                    <label className="text-eyebrow" htmlFor="ph-name">Name</label>
-                    <input
-                      id="ph-name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      required
-                      maxLength={120}
-                      className="mt-2 w-full rounded-xl border border-foreground/15 bg-background px-4 py-3 text-sm outline-none focus:border-blood"
-                      placeholder="Your name"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-eyebrow" htmlFor="ph-email">Email</label>
-                    <input
-                      id="ph-email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      maxLength={200}
-                      className="mt-2 w-full rounded-xl border border-foreground/15 bg-background px-4 py-3 text-sm outline-none focus:border-blood"
-                      placeholder="you@email.com"
-                    />
-                  </div>
-                  <button type="submit" disabled={busy} className="btn-primary w-full justify-center">
-                    {busy ? "Signing you up…" : "Get sale alerts"}
-                  </button>
-                </form>
-              </>
-            )}
-          </div>
+              <Mail className="text-blood" size={22} />
+              <h2 className="mt-4 text-2xl">You're on the list.</h2>
+              <p className="mt-3 text-sm text-muted-foreground">
+                We'll email you whenever a trusted source runs a sale or discount. Nothing else, no
+                spam. You can unsubscribe from any email — that also ends your PepHub access.
+              </p>
+            </div>
           </div>
         </div>
       </section>
