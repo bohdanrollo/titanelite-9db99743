@@ -19,6 +19,8 @@ type TriggerInput = {
   userId?: string | null;
   /** True only when the account was genuinely just created. */
   isNewSignup?: boolean;
+  /** Required signup confirmations, recorded when both are true. */
+  acknowledgements?: { age21: boolean; researchUse: boolean } | null;
 };
 
 /**
