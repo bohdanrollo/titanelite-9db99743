@@ -78,13 +78,25 @@ export const pephubSubscribeCurrentUser = createServerFn({ method: "POST" })
     const email = (context.claims?.email as string | undefined)?.toLowerCase();
     if (!email) throw new Error("Your account has no email address.");
     const { saveSubscriber } = await import("@/lib/marketing.server");
-    await saveSubscriber({
+    const subscriber = await saveSubscriber({
       email,
       name: data.name ?? (context.claims?.["user_metadata"] as { full_name?: string } | undefined)?.full_name ?? null,
       source: "pephub",
       userId: context.userId,
       acknowledgements: { age21: data.age21, researchUse: data.researchUse },
     });
+
+    // Opting in from an existing account is still a PepHub signup. The trigger
+    // claims the row atomically, so an already-triggered contact is never
+    // mailed twice, and a failure here must never block PepHub access.
+    if (subscriber.id) {
+      try {
+        const { triggerPepHubWelcome } = await import("@/lib/pephub-welcome.server");
+        await triggerPepHubWelcome({ subscriberId: subscriber.id, userId: context.userId });
+      } catch (err) {
+        console.error("[pephub welcome] opt-in trigger failed", err);
+      }
+    }
     return { ok: true };
   });
 
