@@ -359,55 +359,13 @@ function PepHub() {
             )}
 
             <div className="lg:sticky lg:top-24 h-fit rounded-2xl border border-foreground/10 bg-card p-7 shadow-sm">
-            {joined ? (
-              <>
-                <Mail className="text-blood" size={22} />
-                <h2 className="mt-4 text-2xl">You're on the list.</h2>
-                <p className="mt-3 text-sm text-muted-foreground">
-                  We'll email {email} whenever a trusted source runs a sale or discount. Nothing else,
-                  no spam.
-                </p>
-              </>
-            ) : (
-              <>
-                <div className="text-eyebrow">Get sale alerts</div>
-                <h2 className="mt-3 text-2xl">Join PepHub free.</h2>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Name and email — that's it. No account, no card.
-                </p>
-                <form onSubmit={submit} className="mt-6 space-y-4">
-                  <div>
-                    <label className="text-eyebrow" htmlFor="ph-name">Name</label>
-                    <input
-                      id="ph-name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      required
-                      maxLength={120}
-                      className="mt-2 w-full rounded-xl border border-foreground/15 bg-background px-4 py-3 text-sm outline-none focus:border-blood"
-                      placeholder="Your name"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-eyebrow" htmlFor="ph-email">Email</label>
-                    <input
-                      id="ph-email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      maxLength={200}
-                      className="mt-2 w-full rounded-xl border border-foreground/15 bg-background px-4 py-3 text-sm outline-none focus:border-blood"
-                      placeholder="you@email.com"
-                    />
-                  </div>
-                  <button type="submit" disabled={busy} className="btn-primary w-full justify-center">
-                    {busy ? "Signing you up…" : "Get sale alerts"}
-                  </button>
-                </form>
-              </>
-            )}
-          </div>
+              <Mail className="text-blood" size={22} />
+              <h2 className="mt-4 text-2xl">You're on the list.</h2>
+              <p className="mt-3 text-sm text-muted-foreground">
+                We'll email you whenever a trusted source runs a sale or discount. Nothing else, no
+                spam. You can unsubscribe from any email — that also ends your PepHub access.
+              </p>
+            </div>
           </div>
         </div>
       </section>
