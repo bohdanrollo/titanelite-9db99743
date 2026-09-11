@@ -47,6 +47,7 @@ export async function saveSubscriber(input: {
         unsubscribed_at: null,
         resend_sync_status: "pending",
         ...(input.userId ? { user_id: input.userId } : {}),
+        ...ack,
       })
       .eq("id", rowId);
   } else {
@@ -60,6 +61,7 @@ export async function saveSubscriber(input: {
         source: input.source ?? "pephub",
         resend_sync_status: "pending",
         ...(input.userId ? { user_id: input.userId } : {}),
+        ...ack,
       })
       .select("id")
       .maybeSingle();
