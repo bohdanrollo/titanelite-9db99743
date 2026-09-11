@@ -134,6 +134,13 @@
       "when": 1789118769226,
       "tag": "0018_add_signup_age_research_acknowledgements",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1789154226910,
+      "tag": "0019_revoke_execute_trigger_function",
+      "breakpoints": true
     }
   ]
 }
