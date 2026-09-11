@@ -322,6 +322,45 @@ export default function EmailMarketing() {
                       </button>
                     ) : "—"}
                   </td>
+                  <td className="py-2 pr-4">{r.titanelite_welcome_status}</td>
+                  <td className="py-2 pr-4">
+                    {r.titanelite_welcome_triggered_at
+                      ? new Date(r.titanelite_welcome_triggered_at).toLocaleString()
+                      : "—"}
+                  </td>
+                  <td className="py-2 pr-4 font-mono text-[11px]">
+                    {r.titanelite_welcome_event_name ?? "—"}
+                  </td>
+                  <td className="py-2 pr-4">{r.titanelite_welcome_attempts}</td>
+                  <td className="py-2 pr-4 max-w-[220px] truncate text-xs text-blood">
+                    {r.titanelite_welcome_error ?? "—"}
+                  </td>
+                  <td className="py-2 pr-4">
+                    {r.titanelite_welcome_status === "failed" ? (
+                      <button
+                        type="button"
+                        className="btn-primary whitespace-nowrap"
+                        disabled={retryingId !== null}
+                        onClick={async () => {
+                          setRetryingId(r.id);
+                          try {
+                            const result = await retryTitanWelcome({ data: { subscriberId: r.id } });
+                            if (result.outcome === "triggered")
+                              toast.success("Titan Elite Automation triggered");
+                            else toast.error(("reason" in result && result.reason) || result.outcome);
+                            await load();
+                          } catch (err) {
+                            toast.error(err instanceof Error ? err.message : "Retry failed");
+                          } finally {
+                            setRetryingId(null);
+                          }
+                        }}
+                      >
+                        <RotateCcw size={14} className="mr-2" />
+                        {retryingId === r.id ? "Retrying…" : "Retry"}
+                      </button>
+                    ) : "—"}
+                  </td>
                 </tr>
               ))}
             </tbody>
