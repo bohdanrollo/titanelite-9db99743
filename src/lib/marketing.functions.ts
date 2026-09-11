@@ -385,7 +385,11 @@ export const adminRetryPepHubWelcome = createServerFn({ method: "POST" })
       .eq("id", data.subscriberId)
       .maybeSingle();
     if (!subscriber?.user_id) throw new Error("This subscriber is not linked to a PepHub account.");
-    if (subscriber.pephub_welcome_status !== "failed") {
+    // "pending" means the event was never fired (e.g. the signup call never
+    // reached the server); "failed" is a definite Resend rejection. Both are
+    // safe to retry — the trigger claims the row atomically and can only ever
+    // mail this one address once.
+    if (subscriber.pephub_welcome_status !== "failed" && subscriber.pephub_welcome_status !== "pending") {
       return { outcome: "already_triggered" as const };
     }
     const { triggerPepHubWelcome } = await import("@/lib/pephub-welcome.server");
