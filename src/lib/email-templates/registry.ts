@@ -14,8 +14,7 @@ export interface TemplateEntry {
  * Import and register new templates here after creating them in this directory.
  *
  * Example:
- *   import { template as welcomeTemplate } from './welcome'
- *   // then add to TEMPLATES: 'welcome': welcomeTemplate
+ *    *   // then add to TEMPLATES: 'welcome': welcomeTemplate
  */
 import { template as protocolReadyTemplate } from './protocol-ready'
 import { template as affiliateApprovedTemplate } from './affiliate-approved'
@@ -23,7 +22,6 @@ import { template as coachCallScheduledTemplate } from './coach-call-scheduled'
 import { template as callApprovedTemplate } from './call-approved'
 import { template as pephubDealTemplate } from './pephub-deal'
 import { template as pephubSaleTemplate } from './pephub-sale'
-import { template as welcomeTemplate } from './welcome'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'protocol-ready': protocolReadyTemplate,
@@ -32,6 +30,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'call-approved': callApprovedTemplate,
   'pephub-deal': pephubDealTemplate,
   'pephub-sale': pephubSaleTemplate,
-  'welcome': welcomeTemplate,
 }
 

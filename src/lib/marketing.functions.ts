@@ -16,6 +16,10 @@ export type MarketingSubscriber = {
   resend_last_synced_at: string | null;
   migrated_to_resend: boolean;
   created_at: string;
+  welcome_email_status: string;
+  welcome_email_sent_at: string | null;
+  welcome_broadcast_id: string | null;
+  welcome_email_error: string | null;
 };
 
 export type SyncReport = {
@@ -149,7 +153,7 @@ export const adminMarketingOverview = createServerFn({ method: "POST" })
     const { data, error } = await supabaseAdmin
       .from("marketing_subscribers")
       .select(
-        "id, user_id, email, first_name, last_name, subscribed, source, resend_contact_id, resend_sync_status, resend_sync_error, resend_last_synced_at, migrated_to_resend, created_at",
+        "id, user_id, email, first_name, last_name, subscribed, source, resend_contact_id, resend_sync_status, resend_sync_error, resend_last_synced_at, migrated_to_resend, created_at, welcome_email_status, welcome_email_sent_at, welcome_broadcast_id, welcome_email_error",
       )
       .order("created_at", { ascending: false })
       .limit(5000);
@@ -290,4 +294,68 @@ export const adminMigrationPreview = createServerFn({ method: "POST" })
       preservedRecords: local ?? 0,
       readyToMigrate: ready ?? 0,
     };
+  });
+
+/**
+ * Admin: send the configured welcome Broadcast to ONE address for testing, or
+ * retry a failed welcome. Admin-only, single recipient — this can never mass
+ * send, because the Broadcast send endpoint is never called.
+ */
+export const adminSendTestWelcome = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        email: z.string().trim().email().max(200),
+        force: z.boolean().default(false),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await requireAdmin(context.supabase, context.userId);
+    const email = data.email.trim().toLowerCase();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    if (data.force) {
+      // Clear the idempotency markers for this one address only, so the same
+      // test inbox can be used repeatedly. Never touches other rows.
+      await supabaseAdmin
+        .from("email_send_log")
+        .delete()
+        .eq("template_name", "welcome")
+        .ilike("recipient_email", email);
+      await supabaseAdmin
+        .from("marketing_subscribers")
+        .update({ welcome_email_status: "pending", welcome_email_error: null })
+        .ilike("email", email);
+    }
+
+    const { sendWelcomeEmailTo } = await import("@/lib/welcome-email.functions");
+    const res = await sendWelcomeEmailTo(email, null, null);
+    console.info("[welcome] admin test", { outcome: res.outcome });
+    return res;
+  });
+
+/** Admin: which Broadcast is wired up (id only, no secrets). */
+export const adminWelcomeConfig = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await requireAdmin(context.supabase, context.userId);
+    const broadcastId = process.env["RESEND_WELCOME_BROADCAST_ID"] ?? null;
+    const audienceConfigured = Boolean(process.env["RESEND_AUDIENCE_ID"]);
+    const apiKeyConfigured = Boolean(process.env["RESEND_API_KEY"]);
+    if (!broadcastId) return { broadcastId, audienceConfigured, apiKeyConfigured, name: null, subject: null };
+    try {
+      const { getBroadcast } = await import("@/lib/resend.server");
+      const b = await getBroadcast(broadcastId);
+      return {
+        broadcastId,
+        audienceConfigured,
+        apiKeyConfigured,
+        name: b.name ?? null,
+        subject: b.subject ?? null,
+      };
+    } catch {
+      return { broadcastId, audienceConfigured, apiKeyConfigured, name: null, subject: null };
+    }
   });

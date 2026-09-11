@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { RefreshCw, Upload } from "lucide-react";
+import { RefreshCw, Upload, Send } from "lucide-react";
 import {
   adminMarketingOverview,
   adminMigrationPreview,
   adminSyncResend,
+  adminSendTestWelcome,
+  adminWelcomeConfig,
   type MarketingSubscriber,
   type SyncReport,
 } from "@/lib/marketing.functions";
@@ -35,21 +37,33 @@ export default function EmailMarketing() {
   const [busy, setBusy] = useState<"sync" | "migrate" | null>(null);
   const [report, setReport] = useState<{ title: string; data: SyncReport } | null>(null);
   const [query, setQuery] = useState("");
+  const [testEmail, setTestEmail] = useState("");
+  const [testBusy, setTestBusy] = useState(false);
+  const [welcomeCfg, setWelcomeCfg] = useState<{
+    broadcastId: string | null;
+    name: string | null;
+    subject: string | null;
+    audienceConfigured: boolean;
+    apiKeyConfigured: boolean;
+  } | null>(null);
 
   const overview = useServerFn(adminMarketingOverview);
   const previewFn = useServerFn(adminMigrationPreview);
   const sync = useServerFn(adminSyncResend);
+  const sendTest = useServerFn(adminSendTestWelcome);
+  const welcomeConfig = useServerFn(adminWelcomeConfig);
 
   const load = useCallback(async () => {
     try {
-      const [o, p] = await Promise.all([overview({}), previewFn({})]);
+      const [o, p, w] = await Promise.all([overview({}), previewFn({}), welcomeConfig({})]);
       setRows(o.subscribers);
       setStats(o.stats as Stats);
       setPreview(p);
+      setWelcomeCfg(w);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not load subscribers");
     }
-  }, [overview, previewFn]);
+  }, [overview, previewFn, welcomeConfig]);
 
   useEffect(() => {
     void load();
@@ -154,6 +168,52 @@ export default function EmailMarketing() {
       </div>
 
       <div className="rounded-2xl border border-foreground/10 bg-card p-5">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="font-semibold">Welcome email</div>
+            <p className="mt-1 text-sm text-muted-foreground">
+              New signups receive the exact content of your Resend broadcast
+              {welcomeCfg?.name ? ` “${welcomeCfg.name}”` : ""}
+              {welcomeCfg?.subject ? ` (subject: “${welcomeCfg.subject}”)` : ""}. It is delivered to
+              that one person only — your list is never broadcast to on signup.
+            </p>
+            <p className="mt-1 font-mono text-[11px] text-muted-foreground">
+              Broadcast ID: {welcomeCfg?.broadcastId ?? "not configured"}
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              value={testEmail}
+              onChange={(e) => setTestEmail(e.target.value)}
+              placeholder="test@example.com"
+              className="rounded-xl border border-foreground/15 bg-background px-3 py-2 text-sm outline-none focus:border-blood"
+            />
+            <button
+              type="button"
+              className="btn-primary"
+              disabled={testBusy || !testEmail.trim()}
+              onClick={async () => {
+                setTestBusy(true);
+                try {
+                  const res = await sendTest({ data: { email: testEmail.trim(), force: true } });
+                  if (res.outcome === "sent") toast.success(`Welcome email sent to ${testEmail}`);
+                  else toast.error(`${res.outcome}${res.reason ? `: ${res.reason}` : ""}`);
+                  await load();
+                } catch (err) {
+                  toast.error(err instanceof Error ? err.message : "Test send failed");
+                } finally {
+                  setTestBusy(false);
+                }
+              }}
+            >
+              <Send size={14} className="mr-2" />
+              {testBusy ? "Sending…" : "Send test welcome"}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-foreground/10 bg-card p-5">
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -173,6 +233,10 @@ export default function EmailMarketing() {
                 <th className="py-2 pr-4">Resend contact</th>
                 <th className="py-2 pr-4">Sync</th>
                 <th className="py-2 pr-4">Last synced</th>
+                <th className="py-2 pr-4">Welcome</th>
+                <th className="py-2 pr-4">Welcome sent</th>
+                <th className="py-2 pr-4">Broadcast</th>
+                <th className="py-2 pr-4">Error</th>
               </tr>
             </thead>
             <tbody>
@@ -192,6 +256,18 @@ export default function EmailMarketing() {
                     {r.resend_last_synced_at
                       ? new Date(r.resend_last_synced_at).toLocaleString()
                       : "—"}
+                  </td>
+                  <td className="py-2 pr-4">{r.welcome_email_status}</td>
+                  <td className="py-2 pr-4">
+                    {r.welcome_email_sent_at
+                      ? new Date(r.welcome_email_sent_at).toLocaleString()
+                      : "—"}
+                  </td>
+                  <td className="py-2 pr-4 font-mono text-[11px]">
+                    {r.welcome_broadcast_id ? r.welcome_broadcast_id.slice(0, 8) + "…" : "—"}
+                  </td>
+                  <td className="py-2 pr-4 max-w-[220px] truncate text-xs text-blood">
+                    {r.welcome_email_error ?? "—"}
                   </td>
                 </tr>
               ))}
