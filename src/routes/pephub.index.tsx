@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { type PepSource } from "@/lib/pephub.functions";
 import { pephubAccess, pephubSignup, pephubSubscribeCurrentUser } from "@/lib/pephub-access.functions";
+import { SignupAcknowledgements } from "@/components/SignupAcknowledgements";
 import zeerowLogoAsset from "@/assets/zeerow-logo.jpeg.asset.json";
 
 export const Route = createFileRoute("/pephub/")({
@@ -323,7 +324,20 @@ function PepHub() {
                       placeholder={mode === "signup" ? "At least 8 characters" : "Your password"}
                     />
                   </div>
-                  <button type="submit" disabled={busy} className="btn-primary w-full justify-center">
+                  {mode === "signup" && (
+                    <SignupAcknowledgements
+                      idPrefix="ph-signup"
+                      age21={age21}
+                      researchUse={researchUse}
+                      onAge21={setAge21}
+                      onResearchUse={setResearchUse}
+                    />
+                  )}
+                  <button
+                    type="submit"
+                    disabled={busy || (mode === "signup" && (!age21 || !researchUse))}
+                    className="btn-primary w-full justify-center disabled:opacity-50"
+                  >
                     {busy
                       ? "Just a second…"
                       : mode === "signup"
