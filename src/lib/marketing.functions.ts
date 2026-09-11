@@ -26,6 +26,12 @@ export type MarketingSubscriber = {
   pephub_welcome_error: string | null;
   pephub_welcome_attempts: number;
   pephub_welcome_last_attempt_at: string | null;
+  titanelite_welcome_status: string;
+  titanelite_welcome_triggered_at: string | null;
+  titanelite_welcome_event_name: string | null;
+  titanelite_welcome_error: string | null;
+  titanelite_welcome_attempts: number;
+  titanelite_welcome_last_attempt_at: string | null;
 };
 
 export type SyncReport = {
