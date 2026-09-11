@@ -252,11 +252,20 @@ function PepHub() {
                   PepHub is free, but it's for members of our sale-alert list. Turn on email alerts
                   to unlock the full list of trusted sources.
                 </p>
+                <div className="mt-6">
+                  <SignupAcknowledgements
+                    idPrefix="ph-optin"
+                    age21={age21}
+                    researchUse={researchUse}
+                    onAge21={setAge21}
+                    onResearchUse={setResearchUse}
+                  />
+                </div>
                 <button
                   type="button"
                   onClick={optIn}
-                  disabled={busy}
-                  className="btn-primary mt-6 w-full justify-center"
+                  disabled={busy || !age21 || !researchUse}
+                  className="btn-primary mt-6 w-full justify-center disabled:opacity-50"
                 >
                   {busy ? "Turning on alerts…" : "Turn on sale alerts & unlock PepHub"}
                 </button>
