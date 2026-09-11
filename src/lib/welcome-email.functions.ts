@@ -276,7 +276,16 @@ export async function sendWelcomeEmailTo(
 export const sendWelcomeEmail = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({ name: z.string().trim().max(120).optional() }).parse(d ?? {}),
+    z
+      .object({
+        name: z.string().trim().max(120).optional(),
+        age21: z.literal(true, { message: "You must confirm that you are 21 or older." }),
+        researchUse: z.literal(true, {
+          message:
+            "You must confirm you understand peptide information and sources are not for human or animal use.",
+        }),
+      })
+      .parse(d ?? {}),
   )
   .handler(async ({ data, context }) => {
     const email = (context.claims?.email as string | undefined)?.toLowerCase();
@@ -290,5 +299,6 @@ export const sendWelcomeEmail = createServerFn({ method: "POST" })
       name: data.name ?? fallbackName,
       userId: context.userId,
       isNewSignup: true,
+      acknowledgements: { age21: data.age21, researchUse: data.researchUse },
     });
   });

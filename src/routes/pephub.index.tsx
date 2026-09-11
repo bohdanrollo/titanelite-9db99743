@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { type PepSource } from "@/lib/pephub.functions";
 import { pephubAccess, pephubSignup, pephubSubscribeCurrentUser } from "@/lib/pephub-access.functions";
+import { SignupAcknowledgements } from "@/components/SignupAcknowledgements";
 import zeerowLogoAsset from "@/assets/zeerow-logo.jpeg.asset.json";
 
 export const Route = createFileRoute("/pephub/")({
@@ -42,6 +43,8 @@ function PepHub() {
   const [checking, setChecking] = useState(true);
   const [signedIn, setSignedIn] = useState(false);
   const [hasAccess, setHasAccess] = useState(false);
+  const [age21, setAge21] = useState(false);
+  const [researchUse, setResearchUse] = useState(false);
   const [showZeerowPopup, setShowZeerowPopup] = useState(false);
   const [showLegalShieldPopup, setShowLegalShieldPopup] = useState(false);
   const signup = useServerFn(pephubSignup);
@@ -128,8 +131,12 @@ function PepHub() {
           toast.error("Name, email and a password of at least 8 characters are required.");
           return;
         }
+        if (!age21 || !researchUse) {
+          toast.error("Please check both confirmation boxes to create your account.");
+          return;
+        }
         const res = await signup({
-          data: { name: name.trim(), email: email.trim(), password },
+          data: { name: name.trim(), email: email.trim(), password, age21: true, researchUse: true },
         });
         const { error } = await supabase.auth.signInWithPassword({
           email: email.trim().toLowerCase(),
@@ -165,9 +172,15 @@ function PepHub() {
   }
 
   async function optIn() {
+    if (!age21 || !researchUse) {
+      toast.error("Please check both confirmation boxes to unlock PepHub.");
+      return;
+    }
     setBusy(true);
     try {
-      await subscribeMe({ data: { name: name.trim() || undefined } });
+      await subscribeMe({
+        data: { name: name.trim() || undefined, age21: true, researchUse: true },
+      });
       toast.success("You're on the PepHub list.");
       await refreshAccess();
     } catch (err) {
@@ -240,11 +253,20 @@ function PepHub() {
                   PepHub is free, but it's for members of our sale-alert list. Turn on email alerts
                   to unlock the full list of trusted sources.
                 </p>
+                <div className="mt-6">
+                  <SignupAcknowledgements
+                    idPrefix="ph-optin"
+                    age21={age21}
+                    researchUse={researchUse}
+                    onAge21={setAge21}
+                    onResearchUse={setResearchUse}
+                  />
+                </div>
                 <button
                   type="button"
                   onClick={optIn}
-                  disabled={busy}
-                  className="btn-primary mt-6 w-full justify-center"
+                  disabled={busy || !age21 || !researchUse}
+                  className="btn-primary mt-6 w-full justify-center disabled:opacity-50"
                 >
                   {busy ? "Turning on alerts…" : "Turn on sale alerts & unlock PepHub"}
                 </button>
@@ -302,7 +324,20 @@ function PepHub() {
                       placeholder={mode === "signup" ? "At least 8 characters" : "Your password"}
                     />
                   </div>
-                  <button type="submit" disabled={busy} className="btn-primary w-full justify-center">
+                  {mode === "signup" && (
+                    <SignupAcknowledgements
+                      idPrefix="ph-signup"
+                      age21={age21}
+                      researchUse={researchUse}
+                      onAge21={setAge21}
+                      onResearchUse={setResearchUse}
+                    />
+                  )}
+                  <button
+                    type="submit"
+                    disabled={busy || (mode === "signup" && (!age21 || !researchUse))}
+                    className="btn-primary w-full justify-center disabled:opacity-50"
+                  >
                     {busy
                       ? "Just a second…"
                       : mode === "signup"

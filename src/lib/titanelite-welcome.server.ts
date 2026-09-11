@@ -19,6 +19,8 @@ type TriggerInput = {
   userId?: string | null;
   /** True only when the account was genuinely just created. */
   isNewSignup?: boolean;
+  /** Required signup confirmations, recorded when both are true. */
+  acknowledgements?: { age21: boolean; researchUse: boolean } | null;
 };
 
 /**
@@ -47,6 +49,15 @@ export async function triggerTitanEliteWelcome(
 
     let rowId = existing?.id as string | undefined;
 
+    const ack =
+      input.acknowledgements?.age21 && input.acknowledgements?.researchUse
+        ? {
+            age_21_confirmed: true,
+            research_use_confirmed: true,
+            acknowledgements_confirmed_at: new Date().toISOString(),
+          }
+        : {};
+
     if (!rowId) {
       const { data: inserted, error } = await supabaseAdmin
         .from("marketing_subscribers")
@@ -59,6 +70,7 @@ export async function triggerTitanEliteWelcome(
           resend_sync_status: "pending",
           titanelite_welcome_status: "pending",
           ...(input.userId ? { user_id: input.userId } : {}),
+          ...ack,
         })
         .select("id")
         .maybeSingle();
@@ -75,9 +87,12 @@ export async function triggerTitanEliteWelcome(
           first_name: existing?.first_name ?? first,
           last_name: existing?.last_name ?? last,
           ...(input.userId ? { user_id: input.userId } : {}),
+          ...ack,
         })
         .eq("id", rowId)
         .in("titanelite_welcome_status", ["pending", "failed", "skipped"]);
+    } else if (Object.keys(ack).length) {
+      await supabaseAdmin.from("marketing_subscribers").update(ack).eq("id", rowId);
     }
 
     if (!rowId) return { outcome: "failed", reason: "no subscriber record" };

@@ -13,12 +13,19 @@ export const pephubAccess = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const email = (context.claims?.email as string | undefined)?.toLowerCase() ?? null;
 
-    type SubRow = { id: string; subscribed: boolean; user_id: string | null };
+    type SubRow = {
+      id: string;
+      subscribed: boolean;
+      user_id: string | null;
+      age_21_confirmed: boolean;
+      research_use_confirmed: boolean;
+    };
+    const cols = "id, subscribed, user_id, age_21_confirmed, research_use_confirmed";
     let row: SubRow | null = null;
 
     const byUser = await supabaseAdmin
       .from("marketing_subscribers")
-      .select("id, subscribed, user_id")
+      .select(cols)
       .eq("user_id", context.userId)
       .maybeSingle();
     row = (byUser.data as SubRow | null) ?? null;
@@ -26,7 +33,7 @@ export const pephubAccess = createServerFn({ method: "POST" })
     if (!row && email) {
       const byEmail = await supabaseAdmin
         .from("marketing_subscribers")
-        .select("id, subscribed, user_id")
+        .select(cols)
         .ilike("email", email)
         .maybeSingle();
       row = (byEmail.data as SubRow | null) ?? null;
@@ -39,13 +46,34 @@ export const pephubAccess = createServerFn({ method: "POST" })
       }
     }
 
-    return { hasAccount: true, subscribed: Boolean(row?.subscribed), email };
+    const acknowledged = Boolean(row?.age_21_confirmed && row?.research_use_confirmed);
+    return {
+      hasAccount: true,
+      subscribed: Boolean(row?.subscribed) && acknowledged,
+      acknowledged,
+      email,
+    };
   });
+
+/** Both boxes are required — the server never accepts an unchecked value. */
+const acknowledgementsSchema = {
+  age21: z.literal(true, {
+    message: "You must confirm that you are 21 or older.",
+  }),
+  researchUse: z.literal(true, {
+    message:
+      "You must confirm you understand peptide information and sources are not for human or animal use.",
+  }),
+};
 
 /** Signed-in user opts into the email list to unlock PepHub. */
 export const pephubSubscribeCurrentUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ name: z.string().trim().max(120).optional() }).parse(d ?? {}))
+  .inputValidator((d: unknown) =>
+    z
+      .object({ name: z.string().trim().max(120).optional(), ...acknowledgementsSchema })
+      .parse(d ?? {}),
+  )
   .handler(async ({ data, context }) => {
     const email = (context.claims?.email as string | undefined)?.toLowerCase();
     if (!email) throw new Error("Your account has no email address.");
@@ -55,6 +83,7 @@ export const pephubSubscribeCurrentUser = createServerFn({ method: "POST" })
       name: data.name ?? (context.claims?.["user_metadata"] as { full_name?: string } | undefined)?.full_name ?? null,
       source: "pephub",
       userId: context.userId,
+      acknowledgements: { age21: data.age21, researchUse: data.researchUse },
     });
     return { ok: true };
   });
@@ -71,6 +100,7 @@ export const pephubSignup = createServerFn({ method: "POST" })
         email: z.string().trim().email().max(200),
         password: z.string().min(8).max(200),
         website: z.string().max(0).optional(), // honeypot
+        ...acknowledgementsSchema,
       })
       .parse(d),
   )
@@ -87,7 +117,11 @@ export const pephubSignup = createServerFn({ method: "POST" })
       email,
       password: data.password,
       email_confirm: true,
-      user_metadata: { full_name: data.name.trim() },
+      user_metadata: {
+        full_name: data.name.trim(),
+        age_21_confirmed: true,
+        research_use_confirmed: true,
+      },
     });
 
     if (created.error) {
@@ -102,7 +136,13 @@ export const pephubSignup = createServerFn({ method: "POST" })
     }
 
     const { saveSubscriber } = await import("@/lib/marketing.server");
-    const subscriber = await saveSubscriber({ email, name: data.name, source: "pephub", userId });
+    const subscriber = await saveSubscriber({
+      email,
+      name: data.name,
+      source: "pephub",
+      userId,
+      acknowledgements: { age21: data.age21, researchUse: data.researchUse },
+    });
 
     if (!existingAccount && userId && subscriber.id) {
       console.info("[pephub signup] account created", { userId, subscriberId: subscriber.id });

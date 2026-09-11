@@ -818,6 +818,8 @@ export type Database = {
       }
       marketing_subscribers: {
         Row: {
+          acknowledgements_confirmed_at: string | null
+          age_21_confirmed: boolean
           created_at: string
           email: string
           first_name: string | null
@@ -831,6 +833,7 @@ export type Database = {
           pephub_welcome_last_attempt_at: string | null
           pephub_welcome_status: string
           pephub_welcome_triggered_at: string | null
+          research_use_confirmed: boolean
           resend_contact_id: string | null
           resend_last_synced_at: string | null
           resend_sync_error: string | null
@@ -853,6 +856,8 @@ export type Database = {
           welcome_message_id: string | null
         }
         Insert: {
+          acknowledgements_confirmed_at?: string | null
+          age_21_confirmed?: boolean
           created_at?: string
           email: string
           first_name?: string | null
@@ -866,6 +871,7 @@ export type Database = {
           pephub_welcome_last_attempt_at?: string | null
           pephub_welcome_status?: string
           pephub_welcome_triggered_at?: string | null
+          research_use_confirmed?: boolean
           resend_contact_id?: string | null
           resend_last_synced_at?: string | null
           resend_sync_error?: string | null
@@ -888,6 +894,8 @@ export type Database = {
           welcome_message_id?: string | null
         }
         Update: {
+          acknowledgements_confirmed_at?: string | null
+          age_21_confirmed?: boolean
           created_at?: string
           email?: string
           first_name?: string | null
@@ -901,6 +909,7 @@ export type Database = {
           pephub_welcome_last_attempt_at?: string | null
           pephub_welcome_status?: string
           pephub_welcome_triggered_at?: string | null
+          research_use_confirmed?: boolean
           resend_contact_id?: string | null
           resend_last_synced_at?: string | null
           resend_sync_error?: string | null

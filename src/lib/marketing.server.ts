@@ -16,9 +16,19 @@ export async function saveSubscriber(input: {
   name?: string | null;
   source?: string;
   userId?: string | null;
+  /** Both must be true when the person is confirming at signup / opt-in. */
+  acknowledgements?: { age21: boolean; researchUse: boolean } | null;
 }) {
   const email = input.email.trim().toLowerCase();
   const { first, last } = splitName(input.name ?? "");
+  const ack =
+    input.acknowledgements?.age21 && input.acknowledgements?.researchUse
+      ? {
+          age_21_confirmed: true,
+          research_use_confirmed: true,
+          acknowledgements_confirmed_at: new Date().toISOString(),
+        }
+      : {};
 
   const { data: existing } = await supabaseAdmin
     .from("marketing_subscribers")
@@ -37,6 +47,7 @@ export async function saveSubscriber(input: {
         unsubscribed_at: null,
         resend_sync_status: "pending",
         ...(input.userId ? { user_id: input.userId } : {}),
+        ...ack,
       })
       .eq("id", rowId);
   } else {
@@ -50,6 +61,7 @@ export async function saveSubscriber(input: {
         source: input.source ?? "pephub",
         resend_sync_status: "pending",
         ...(input.userId ? { user_id: input.userId } : {}),
+        ...ack,
       })
       .select("id")
       .maybeSingle();
