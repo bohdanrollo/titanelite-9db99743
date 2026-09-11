@@ -89,7 +89,7 @@ export async function triggerPepHubWelcome(
       email: claimed.email,
       payload: {
         first_name: claimed.first_name ?? "",
-        pephub_user_id: claimed.user_id,
+        pephub_user_id: claimed.user_id ?? input.userId,
         signup_timestamp: claimed.created_at,
         source: "pephub",
       },
