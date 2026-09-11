@@ -19,6 +19,7 @@ import { getStripeEnvironment } from "@/lib/stripe";
 import { AdminMessages } from "@/components/Messaging";
 import CoachingAdmin, { type SchedulePrefill } from "@/components/coaching/CoachingAdmin";
 import PepHubAdmin from "@/components/PepHubAdmin";
+import EmailMarketing from "@/components/EmailMarketing";
 
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -26,7 +27,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: Admin,
 });
 
-type Tab = "clients" | "intakes" | "protocols" | "messages" | "affiliates" | "videos" | "product" | "peptide-requests" | "contact" | "calls" | "pephub";
+type Tab = "clients" | "intakes" | "protocols" | "messages" | "affiliates" | "videos" | "product" | "peptide-requests" | "contact" | "calls" | "pephub" | "email";
 
 
 function Admin() {
@@ -84,6 +85,7 @@ function Admin() {
             { k: "calls", l: "Coach calls", i: Phone },
             { k: "contact", l: "Contact form", i: Mail },
             { k: "pephub", l: "PepHub", i: Users },
+            { k: "email", l: "Email marketing", i: Mail },
           ] as const).map((t) => (
             <button
               key={t.k}
@@ -108,6 +110,7 @@ function Admin() {
 
           {tab === "contact" && <ContactMessagesAdmin />}
           {tab === "pephub" && <PepHubAdmin />}
+          {tab === "email" && <EmailMarketing />}
         </div>
       </section>
     </div>
