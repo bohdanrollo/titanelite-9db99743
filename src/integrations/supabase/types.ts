@@ -825,6 +825,12 @@ export type Database = {
           last_name: string | null
           legacy_pephub_member_id: string | null
           migrated_to_resend: boolean
+          pephub_welcome_attempts: number
+          pephub_welcome_error: string | null
+          pephub_welcome_event_name: string | null
+          pephub_welcome_last_attempt_at: string | null
+          pephub_welcome_status: string
+          pephub_welcome_triggered_at: string | null
           resend_contact_id: string | null
           resend_last_synced_at: string | null
           resend_sync_error: string | null
@@ -848,6 +854,12 @@ export type Database = {
           last_name?: string | null
           legacy_pephub_member_id?: string | null
           migrated_to_resend?: boolean
+          pephub_welcome_attempts?: number
+          pephub_welcome_error?: string | null
+          pephub_welcome_event_name?: string | null
+          pephub_welcome_last_attempt_at?: string | null
+          pephub_welcome_status?: string
+          pephub_welcome_triggered_at?: string | null
           resend_contact_id?: string | null
           resend_last_synced_at?: string | null
           resend_sync_error?: string | null
@@ -871,6 +883,12 @@ export type Database = {
           last_name?: string | null
           legacy_pephub_member_id?: string | null
           migrated_to_resend?: boolean
+          pephub_welcome_attempts?: number
+          pephub_welcome_error?: string | null
+          pephub_welcome_event_name?: string | null
+          pephub_welcome_last_attempt_at?: string | null
+          pephub_welcome_status?: string
+          pephub_welcome_triggered_at?: string | null
           resend_contact_id?: string | null
           resend_last_synced_at?: string | null
           resend_sync_error?: string | null

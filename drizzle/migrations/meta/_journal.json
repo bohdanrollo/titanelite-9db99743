@@ -113,6 +113,13 @@
       "when": 1789116152996,
       "tag": "0015_welcome_broadcast_tracking",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1789117302187,
+      "tag": "0016_add_pephub_automation_tracking",
+      "breakpoints": true
     }
   ]
 }
