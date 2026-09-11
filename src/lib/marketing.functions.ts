@@ -16,6 +16,10 @@ export type MarketingSubscriber = {
   resend_last_synced_at: string | null;
   migrated_to_resend: boolean;
   created_at: string;
+  welcome_email_status: string;
+  welcome_email_sent_at: string | null;
+  welcome_broadcast_id: string | null;
+  welcome_email_error: string | null;
 };
 
 export type SyncReport = {

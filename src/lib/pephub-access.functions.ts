@@ -106,7 +106,7 @@ export const pephubSignup = createServerFn({ method: "POST" })
 
     if (!existingAccount) {
       const { sendWelcomeEmailTo } = await import("@/lib/welcome-email.functions");
-      await sendWelcomeEmailTo(email, data.name);
+      await sendWelcomeEmailTo(email, data.name, userId);
     }
 
     return { ok: true, existingAccount };
