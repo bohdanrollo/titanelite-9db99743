@@ -117,6 +117,40 @@ export async function upsertContact(input: {
   return { contactId: id, action: "created" };
 }
 
+export function welcomeBroadcastId(): string {
+  const id = process.env["RESEND_WELCOME_BROADCAST_ID"];
+  if (!id) throw new Error("RESEND_WELCOME_BROADCAST_ID is not configured");
+  return id;
+}
+
+export type ResendBroadcast = {
+  id: string;
+  name?: string | null;
+  subject: string;
+  from: string;
+  reply_to?: string | string[] | null;
+  preview_text?: string | null;
+  html: string;
+};
+
+/**
+ * Read a Broadcast you already designed in Resend. We never modify it — we
+ * only read its saved HTML/subject/from so the exact same content can be
+ * delivered to one new signup via the transactional /emails endpoint.
+ *
+ * NOTE: Resend's Broadcast send endpoint (POST /broadcasts/:id/send) targets a
+ * whole audience or segment; there is no supported way to send an existing
+ * Broadcast to a single contact. Reading the Broadcast and sending it as a
+ * one-off email is the only supported single-recipient path.
+ */
+export async function getBroadcast(id: string): Promise<ResendBroadcast> {
+  const res = await call(`/broadcasts/${id}`, { method: "GET" });
+  if (!res.ok) throw new Error(`Resend broadcast fetch failed [${res.status}]: ${res.raw}`);
+  const b = (res.body?.["data"] ?? res.body) as ResendBroadcast | null;
+  if (!b || !b.html) throw new Error(`Resend broadcast ${id} has no saved content`);
+  return b;
+}
+
 /** Send a one-off transactional email through Resend (verified domain). */
 export async function sendEmail(input: {
   to: string;
@@ -125,6 +159,7 @@ export async function sendEmail(input: {
   text?: string;
   from?: string;
   replyTo?: string;
+  headers?: Record<string, string>;
 }): Promise<{ id: string }> {
   const res = await call("/emails", {
     method: "POST",
@@ -135,6 +170,7 @@ export async function sendEmail(input: {
       html: input.html,
       text: input.text,
       reply_to: input.replyTo,
+      headers: input.headers,
     },
   });
   if (!res.ok) throw new Error(`Resend send failed [${res.status}]: ${res.raw}`);
