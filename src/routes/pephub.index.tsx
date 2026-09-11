@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { type PepSource } from "@/lib/pephub.functions";
-import { subscribeMarketing } from "@/lib/marketing.functions";
+import { pephubAccess, pephubSignup, pephubSubscribeCurrentUser } from "@/lib/pephub-access.functions";
 import zeerowLogoAsset from "@/assets/zeerow-logo.jpeg.asset.json";
 
 export const Route = createFileRoute("/pephub/")({
@@ -36,13 +36,45 @@ function PepHub() {
   const [ready, setReady] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [mode, setMode] = useState<"signup" | "login">("signup");
   const [busy, setBusy] = useState(false);
-  const [joined, setJoined] = useState(false);
+  const [checking, setChecking] = useState(true);
+  const [signedIn, setSignedIn] = useState(false);
+  const [hasAccess, setHasAccess] = useState(false);
   const [showZeerowPopup, setShowZeerowPopup] = useState(false);
   const [showLegalShieldPopup, setShowLegalShieldPopup] = useState(false);
-  const join = useServerFn(subscribeMarketing);
+  const signup = useServerFn(pephubSignup);
+  const checkAccess = useServerFn(pephubAccess);
+  const subscribeMe = useServerFn(pephubSubscribeCurrentUser);
+
+  async function refreshAccess() {
+    setChecking(true);
+    try {
+      const { data } = await supabase.auth.getUser();
+      if (!data.user) {
+        setSignedIn(false);
+        setHasAccess(false);
+        return;
+      }
+      setSignedIn(true);
+      const res = await checkAccess({ data: {} });
+      setHasAccess(Boolean(res.subscribed));
+    } catch {
+      setSignedIn(false);
+      setHasAccess(false);
+    } finally {
+      setChecking(false);
+    }
+  }
 
   useEffect(() => {
+    void refreshAccess();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!hasAccess) return;
     (async () => {
       const { data } = await supabase
         .from("pephub_sources")
@@ -53,7 +85,7 @@ function PepHub() {
       setSources((data ?? []) as PepSource[]);
       setReady(true);
     })();
-  }, []);
+  }, [hasAccess]);
 
   useEffect(() => {
     try {
@@ -89,12 +121,55 @@ function PepHub() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim() || !email.trim()) return;
     setBusy(true);
     try {
-      await join({ data: { name: name.trim(), email: email.trim(), source: "pephub" } });
-      setJoined(true);
+      if (mode === "signup") {
+        if (!name.trim() || !email.trim() || password.length < 8) {
+          toast.error("Name, email and a password of at least 8 characters are required.");
+          return;
+        }
+        const res = await signup({
+          data: { name: name.trim(), email: email.trim(), password },
+        });
+        const { error } = await supabase.auth.signInWithPassword({
+          email: email.trim().toLowerCase(),
+          password,
+        });
+        if (error) {
+          toast.error(
+            res.existingAccount
+              ? "That email already has an account — sign in with your existing password."
+              : error.message,
+          );
+          if (res.existingAccount) setMode("login");
+          return;
+        }
+        toast.success("You're in — welcome to PepHub.");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: email.trim().toLowerCase(),
+          password,
+        });
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
+      }
+      setPassword("");
+      await refreshAccess();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function optIn() {
+    setBusy(true);
+    try {
+      await subscribeMe({ data: { name: name.trim() || undefined } });
       toast.success("You're on the PepHub list.");
+      await refreshAccess();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
     } finally {
