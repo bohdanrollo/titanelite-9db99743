@@ -102,11 +102,12 @@ export const pephubSignup = createServerFn({ method: "POST" })
     }
 
     const { saveSubscriber } = await import("@/lib/marketing.server");
-    await saveSubscriber({ email, name: data.name, source: "pephub", userId });
+    const subscriber = await saveSubscriber({ email, name: data.name, source: "pephub", userId });
 
-    if (!existingAccount) {
-      const { sendWelcomeEmailTo } = await import("@/lib/welcome-email.functions");
-      await sendWelcomeEmailTo(email, data.name, userId);
+    if (!existingAccount && userId && subscriber.id) {
+      console.info("[pephub signup] account created", { userId, subscriberId: subscriber.id });
+      const { triggerPepHubWelcome } = await import("@/lib/pephub-welcome.server");
+      await triggerPepHubWelcome({ subscriberId: subscriber.id, userId, isNewSignup: true });
     }
 
     return { ok: true, existingAccount };

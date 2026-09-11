@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { RefreshCw, Upload, Send } from "lucide-react";
+import { RefreshCw, Upload, Send, RotateCcw } from "lucide-react";
 import {
   adminMarketingOverview,
   adminMigrationPreview,
   adminSyncResend,
   adminSendTestWelcome,
   adminWelcomeConfig,
+  adminRetryPepHubWelcome,
   type MarketingSubscriber,
   type SyncReport,
 } from "@/lib/marketing.functions";
@@ -39,6 +40,7 @@ export default function EmailMarketing() {
   const [query, setQuery] = useState("");
   const [testEmail, setTestEmail] = useState("");
   const [testBusy, setTestBusy] = useState(false);
+  const [retryingId, setRetryingId] = useState<string | null>(null);
   const [welcomeCfg, setWelcomeCfg] = useState<{
     broadcastId: string | null;
     name: string | null;
@@ -52,6 +54,7 @@ export default function EmailMarketing() {
   const sync = useServerFn(adminSyncResend);
   const sendTest = useServerFn(adminSendTestWelcome);
   const welcomeConfig = useServerFn(adminWelcomeConfig);
+  const retryPepHubWelcome = useServerFn(adminRetryPepHubWelcome);
 
   const load = useCallback(async () => {
     try {
@@ -237,6 +240,12 @@ export default function EmailMarketing() {
                 <th className="py-2 pr-4">Welcome sent</th>
                 <th className="py-2 pr-4">Broadcast</th>
                 <th className="py-2 pr-4">Error</th>
+                <th className="py-2 pr-4">PepHub automation</th>
+                <th className="py-2 pr-4">Triggered</th>
+                <th className="py-2 pr-4">Event</th>
+                <th className="py-2 pr-4">Attempts</th>
+                <th className="py-2 pr-4">Automation error</th>
+                <th className="py-2 pr-4">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -268,6 +277,44 @@ export default function EmailMarketing() {
                   </td>
                   <td className="py-2 pr-4 max-w-[220px] truncate text-xs text-blood">
                     {r.welcome_email_error ?? "—"}
+                  </td>
+                  <td className="py-2 pr-4">{r.pephub_welcome_status}</td>
+                  <td className="py-2 pr-4">
+                    {r.pephub_welcome_triggered_at
+                      ? new Date(r.pephub_welcome_triggered_at).toLocaleString()
+                      : "—"}
+                  </td>
+                  <td className="py-2 pr-4 font-mono text-[11px]">
+                    {r.pephub_welcome_event_name ?? "—"}
+                  </td>
+                  <td className="py-2 pr-4">{r.pephub_welcome_attempts}</td>
+                  <td className="py-2 pr-4 max-w-[220px] truncate text-xs text-blood">
+                    {r.pephub_welcome_error ?? "—"}
+                  </td>
+                  <td className="py-2 pr-4">
+                    {r.pephub_welcome_status === "failed" ? (
+                      <button
+                        type="button"
+                        className="btn-primary whitespace-nowrap"
+                        disabled={retryingId !== null}
+                        onClick={async () => {
+                          setRetryingId(r.id);
+                          try {
+                            const result = await retryPepHubWelcome({ data: { subscriberId: r.id } });
+                            if (result.outcome === "triggered") toast.success("PepHub Automation triggered");
+                            else toast.error(result.reason ?? result.outcome);
+                            await load();
+                          } catch (err) {
+                            toast.error(err instanceof Error ? err.message : "Retry failed");
+                          } finally {
+                            setRetryingId(null);
+                          }
+                        }}
+                      >
+                        <RotateCcw size={14} className="mr-2" />
+                        {retryingId === r.id ? "Retrying…" : "Retry"}
+                      </button>
+                    ) : "—"}
                   </td>
                 </tr>
               ))}

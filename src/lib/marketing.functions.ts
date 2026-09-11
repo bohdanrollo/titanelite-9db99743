@@ -20,6 +20,12 @@ export type MarketingSubscriber = {
   welcome_email_sent_at: string | null;
   welcome_broadcast_id: string | null;
   welcome_email_error: string | null;
+  pephub_welcome_status: string;
+  pephub_welcome_triggered_at: string | null;
+  pephub_welcome_event_name: string | null;
+  pephub_welcome_error: string | null;
+  pephub_welcome_attempts: number;
+  pephub_welcome_last_attempt_at: string | null;
 };
 
 export type SyncReport = {
@@ -153,7 +159,7 @@ export const adminMarketingOverview = createServerFn({ method: "POST" })
     const { data, error } = await supabaseAdmin
       .from("marketing_subscribers")
       .select(
-        "id, user_id, email, first_name, last_name, subscribed, source, resend_contact_id, resend_sync_status, resend_sync_error, resend_last_synced_at, migrated_to_resend, created_at, welcome_email_status, welcome_email_sent_at, welcome_broadcast_id, welcome_email_error",
+        "id, user_id, email, first_name, last_name, subscribed, source, resend_contact_id, resend_sync_status, resend_sync_error, resend_last_synced_at, migrated_to_resend, created_at, welcome_email_status, welcome_email_sent_at, welcome_broadcast_id, welcome_email_error, pephub_welcome_status, pephub_welcome_triggered_at, pephub_welcome_event_name, pephub_welcome_error, pephub_welcome_attempts, pephub_welcome_last_attempt_at",
       )
       .order("created_at", { ascending: false })
       .limit(5000);
@@ -358,4 +364,24 @@ export const adminWelcomeConfig = createServerFn({ method: "POST" })
     } catch {
       return { broadcastId, audienceConfigured, apiKeyConfigured, name: null, subject: null };
     }
+  });
+
+/** Admin: safely retry one definitively failed PepHub Automation event. */
+export const adminRetryPepHubWelcome = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ subscriberId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await requireAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: subscriber } = await supabaseAdmin
+      .from("marketing_subscribers")
+      .select("id, user_id, pephub_welcome_status")
+      .eq("id", data.subscriberId)
+      .maybeSingle();
+    if (!subscriber?.user_id) throw new Error("This subscriber is not linked to a PepHub account.");
+    if (subscriber.pephub_welcome_status !== "failed") {
+      return { outcome: "already_triggered" as const };
+    }
+    const { triggerPepHubWelcome } = await import("@/lib/pephub-welcome.server");
+    return triggerPepHubWelcome({ subscriberId: subscriber.id, userId: subscriber.user_id });
   });

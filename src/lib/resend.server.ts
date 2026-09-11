@@ -45,6 +45,36 @@ async function call(path: string, init: { method: string; body?: unknown }) {
   return { ok: res.ok, status: res.status, body: parsed as Record<string, unknown> | null, raw: text };
 }
 
+export type ResendEventResult = {
+  event: string;
+  object: "event";
+};
+
+/**
+ * Trigger one existing Resend Automation event for exactly one email address.
+ * The endpoint accepts a single `email` value; it cannot broadcast to a list.
+ */
+export async function sendAutomationEvent(input: {
+  event: string;
+  email: string;
+  payload?: Record<string, string>;
+}): Promise<ResendEventResult> {
+  const res = await call("/events/send", {
+    method: "POST",
+    body: {
+      event: input.event,
+      email: input.email,
+      payload: input.payload,
+    },
+  });
+  if (!res.ok) throw new Error(`Resend event failed [${res.status}]: ${res.raw}`);
+  const result = res.body as ResendEventResult | null;
+  if (res.status !== 202 || result?.object !== "event" || result.event !== input.event) {
+    throw new Error(`Resend event returned an unexpected response [${res.status}]: ${res.raw}`);
+  }
+  return result;
+}
+
 /** Look up a contact by email address. Returns null when absent. */
 export async function getContact(email: string): Promise<ResendContact | null> {
   const res = await call(`/audiences/${audienceId()}/contacts/${encodeURIComponent(email)}`, {
