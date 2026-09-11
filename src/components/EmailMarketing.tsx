@@ -246,6 +246,12 @@ export default function EmailMarketing() {
                 <th className="py-2 pr-4">Attempts</th>
                 <th className="py-2 pr-4">Automation error</th>
                 <th className="py-2 pr-4">Action</th>
+                <th className="py-2 pr-4">Titan Elite automation</th>
+                <th className="py-2 pr-4">Triggered</th>
+                <th className="py-2 pr-4">Event</th>
+                <th className="py-2 pr-4">Attempts</th>
+                <th className="py-2 pr-4">Automation error</th>
+                <th className="py-2 pr-4">Action</th>
               </tr>
             </thead>
             <tbody>
