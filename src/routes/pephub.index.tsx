@@ -6,7 +6,8 @@ import { BadgeCheck, ExternalLink, Mail, ShieldCheck, Tag, X } from "lucide-reac
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { joinPepHub, type PepSource } from "@/lib/pephub.functions";
+import { type PepSource } from "@/lib/pephub.functions";
+import { subscribeMarketing } from "@/lib/marketing.functions";
 import zeerowLogoAsset from "@/assets/zeerow-logo.jpeg.asset.json";
 
 export const Route = createFileRoute("/pephub/")({
@@ -39,7 +40,7 @@ function PepHub() {
   const [joined, setJoined] = useState(false);
   const [showZeerowPopup, setShowZeerowPopup] = useState(false);
   const [showLegalShieldPopup, setShowLegalShieldPopup] = useState(false);
-  const join = useServerFn(joinPepHub);
+  const join = useServerFn(subscribeMarketing);
 
   useEffect(() => {
     (async () => {
@@ -91,7 +92,7 @@ function PepHub() {
     if (!name.trim() || !email.trim()) return;
     setBusy(true);
     try {
-      await join({ data: { name: name.trim(), email: email.trim() } });
+      await join({ data: { name: name.trim(), email: email.trim(), source: "pephub" } });
       setJoined(true);
       toast.success("You're on the PepHub list.");
     } catch (err) {

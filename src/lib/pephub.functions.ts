@@ -46,28 +46,8 @@ export type PepAlert = {
   sent_at: string;
 };
 
-/** Public: join PepHub with name + email. */
-export const joinPepHub = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
-    z
-      .object({
-        name: z.string().trim().min(1).max(120),
-        email: z.string().trim().email().max(200),
-      })
-      .parse(d),
-  )
-  .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const email = data.email.toLowerCase();
-    const { error } = await supabaseAdmin
-      .from("pephub_members")
-      .upsert(
-        { name: data.name, email, subscribed: true, unsubscribed_at: null },
-        { onConflict: "email" },
-      );
-    if (error) throw new Error(error.message);
-    return { ok: true };
-  });
+// Public signup now lives in src/lib/marketing.functions.ts (subscribeMarketing),
+// which writes to marketing_subscribers and syncs the contact to Resend.
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function requireAdmin(supabase: any, userId: string) {
@@ -81,13 +61,21 @@ export const adminListPepHubMembers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await requireAdmin(context.supabase, context.userId);
-    const { data, error } = await context.supabase
-      .from("pephub_members")
-      .select("id, name, email, subscribed, created_at")
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin
+      .from("marketing_subscribers")
+      .select("id, first_name, last_name, email, subscribed, created_at")
       .order("created_at", { ascending: false })
       .limit(2000);
     if (error) throw new Error(error.message);
-    return { members: (data ?? []) as PepMember[] };
+    const members: PepMember[] = (data ?? []).map((r) => ({
+      id: r.id,
+      name: [r.first_name, r.last_name].filter(Boolean).join(" "),
+      email: r.email,
+      subscribed: r.subscribed,
+      created_at: r.created_at,
+    }));
+    return { members };
   });
 
 /** Admin: remove a PepHub member. */
@@ -97,7 +85,7 @@ export const adminDeletePepHubMember = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await requireAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("pephub_members").delete().eq("id", data.id);
+    const { error } = await supabaseAdmin.from("marketing_subscribers").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
@@ -217,10 +205,14 @@ export const adminSendDealAlert = createServerFn({ method: "POST" })
     if (srcErr) throw new Error(srcErr.message);
     if (!source) throw new Error("Source not found");
 
-    const { data: members, error: memErr } = await supabaseAdmin
-      .from("pephub_members")
-      .select("name, email")
+    const { data: memberRows, error: memErr } = await supabaseAdmin
+      .from("marketing_subscribers")
+      .select("first_name, last_name, email")
       .eq("subscribed", true);
+    const members = (memberRows ?? []).map((r) => ({
+      name: [r.first_name, r.last_name].filter(Boolean).join(" "),
+      email: r.email,
+    }));
     if (memErr) throw new Error(memErr.message);
 
     const promo = data.promoCode || source.discount_code || undefined;

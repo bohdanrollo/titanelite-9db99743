@@ -653,10 +653,14 @@ export async function sendPromotionEmails(promotionId: string): Promise<{ sent: 
   const source = (promo as any).pephub_sources ?? {};
   const data = templateDataFor(promo as any, source);
 
-  const { data: members } = await supabaseAdmin
-    .from("pephub_members")
-    .select("id, name, email")
+  const { data: memberRows } = await supabaseAdmin
+    .from("marketing_subscribers")
+    .select("first_name, last_name, email")
     .eq("subscribed", true);
+  const members = (memberRows ?? []).map((r: any) => ({
+    name: [r.first_name, r.last_name].filter(Boolean).join(" "),
+    email: r.email,
+  }));
 
   let sent = 0;
   for (const m of members ?? []) {
@@ -664,7 +668,7 @@ export async function sendPromotionEmails(promotionId: string): Promise<{ sent: 
     // Claim the recipient first — unique index makes this idempotent.
     const { data: claimed, error: claimErr } = await supabaseAdmin
       .from("pephub_sale_emails")
-      .insert({ promotion_id: promotionId, member_id: m.id, email, status: "queued" })
+      .insert({ promotion_id: promotionId, email, status: "queued" })
       .select("id")
       .maybeSingle();
     if (claimErr || !claimed) continue; // already emailed about this promotion
