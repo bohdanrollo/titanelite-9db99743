@@ -19,9 +19,9 @@ export const Route = createFileRoute("/features")({
 
 function Page() {
   const items = [
-    { i: FileText, t: "Custom Protocols", d: "Receive a 100% custom educational peptide protocol and weight-programming plan built from your intake, delivered as a PDF. Full Access only." },
+    { i: FileText, t: "Custom Protocols", d: "Receive a 100% custom educational peptide protocol and weight-programming plan built from your intake, delivered as a PDF. Elite Access only." },
     { i: MessagesSquare, t: "Coach Messaging", d: "Message your coach directly from the dashboard and get replies in the same thread. Included with Full Access." },
-    { i: Phone, t: "Coach Calls", d: "Book a 30-minute call with your coach on fitness or peptides — pick a weekday slot between 8 AM and 8 PM, at least 48 hours ahead. Full Access only." },
+    { i: Phone, t: "Coach Calls", d: "Book a 30-minute call with your coach on fitness or peptides — pick a weekday slot between 8 AM and 8 PM, at least 48 hours ahead. Elite Access only." },
     { i: MessageCircle, t: "Pep Talk AI", d: "Ask anything about peptide effects, dosing, timing, stacking, and safety — instant research answers." },
     { i: Beaker, t: "Top 50 Peptides", d: "A searchable research library covering the most popular compounds and what each is studied for." },
     { i: Layers, t: "Combo Guides", d: "Research-informed breakdowns of popular peptide combinations — pathways, overlap, and the questions to ask before stacking." },
@@ -40,7 +40,7 @@ function Page() {
     { i: TrendingUp, t: "Progress Tracker", d: "Log weight and body fat over time with an automatic trend chart — your full history is saved." },
     { i: NotebookPen, t: "Workout Logger", d: "Record exercises, sets, reps, and weight for every session. Personal records are tracked automatically." },
     { i: HeartPulse, t: "Wellness Tracker", d: "Track daily water intake, sleep hours, and steps with a per-day history." },
-    { i: Sparkles, t: "AI Stack Builder", d: "Pick a goal and get an educational research-oriented peptide stack with typical dosing, timing, and cycling guidance. Full Access only." },
+    { i: Sparkles, t: "AI Stack Builder", d: "Pick a goal and get an educational research-oriented peptide stack with typical dosing, timing, and cycling guidance. Elite Access only." },
   ];
   return (
     <div className="min-h-dvh bg-background text-foreground">

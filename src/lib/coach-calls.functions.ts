@@ -79,7 +79,7 @@ export const requestCoachCall = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    if (!(await hasFullAccess(supabase, userId))) throw new Error("Full Access required to book a coach call.");
+    if (!(await hasFullAccess(supabase, userId))) throw new Error("Elite Access required to book a coach call.");
 
     const start = new Date(data.startIso);
     if (Number.isNaN(start.getTime())) throw new Error("Invalid date or time.");
