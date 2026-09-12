@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useAccess, isTabAllowed } from "@/lib/access";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, MessagesSquare, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, CheckCircle, Activity, Apple, TrendingUp, HeartPulse, NotebookPen, Sparkles, CreditCard, Phone } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, MessagesSquare, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, Check, CheckCircle, Activity, Apple, TrendingUp, HeartPulse, NotebookPen, Sparkles, CreditCard, Phone } from "lucide-react";
 import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import ReactMarkdown from "react-markdown";
@@ -25,6 +25,7 @@ import { getStripeEnvironment } from "@/lib/stripe";
 import { AddToHomeScreenButton } from "@/components/AddToHomeScreen";
 import { wasReferredByCode } from "@/lib/affiliates.functions";
 import CoachCalls from "@/components/CoachCalls";
+import { StripeEmbeddedCheckoutForm } from "@/components/StripeEmbeddedCheckout";
 
 function ManageSubscriptionButton() {
   const openPortal = useServerFn(createPortalSession);
@@ -74,6 +75,7 @@ function Dashboard() {
   const routeSearch = Route.useSearch();
   const [tab, setTab] = useState<Tab>(routeSearch.tab ?? "peptides");
   const [navOpen, setNavOpen] = useState(false);
+  const [showUpgrade, setShowUpgrade] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const [intake, setIntake] = useState<{ id: string; status: string; submitted_at: string } | null>(null);
   const [isAffiliate, setIsAffiliate] = useState(false);
@@ -141,36 +143,9 @@ function Dashboard() {
           </div>
         )}
 
-        {!accessLoading && tier === "limited" && (
-          <div className="mt-8 border border-blood/40 bg-blood/5 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <div className="text-eyebrow text-blood">Limited Access</div>
-              <div className="mt-1 font-display text-xl sm:text-2xl">Upgrade to Full Access</div>
-              <p className="mt-1 text-sm text-muted-foreground">Unlock custom peptide + training protocols and direct messaging with your coach. $40.99/month. Cancel anytime.</p>
-            </div>
-            <button
-              onClick={() => nav({ to: "/checkout" })}
-              className="btn-blood hover:btn-blood-hover shrink-0"
-            >
-              Upgrade
-            </button>
-          </div>
-        )}
-
-        {!accessLoading && tier === "full" && (
-          <div className="mt-8 border border-blood/40 bg-blood/5 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <div className="text-eyebrow text-blood">Full Access</div>
-              <div className="mt-1 font-display text-xl sm:text-2xl">Upgrade to Elite Access</div>
-              <p className="mt-1 text-sm text-muted-foreground">Everything on the dashboard plus coach calling and scheduling. $250/month. Cancel anytime.</p>
-            </div>
-            <button onClick={() => nav({ to: "/checkout" })} className="btn-blood hover:btn-blood-hover shrink-0">
-              Upgrade
-            </button>
-          </div>
-        )}
-
-        {accessLoading ? (
+        {showUpgrade && hasAccess ? (
+          <UpgradeScreen tier={tier} onClose={() => setShowUpgrade(false)} />
+        ) : accessLoading ? (
           <div className="mt-10 text-eyebrow">Loading access…</div>
         ) : !hasAccess ? (
           <PaywallCard />
@@ -230,7 +205,7 @@ function Dashboard() {
                               key={t.k}
                               onClick={() => {
                                 setNavOpen(false);
-                                if (t.locked) { nav({ to: "/checkout" }); return; }
+                                if (t.locked) { setShowUpgrade(true); return; }
                                 setTab(t.k);
                               }}
                               className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] transition ${tab === t.k && !t.locked ? "bg-blood/10 text-blood" : t.locked ? "text-muted-foreground/60 hover:bg-muted" : "hover:bg-muted"}`}
@@ -256,7 +231,7 @@ function Dashboard() {
                           <button
                             key={t.k}
                             onClick={() => {
-                              if (t.locked) { nav({ to: "/checkout" }); return; }
+                              if (t.locked) { setShowUpgrade(true); return; }
                               setTab(t.k);
                             }}
                             className={`shrink-0 px-3 lg:px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] flex items-center gap-1.5 border-b-2 transition ${tab === t.k && !t.locked ? "border-blood text-blood" : t.locked ? "border-transparent text-muted-foreground/50 hover:text-muted-foreground" : "border-transparent text-muted-foreground hover:text-foreground"} ${idx < arr.length - 1 ? "mr-1" : ""}`}
@@ -298,9 +273,18 @@ function Dashboard() {
           {tab === "wellness" && isTabAllowed("wellness", tier, isAdmin) && <WellnessTracker />}
           {tab === "workouts" && isTabAllowed("workouts", tier, isAdmin) && <WorkoutLogger />}
           {tab === "stackbuilder" && isTabAllowed("stackbuilder", tier, isAdmin) && <StackBuilder />}
-          {!accessLoading && hasAccess && !isTabAllowed(tab, tier, isAdmin) && <LockedTabCard tab={tab} />}
+          {!accessLoading && hasAccess && !isTabAllowed(tab, tier, isAdmin) && <LockedTabCard tab={tab} onUpgrade={() => setShowUpgrade(true)} />}
           {hasAccess && (
-            <div className="mt-16 pt-6 border-t border-foreground/5 flex justify-center">
+            <div className="mt-16 pt-6 border-t border-foreground/5 flex items-center justify-center gap-5">
+              {!isAdmin && tier !== "elite" && (
+                <button
+                  onClick={() => setShowUpgrade(true)}
+                  className="font-mono text-[10px] uppercase tracking-[0.18em] text-blood hover:text-foreground flex items-center gap-1.5 transition"
+                >
+                  <Sparkles size={12} />
+                  <span>Upgrade</span>
+                </button>
+              )}
               <ManageSubscriptionButton />
             </div>
           )}
@@ -312,24 +296,99 @@ function Dashboard() {
   );
 }
 
-function LockedTabCard({ tab }: { tab: Tab }) {
+type UpgradePlanId = "full_monthly" | "elite_monthly";
+
+function UpgradeScreen({ tier, onClose }: { tier: "limited" | "full" | "elite" | null; onClose: () => void }) {
+  const [selectedPlan, setSelectedPlan] = useState<UpgradePlanId | null>(null);
+  const plans = [
+    {
+      id: "full_monthly" as const,
+      name: "Full Access",
+      price: "$40.99",
+      features: ["Everything in Limited Access", "Custom peptide and training protocols", "Direct coach messaging", "AI Stack Builder"],
+    },
+    {
+      id: "elite_monthly" as const,
+      name: "Elite Access",
+      price: "$250",
+      features: ["Everything in Full Access", "Coach calling and scheduling", "Priority coach support", "All 21 dashboard tools"],
+    },
+  ].filter((plan) => tier === "limited" || plan.id === "elite_monthly");
+
+  return (
+    <div className="mt-10">
+      <button
+        onClick={() => selectedPlan ? setSelectedPlan(null) : onClose()}
+        className="mb-7 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground hover:text-blood transition"
+      >
+        ← {selectedPlan ? "Back to plans" : "Back to dashboard"}
+      </button>
+
+      {selectedPlan ? (
+        <div>
+          <div className="mb-6">
+            <div className="text-eyebrow">Secure checkout</div>
+            <h2 className="mt-3 text-3xl sm:text-5xl">Complete your upgrade.</h2>
+          </div>
+          <div className="border border-foreground/15 bg-card">
+            <StripeEmbeddedCheckoutForm priceId={selectedPlan} />
+          </div>
+        </div>
+      ) : (
+        <div>
+          <div className="max-w-2xl">
+            <div className="text-eyebrow">Upgrade your membership</div>
+            <h2 className="mt-3 text-3xl sm:text-5xl">Choose your access.</h2>
+            <p className="mt-4 text-sm text-muted-foreground">Unlock more coaching and dashboard tools. Cancel anytime.</p>
+          </div>
+          <div className={`mt-8 grid gap-5 ${plans.length > 1 ? "md:grid-cols-2" : "max-w-xl"}`}>
+            {plans.map((plan) => (
+              <div key={plan.id} className="border border-foreground/15 bg-card p-6 sm:p-8 flex flex-col">
+                <div className="text-eyebrow text-blood">Monthly membership</div>
+                <h3 className="mt-3 text-3xl">{plan.name}</h3>
+                <div className="mt-4 flex items-end gap-2">
+                  <span className="font-display text-5xl">{plan.price}</span>
+                  <span className="pb-1 text-sm text-muted-foreground">/ month</span>
+                </div>
+                <ul className="mt-7 space-y-3 text-sm flex-1">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex gap-2.5">
+                      <Check size={16} className="mt-0.5 shrink-0 text-blood" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <button onClick={() => setSelectedPlan(plan.id)} className="mt-8 btn-blood hover:btn-blood-hover w-full">
+                  Upgrade to {plan.name}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function LockedTabCard({ tab, onUpgrade }: { tab: Tab; onUpgrade: () => void }) {
   const labels: Partial<Record<Tab, string>> = {
     protocols: "Custom protocols",
     messages: "Coach messaging",
     stackbuilder: "Stack builder",
     calls: "Coach calls",
   };
+  const requiredPlan = tab === "calls" ? "Elite Access" : "Full Access";
   return (
     <div className="border border-foreground/15 p-6 sm:p-10 text-center max-w-2xl mx-auto">
       <Lock size={40} className="mx-auto text-blood" />
-      <div className="text-eyebrow mt-4">Full Access feature</div>
-      <h2 className="mt-3 font-display text-3xl sm:text-4xl">{labels[tab] ?? "This tool"} is part of Full Access</h2>
+      <div className="text-eyebrow mt-4">{requiredPlan} feature</div>
+      <h2 className="mt-3 font-display text-3xl sm:text-4xl">{labels[tab] ?? "This tool"} is part of {requiredPlan}</h2>
       <p className="mt-4 text-sm text-muted-foreground">
-        Upgrade to Full Access to unlock {labels[tab] ? labels[tab].toLowerCase() : "this tool"} along with every other dashboard tool. Cancel anytime.
+        Upgrade to {requiredPlan} to unlock {labels[tab] ? labels[tab].toLowerCase() : "this tool"}. Cancel anytime.
       </p>
-      <Link to="/checkout" className="mt-6 inline-flex btn-blood hover:btn-blood-hover">
-        Upgrade to Full Access
-      </Link>
+      <button onClick={onUpgrade} className="mt-6 inline-flex btn-blood hover:btn-blood-hover">
+        Upgrade to {requiredPlan}
+      </button>
     </div>
   );
 }
@@ -357,7 +416,7 @@ function Protocols() {
   const [items, setItems] = useState<{ id: string; type: string; title: string; status: string; draft_content: unknown; pdf_storage_path: string | null; coach_notes: string | null; created_at: string; delivered_at: string | null }[]>([]);
   const [intake, setIntake] = useState<{ id: string; status: string; submitted_at: string } | null>(null);
 
-  const canIntake = isAdmin || tier === "full";
+  const canIntake = isAdmin || tier === "full" || tier === "elite";
 
   useEffect(() => {
     if (!user) return;
