@@ -20,7 +20,7 @@ export const Route = createFileRoute("/checkout")({
   component: CheckoutPage,
 });
 
-type PlanId = "limited_monthly" | "full_monthly";
+type PlanId = "limited_monthly" | "full_monthly" | "elite_monthly";
 type Plan = {
   id: PlanId;
   name: string;
@@ -56,15 +56,27 @@ const PLANS: Plan[] = [
   {
     id: "full_monthly",
     name: "Full Access",
-    price: "$69.99",
+    price: "$40.99",
     tag: "Per month",
     features: [
       "Everything in Limited Access — all 17 tools",
       "Custom peptide + training protocols",
       "Direct messaging with your coach",
-      "Book 30-minute coach calls",
       "AI Stack Builder",
       "One-on-one intake review",
+      "Cancel anytime",
+    ],
+    disabled: "Does NOT include coach calling — that's Elite Access only",
+  },
+  {
+    id: "elite_monthly",
+    name: "Elite Access",
+    price: "$250",
+    tag: "Per month",
+    features: [
+      "Everything in Full Access",
+      "Coach calling & scheduling — book 30-minute calls",
+      "Priority coach support",
       "All 21 dashboard tools unlocked",
       "Cancel anytime",
     ],
