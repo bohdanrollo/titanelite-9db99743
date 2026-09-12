@@ -276,7 +276,7 @@ function Dashboard() {
           {!accessLoading && hasAccess && !isTabAllowed(tab, tier, isAdmin) && <LockedTabCard tab={tab} onUpgrade={() => setShowUpgrade(true)} />}
           {hasAccess && (
             <div className="mt-16 pt-6 border-t border-foreground/5 flex items-center justify-center gap-5">
-              {!isAdmin && tier !== "elite" && (
+              {tier !== "elite" && (
                 <button
                   onClick={() => setShowUpgrade(true)}
                   className="font-mono text-[10px] uppercase tracking-[0.18em] text-blood hover:text-foreground flex items-center gap-1.5 transition"
@@ -313,7 +313,7 @@ function UpgradeScreen({ tier, onClose }: { tier: "limited" | "full" | "elite" |
       price: "$250",
       features: ["Everything in Full Access", "Coach calling and scheduling", "Priority coach support", "All 21 dashboard tools"],
     },
-  ].filter((plan) => tier === "limited" || plan.id === "elite_monthly");
+  ].filter((plan) => tier !== "full" || plan.id === "elite_monthly");
 
   return (
     <div className="mt-10">
