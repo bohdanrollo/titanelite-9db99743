@@ -62,7 +62,7 @@ function Home() {
 function Hero() {
   return (
     <section className="relative min-h-[calc(100svh-4rem)] overflow-hidden border-b border-border">
-      <div className="absolute inset-0 flex items-center justify-center lg:left-[45%]">
+      <div className="absolute inset-0 hidden items-center justify-center lg:left-[45%] lg:flex">
         <img
           src={heroLogoAsset.url}
           alt="Titan Elite logo"
@@ -84,7 +84,17 @@ function Hero() {
           </div>
         </div>
 
-        <div className="max-w-4xl py-14 lg:py-20">
+        <div className="flex max-w-4xl flex-col py-10 lg:py-20">
+          <div className="flex justify-center py-4 lg:hidden">
+            <img
+              src={heroLogoAsset.url}
+              alt="Titan Elite logo"
+              className="h-auto max-h-44 w-auto max-w-[70%] object-contain opacity-90"
+              width={600}
+              height={450}
+            />
+          </div>
+
           <h1 className="font-landing text-[clamp(4.6rem,11vw,9.5rem)] font-semibold uppercase leading-[0.78] tracking-normal text-foreground">
             Titan<br />
             <span className="text-outline">Elite</span>
