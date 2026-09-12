@@ -416,7 +416,7 @@ function Protocols() {
   const [items, setItems] = useState<{ id: string; type: string; title: string; status: string; draft_content: unknown; pdf_storage_path: string | null; coach_notes: string | null; created_at: string; delivered_at: string | null }[]>([]);
   const [intake, setIntake] = useState<{ id: string; status: string; submitted_at: string } | null>(null);
 
-  const canIntake = isAdmin || tier === "full";
+  const canIntake = isAdmin || tier === "full" || tier === "elite";
 
   useEffect(() => {
     if (!user) return;
