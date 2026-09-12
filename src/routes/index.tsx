@@ -62,15 +62,16 @@ function Home() {
 function Hero() {
   return (
     <section className="relative min-h-[calc(100svh-4rem)] overflow-hidden border-b border-border">
-      <div className="absolute inset-0 hidden items-center justify-center lg:left-[45%] lg:flex">
+      <div className="absolute inset-0">
         <img
           src={heroLogoAsset.url}
-          alt="Titan Elite logo"
-          className="h-auto max-h-[60%] w-auto max-w-[85%] object-contain opacity-95 drop-shadow-2xl"
+          alt=""
+          className="h-full w-full object-cover object-center opacity-40"
           width={1200}
           height={900}
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--background)_0%,color-mix(in_oklab,var(--background)_94%,transparent)_24%,color-mix(in_oklab,var(--background)_12%,transparent)_70%,var(--background)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--background)_0%,color-mix(in_oklab,var(--background)_92%,transparent)_45%,color-mix(in_oklab,var(--background)_55%,transparent)_72%,transparent_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(0deg,var(--background)_0%,transparent_45%)]" />
       </div>
 
       <div className="container-edge relative z-10 flex min-h-[calc(100svh-4rem)] flex-col justify-between py-10 sm:py-14 lg:py-16">
@@ -85,16 +86,6 @@ function Hero() {
         </div>
 
         <div className="flex max-w-4xl flex-col py-10 lg:py-20">
-          <div className="flex justify-center py-4 lg:hidden">
-            <img
-              src={heroLogoAsset.url}
-              alt="Titan Elite logo"
-              className="h-auto max-h-44 w-auto max-w-[70%] object-contain opacity-90"
-              width={600}
-              height={450}
-            />
-          </div>
-
           <h1 className="font-landing text-[clamp(4.6rem,11vw,9.5rem)] font-semibold uppercase leading-[0.78] tracking-normal text-foreground">
             Titan<br />
             <span className="text-outline">Elite</span>
