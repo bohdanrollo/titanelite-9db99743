@@ -13,7 +13,10 @@ function getSupabase() {
   return _supabase;
 }
 
-const TIER_BY_PRICE: Record<string, "limited" | "full"> = {
+type Tier = "limited" | "full" | "elite";
+const TIER_RANK: Record<Tier, number> = { limited: 1, full: 2, elite: 3 };
+
+const TIER_BY_PRICE: Record<string, Tier> = {
   // Legacy one-time products (kept so old webhooks + admin actions still work)
   limited_access_onetime: "limited",
   full_access_lifetime: "full",
@@ -21,6 +24,7 @@ const TIER_BY_PRICE: Record<string, "limited" | "full"> = {
   // Subscription products
   limited_monthly: "limited",
   full_monthly: "full",
+  elite_monthly: "elite",
 };
 
 // Access-granting price IDs that should never be overwritten/downgraded by
@@ -197,9 +201,9 @@ async function handleCheckoutCompleted(session: CheckoutSession, env: StripeEnv)
     .maybeSingle();
 
   if (existing) {
-    const currentTier = existing.tier as "limited" | "full";
-    if (currentTier === "full") return; // already at highest tier
-    if (tier === "full") {
+    const currentTier = existing.tier as Tier;
+    if (TIER_RANK[currentTier] >= TIER_RANK[tier]) return; // already at or above this tier
+    {
       await supa
         .from("user_access")
         .update({
@@ -276,16 +280,16 @@ async function ensurePaymentIntent(session: CheckoutSession, env: StripeEnv): Pr
   }
 }
 
-function resolveSubTier(sub: Subscription): { tier: "limited" | "full"; priceLookup: string } | null {
+function resolveSubTier(sub: Subscription): { tier: Tier; priceLookup: string } | null {
   const items = sub.items?.data ?? [];
   // Pick the item whose lookup_key maps to a known tier (prefer highest = full).
-  let best: { tier: "limited" | "full"; priceLookup: string } | null = null;
+  let best: { tier: Tier; priceLookup: string } | null = null;
   for (const it of items) {
     const lk = it.price?.lookup_key || it.price?.metadata?.lovable_external_id;
     if (!lk) continue;
     const t = TIER_BY_PRICE[lk];
     if (!t) continue;
-    if (!best || (t === "full" && best.tier !== "full")) best = { tier: t, priceLookup: lk };
+    if (!best || TIER_RANK[t] > TIER_RANK[best.tier]) best = { tier: t, priceLookup: lk };
   }
   return best;
 }

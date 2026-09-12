@@ -33,7 +33,7 @@ async function isAdmin(supabase: any, userId: string) {
 async function hasFullAccess(supabase: any, userId: string) {
   if (await isAdmin(supabase, userId)) return true;
   const { data } = await supabase
-    .from("user_access").select("tier").eq("user_id", userId).eq("tier", "full").limit(1);
+    .from("user_access").select("tier").eq("user_id", userId).eq("tier", "elite").limit(1);
   return !!(data && data.length);
 }
 

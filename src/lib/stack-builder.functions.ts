@@ -56,7 +56,7 @@ export const buildStack = createServerFn({ method: "POST" })
       .from("user_access")
       .select("tier")
       .eq("user_id", userId)
-      .eq("tier", "full")
+      .in("tier", ["full", "elite"])
       .limit(1);
     if (!accessRows || accessRows.length === 0) {
       const { data: roleRows } = await supabase
