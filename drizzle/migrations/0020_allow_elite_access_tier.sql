@@ -1,0 +1,2 @@
+ALTER TABLE public.user_access DROP CONSTRAINT IF EXISTS user_access_tier_check;
+ALTER TABLE public.user_access ADD CONSTRAINT user_access_tier_check CHECK (tier = ANY (ARRAY['limited'::text, 'full'::text, 'elite'::text]));
