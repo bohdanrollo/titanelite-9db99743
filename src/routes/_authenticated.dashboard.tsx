@@ -144,7 +144,7 @@ function Dashboard() {
         )}
 
         {showUpgrade && hasAccess ? (
-          <UpgradeScreen tier={tier} onClose={() => setShowUpgrade(false)} />
+          <UpgradeScreen tier={tier} isAdmin={isAdmin} onClose={() => setShowUpgrade(false)} />
         ) : accessLoading ? (
           <div className="mt-10 text-eyebrow">Loading access…</div>
         ) : !hasAccess ? (
@@ -298,7 +298,7 @@ function Dashboard() {
 
 type UpgradePlanId = "full_monthly" | "elite_monthly";
 
-function UpgradeScreen({ tier, onClose }: { tier: "limited" | "full" | "elite" | null; onClose: () => void }) {
+function UpgradeScreen({ tier, isAdmin, onClose }: { tier: "limited" | "full" | "elite" | null; isAdmin: boolean; onClose: () => void }) {
   const [selectedPlan, setSelectedPlan] = useState<UpgradePlanId | null>(null);
   const plans = [
     {
@@ -313,7 +313,7 @@ function UpgradeScreen({ tier, onClose }: { tier: "limited" | "full" | "elite" |
       price: "$250",
       features: ["Everything in Full Access", "Coach calling and scheduling", "Priority coach support", "All 21 dashboard tools"],
     },
-  ].filter((plan) => tier !== "full" || plan.id === "elite_monthly");
+  ].filter((plan) => isAdmin || tier !== "full" || plan.id === "elite_monthly");
 
   return (
     <div className="mt-10">
