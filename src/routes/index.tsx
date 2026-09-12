@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import physiqueImg from "@/assets/physique.jpg";
+import heroLogoAsset from "@/assets/titan-elite-hero-logo.png.asset.json";
 import handsBarImg from "@/assets/hands-bar.jpg";
 import protocolImg from "@/assets/protocol.jpg";
 
