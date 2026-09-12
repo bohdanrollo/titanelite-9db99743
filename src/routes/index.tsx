@@ -66,12 +66,11 @@ function Hero() {
         <img
           src={heroLogoAsset.url}
           alt="Titan Elite logo"
-          className="h-auto max-h-[62%] w-auto max-w-[90%] object-contain opacity-95 drop-shadow-2xl"
+          className="h-auto max-h-[60%] w-auto max-w-[85%] object-contain opacity-95 drop-shadow-2xl"
           width={1200}
           height={900}
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--background)_0%,color-mix(in_oklab,var(--background)_94%,transparent)_24%,color-mix(in_oklab,var(--background)_20%,transparent)_70%,var(--background)_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_0%,transparent_75%,var(--background)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--background)_0%,color-mix(in_oklab,var(--background)_94%,transparent)_24%,color-mix(in_oklab,var(--background)_12%,transparent)_70%,var(--background)_100%)]" />
       </div>
 
       <div className="container-edge relative z-10 flex min-h-[calc(100svh-4rem)] flex-col justify-between py-10 sm:py-14 lg:py-16">
