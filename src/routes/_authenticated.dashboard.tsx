@@ -81,7 +81,7 @@ function Dashboard() {
   const checkTammyReferral = useServerFn(wasReferredByCode);
 
   // If user has no access, keep them on paywall regardless of `tab` state.
-  const hasAccess = isAdmin || tier === "limited" || tier === "full";
+  const hasAccess = isAdmin || tier === "limited" || tier === "full" || tier === "elite";
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
@@ -146,12 +146,25 @@ function Dashboard() {
             <div>
               <div className="text-eyebrow text-blood">Limited Access</div>
               <div className="mt-1 font-display text-xl sm:text-2xl">Upgrade to Full Access</div>
-              <p className="mt-1 text-sm text-muted-foreground">Unlock custom peptide + training protocols and direct messaging with your coach. $69.99/month. Cancel anytime.</p>
+              <p className="mt-1 text-sm text-muted-foreground">Unlock custom peptide + training protocols and direct messaging with your coach. $40.99/month. Cancel anytime.</p>
             </div>
             <button
               onClick={() => nav({ to: "/checkout" })}
               className="btn-blood hover:btn-blood-hover shrink-0"
             >
+              Upgrade
+            </button>
+          </div>
+        )}
+
+        {!accessLoading && tier === "full" && (
+          <div className="mt-8 border border-blood/40 bg-blood/5 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <div className="text-eyebrow text-blood">Full Access</div>
+              <div className="mt-1 font-display text-xl sm:text-2xl">Upgrade to Elite Access</div>
+              <p className="mt-1 text-sm text-muted-foreground">Everything on the dashboard plus coach calling and scheduling. $250/month. Cancel anytime.</p>
+            </div>
+            <button onClick={() => nav({ to: "/checkout" })} className="btn-blood hover:btn-blood-hover shrink-0">
               Upgrade
             </button>
           </div>
