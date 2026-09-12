@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useAccess, isTabAllowed } from "@/lib/access";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, MessagesSquare, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, CheckCircle, Activity, Apple, TrendingUp, HeartPulse, NotebookPen, Sparkles, CreditCard, Phone } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, MessagesSquare, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, Check, CheckCircle, Activity, Apple, TrendingUp, HeartPulse, NotebookPen, Sparkles, CreditCard, Phone } from "lucide-react";
 import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import ReactMarkdown from "react-markdown";
@@ -377,16 +377,17 @@ function LockedTabCard({ tab, onUpgrade }: { tab: Tab; onUpgrade: () => void }) 
     stackbuilder: "Stack builder",
     calls: "Coach calls",
   };
+  const requiredPlan = tab === "calls" ? "Elite Access" : "Full Access";
   return (
     <div className="border border-foreground/15 p-6 sm:p-10 text-center max-w-2xl mx-auto">
       <Lock size={40} className="mx-auto text-blood" />
-      <div className="text-eyebrow mt-4">Full Access feature</div>
-      <h2 className="mt-3 font-display text-3xl sm:text-4xl">{labels[tab] ?? "This tool"} is part of Full Access</h2>
+      <div className="text-eyebrow mt-4">{requiredPlan} feature</div>
+      <h2 className="mt-3 font-display text-3xl sm:text-4xl">{labels[tab] ?? "This tool"} is part of {requiredPlan}</h2>
       <p className="mt-4 text-sm text-muted-foreground">
-        Upgrade to Full Access to unlock {labels[tab] ? labels[tab].toLowerCase() : "this tool"} along with every other dashboard tool. Cancel anytime.
+        Upgrade to {requiredPlan} to unlock {labels[tab] ? labels[tab].toLowerCase() : "this tool"}. Cancel anytime.
       </p>
       <button onClick={onUpgrade} className="mt-6 inline-flex btn-blood hover:btn-blood-hover">
-        Upgrade to Full Access
+        Upgrade to {requiredPlan}
       </button>
     </div>
   );
