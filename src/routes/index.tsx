@@ -62,16 +62,16 @@ function Home() {
 function Hero() {
   return (
     <section className="relative min-h-[calc(100svh-4rem)] overflow-hidden border-b border-border">
-      <div className="absolute inset-0 lg:left-[48%]">
+      <div className="absolute inset-0 flex items-center justify-center lg:left-[45%]">
         <img
-          src={physiqueImg}
-          alt="Athlete displaying a developed back physique"
-          className="h-full w-full object-cover object-[50%_35%] opacity-70 grayscale"
-          width={1080}
-          height={1920}
+          src={heroLogoAsset.url}
+          alt="Titan Elite logo"
+          className="h-full max-h-[80%] w-auto object-contain opacity-90"
+          width={1200}
+          height={900}
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--background)_0%,color-mix(in_oklab,var(--background)_86%,transparent)_18%,color-mix(in_oklab,var(--background)_20%,transparent)_72%,var(--background)_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(0deg,var(--background)_0%,transparent_35%,color-mix(in_oklab,var(--background)_36%,transparent)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--background)_0%,color-mix(in_oklab,var(--background)_92%,transparent)_22%,color-mix(in_oklab,var(--background)_30%,transparent)_68%,var(--background)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(0deg,var(--background)_0%,transparent_30%,color-mix(in_oklab,var(--background)_40%,transparent)_100%)]" />
       </div>
 
       <div className="container-edge relative z-10 flex min-h-[calc(100svh-4rem)] flex-col justify-between py-10 sm:py-14 lg:py-16">
