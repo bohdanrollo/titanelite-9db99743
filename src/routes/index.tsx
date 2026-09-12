@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import physiqueImg from "@/assets/physique.jpg";
+import heroLogoAsset from "@/assets/titan-elite-hero-logo.png.asset.json";
 import handsBarImg from "@/assets/hands-bar.jpg";
 import protocolImg from "@/assets/protocol.jpg";
 
@@ -62,16 +62,15 @@ function Home() {
 function Hero() {
   return (
     <section className="relative min-h-[calc(100svh-4rem)] overflow-hidden border-b border-border">
-      <div className="absolute inset-0 lg:left-[48%]">
+      <div className="absolute inset-0 hidden items-center justify-center lg:left-[45%] lg:flex">
         <img
-          src={physiqueImg}
-          alt="Athlete displaying a developed back physique"
-          className="h-full w-full object-cover object-[50%_35%] opacity-70 grayscale"
-          width={1080}
-          height={1920}
+          src={heroLogoAsset.url}
+          alt="Titan Elite logo"
+          className="h-auto max-h-[60%] w-auto max-w-[85%] object-contain opacity-95 drop-shadow-2xl"
+          width={1200}
+          height={900}
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--background)_0%,color-mix(in_oklab,var(--background)_86%,transparent)_18%,color-mix(in_oklab,var(--background)_20%,transparent)_72%,var(--background)_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(0deg,var(--background)_0%,transparent_35%,color-mix(in_oklab,var(--background)_36%,transparent)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--background)_0%,color-mix(in_oklab,var(--background)_94%,transparent)_24%,color-mix(in_oklab,var(--background)_12%,transparent)_70%,var(--background)_100%)]" />
       </div>
 
       <div className="container-edge relative z-10 flex min-h-[calc(100svh-4rem)] flex-col justify-between py-10 sm:py-14 lg:py-16">
@@ -85,7 +84,17 @@ function Hero() {
           </div>
         </div>
 
-        <div className="max-w-4xl py-14 lg:py-20">
+        <div className="flex max-w-4xl flex-col py-10 lg:py-20">
+          <div className="flex justify-center py-4 lg:hidden">
+            <img
+              src={heroLogoAsset.url}
+              alt="Titan Elite logo"
+              className="h-auto max-h-44 w-auto max-w-[70%] object-contain opacity-90"
+              width={600}
+              height={450}
+            />
+          </div>
+
           <h1 className="font-landing text-[clamp(4.6rem,11vw,9.5rem)] font-semibold uppercase leading-[0.78] tracking-normal text-foreground">
             Titan<br />
             <span className="text-outline">Elite</span>
