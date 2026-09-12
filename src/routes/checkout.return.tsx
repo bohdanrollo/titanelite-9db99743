@@ -20,7 +20,7 @@ function ReturnPage() {
   const { tier, refresh } = useAccess();
   const [tries, setTries] = useState(0);
   const [round, setRound] = useState(0);
-  const activated = tier === "limited" || tier === "full";
+  const activated = tier === "limited" || tier === "full" || tier === "elite";
   const stalled = !activated && tries >= MAX_TRIES;
 
   // Poll for the webhook to activate access. Ceiling ~20s per round.
@@ -44,7 +44,7 @@ function ReturnPage() {
             <div className="text-eyebrow mt-6">Access activated</div>
             <h1 className="mt-4 text-4xl sm:text-6xl">You're in.</h1>
             <p className="mt-4 text-muted-foreground">
-              Your {tier === "full" ? "Full Access" : "Limited Access"} is live. Head to the dashboard.
+              Your {tier === "elite" ? "Elite Access" : tier === "full" ? "Full Access" : "Limited Access"} is live. Head to the dashboard.
             </p>
             <Link to="/dashboard" className="mt-8 inline-flex btn-blood hover:btn-blood-hover">
               Open dashboard

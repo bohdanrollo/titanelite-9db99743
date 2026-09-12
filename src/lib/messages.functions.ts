@@ -22,7 +22,7 @@ async function isAdmin(supabase: any, userId: string) {
 async function hasFullAccess(supabase: any, userId: string) {
   if (await isAdmin(supabase, userId)) return true;
   const { data } = await supabase
-    .from("user_access").select("tier").eq("user_id", userId).eq("tier", "full").limit(1);
+    .from("user_access").select("tier").eq("user_id", userId).in("tier", ["full", "elite"]).limit(1);
   return !!(data && data.length);
 }
 
@@ -186,7 +186,7 @@ export const adminListMessageableClients = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const admin = supabaseAdmin as any;
-    const { data: access } = await admin.from("user_access").select("user_id, tier").eq("tier", "full");
+    const { data: access } = await admin.from("user_access").select("user_id, tier").in("tier", ["full", "elite"]);
     const ids = [...new Set(((access ?? []) as { user_id: string }[]).map((a) => a.user_id))];
     if (!ids.length) return { clients: [] as Array<{ id: string; full_name: string | null; email: string | null }> };
     const { data: p } = await admin.from("profiles").select("id, full_name, email").in("id", ids);

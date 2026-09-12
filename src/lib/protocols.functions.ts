@@ -236,7 +236,7 @@ export const getProtocolDownloadUrl = createServerFn({ method: "POST" })
         .from("user_access")
         .select("tier")
         .eq("user_id", userId)
-        .eq("tier", "full")
+        .in("tier", ["full", "elite"])
         .limit(1);
       if (aErr) throw new Error("Access check failed");
       if (!access || access.length === 0) throw new Error("Full Access required to download protocols");

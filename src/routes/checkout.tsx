@@ -20,7 +20,7 @@ export const Route = createFileRoute("/checkout")({
   component: CheckoutPage,
 });
 
-type PlanId = "limited_monthly" | "full_monthly";
+type PlanId = "limited_monthly" | "full_monthly" | "elite_monthly";
 type Plan = {
   id: PlanId;
   name: string;
@@ -56,15 +56,27 @@ const PLANS: Plan[] = [
   {
     id: "full_monthly",
     name: "Full Access",
-    price: "$69.99",
+    price: "$40.99",
     tag: "Per month",
     features: [
       "Everything in Limited Access — all 17 tools",
       "Custom peptide + training protocols",
       "Direct messaging with your coach",
-      "Book 30-minute coach calls",
       "AI Stack Builder",
       "One-on-one intake review",
+      "Cancel anytime",
+    ],
+    disabled: "Does NOT include coach calling — that's Elite Access only",
+  },
+  {
+    id: "elite_monthly",
+    name: "Elite Access",
+    price: "$250",
+    tag: "Per month",
+    features: [
+      "Everything in Full Access",
+      "Coach calling & scheduling — book 30-minute calls",
+      "Priority coach support",
       "All 21 dashboard tools unlocked",
       "Cancel anytime",
     ],
@@ -82,8 +94,12 @@ function CheckoutPage() {
   }, [loading, user, nav]);
 
   useEffect(() => {
-    if (!accessLoading && tier === "full") nav({ to: "/dashboard" });
+    if (!accessLoading && tier === "elite") nav({ to: "/dashboard" });
   }, [accessLoading, tier, nav]);
+
+  const visiblePlans = PLANS.filter((p) =>
+    tier === "full" ? p.id === "elite_monthly" : tier === "limited" ? p.id !== "limited_monthly" : true,
+  );
 
   if (loading || !user) {
     return <div className="min-h-dvh bg-background flex items-center justify-center text-eyebrow">Loading…</div>;
@@ -96,17 +112,19 @@ function CheckoutPage() {
       <section className="container-edge py-12 sm:py-20 flex-1">
         <div className="text-eyebrow">Get Access</div>
         <h1 className="mt-4 text-4xl sm:text-6xl">
-          {tier === "limited" ? "Upgrade your access." : "Unlock the dashboard."}
+          {tier === "limited" || tier === "full" ? "Upgrade your access." : "Unlock the dashboard."}
         </h1>
         <p className="mt-4 max-w-2xl text-muted-foreground">
-          {tier === "limited"
-            ? "You currently have Limited Access. Upgrade to Full Access for custom protocols — $69.99/month. Cancel anytime."
-            : "Choose your plan. Promo codes supported at checkout. Cancel anytime."}
+          {tier === "full"
+            ? "You currently have Full Access. Upgrade to Elite Access for coach calling — $250/month. Cancel anytime."
+            : tier === "limited"
+              ? "You currently have Limited Access. Upgrade to Full Access for custom protocols — $40.99/month, or go Elite for coach calling. Cancel anytime."
+              : "Choose your plan. Promo codes supported at checkout. Cancel anytime."}
         </p>
 
         {!selected && (
-          <div className="mt-10 grid gap-6 md:grid-cols-2">
-            {PLANS.map((p) => (
+          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {visiblePlans.map((p) => (
               <div key={p.id} className="border border-foreground/15 p-6 sm:p-8 flex flex-col">
                 <div className="text-eyebrow text-blood">{p.tag}</div>
                 <div className="mt-2 font-display text-3xl">{p.name}</div>

@@ -33,7 +33,7 @@ async function isAdmin(supabase: any, userId: string) {
 async function hasFullAccess(supabase: any, userId: string) {
   if (await isAdmin(supabase, userId)) return true;
   const { data } = await supabase
-    .from("user_access").select("tier").eq("user_id", userId).eq("tier", "full").limit(1);
+    .from("user_access").select("tier").eq("user_id", userId).eq("tier", "elite").limit(1);
   return !!(data && data.length);
 }
 
@@ -79,7 +79,7 @@ export const requestCoachCall = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    if (!(await hasFullAccess(supabase, userId))) throw new Error("Full Access required to book a coach call.");
+    if (!(await hasFullAccess(supabase, userId))) throw new Error("Elite Access required to book a coach call.");
 
     const start = new Date(data.startIso);
     if (Number.isNaN(start.getTime())) throw new Error("Invalid date or time.");

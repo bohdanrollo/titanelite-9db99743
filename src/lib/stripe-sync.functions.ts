@@ -3,12 +3,16 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { createStripeClient, getStripeErrorMessage } from "@/lib/stripe.server";
 
-const TIER_BY_PRICE: Record<string, "limited" | "full"> = {
+type Tier = "limited" | "full" | "elite";
+const TIER_RANK: Record<Tier, number> = { limited: 1, full: 2, elite: 3 };
+
+const TIER_BY_PRICE: Record<string, Tier> = {
   limited_access_onetime: "limited",
   full_access_lifetime: "full",
   full_access_upgrade: "full",
   limited_monthly: "limited",
   full_monthly: "full",
+  elite_monthly: "elite",
 };
 
 const LIFETIME_PRICES = new Set([
@@ -57,13 +61,13 @@ export const syncStripeAccess = createServerFn({ method: "POST" })
         if (!ACTIVE.has(sub.status)) continue;
 
         // Resolve the tier from the subscription's price lookup keys.
-        let tier: "limited" | "full" | null = null;
+        let tier: Tier | null = null;
         let priceLookup: string | null = null;
         for (const item of sub.items?.data ?? []) {
           const lk = item.price?.lookup_key ?? item.price?.metadata?.["lovable_external_id"];
           const t = lk ? TIER_BY_PRICE[lk] : undefined;
           if (!t) continue;
-          if (!tier || (t === "full" && tier !== "full")) { tier = t; priceLookup = lk ?? null; }
+          if (!tier || TIER_RANK[t] > TIER_RANK[tier]) { tier = t; priceLookup = lk ?? null; }
         }
         if (!tier) continue;
 
@@ -106,7 +110,7 @@ export const syncStripeAccess = createServerFn({ method: "POST" })
         }
         if (existing.stripe_price_id && LIFETIME_PRICES.has(existing.stripe_price_id)) continue;
         if (existing.tier === tier && existing.stripe_price_id === priceLookup) continue;
-        if (existing.tier === "full" && tier === "limited") continue;
+        if (TIER_RANK[existing.tier as Tier] > TIER_RANK[tier]) continue;
         await admin.from("user_access").update(payload).eq("id", existing.id);
         upgraded++;
       }

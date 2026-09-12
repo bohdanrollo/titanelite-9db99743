@@ -117,8 +117,8 @@ function Admin() {
   );
 }
 
-type ClientTier = "full" | "limited" | null;
-type ClientSubTab = "all" | "full" | "limited" | "none";
+type ClientTier = "elite" | "full" | "limited" | null;
+type ClientSubTab = "all" | "elite" | "full" | "limited" | "none";
 
 function Clients() {
   const [rows, setRows] = useState<{ id: string; full_name: string | null; email: string | null; created_at: string }[]>([]);
@@ -139,14 +139,16 @@ function Clients() {
   const reload = async () => {
     const [{ data }, accessRes] = await Promise.all([
       supabase.from("profiles").select("id, full_name, email, created_at").order("created_at", { ascending: false }),
-      listFn({ data: { environment: env } }).catch(() => ({ rows: [] as { user_id: string; tier: "limited" | "full"; stripe_price_id?: string | null }[] })),
+      listFn({ data: { environment: env } }).catch(() => ({ rows: [] as { user_id: string; tier: "limited" | "full" | "elite"; stripe_price_id?: string | null }[] })),
     ]);
     setRows(data ?? []);
     const map: Record<string, ClientTier> = {};
     const paidMap: Record<string, boolean> = {};
     accessRes.rows.forEach((r) => {
       // A user can have rows in both environments (and both tiers) — keep the highest.
-      if (map[r.user_id] !== "full") map[r.user_id] = r.tier;
+      const rank = { limited: 1, full: 2, elite: 3 } as const;
+      const cur = map[r.user_id];
+      if (!cur || rank[r.tier] > rank[cur as "limited" | "full" | "elite"]) map[r.user_id] = r.tier;
       if (r.stripe_price_id) paidMap[r.user_id] = true;
     });
     setAccess(map);
@@ -155,13 +157,13 @@ function Clients() {
 
   useEffect(() => { reload(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, []);
 
-  const grant = async (userId: string, tier: "limited" | "full") => {
+  const grant = async (userId: string, tier: "limited" | "full" | "elite") => {
     setBusyId(userId);
     const prev = access[userId];
     setAccess((s) => ({ ...s, [userId]: tier })); // optimistic
     try {
       await grantFn({ data: { userId, tier, environment: env } });
-      toast.success(`${tier === "full" ? "Full" : "Limited"} access ${prev ? "updated" : "granted"}.`);
+      toast.success(`${tier === "elite" ? "Elite" : tier === "full" ? "Full" : "Limited"} access ${prev ? "updated" : "granted"}.`);
       await reload();
     } catch (err) {
       setAccess((s) => { const n = { ...s }; if (prev) n[userId] = prev; else delete n[userId]; return n; });
@@ -186,6 +188,7 @@ function Clients() {
   const filtered = rows.filter((r) => !q || `${r.full_name ?? ""} ${r.email ?? ""}`.toLowerCase().includes(q.toLowerCase()));
   const grouped: Record<ClientSubTab, typeof filtered> = {
     all: filtered,
+    elite: filtered.filter((r) => access[r.id] === "elite"),
     full: filtered.filter((r) => access[r.id] === "full"),
     limited: filtered.filter((r) => access[r.id] === "limited"),
     none: filtered.filter((r) => !access[r.id]),
@@ -193,6 +196,7 @@ function Clients() {
 
   const subTabs: { k: ClientSubTab; label: string; count: number }[] = [
     { k: "all", label: "All", count: grouped.all.length },
+    { k: "elite", label: "Elite Access", count: grouped.elite.length },
     { k: "full", label: "Full Access", count: grouped.full.length },
     { k: "limited", label: "Limited Access", count: grouped.limited.length },
     { k: "none", label: "No Plan", count: grouped.none.length },
@@ -267,7 +271,11 @@ function Clients() {
                   <td className="p-3 text-muted-foreground">{r.email}</td>
                   <td className="p-3">
                     <div className="flex items-center gap-2 flex-wrap">
-                      {tier === "full" ? (
+                      {tier === "elite" ? (
+                        <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-blood">
+                          <span className="h-2 w-2 rounded-full bg-blood" /> Elite
+                        </span>
+                      ) : tier === "full" ? (
                         <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-emerald-600">
                           <span className="h-2 w-2 rounded-full bg-emerald-500" /> Full
                         </span>
@@ -307,6 +315,13 @@ function Clients() {
                           className="px-2 py-1 border border-foreground/20 font-mono text-[10px] uppercase tracking-[0.14em] hover:border-blood hover:text-blood disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-foreground/20 disabled:hover:text-inherit"
                         >
                           {tier === "full" ? "Full ✓" : tier === "limited" ? "Upgrade to Full" : "Set Full"}
+                        </button>
+                        <button
+                          onClick={() => grant(r.id, "elite")}
+                          disabled={tier === "elite"}
+                          className="px-2 py-1 border border-foreground/20 font-mono text-[10px] uppercase tracking-[0.14em] hover:border-blood hover:text-blood disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-foreground/20 disabled:hover:text-inherit"
+                        >
+                          {tier === "elite" ? "Elite ✓" : "Set Elite"}
                         </button>
                         <button
                           onClick={() => revoke(r.id)}

@@ -141,6 +141,13 @@
       "when": 1789154226910,
       "tag": "0019_revoke_execute_trigger_function",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1789244583457,
+      "tag": "0020_allow_elite_access_tier",
+      "breakpoints": true
     }
   ]
 }

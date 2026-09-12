@@ -61,8 +61,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       if (!prices.data.length) throw new Error("Price not found");
       const primary = prices.data[0];
 
-      // Both plans are flat recurring subscriptions (full_monthly is
-      // $69.99/month; limited_monthly is $10.99/month) — no initial fee.
+      // All plans are flat recurring subscriptions (elite_monthly $250/mo,
+      // full_monthly $40.99/mo, limited_monthly $10.99/mo) — no initial fee.
       const lineItems: { price: string; quantity: number }[] = [
         { price: primary.id, quantity: 1 },
       ];

@@ -9,7 +9,7 @@ export const grantAccess = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({
       userId: z.string().uuid(),
-      tier: z.enum(["limited", "full"]),
+      tier: z.enum(["limited", "full", "elite"]),
       environment: z.enum(["sandbox", "live"]),
     }).parse(d),
   )
@@ -99,7 +99,7 @@ export const listAccess = createServerFn({ method: "POST" })
       .from("user_access")
       .select("user_id, tier, stripe_price_id, environment, created_at, updated_at");
     if (error) throw new Error(error.message);
-    return { rows: rows as Array<{ user_id: string; tier: "limited" | "full"; stripe_price_id: string | null; environment: string; created_at: string; updated_at: string }> };
+    return { rows: rows as Array<{ user_id: string; tier: "limited" | "full" | "elite"; stripe_price_id: string | null; environment: string; created_at: string; updated_at: string }> };
   });
 
 export const grantFullAccessByEmail = createServerFn({ method: "POST" })
