@@ -7,20 +7,30 @@ import { useAccess } from "@/lib/access";
 
 export const Route = createFileRoute("/checkout/return")({
   head: () => ({ meta: [{ title: "Payment complete — Titan Elite" }] }),
-  validateSearch: (search: Record<string, unknown>): { session_id?: string } => ({
+  validateSearch: (search: Record<string, unknown>): { session_id?: string; plan?: string } => ({
     session_id: typeof search.session_id === "string" ? search.session_id : undefined,
+    plan: typeof search.plan === "string" ? search.plan : undefined,
   }),
   component: ReturnPage,
 });
 
 const MAX_TRIES = 10;
+const TIER_RANK: Record<string, number> = { limited: 1, full: 2, elite: 3 };
+const TIER_BY_PLAN: Record<string, string> = {
+  limited_monthly: "limited",
+  full_monthly: "full",
+  elite_monthly: "elite",
+};
 
 function ReturnPage() {
-  const { session_id } = Route.useSearch();
+  const { session_id, plan } = Route.useSearch();
   const { tier, refresh } = useAccess();
   const [tries, setTries] = useState(0);
   const [round, setRound] = useState(0);
-  const activated = tier === "limited" || tier === "full" || tier === "elite";
+  const purchasedTier = plan ? TIER_BY_PLAN[plan] : undefined;
+  const currentRank = tier ? (TIER_RANK[tier] ?? 0) : 0;
+  const requiredRank = purchasedTier ? (TIER_RANK[purchasedTier] ?? 1) : 1;
+  const activated = currentRank >= requiredRank && currentRank > 0;
   const stalled = !activated && tries >= MAX_TRIES;
 
   // Poll for the webhook to activate access. Ceiling ~20s per round.

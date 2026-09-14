@@ -66,7 +66,8 @@ export function StripeEmbeddedCheckoutForm({ priceId, returnUrl }: Props) {
         data: {
           priceId,
           returnUrl:
-            returnUrl || `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
+            returnUrl ||
+            `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}&plan=${encodeURIComponent(priceId)}`,
           environment: getStripeEnvironment(),
           refCode:
             (typeof window !== "undefined"

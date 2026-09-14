@@ -363,6 +363,43 @@ async function handleSubscriptionChange(sub: Subscription, env: StripeEnv) {
   } else {
     await supa.from("user_access").insert(payload);
   }
+
+  await cancelSupersededSubscriptions(sub, customerId, resolved.tier, env);
+}
+
+/**
+ * When a member upgrades (e.g. Full -> Elite) Stripe creates a brand-new
+ * subscription while the old one keeps billing. Cancel any other active
+ * subscription on the same customer whose tier is at or below the new one,
+ * so nobody is charged for two plans at once.
+ */
+async function cancelSupersededSubscriptions(
+  sub: Subscription,
+  customerId: string | null,
+  newTier: Tier,
+  env: StripeEnv,
+) {
+  if (!customerId) return;
+  try {
+    const stripe = createStripeClient(env);
+    const list = await stripe.subscriptions.list({
+      customer: customerId,
+      status: "active",
+      limit: 100,
+      expand: ["data.items.data.price"],
+    });
+    for (const other of list.data) {
+      if (other.id === sub.id) continue;
+      if (other.cancel_at_period_end) continue;
+      const otherResolved = resolveSubTier(other as unknown as Subscription);
+      if (!otherResolved) continue;
+      if (TIER_RANK[otherResolved.tier] > TIER_RANK[newTier]) continue;
+      await stripe.subscriptions.cancel(other.id, { prorate: true });
+      console.log("[webhook] cancelled superseded subscription", other.id, "for", sub.id);
+    }
+  } catch (e) {
+    console.error("[webhook] failed cancelling superseded subscriptions", e);
+  }
 }
 
 function normalizeCode(raw: string) {
