@@ -311,7 +311,7 @@ function UpgradeScreen({ tier, isAdmin, onClose }: { tier: "limited" | "full" | 
       id: "elite_monthly" as const,
       name: "Elite Access",
       price: "$250",
-      features: ["Everything in Full Access", "Coach calling and scheduling", "Priority coach support", "All 21 dashboard tools"],
+      features: ["Everything in Full Access", "Coach calling and scheduling", "Priority coach support", "Increased peptide discounts", "All 21 dashboard tools"],
     },
   ].filter((plan) => isAdmin || tier !== "full" || plan.id === "elite_monthly");
 
