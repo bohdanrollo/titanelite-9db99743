@@ -77,6 +77,7 @@ const PLANS: Plan[] = [
       "Everything in Full Access",
       "Coach calling & scheduling — book 30-minute calls",
       "Priority coach support",
+      "Increased peptide discounts",
       "All 21 dashboard tools unlocked",
       "Cancel anytime",
     ],
