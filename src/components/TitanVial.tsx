@@ -1,7 +1,7 @@
 import vialMaster from "@/assets/titan-vial-master.png.asset.json";
 
 /**
- * Titan Elite master product shot.
+ * PepLog master product shot.
  *
  * One photographed vial (identical glass, cap, lighting, background, angle and
  * shadows) with the peptide-specific label text composited onto the blank
@@ -28,7 +28,7 @@ export default function TitanVial({
       <div className="absolute left-1/2 top-1/2 h-full w-[135.4%] -translate-x-1/2 -translate-y-1/2">
         <img
           src={vialMaster.url}
-          alt={`Titan Elite ${name} ${strength} research vial`}
+          alt={`PepLog ${name} ${strength} research vial`}
           className="h-full w-full object-cover select-none"
           draggable={false}
           loading="lazy"

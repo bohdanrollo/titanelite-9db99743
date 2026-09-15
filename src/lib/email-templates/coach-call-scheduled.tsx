@@ -44,7 +44,7 @@ const CoachCallScheduledEmail = ({
       <Body style={main}>
         <Container style={container}>
           <Section style={header}>
-            <Text style={eyebrow}>TITAN ELITE</Text>
+            <Text style={eyebrow}>PEPLOG</Text>
             <Heading style={h1}>New call on your calendar.</Heading>
           </Section>
 

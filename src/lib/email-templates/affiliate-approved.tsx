@@ -29,11 +29,11 @@ const AffiliateApprovedEmail = ({ name, code, referralUrl, mustSetPassword }: Pr
   return (
     <Html lang="en" dir="ltr">
       <Head />
-      <Preview>You're approved as a Titan Elite affiliate.</Preview>
+      <Preview>You're approved as a PepLog affiliate.</Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={header}>
-            <Text style={eyebrow}>TITAN ELITE</Text>
+            <Text style={eyebrow}>PEPLOG</Text>
             <Heading style={h1}>You're in.</Heading>
           </Section>
 
@@ -84,7 +84,7 @@ const AffiliateApprovedEmail = ({ name, code, referralUrl, mustSetPassword }: Pr
 
 export const template = {
   component: AffiliateApprovedEmail,
-  subject: "You're approved — Titan Elite Affiliate",
+  subject: "You're approved — PepLog Affiliate",
   displayName: 'Affiliate Approved',
   previewData: { name: 'Marcus', code: 'MARCUS', referralUrl: 'https://titanelite.org/?ref=MARCUS' },
 } satisfies TemplateEntry

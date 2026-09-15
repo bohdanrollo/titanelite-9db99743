@@ -24,15 +24,15 @@ const DASHBOARD_URL = 'https://titanelite.org/dashboard'
 const ProtocolReadyEmail = ({ name, title, dashboardUrl }: Props) => {
   const url = dashboardUrl || DASHBOARD_URL
   const greeting = name ? `${name},` : 'Athlete,'
-  const protocolTitle = title || 'Your Titan Elite Protocol'
+  const protocolTitle = title || 'Your PepLog Protocol'
   return (
     <Html lang="en" dir="ltr">
       <Head />
-      <Preview>Your Titan Elite protocol is ready to view.</Preview>
+      <Preview>Your PepLog protocol is ready to view.</Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={header}>
-            <Text style={eyebrow}>TITAN ELITE</Text>
+            <Text style={eyebrow}>PEPLOG</Text>
             <Heading style={h1}>Your protocol is ready.</Heading>
           </Section>
 
@@ -67,7 +67,7 @@ const ProtocolReadyEmail = ({ name, title, dashboardUrl }: Props) => {
 
 export const template = {
   component: ProtocolReadyEmail,
-  subject: 'Your Titan Elite protocol is ready',
+  subject: 'Your PepLog protocol is ready',
   displayName: 'Protocol Ready',
   previewData: { name: 'Marcus', title: 'Elite Protocol — Marcus R.' },
 } satisfies TemplateEntry
