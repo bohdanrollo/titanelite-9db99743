@@ -11,7 +11,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
  *
  * Why not POST /broadcasts/:id/send? That endpoint sends to an entire audience
  * or segment — Resend has no supported way to send an existing Broadcast to one
- * contact. Sending the Broadcast would mail the whole Titan Elite list, so we
+ * contact. Sending the Broadcast would mail the whole PepLog list, so we
  * never call it.
  *
  * Idempotency: `marketing_subscribers.welcome_email_status` is the source of

@@ -14,9 +14,9 @@ import { Copy, DollarSign, Users, Clock, CheckCircle2, XCircle, UserPlus, MouseP
 export const Route = createFileRoute("/affiliate")({
   head: () => ({
     meta: [
-      { title: "Affiliate Program — Titan Elite" },
-      { name: "description", content: "Earn $25 for every 5 people who sign up through your Titan Elite referral link. Apply to join the affiliate program." },
-      { property: "og:title", content: "Become a Titan Elite Affiliate" },
+      { title: "Affiliate Program — PepLog" },
+      { name: "description", content: "Earn $25 for every 5 people who sign up through your PepLog referral link. Apply to join the affiliate program." },
+      { property: "og:title", content: "Become a PepLog Affiliate" },
       { property: "og:description", content: "Earn $25 for every 5 people who sign up through your referral link." },
     ],
   }),
@@ -88,7 +88,7 @@ function AffiliatePage() {
         <div className="text-eyebrow">Partnership</div>
         <h1 className="mt-4 text-5xl lg:text-7xl">Become an Affiliate.</h1>
         <p className="mt-4 max-w-2xl text-muted-foreground">
-          Share Titan Elite with your audience. Earn <span className="text-blood font-semibold">$25 for every 5 people</span> who sign up through your unique referral link — plus <span className="text-blood font-semibold">$5 for every 5 signups</span> your recruited sub-affiliates drive.
+           Share PepLog with your audience. Earn <span className="text-blood font-semibold">$25 for every 5 people</span> who sign up through your unique referral link — plus <span className="text-blood font-semibold">$5 for every 5 signups</span> your recruited sub-affiliates drive.
         </p>
 
         {checking ? (
@@ -654,14 +654,14 @@ function VideoIncentives({ affiliateId, videoOwed, lifetimeVideo }: { affiliateI
         <div className="text-eyebrow text-blood">Video incentive program</div>
         <h3 className="mt-2 font-display text-3xl">Get paid $1 per 1,000 views.</h3>
         <p className="mt-3 text-sm text-muted-foreground">
-          Make a video about Titan Elite — a review, a walkthrough of the client dashboard, your results, anything honest.
+          Make a video about PepLog — a review, a walkthrough of the client dashboard, your results, anything honest.
           Once it passes <span className="text-foreground font-semibold">1,000 views</span>, drop the link below.
           We verify the view count and credit <span className="text-blood font-semibold">$1 for every 1,000 views</span> to your earnings.
         </p>
         <ul className="mt-4 space-y-1 text-xs text-muted-foreground font-mono">
           <li>· Videos under 1,000 views earn $0 — resubmit once you cross the threshold.</li>
           <li>· Payout is rounded down per full 1,000 views (4,800 views = $4.80).</li>
-          <li>· The video must clearly mention Titan Elite and stay publicly viewable.</li>
+          <li>· The video must clearly mention PepLog and stay publicly viewable.</li>
           <li>· Each video is reviewed and approved or declined manually.</li>
         </ul>
       </div>

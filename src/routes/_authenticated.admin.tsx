@@ -20,10 +20,18 @@ import { AdminMessages } from "@/components/Messaging";
 import CoachingAdmin, { type SchedulePrefill } from "@/components/coaching/CoachingAdmin";
 import PepHubAdmin from "@/components/PepHubAdmin";
 import EmailMarketing from "@/components/EmailMarketing";
+import pepLogMark from "@/assets/peplog-mark.png";
 
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  head: () => ({ meta: [{ title: "Admin — Titan Elite" }] }),
+  head: () => ({ meta: [
+    { title: "Admin — PepLog" },
+    { name: "description", content: "PepLog administration dashboard." },
+    { property: "og:title", content: "Admin — PepLog" },
+    { property: "og:description", content: "PepLog administration dashboard." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: Admin,
 });
 
@@ -60,8 +68,8 @@ function Admin() {
       <header className="border-b border-foreground/10 bg-ink text-bone">
         <div className="container-edge h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <span className="inline-block h-3 w-3 bg-blood" />
-            <span className="font-display text-xl tracking-wider">TITAN ELITE / ADMIN</span>
+             <img src={pepLogMark} alt="" className="h-8 w-8 object-contain" width={1024} height={1024} />
+             <span className="font-landing text-xl font-semibold">PepLog / Admin</span>
           </Link>
           <button onClick={signOut} className="font-mono text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood">
             <LogOut size={14} /> Sign out
@@ -1486,7 +1494,7 @@ function ContactMessagesAdmin() {
                   <p className="mt-3 text-sm whitespace-pre-wrap">{r.message}</p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <a href={`mailto:${r.email}?subject=${encodeURIComponent("Re: " + (r.subject || "Your message to Titan Elite"))}`}
+                  <a href={`mailto:${r.email}?subject=${encodeURIComponent("Re: " + (r.subject || "Your message to PepLog"))}`}
                     className="btn-ghost"><Send size={14} /> Reply</a>
                   <button disabled={busy[r.id]} onClick={() => toggle(r)} className="btn-ghost">
                     <Check size={14} /> {r.handled ? "Mark new" : "Mark handled"}

@@ -6,10 +6,10 @@ import { SiteFooter } from "@/components/SiteFooter";
 export const Route = createFileRoute("/features")({
   head: () => ({
     meta: [
-      { title: "Dashboard Features — Titan Elite" },
-      { name: "description", content: "Twenty-one tools inside the Titan Elite client dashboard: blood panel lab analysis, calorie and macro tracker, progress and workout logging, wellness tracking, AI stack builder, custom protocols, coach messaging and calls, Pep Talk AI, peptide library, combos, dosing guide, dose calculator, stack tracker, learning center, and more." },
-      { property: "og:title", content: "Dashboard Features — Titan Elite" },
-      { property: "og:description", content: "Twenty-one tools inside the Titan Elite client dashboard: blood panel lab analysis, calorie and macro tracker, progress and workout logging, wellness tracking, AI stack builder, custom protocols, coach messaging and calls, Pep Talk AI, peptide library, combos, dosing guide, dose calculator, stack tracker, learning center, and more." },
+      { title: "Dashboard Features — PepLog" },
+      { name: "description", content: "Explore 21 connected PepLog tools for peptide research, labs, nutrition, training, protocols, and coaching." },
+      { property: "og:title", content: "Dashboard Features — PepLog" },
+      { property: "og:description", content: "Explore 21 connected PepLog tools for peptide research, labs, nutrition, training, protocols, and coaching." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -45,21 +45,21 @@ function Page() {
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <SiteHeader />
-      <section className="bg-ink text-bone py-24 lg:py-32 border-y border-foreground/15">
+      <section className="border-y border-border bg-background py-24 text-foreground lg:py-32">
         <div className="container-edge">
           <div className="text-eyebrow">Built-In Tools</div>
           <h1 className="mt-4 text-5xl lg:text-7xl max-w-4xl">
             Twenty-one tools. <span className="text-blood">One dashboard.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-bone/70 leading-relaxed">
-            No more scattered notes, calculators, or search tabs. The Titan Elite dashboard puts peptides, dosing, and training guidance in one place.
+             No more scattered notes, calculators, or search tabs. PepLog puts peptides, dosing, and training guidance in one place.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
             {items.map((b) => (
-              <div key={b.t} className="border border-bone/15 bg-ink/50 p-6 hover:border-blood/60 transition">
+               <div key={b.t} className="border border-border bg-secondary/30 p-6 transition hover:border-primary/60">
                 <b.i className="text-blood" size={26} strokeWidth={1.2} />
                 <div className="font-display text-2xl mt-5">{b.t}</div>
-                <p className="text-bone/70 text-sm mt-2 leading-relaxed">{b.d}</p>
+                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{b.d}</p>
               </div>
             ))}
           </div>

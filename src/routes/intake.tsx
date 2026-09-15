@@ -11,8 +11,12 @@ import { ArrowLeft, ArrowRight, Upload, Lock } from "lucide-react";
 export const Route = createFileRoute("/intake")({
   head: () => ({
     meta: [
-      { title: "Client Intake — Titan Elite" },
-      { name: "description", content: "Submit your detailed intake for Titan Elite coaching." },
+      { title: "Client Intake — PepLog" },
+      { name: "description", content: "Submit your detailed intake for PepLog coaching." },
+      { property: "og:title", content: "Client Intake — PepLog" },
+      { property: "og:description", content: "Submit your detailed intake for PepLog coaching." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Intake,
@@ -189,7 +193,7 @@ function Intake() {
           {step === 4 && (
             <>
               <div className="border-l-2 border-blood pl-4 py-2 bg-muted text-sm text-muted-foreground">
-                Reminder: Titan Elite provides peptide information for educational purposes only.
+                Reminder: PepLog provides peptide information for educational purposes only.
                 We do not prescribe, sell, or distribute peptides.
               </div>
               <Area label="Peptide Experience" value={form.peptide_experience} onChange={(v) => set("peptide_experience", v)} placeholder="Past peptide use, cycles, dosing protocols you've followed…" />
@@ -210,7 +214,7 @@ function Intake() {
               <p className="text-xs text-muted-foreground">Once you submit, your coach will review your intake and reach out with next steps.</p>
               <label className="flex items-start gap-3 cursor-pointer">
                 <input type="checkbox" checked={form.consent_health} onChange={(e) => set("consent_health", e.target.checked)} className="mt-1 accent-blood" />
-                <span className="text-sm">I consent to Titan Elite collecting and storing the health information I've shared for the purpose of building my custom coaching protocols, and I confirm I'm at least 18 years old.</span>
+                <span className="text-sm">I consent to PepLog collecting and storing the health information I've shared for the purpose of building my custom coaching protocols, and I confirm I'm at least 18 years old.</span>
               </label>
               <label className="flex items-start gap-3 cursor-pointer">
                 <input type="checkbox" checked={form.consent_disclaimer} onChange={(e) => set("consent_disclaimer", e.target.checked)} className="mt-1 accent-blood" />

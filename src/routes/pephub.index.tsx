@@ -14,7 +14,7 @@ import zeerowLogoAsset from "@/assets/zeerow-logo.jpeg.asset.json";
 export const Route = createFileRoute("/pephub/")({
   head: () => ({
     meta: [
-      { title: "PepHub — Trusted Peptide Sources & Sale Alerts | Titan Elite" },
+      { title: "PepHub — Trusted Peptide Sources | PepLog" },
       {
         name: "description",
         content:
@@ -398,7 +398,7 @@ function PepHub() {
             <SourceGroup title="More sources" sources={more} />
 
             <p className="mt-8 max-w-2xl text-xs leading-relaxed text-muted-foreground">
-              Titan Elite does not sell, ship, or supply any product. These are independent
+              PepLog does not sell, ship, or supply any product. These are independent
               third-party sources listed for research purposes only. Nothing here is medical advice.
             </p>
           </div>

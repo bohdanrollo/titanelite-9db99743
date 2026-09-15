@@ -35,7 +35,7 @@ export const getLabAnalysis = createServerFn({ method: "GET" })
     return (data as LabAnalysisRow | null) ?? null;
   });
 
-const SYSTEM_PROMPT = `You are an educational health-data assistant for Titan Elite, a fitness and peptide-research coaching platform.
+const SYSTEM_PROMPT = `You are an educational health-data assistant for PepLog, a fitness and peptide-research coaching platform.
 You review a client's blood panel results plus their basic stats (age, sex, height, weight) and produce a clear, structured educational review.
 
 Rules:

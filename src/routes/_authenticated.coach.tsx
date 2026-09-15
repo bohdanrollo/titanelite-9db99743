@@ -15,13 +15,14 @@ import { AvailabilityEditor, normalizeAvailability } from "@/components/coaching
 import { CalendarView } from "@/components/coaching/CalendarView";
 import { CallDetailModal, StatusBadge } from "@/components/coaching/CallDetail";
 import { DEFAULT_TZ, TIMEZONES, SPECIALTY_LABEL, CALL_TYPE_LABEL, dateKey, formatDate, formatTime } from "@/lib/tz";
+import pepLogMark from "@/assets/peplog-mark.png";
 
 export const Route = createFileRoute("/_authenticated/coach")({
   head: () => ({
     meta: [
-      { title: "Coach Dashboard — Titan Elite" },
-      { name: "description", content: "Titan Elite coach portal: today's calls, your calendar, availability and notifications." },
-      { property: "og:title", content: "Coach Dashboard — Titan Elite" },
+      { title: "Coach Dashboard — PepLog" },
+      { name: "description", content: "PepLog coach portal: today's calls, your calendar, availability, and notifications." },
+      { property: "og:title", content: "Coach Dashboard — PepLog" },
       { property: "og:description", content: "Manage your coaching calls, weekly availability and client sessions." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -78,8 +79,8 @@ function CoachPortal() {
       <header className="border-b border-foreground/10 bg-ink text-bone">
         <div className="container-edge h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <span className="inline-block h-3 w-3 bg-blood" />
-            <span className="font-display text-xl tracking-wider">TITAN ELITE / COACH</span>
+             <img src={pepLogMark} alt="" className="h-8 w-8 object-contain" width={1024} height={1024} />
+             <span className="font-landing text-xl font-semibold">PepLog / Coach</span>
           </Link>
           <button onClick={signOut} className="font-mono text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood">
             <LogOut size={14} /> Sign out

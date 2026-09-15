@@ -5,10 +5,12 @@ import { SiteFooter } from "@/components/SiteFooter";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy Policy — Titan Elite" },
-      { name: "description", content: "How Titan Elite handles your personal and health information." },
-      { property: "og:title", content: "Privacy Policy — Titan Elite" },
-      { property: "og:description", content: "What Titan Elite collects, how intake and health information is used and stored, third parties involved, and how to access or delete your data." },
+      { title: "Privacy Policy — PepLog" },
+      { name: "description", content: "How PepLog handles your personal and health information." },
+      { property: "og:title", content: "Privacy Policy — PepLog" },
+      { property: "og:description", content: "What PepLog collects, how intake and health information is used and stored, and how to access or delete your data." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Privacy,

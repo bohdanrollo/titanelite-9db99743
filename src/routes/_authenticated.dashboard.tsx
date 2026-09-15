@@ -26,6 +26,7 @@ import { AddToHomeScreenButton } from "@/components/AddToHomeScreen";
 import { wasReferredByCode } from "@/lib/affiliates.functions";
 import CoachCalls from "@/components/CoachCalls";
 import { StripeEmbeddedCheckoutForm } from "@/components/StripeEmbeddedCheckout";
+import pepLogMark from "@/assets/peplog-mark.png";
 
 function ManageSubscriptionButton() {
   const openPortal = useServerFn(createPortalSession);
@@ -59,7 +60,14 @@ type Tab = "protocols" | "messages" | "calls" | "peptalk" | "peptides" | "dosing
 const VALID_TABS: Tab[] = ["protocols", "messages", "calls", "peptalk", "peptides", "dosing", "mystack", "supplies", "reconstitution", "injection", "calculator", "lifting", "combos", "learning", "myths", "labs", "nutrition", "progress", "wellness", "workouts", "stackbuilder"];
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Client Dashboard — Titan Elite" }] }),
+  head: () => ({ meta: [
+    { title: "Client Dashboard — PepLog" },
+    { name: "description", content: "Your private PepLog performance dashboard." },
+    { property: "og:title", content: "Client Dashboard — PepLog" },
+    { property: "og:description", content: "Your private PepLog performance dashboard." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   validateSearch: (search: Record<string, unknown>): { tab?: Tab } => {
     const t = typeof search.tab === "string" ? (search.tab as Tab) : undefined;
     return t && VALID_TABS.includes(t) ? { tab: t } : {};
@@ -105,8 +113,8 @@ function Dashboard() {
       <header className="border-b border-foreground/10">
         <div className="container-edge h-16 flex items-center justify-between gap-3">
           <Link to="/" className="flex min-w-0 items-center gap-2">
-            <span className="inline-block h-3 w-3 shrink-0 bg-blood" />
-            <span className="font-display text-base sm:text-xl tracking-wider truncate">TITAN ELITE</span>
+            <img src={pepLogMark} alt="" className="h-8 w-8 shrink-0 object-contain" width={1024} height={1024} />
+            <span className="truncate font-landing text-base font-semibold sm:text-xl">PepLog</span>
           </Link>
           <div className="flex items-center gap-3 sm:gap-4 shrink-0">
             <AddToHomeScreenButton />
@@ -125,8 +133,8 @@ function Dashboard() {
             <span className="inline-flex items-center gap-2 text-blood font-medium">
               <CheckCircle size={14} />
               {referredByTammy
-                ? "Congrats! As a Titan Elite client you get 20% off of all peptides with code TITAN"
-                : "Congrats! As a Titan Elite client you get 30% off of all peptides with code TITAN30"}
+                 ? "Congrats! As a PepLog client you get 20% off of all peptides with code TITAN"
+                 : "Congrats! As a PepLog client you get 30% off of all peptides with code TITAN30"}
             </span>
             <span className="mx-2">·</span>
             Order through{" "}

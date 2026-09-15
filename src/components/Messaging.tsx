@@ -90,7 +90,7 @@ export function ClientMessages({ myId }: { myId: string }) {
       <div className="text-eyebrow">Messages</div>
       <h2 className="mt-2 text-3xl">Talk to your coach.</h2>
       <p className="mt-2 text-sm text-muted-foreground max-w-2xl">
-        Direct line to the Titan Elite coaching team. Ask about your protocol, training, or adjustments — replies land right here.
+        Direct line to the PepLog coaching team. Ask about your protocol, training, or adjustments — replies land right here.
       </p>
       <div className="mt-6 border border-foreground/15 bg-card/40 p-4 max-h-[55vh] overflow-y-auto space-y-3">
         {msgs.length === 0 ? (

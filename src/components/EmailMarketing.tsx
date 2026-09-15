@@ -248,7 +248,7 @@ export default function EmailMarketing() {
                 <th className="py-2 pr-4">Attempts</th>
                 <th className="py-2 pr-4">Automation error</th>
                 <th className="py-2 pr-4">Action</th>
-                <th className="py-2 pr-4">Titan Elite automation</th>
+                <th className="py-2 pr-4">PepLog automation</th>
                 <th className="py-2 pr-4">Triggered</th>
                 <th className="py-2 pr-4">Event</th>
                 <th className="py-2 pr-4">Attempts</th>
@@ -348,7 +348,7 @@ export default function EmailMarketing() {
                           try {
                             const result = await retryTitanWelcome({ data: { subscriberId: r.id } });
                             if (result.outcome === "triggered")
-                              toast.success("Titan Elite Automation triggered");
+                              toast.success("PepLog Automation triggered");
                             else toast.error(("reason" in result && result.reason) || result.outcome);
                             await load();
                           } catch (err) {

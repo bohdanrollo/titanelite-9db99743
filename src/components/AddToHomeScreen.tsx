@@ -69,7 +69,7 @@ export function AddToHomeScreenButton() {
       <button
         onClick={handleClick}
         className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 text-muted-foreground hover:text-blood transition"
-        title="Add Titan Elite to your home screen"
+        title="Add PepLog to your home screen"
       >
         <Smartphone size={14} />
         <span className="hidden sm:inline">Add to home screen</span>
@@ -115,7 +115,7 @@ export function AddToHomeScreenButton() {
                 </li>
                 <li className="flex gap-3">
                   <span className="text-blood font-display">3.</span>
-                  <span>Tap Add. Titan Elite opens full-screen like an app, and you stay logged in.</span>
+                  <span>Tap Add. PepLog opens full-screen like an app, and you stay logged in.</span>
                 </li>
               </ol>
             ) : (
@@ -140,7 +140,7 @@ export function AddToHomeScreenButton() {
                 </li>
                 <li className="flex gap-3">
                   <span className="text-blood font-display">3.</span>
-                  <span>Confirm. Titan Elite opens full-screen like an app, and you stay logged in.</span>
+                  <span>Confirm. PepLog opens full-screen like an app, and you stay logged in.</span>
                 </li>
               </ol>
             )}

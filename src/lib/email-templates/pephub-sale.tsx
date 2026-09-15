@@ -46,7 +46,7 @@ const PepHubSaleEmail = ({
     <Body style={main}>
       <Container style={container}>
         <Section style={header}>
-          <Text style={eyebrow}>TITAN ELITE / TRUSTED SOURCE ALERT</Text>
+          <Text style={eyebrow}>PEPLOG / TRUSTED SOURCE ALERT</Text>
           <Heading style={h1}>{sale_title || 'Sale alert'}</Heading>
         </Section>
 
@@ -87,7 +87,7 @@ const PepHubSaleEmail = ({
         <Text style={footer}>
           You can find this source and the rest of the list inside PepHub at{' '}
           {pephub_url || `${SITE_URL}/pephub`}. You're getting this because you signed up for
-          PepHub source alerts. Titan Elite does not sell or ship any product — these are
+          PepHub source alerts. PepLog does not sell or ship any product — these are
           independent third-party sources shared for research purposes only. To stop receiving
           these emails, use the unsubscribe link below.
         </Text>

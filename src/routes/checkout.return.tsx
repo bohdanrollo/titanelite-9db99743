@@ -6,7 +6,14 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { useAccess } from "@/lib/access";
 
 export const Route = createFileRoute("/checkout/return")({
-  head: () => ({ meta: [{ title: "Payment complete — Titan Elite" }] }),
+  head: () => ({ meta: [
+    { title: "Payment complete — PepLog" },
+    { name: "description", content: "Your PepLog access is being activated." },
+    { property: "og:title", content: "Payment complete — PepLog" },
+    { property: "og:description", content: "Your PepLog access is being activated." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   validateSearch: (search: Record<string, unknown>): { session_id?: string; plan?: string } => ({
     session_id: typeof search.session_id === "string" ? search.session_id : undefined,
     plan: typeof search.plan === "string" ? search.plan : undefined,

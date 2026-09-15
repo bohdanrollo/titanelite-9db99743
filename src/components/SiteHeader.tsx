@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import pepLogMark from "@/assets/peplog-mark.png";
 
 const exploreNav = [
   { to: "/how-it-works", label: "How It Works" },
@@ -23,11 +24,11 @@ export function SiteHeader() {
   const { user, role } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-foreground/10 bg-background/85 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-xl">
       <div className="container-edge flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 group">
-          <span className="inline-block h-3 w-3 bg-blood group-hover:rotate-45 transition-transform" />
-          <span className="font-display text-xl tracking-wider">TITAN ELITE</span>
+        <Link to="/" className="group flex items-center gap-2.5" aria-label="PepLog home">
+          <img src={pepLogMark} alt="" className="h-8 w-8 object-contain" width={1024} height={1024} />
+          <span className="font-landing text-lg font-semibold">PepLog</span>
         </Link>
         <nav className="hidden md:flex items-center gap-8">
           <div
@@ -38,7 +39,7 @@ export function SiteHeader() {
             <button
               type="button"
               onClick={() => setExploreOpen((v) => !v)}
-              className="flex items-center gap-1 font-mono text-[11px] uppercase tracking-[0.18em] text-foreground/80 hover:text-blood transition"
+               className="flex items-center gap-1 font-mono text-[11px] uppercase text-foreground/80 transition hover:text-primary"
               aria-haspopup="true"
               aria-expanded={exploreOpen}
             >
@@ -46,14 +47,14 @@ export function SiteHeader() {
             </button>
             {exploreOpen && (
               <div className="absolute left-0 top-full pt-3">
-                <div className="min-w-[220px] border border-foreground/10 bg-background shadow-xl">
+                 <div className="min-w-[220px] border border-border bg-popover shadow-2xl">
                   {exploreNav.map((n) => (
                     <Link
                       key={n.to}
                       to={n.to}
                       onClick={() => setExploreOpen(false)}
-                      className="block px-4 py-3 font-mono text-[11px] uppercase tracking-[0.18em] text-foreground/80 hover:text-blood hover:bg-foreground/5 transition"
-                      activeProps={{ className: "text-blood" }}
+                       className="block px-4 py-3 font-mono text-[11px] uppercase text-foreground/80 transition hover:bg-secondary hover:text-primary"
+                       activeProps={{ className: "text-primary" }}
                     >
                       {n.label}
                     </Link>
@@ -66,8 +67,8 @@ export function SiteHeader() {
             <Link
               key={n.to}
               to={n.to}
-              className="font-mono text-[11px] uppercase tracking-[0.18em] text-foreground/80 hover:text-blood transition"
-              activeProps={{ className: "text-blood" }}
+               className="font-mono text-[11px] uppercase text-foreground/80 transition hover:text-primary"
+               activeProps={{ className: "text-primary" }}
             >
               {n.label}
             </Link>
@@ -80,7 +81,7 @@ export function SiteHeader() {
             </Link>
           ) : (
             <>
-              <Link to="/auth" className="font-mono text-[11px] uppercase tracking-[0.18em] hover:text-blood">
+               <Link to="/auth" className="font-mono text-[11px] uppercase hover:text-primary">
                 Sign in
               </Link>
               <Link to="/auth" className="btn-blood hover:btn-blood-hover">

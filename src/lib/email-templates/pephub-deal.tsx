@@ -31,7 +31,7 @@ const PepHubDealEmail = ({ name, sourceName, sourceUrl, headline, details, promo
     <Body style={main}>
       <Container style={container}>
         <Section style={header}>
-          <Text style={eyebrow}>PEPHUB / TITAN ELITE</Text>
+          <Text style={eyebrow}>PEPHUB / PEPLOG</Text>
           <Heading style={h1}>{headline || 'Sale alert'}</Heading>
         </Section>
 
@@ -60,7 +60,7 @@ const PepHubDealEmail = ({ name, sourceName, sourceUrl, headline, details, promo
         <Hr style={hr} />
         <Text style={footer}>
           You're getting this because you signed up for PepHub source alerts at{' '}
-          {SITE_URL}/pephub. Titan Elite does not sell or ship any product — these are
+          {SITE_URL}/pephub. PepLog does not sell or ship any product — these are
           independent third-party sources shared for research purposes only.
         </Text>
       </Container>

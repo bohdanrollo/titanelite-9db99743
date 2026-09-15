@@ -1,7 +1,7 @@
 // Server-only PepHub trusted-source sale monitoring engine.
 // Fetches publicly available vendor pages, extracts promotion data with the
 // Lovable AI gateway, de-duplicates promotions, and queues alert emails
-// through the existing Titan Elite email infrastructure.
+// through the existing PepLog email infrastructure.
 
 import { generateText } from "ai";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";

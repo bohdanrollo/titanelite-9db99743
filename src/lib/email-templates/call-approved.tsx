@@ -42,7 +42,7 @@ const CallApprovedEmail = ({
       <Body style={main}>
         <Container style={container}>
           <Section style={header}>
-            <Text style={eyebrow}>TITAN ELITE</Text>
+            <Text style={eyebrow}>PEPLOG</Text>
             <Heading style={h1}>Your call is confirmed.</Heading>
           </Section>
 
@@ -76,7 +76,7 @@ const CallApprovedEmail = ({
 
 export const template = {
   component: CallApprovedEmail,
-  subject: 'Your Titan Elite coaching call is confirmed',
+  subject: 'Your PepLog coaching call is confirmed',
   displayName: 'Client — Call Approved',
   previewData: {
     name: 'Marcus',
