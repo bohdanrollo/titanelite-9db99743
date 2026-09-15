@@ -1,5 +1,5 @@
 /**
- * Server-only helper: make sure an approved affiliate has a Titan Elite
+ * Server-only helper: make sure an approved affiliate has a PepLog
  * account with FULL dashboard access. If no account exists for their email we
  * create a confirmed, password-less user — they set a password themselves via
  * the "Set / reset password" flow on /auth.

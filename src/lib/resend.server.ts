@@ -194,7 +194,7 @@ export async function sendEmail(input: {
   const res = await call("/emails", {
     method: "POST",
     body: {
-      from: input.from ?? "Titan Elite <noreply@titanelite.org>",
+      from: input.from ?? "PepLog <noreply@titanelite.org>",
       to: [input.to],
       subject: input.subject,
       html: input.html,

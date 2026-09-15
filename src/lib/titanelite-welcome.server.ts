@@ -25,7 +25,7 @@ type TriggerInput = {
 
 /**
  * Trigger the existing Resend Automation `titanelite.signup` for exactly one
- * newly registered Titan Elite user. Resend's /events/send accepts a single
+ * newly registered PepLog user. Resend's /events/send accepts a single
  * recipient, so this can never mail the audience.
  *
  * Idempotency lives in marketing_subscribers.titanelite_welcome_status.

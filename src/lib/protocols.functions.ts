@@ -80,7 +80,7 @@ export const generateProtocolDraft = createServerFn({ method: "POST" })
     const tier = intake.selected_plan || "Elite";
     const weeks = tierWeeks[tier] ?? 12;
 
-    const prompt = `You are a senior strength coach drafting a custom protocol for a Titan Elite client.
+    const prompt = `You are a senior strength coach drafting a custom protocol for a PepLog client.
 Tier: ${tier} (target block: ~${weeks} weeks)
 Client profile:
 - Age: ${intake.age ?? "?"} · Gender: ${intake.gender ?? "?"} · Height: ${intake.height ?? "?"} · Weight: ${intake.weight ?? "?"}

@@ -432,12 +432,12 @@ export const PEPTIDE_GENERAL_SOURCES: PeptideSource[] = [
   { label: "DrugBank", url: "https://go.drugbank.com/" },
 ];
 
-/** Strength printed on the Titan Elite vial label for a peptide. */
+/** Strength printed on the PepLog vial label for a peptide. */
 export function vialStrength(p: Pick<PeptideEntry, "name" | "strength">): string {
   return (p.strength ?? "10MG").toUpperCase();
 }
 
-/** Deterministic Titan Elite lot number derived from the compound name. */
+/** Deterministic PepLog lot number derived from the compound name. */
 export function vialLot(p: Pick<PeptideEntry, "name">): string {
   const digits = p.name.replace(/\D/g, "");
   const letters = p.name.toUpperCase().replace(/[^A-Z]/g, "");

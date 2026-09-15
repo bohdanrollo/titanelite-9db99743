@@ -65,7 +65,7 @@ export async function renderProtocolPdf(draft: ProtocolDraft, meta: { title: str
 
   const drawHeader = () => {
     page.drawRectangle({ x: 0, y: H - 6, width: W, height: 6, color: BLOOD });
-    page.drawText("TITAN ELITE", { x: MARGIN, y: H - 30, size: 11, font: helvBold, color: INK });
+    page.drawText("PEPLOG", { x: MARGIN, y: H - 30, size: 11, font: helvBold, color: INK });
     page.drawText("CUSTOM PROTOCOL", { x: W - MARGIN - helv.widthOfTextAtSize("CUSTOM PROTOCOL", 9), y: H - 30, size: 9, font: helv, color: MUTED });
     y = H - 70;
   };
@@ -146,7 +146,7 @@ export async function renderProtocolPdf(draft: ProtocolDraft, meta: { title: str
   const pages = pdf.getPages();
   for (let i = 0; i < pages.length; i++) {
     const pg = pages[i];
-    pg.drawText("Titan Elite — Educational content. Not medical advice. Consult a licensed provider before use.", {
+    pg.drawText("PepLog — Educational content. Not medical advice. Consult a licensed provider before use.", {
       x: MARGIN, y: 30, size: 7.5, font: helv, color: MUTED,
     });
     pg.drawText(`${i + 1} / ${pages.length}`, {

@@ -396,7 +396,7 @@ export const adminRetryPepHubWelcome = createServerFn({ method: "POST" })
     return triggerPepHubWelcome({ subscriberId: subscriber.id, userId: subscriber.user_id });
   });
 
-/** Admin: safely retry one definitively failed Titan Elite Automation event. */
+/** Admin: safely retry one definitively failed PepLog Automation event. */
 export const adminRetryTitanEliteWelcome = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ subscriberId: z.string().uuid() }).parse(d))
