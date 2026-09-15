@@ -14,9 +14,9 @@ import { Copy, DollarSign, Users, Clock, CheckCircle2, XCircle, UserPlus, MouseP
 export const Route = createFileRoute("/affiliate")({
   head: () => ({
     meta: [
-      { title: "Affiliate Program — Titan Elite" },
-      { name: "description", content: "Earn $25 for every 5 people who sign up through your Titan Elite referral link. Apply to join the affiliate program." },
-      { property: "og:title", content: "Become a Titan Elite Affiliate" },
+      { title: "Affiliate Program — PepLog" },
+      { name: "description", content: "Earn $25 for every 5 people who sign up through your PepLog referral link. Apply to join the affiliate program." },
+      { property: "og:title", content: "Become a PepLog Affiliate" },
       { property: "og:description", content: "Earn $25 for every 5 people who sign up through your referral link." },
     ],
   }),
@@ -88,7 +88,7 @@ function AffiliatePage() {
         <div className="text-eyebrow">Partnership</div>
         <h1 className="mt-4 text-5xl lg:text-7xl">Become an Affiliate.</h1>
         <p className="mt-4 max-w-2xl text-muted-foreground">
-          Share Titan Elite with your audience. Earn <span className="text-blood font-semibold">$25 for every 5 people</span> who sign up through your unique referral link — plus <span className="text-blood font-semibold">$5 for every 5 signups</span> your recruited sub-affiliates drive.
+           Share PepLog with your audience. Earn <span className="text-blood font-semibold">$25 for every 5 people</span> who sign up through your unique referral link — plus <span className="text-blood font-semibold">$5 for every 5 signups</span> your recruited sub-affiliates drive.
         </p>
 
         {checking ? (

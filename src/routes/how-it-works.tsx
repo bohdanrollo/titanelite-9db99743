@@ -5,10 +5,10 @@ import { SiteFooter } from "@/components/SiteFooter";
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({
     meta: [
-      { title: "How It Works — Titan Elite" },
-      { name: "description", content: "Four steps to unlock your Titan Elite dashboard: apply, get reviewed, receive your 100% custom protocol, and use the tools daily." },
-      { property: "og:title", content: "How It Works — Titan Elite" },
-      { property: "og:description", content: "Four steps to unlock your Titan Elite dashboard: apply, get reviewed, receive your 100% custom protocol, and use the tools daily." },
+      { title: "How It Works — PepLog" },
+      { name: "description", content: "Four steps to unlock PepLog: apply, get reviewed, receive your custom protocol, and use the tools daily." },
+      { property: "og:title", content: "How It Works — PepLog" },
+      { property: "og:description", content: "Four steps to unlock PepLog: apply, get reviewed, receive your custom protocol, and use the tools daily." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

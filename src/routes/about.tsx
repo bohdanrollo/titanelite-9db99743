@@ -5,10 +5,10 @@ import { SiteFooter } from "@/components/SiteFooter";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About — Titan Elite" },
-      { name: "description", content: "How Titan Elite began, and what's inside the peptide research and training dashboard: custom protocols, Pep Talk AI, and daily tools." },
-      { property: "og:title", content: "About — Titan Elite" },
-      { property: "og:description", content: "Titan Elite is an all-in-one peptide research and training dashboard with custom educational protocols and twelve built-in tools." },
+      { title: "About — PepLog" },
+      { name: "description", content: "How PepLog began and what is inside the peptide research and performance dashboard." },
+      { property: "og:title", content: "About — PepLog" },
+      { property: "og:description", content: "PepLog is an all-in-one peptide research and performance dashboard with custom educational protocols and connected tools." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -25,7 +25,7 @@ function About() {
         <h1 className="mt-4 text-6xl lg:text-7xl">Built from real results.</h1>
         <div className="mt-8 space-y-6 text-muted-foreground leading-relaxed">
           <p>
-            I started Titan Elite after losing 95 pounds in 4 months with peptides. That experience changed my understanding of what focused, research-informed guidance can do — and it made me want to share what I’d learned with people who were serious about changing their bodies.
+            I started PepLog after losing 95 pounds in 4 months with peptides. That experience changed my understanding of what focused, research-informed guidance can do — and it made me want to share what I’d learned with people who were serious about changing their bodies.
           </p>
           <p>
             I’ve been deep in the peptide research space for over three years, sorting through the evidence, the hype, and the practical questions that actually matter for dosing, safety, and results. Every client receives a 100% custom educational peptide protocol and weight-programming plan delivered as a PDF and attached to their dashboard.
@@ -34,7 +34,7 @@ function About() {
             Our team of personal trainers has also transformed their own physiques with the same principles we teach — combining resistance training, nutrition, and responsible peptide education to build bodies that perform as well as they look.
           </p>
           <p>
-            Titan Elite does not prescribe, sell, or distribute peptides. Everything shared is strictly educational and intended to inform conversations with your licensed medical provider.
+            PepLog does not prescribe, sell, or distribute peptides. Everything shared is strictly educational and intended to inform conversations with your licensed medical provider.
           </p>
         </div>
 

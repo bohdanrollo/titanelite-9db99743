@@ -85,14 +85,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { name: "theme-color", content: "#0A0A0B" },
-      { name: "author", content: "Titan Elite" },
-      { property: "og:site_name", content: "Titan Elite" },
+      { name: "theme-color", content: "#050816" },
+      { name: "author", content: "PepLog" },
+      { property: "og:site_name", content: "PepLog" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { title: "Titan Elite — Peptide & Training Dashboard" },
-      { property: "og:title", content: "Titan Elite — Peptide & Training Dashboard" },
-      { name: "twitter:title", content: "Titan Elite — Peptide & Training Dashboard" },
+      { title: "PepLog — Peptide & Performance Dashboard" },
+      { property: "og:title", content: "PepLog — Peptide & Performance Dashboard" },
+      { name: "twitter:title", content: "PepLog — Peptide & Performance Dashboard" },
       { name: "description", content: "Client dashboard for peptide research and weightlifting: AI answers, compound library, dose calculator, stack tracker, and custom protocols." },
       { property: "og:description", content: "Client dashboard for peptide research and weightlifting: AI answers, compound library, dose calculator, stack tracker, and custom protocols." },
       { name: "twitter:description", content: "Client dashboard for peptide research and weightlifting: AI answers, compound library, dose calculator, stack tracker, and custom protocols." },
@@ -120,16 +120,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             {
               "@type": "Organization",
               "@id": "https://titanelite.org/#organization",
-              name: "Titan Elite",
+               name: "PepLog",
               url: "https://titanelite.org",
               email: "titanelitee@gmail.com",
               description:
-                "Titan Elite provides custom educational peptide protocols and weightlifting programming through an all-in-one client dashboard.",
+                 "PepLog provides educational peptide research, custom protocols, performance tracking, and weightlifting programming in one private dashboard.",
             },
             {
               "@type": "WebSite",
               "@id": "https://titanelite.org/#website",
-              name: "Titan Elite",
+               name: "PepLog",
               url: "https://titanelite.org",
               publisher: { "@id": "https://titanelite.org/#organization" },
             },
@@ -224,7 +224,7 @@ function RootComponent() {
         <main>
           <Outlet />
         </main>
-        <Toaster theme="light" position="top-right" richColors />
+        <Toaster theme="dark" position="top-right" richColors />
       </AuthProvider>
     </QueryClientProvider>
   );

@@ -6,10 +6,10 @@ import { ChevronDown } from "lucide-react";
 export const Route = createFileRoute("/faq")({
   head: () => ({
     meta: [
-      { title: "FAQ — Titan Elite" },
-      { name: "description", content: "Answers to common questions about Titan Elite's custom fitness protocols, peptide education tools, and the client dashboard." },
-      { property: "og:title", content: "FAQ — Titan Elite" },
-      { property: "og:description", content: "Answers to common questions about Titan Elite's custom fitness protocols, peptide education tools, and the client dashboard." },
+      { title: "FAQ — PepLog" },
+      { name: "description", content: "Answers about PepLog custom fitness protocols, peptide education tools, plans, and the client dashboard." },
+      { property: "og:title", content: "FAQ — PepLog" },
+      { property: "og:description", content: "Answers about PepLog custom fitness protocols, peptide education tools, plans, and the client dashboard." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -18,8 +18,8 @@ export const Route = createFileRoute("/faq")({
 });
 
 const faqs = [
-  { q: "What is Titan Elite?", a: "Titan Elite is a fitness and peptide education platform built around a fully loaded client dashboard. Members get a 100% custom educational peptide protocol and weight-training program, plus research tools like a peptide calculator, reconstitution guide, injection guide, an AI assistant called Pep Talk, and direct messaging with your coach (Full Access)." },
-  { q: "Do you prescribe peptides?", a: "No. Titan Elite provides educational protocol templates only. We do not diagnose, treat, prescribe, sell, or distribute peptides. All information is for educational purposes and is not medical advice. Always consult a licensed medical provider." },
+  { q: "What is PepLog?", a: "PepLog is a fitness and peptide education platform built around a fully loaded client dashboard. Members get a custom educational peptide protocol and weight-training program, plus research tools like a peptide calculator, reconstitution guide, injection guide, Pep Talk AI, and direct coach support based on plan." },
+  { q: "Do you prescribe peptides?", a: "No. PepLog provides educational protocol templates only. We do not diagnose, treat, prescribe, sell, or distribute peptides. All information is for educational purposes and is not medical advice. Always consult a licensed medical provider." },
   { q: "How custom is the programming?", a: "Every protocol and training program is built from scratch around your intake. No recycled templates. Programming evolves with your goals, training history, body composition targets, and recovery needs." },
   { q: "Do I need a gym?", a: "Yes. Full barbell access is strongly recommended for the weight programming. A commercial gym or well-equipped home setup works well." },
   { q: "How do I sign up and access my dashboard?", a: "Sign up or sign in through the Auth page, and you'll go straight to your client dashboard. The intake form is optional — you can begin it whenever you're ready by pressing 'Begin Intake.'" },

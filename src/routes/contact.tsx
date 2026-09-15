@@ -10,10 +10,12 @@ import { Mail, MessageSquare, Send } from "lucide-react";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — Titan Elite" },
-      { name: "description", content: "Get in touch with Titan Elite coaching." },
-      { property: "og:title", content: "Contact — Titan Elite" },
-      { property: "og:description", content: "Send a message." },
+      { title: "Contact — PepLog" },
+      { name: "description", content: "Contact the PepLog team about dashboard access, coaching, or support." },
+      { property: "og:title", content: "Contact — PepLog" },
+      { property: "og:description", content: "Contact the PepLog team about dashboard access, coaching, or support." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Contact,
