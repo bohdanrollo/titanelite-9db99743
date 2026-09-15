@@ -6,10 +6,12 @@ import { AlertTriangle } from "lucide-react";
 export const Route = createFileRoute("/disclaimer")({
   head: () => ({
     meta: [
-      { title: "Health & Educational Disclaimer — Titan Elite" },
-      { name: "description", content: "Important health and educational disclaimer for Titan Elite coaching." },
-      { property: "og:title", content: "Disclaimer — Titan Elite" },
+      { title: "Health & Educational Disclaimer — PepLog" },
+      { name: "description", content: "Important health and educational disclaimer for PepLog." },
+      { property: "og:title", content: "Disclaimer — PepLog" },
       { property: "og:description", content: "Educational content only — not medical advice." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Disclaimer,
@@ -36,8 +38,8 @@ function Disclaimer() {
         </div>
         <div className="mt-10 space-y-6 text-sm leading-relaxed text-muted-foreground">
           <Section title="No Doctor-Patient Relationship">
-            Titan Elite is a fitness coaching service. Use of this site does not create a
-            doctor-patient, medical, or therapeutic relationship between you and Titan Elite
+             PepLog is a fitness coaching service. Use of this site does not create a
+             doctor-patient, medical, or therapeutic relationship between you and PepLog
             or any of its coaches.
           </Section>
           <Section title="Peptide Information">

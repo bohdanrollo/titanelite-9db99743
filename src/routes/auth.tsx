@@ -10,7 +10,14 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SignupAcknowledgements } from "@/components/SignupAcknowledgements";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in — Titan Elite" }] }),
+  head: () => ({ meta: [
+    { title: "Sign in — PepLog" },
+    { name: "description", content: "Sign in or create your PepLog account." },
+    { property: "og:title", content: "Sign in — PepLog" },
+    { property: "og:description", content: "Sign in or create your PepLog account." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: AuthPage,
 });
 

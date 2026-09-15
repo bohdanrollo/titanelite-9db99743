@@ -11,10 +11,12 @@ import { useAccess } from "@/lib/access";
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
-      { title: "Get Access — Titan Elite" },
-      { name: "description", content: "Subscribe to the Titan Elite client dashboard: peptide research, calculators, protocols, and more." },
-      { property: "og:title", content: "Get Access — Titan Elite" },
-      { property: "og:description", content: "Subscribe to the Titan Elite client dashboard." },
+      { title: "Get Access — PepLog" },
+      { name: "description", content: "Subscribe to PepLog for peptide research, calculators, protocols, coaching, and performance tracking." },
+      { property: "og:title", content: "Get Access — PepLog" },
+      { property: "og:description", content: "Choose your PepLog dashboard access plan." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: CheckoutPage,

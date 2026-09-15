@@ -9,10 +9,10 @@ export const Route = createFileRoute("/reset-password")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Set your password — Titan Elite" },
-      { name: "description", content: "Create or reset the password for your Titan Elite dashboard account." },
-      { property: "og:title", content: "Set your password — Titan Elite" },
-      { property: "og:description", content: "Create or reset the password for your Titan Elite dashboard account." },
+      { title: "Set your password — PepLog" },
+      { name: "description", content: "Create or reset the password for your PepLog dashboard account." },
+      { property: "og:title", content: "Set your password — PepLog" },
+      { property: "og:description", content: "Create or reset the password for your PepLog dashboard account." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
