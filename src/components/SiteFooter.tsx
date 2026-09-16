@@ -1,15 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import pepLogMark from "@/assets/peplog-mark.png";
+import { PepLogWordmark } from "@/components/PepLogWordmark";
 
 export function SiteFooter() {
   return (
     <footer className="mt-24 border-t border-border bg-secondary/35 text-foreground">
       <div className="container-edge py-16 grid gap-12 md:grid-cols-4">
         <div className="md:col-span-2">
-          <div className="flex items-center gap-2">
-            <img src={pepLogMark} alt="" className="h-9 w-9 object-contain" width={1024} height={1024} loading="lazy" />
-            <span className="font-landing text-2xl font-semibold">PepLog</span>
-          </div>
+          <PepLogWordmark className="h-7 w-auto" />
           <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
             Peptide research, performance tracking, custom programming, and educational protocols in one private record.
           </p>

@@ -26,7 +26,7 @@ import { AddToHomeScreenButton } from "@/components/AddToHomeScreen";
 import { wasReferredByCode } from "@/lib/affiliates.functions";
 import CoachCalls from "@/components/CoachCalls";
 import { StripeEmbeddedCheckoutForm } from "@/components/StripeEmbeddedCheckout";
-import pepLogMark from "@/assets/peplog-mark.png";
+import { PepLogWordmark } from "@/components/PepLogWordmark";
 
 function ManageSubscriptionButton() {
   const openPortal = useServerFn(createPortalSession);
@@ -112,9 +112,8 @@ function Dashboard() {
     <div className="min-h-dvh bg-background">
       <header className="border-b border-foreground/10">
         <div className="container-edge h-16 flex items-center justify-between gap-3">
-          <Link to="/" className="flex min-w-0 items-center gap-2">
-            <img src={pepLogMark} alt="" className="h-8 w-8 shrink-0 object-contain" width={1024} height={1024} />
-            <span className="truncate font-landing text-base font-semibold sm:text-xl">PepLog</span>
+          <Link to="/" className="flex min-w-0 items-center" aria-label="PepLog home">
+            <PepLogWordmark className="h-5 w-auto sm:h-6" />
           </Link>
           <div className="flex items-center gap-3 sm:gap-4 shrink-0">
             <AddToHomeScreenButton />
