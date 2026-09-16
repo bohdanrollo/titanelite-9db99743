@@ -1,17 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
-  Activity,
   ArrowRight,
   Beaker,
   Bot,
-  CalendarDays,
   Check,
   ChevronRight,
   Dumbbell,
   FlaskConical,
-  HeartPulse,
   Layers3,
-  LineChart,
   Syringe,
   Utensils,
 } from "lucide-react";
@@ -19,6 +15,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import handsBarImg from "@/assets/hands-bar.jpg";
 import protocolImg from "@/assets/protocol.jpg";
+import phoneImg from "@/assets/peplog-phone-stack.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
