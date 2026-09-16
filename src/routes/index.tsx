@@ -60,7 +60,6 @@ function Home() {
 function Hero() {
   return (
     <section className="relative overflow-hidden border-b border-border px-0 pt-16 sm:pt-20">
-      <div className="peplog-grid absolute inset-0" aria-hidden="true" />
       <div className="container-edge relative z-10 flex flex-col items-center text-center">
         <div className="status-chip"><span className="status-dot" /> Your performance record is live</div>
         <h1 className="mt-7 max-w-5xl font-landing text-5xl font-semibold leading-[1.02] sm:text-7xl lg:text-[5.75rem]">
