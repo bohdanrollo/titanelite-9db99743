@@ -6,7 +6,7 @@ export function SiteFooter() {
     <footer className="mt-24 border-t border-border bg-secondary/35 text-foreground">
       <div className="container-edge py-16 grid gap-12 md:grid-cols-4">
         <div className="md:col-span-2">
-          <PepLogWordmark className="h-7 w-auto" />
+          <PepLogWordmark className="h-[22px] w-auto" />
           <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
             Peptide research, performance tracking, custom programming, and educational protocols in one private record.
           </p>

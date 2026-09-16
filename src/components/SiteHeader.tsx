@@ -27,7 +27,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-xl">
       <div className="container-edge flex h-16 items-center justify-between">
         <Link to="/" className="group flex items-center" aria-label="PepLog home">
-          <PepLogWordmark className="h-6 w-auto transition-colors group-hover:text-primary" />
+          <PepLogWordmark className="h-5 w-auto transition-colors group-hover:text-primary" />
         </Link>
         <nav className="hidden md:flex items-center gap-8">
           <div
