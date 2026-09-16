@@ -74,7 +74,7 @@ function Hero() {
           <Link to="/features" className="landing-btn-secondary">Explore the tools</Link>
           <Link to="/pephub" className="landing-btn-secondary">Go to PepHub</Link>
         </div>
-        <p className="mt-5 text-xs text-muted-foreground">Private by design · Built for consistent use · Educational research only</p>
+        <p className="mt-5 text-xs text-muted-foreground">Track, Learn, Implement · Built for consistent use · Educational research only</p>
         <div className="relative mt-14 w-full max-w-sm sm:max-w-md">
           <img
             src={phoneImg}
