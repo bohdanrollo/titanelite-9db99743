@@ -5,7 +5,7 @@ import {
   Bot,
   Check,
   ChevronRight,
-  Dumbbell,
+  
   FlaskConical,
   Layers3,
   Syringe,
