@@ -74,7 +74,17 @@ function Hero() {
           <Link to="/features" className="landing-btn-secondary">Explore the tools</Link>
         </div>
         <p className="mt-5 text-xs text-muted-foreground">Private by design · Built for consistent use · Educational research only</p>
-        <DashboardPreview />
+        <div className="relative mt-14 w-full max-w-sm sm:max-w-md">
+          <div className="absolute inset-x-10 bottom-0 top-1/3 rounded-full bg-primary/20 blur-[100px]" aria-hidden="true" />
+          <img
+            src={phoneImg.url}
+            alt="PepLog My Stack screen on a phone, showing a weekly dosing schedule with morning and evening injections"
+            className="relative z-10 w-full"
+            width={1025}
+            height={1536}
+            loading="lazy"
+          />
+        </div>
       </div>
     </section>
   );
