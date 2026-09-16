@@ -90,63 +90,6 @@ function Hero() {
   );
 }
 
-function DashboardPreview() {
-  const entries = [
-    ["07:10", "DOSE", "Morning schedule completed", "Logged"],
-    ["09:25", "LABS", "New panel review saved", "Reviewed"],
-    ["12:40", "NUTRITION", "Daily protein target updated", "On track"],
-    ["17:30", "TRAINING", "Upper body session", "Planned"],
-  ];
-  return (
-    <div className="dashboard-shell mt-14 w-full max-w-6xl text-left">
-      <div className="flex h-12 items-center justify-between border-b border-border bg-background/70 px-4 sm:px-5">
-        <div className="flex items-center gap-2 text-xs font-semibold"><span className="h-2 w-2 bg-primary" /> PEPLOG / OVERVIEW</div>
-        <div className="hidden items-center gap-2 font-mono text-[10px] text-muted-foreground sm:flex"><span className="status-dot" /> SYSTEM CURRENT</div>
-      </div>
-      <div className="grid lg:grid-cols-[12rem_1fr]">
-        <aside className="hidden border-r border-border p-4 lg:block">
-          <div className="mb-5 font-mono text-[9px] uppercase text-muted-foreground">Performance record</div>
-          {["Overview", "My protocol", "Dose tracker", "Lab analysis", "Nutrition", "Training log"].map((label, i) => (
-            <div key={label} className={`mb-1 flex items-center gap-2 px-3 py-2 text-xs ${i === 0 ? "bg-primary/10 text-primary" : "text-muted-foreground"}`}>
-              <span className={`h-1.5 w-1.5 ${i === 0 ? "bg-primary" : "bg-muted-foreground/30"}`} />{label}
-            </div>
-          ))}
-        </aside>
-        <div className="p-4 sm:p-6">
-          <div className="grid gap-3 sm:grid-cols-3">
-            <Metric label="Protocol adherence" value="92%" detail="+8% this month" />
-            <Metric label="Active schedule" value="4" detail="Items today" />
-            <Metric label="Weekly sessions" value="5/6" detail="One remaining" />
-          </div>
-          <div className="mt-4 grid gap-4 lg:grid-cols-[1.45fr_0.75fr]">
-            <div className="dashboard-panel min-h-64 p-4 sm:p-5">
-              <div className="flex items-center justify-between"><div><p className="dashboard-label">30-day consistency</p><p className="mt-1 text-2xl font-semibold">Your trend</p></div><LineChart className="text-primary" size={19} /></div>
-              <div className="relative mt-7 h-36 border-b border-l border-border">
-                <div className="absolute inset-x-0 top-1/3 border-t border-dashed border-border" />
-                <div className="absolute inset-x-0 top-2/3 border-t border-dashed border-border" />
-                <svg viewBox="0 0 600 140" className="absolute inset-0 h-full w-full" preserveAspectRatio="none" aria-hidden="true">
-                  <path d="M0 118 C58 110, 72 82, 128 91 S220 120, 270 71 S350 64, 395 78 S492 45, 600 28" fill="none" stroke="var(--primary)" strokeWidth="3" vectorEffect="non-scaling-stroke" />
-                  <path d="M0 118 C58 110, 72 82, 128 91 S220 120, 270 71 S350 64, 395 78 S492 45, 600 28 L600 140 L0 140 Z" fill="url(#area)" />
-                  <defs><linearGradient id="area" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="var(--primary)" stopOpacity=".22"/><stop offset="1" stopColor="var(--primary)" stopOpacity="0"/></linearGradient></defs>
-                </svg>
-              </div>
-            </div>
-            <div className="dashboard-panel p-4 sm:p-5">
-              <div className="flex items-center justify-between"><p className="dashboard-label">Today’s log</p><Activity className="text-primary" size={18} /></div>
-              <div className="mt-4 divide-y divide-border">
-                {entries.map(([time, type, text, state]) => <div key={time} className="grid grid-cols-[2.75rem_1fr] gap-3 py-3"><span className="font-mono text-[9px] text-muted-foreground">{time}</span><div><div className="text-[10px] font-semibold text-primary">{type} · {state}</div><div className="mt-1 text-xs text-foreground/80">{text}</div></div></div>)}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Metric({ label, value, detail }: { label: string; value: string; detail: string }) {
-  return <div className="dashboard-panel p-4"><p className="dashboard-label">{label}</p><div className="mt-3 flex items-end justify-between gap-3"><span className="text-2xl font-semibold">{value}</span><span className="text-[10px] text-primary">{detail}</span></div></div>;
-}
 
 function SignalStrip() {
   return (
