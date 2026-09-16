@@ -1,11 +1,10 @@
-import vialMaster from "@/assets/titan-vial-master.png.asset.json";
+import vialMaster from "@/assets/peplog-vial-blank.png";
 
 /**
  * PepLog master product shot.
  *
- * One photographed vial (identical glass, cap, lighting, background, angle and
- * shadows) with the peptide-specific label text composited onto the blank
- * label plate. Rendered 1:1 square for product cards and detail pages.
+ * One photographed PepLog vial with peptide-specific information composited
+ * onto its blank label. Rendered 1:1 for product cards and detail pages.
  */
 export default function TitanVial({
   name,
@@ -19,48 +18,38 @@ export default function TitanVial({
   className?: string;
 }) {
   const display = name.toUpperCase();
-  const long = display.length > 9;
-  const veryLong = display.length > 13;
+  const compact = display.length > 19;
+  const long = display.length > 12;
 
   return (
-    <div className={`relative aspect-square w-full overflow-hidden bg-white [container-type:inline-size] ${className}`}>
-      {/* master photograph, cropped square around the centered vial */}
-      <div className="absolute left-1/2 top-1/2 h-full w-[135.4%] -translate-x-1/2 -translate-y-1/2">
+    <div className={`relative aspect-square w-full overflow-hidden bg-bone [container-type:inline-size] ${className}`}>
+      <div className="absolute inset-0">
         <img
-          src={vialMaster.url}
+          src={vialMaster}
           alt={`PepLog ${name} ${strength} research vial`}
           className="h-full w-full object-cover select-none"
           draggable={false}
           loading="lazy"
         />
 
-        {/* label text plate — positioned over the blank label of the photograph */}
         <div
           aria-hidden
-          className="absolute text-center text-[#111] [text-rendering:geometricPrecision]"
+          className="absolute flex flex-col items-center text-center text-bone [text-rendering:geometricPrecision]"
           style={{
-            left: "38.6%",
-            width: "22.6%",
-            top: "57.5%",
-            transform: "rotate(-0.4deg)",
-            fontFamily: "'Helvetica Neue', Arial, sans-serif",
+            left: "34.1%",
+            width: "31.8%",
+            top: "52.4%",
+            height: "25.2%",
+            fontFamily: "'Space Grotesk', system-ui, sans-serif",
           }}
         >
-          {/* compound name in the outlined box */}
-          <div
-            className="mx-auto flex items-center justify-center border border-[#c8102e]"
-            style={{
-              width: "88%",
-              minHeight: "4.4cqw",
-              padding: "0.6cqw 0.4cqw",
-            }}
-          >
+          <div className="flex min-h-[8.2cqw] w-[91%] items-center justify-center border-y border-primary/70 px-[1cqw] py-[0.8cqw]">
             <span
-              className="font-bold leading-[1.05] text-[#c8102e]"
+              className="font-semibold uppercase leading-[1.06] text-primary"
               style={{
-                fontSize: veryLong ? "2cqw" : long ? "2.7cqw" : "3.7cqw",
-                letterSpacing: "-0.01em",
-                wordBreak: "break-word",
+                fontSize: compact ? "2.35cqw" : long ? "2.8cqw" : "3.5cqw",
+                letterSpacing: "0",
+                overflowWrap: "anywhere",
               }}
             >
               {display}
@@ -68,45 +57,34 @@ export default function TitanVial({
           </div>
 
           <div
-            className="mt-[0.6cqw] font-medium text-[#333]"
-            style={{ fontSize: "1.7cqw", letterSpacing: "0.08em" }}
+            className="mt-[0.9cqw] max-w-[90%] truncate font-mono uppercase text-bone/65"
+            style={{ fontSize: "1.25cqw", letterSpacing: "0.08em" }}
           >
-            PEPTIDE
+            {name === "Bacteriostatic Water" ? "Research supply" : "Peptide · Research compound"}
           </div>
 
-          {/* strength badge */}
           <div
-            className="mx-auto mt-[1cqw] bg-[#c8102e] font-bold text-white"
-            style={{ width: "52%", padding: "0.5cqw 0", fontSize: "3.3cqw", letterSpacing: "0.02em" }}
+            className="mt-[1.2cqw] border border-primary bg-primary/10 px-[2.4cqw] py-[0.45cqw] font-mono font-bold text-primary"
+            style={{ fontSize: "2.5cqw", letterSpacing: "0.04em" }}
           >
             {strength}
           </div>
 
           <div
-            className="mt-[1cqw] font-semibold leading-[1.35] text-[#1a1a1a]"
-            style={{ fontSize: "1.35cqw", letterSpacing: "0.01em" }}
+            className="mt-[1.2cqw] font-mono font-medium uppercase leading-[1.35] text-bone/75"
+            style={{ fontSize: "1.05cqw", letterSpacing: "0.05em" }}
           >
             FOR RESEARCH USE ONLY
             <br />
-            NOT FOR HUMAN CONSUMPTION
+            NOT FOR HUMAN OR ANIMAL USE
           </div>
-        </div>
 
-        {/* lot number inside the bottom red band */}
-        <div
-          aria-hidden
-          className="absolute text-center font-semibold text-white"
-          style={{
-            left: "38.6%",
-            width: "22.6%",
-            top: "82.4%",
-            fontSize: "1.5cqw",
-            letterSpacing: "0.04em",
-            transform: "rotate(-0.4deg)",
-            fontFamily: "'Helvetica Neue', Arial, sans-serif",
-          }}
-        >
-          LOT: {lot}
+          <div
+            className="mt-auto w-[91%] border-t border-primary/70 pt-[0.7cqw] font-mono text-bone/60"
+            style={{ fontSize: "1cqw", letterSpacing: "0.08em" }}
+          >
+            LOT {lot}
+          </div>
         </div>
       </div>
     </div>
