@@ -210,14 +210,33 @@
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--blood) 16%, transparent);
 }
 
-/* PepLog landing experience */
-.landing-dark {
-  color-scheme: dark;
-  --landing-surface: oklch(0.15 0.03 263);
+/* PepLog landing experience — clean, white, professional */
+.landing-light {
+  color-scheme: light;
+  --background: oklch(0.99 0.003 255);
+  --foreground: oklch(0.18 0.02 265);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.02 265);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.02 265);
+  --primary: oklch(0.6 0.11 220);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.965 0.006 255);
+  --secondary-foreground: oklch(0.18 0.02 265);
+  --muted: oklch(0.965 0.006 255);
+  --muted-foreground: oklch(0.47 0.02 260);
+  --accent: oklch(0.955 0.008 250);
+  --accent-foreground: oklch(0.18 0.02 265);
+  --border: oklch(0.9 0.008 255);
+  --input: oklch(0.88 0.01 255);
+  --ring: oklch(0.6 0.11 220);
+  --blood: oklch(0.6 0.11 220);
+  --landing-surface: oklch(0.975 0.005 255);
+  --shadow-soft: 0 16px 40px -24px oklch(0.2 0.02 265 / 0.18);
   font-family: "DM Sans", system-ui, sans-serif;
 }
 
-.landing-dark footer { margin-top: 0; }
+.landing-light footer { margin-top: 0; }
 
 @utility bg-landing-surface {
   background-color: var(--landing-surface);
@@ -230,10 +249,9 @@
 
 @utility peplog-grid {
   background-image:
-    linear-gradient(to right, color-mix(in oklab, var(--foreground) 4%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--foreground) 4%, transparent) 1px, transparent 1px),
-    radial-gradient(circle at 50% 34%, color-mix(in oklab, var(--primary) 12%, transparent), transparent 38%);
-  background-size: 56px 56px, 56px 56px, 100% 100%;
+    linear-gradient(to right, color-mix(in oklab, var(--foreground) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--foreground) 5%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
   mask-image: linear-gradient(to bottom, black 10%, black 75%, transparent 100%);
 }
 
@@ -257,7 +275,6 @@
   height: 0.45rem;
   border-radius: 999px;
   background: var(--primary);
-  box-shadow: 0 0 14px color-mix(in oklab, var(--primary) 70%, transparent);
 }
 
 @utility dashboard-shell {
@@ -348,7 +365,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .landing-dark *, .landing-dark *::before, .landing-dark *::after {
+  .landing-light *, .landing-light *::before, .landing-light *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
   }

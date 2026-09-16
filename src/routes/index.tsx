@@ -43,7 +43,7 @@ const platformTools = [
 
 function Home() {
   return (
-    <div className="landing-dark min-h-dvh bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
+    <div className="landing-light min-h-dvh bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
       <SiteHeader />
       <main>
         <Hero />
@@ -75,11 +75,10 @@ function Hero() {
         </div>
         <p className="mt-5 text-xs text-muted-foreground">Private by design · Built for consistent use · Educational research only</p>
         <div className="relative mt-14 w-full max-w-sm sm:max-w-md">
-          <div className="absolute inset-x-10 bottom-0 top-1/3 rounded-full bg-primary/20 blur-[100px]" aria-hidden="true" />
           <img
             src={phoneImg}
             alt="PepLog My Stack screen on a phone, showing a weekly dosing schedule with morning and evening injections"
-            className="relative z-10 w-full drop-shadow-[0_30px_60px_rgba(26,184,214,0.25)]"
+            className="relative z-10 w-full"
             width={476}
             height={1015}
             loading="lazy"
