@@ -134,7 +134,7 @@ function Method() {
           </div>
           <Link to="/how-it-works" className="landing-text-link mt-7">See how it works <ChevronRight size={15} /></Link>
         </div>
-      </div>
+
     </section>
   );
 }
