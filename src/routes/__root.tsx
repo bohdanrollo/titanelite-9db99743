@@ -96,8 +96,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Client dashboard for peptide research and weightlifting: AI answers, compound library, dose calculator, stack tracker, and custom protocols." },
       { property: "og:description", content: "Client dashboard for peptide research and weightlifting: AI answers, compound library, dose calculator, stack tracker, and custom protocols." },
       { name: "twitter:description", content: "Client dashboard for peptide research and weightlifting: AI answers, compound library, dose calculator, stack tracker, and custom protocols." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/jI2511rt3aQLGHuXuXGbQ3aWYwN2/social-images/social-1780854871864-IMG_9914.webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/jI2511rt3aQLGHuXuXGbQ3aWYwN2/social-images/social-1780854871864-IMG_9914.webp" },
+      { property: "og:image", content: "https://peplog.io/social-peplog.png" },
+      { name: "twitter:image", content: "https://peplog.io/social-peplog.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
