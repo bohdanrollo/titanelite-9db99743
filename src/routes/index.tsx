@@ -15,7 +15,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import handsBarImg from "@/assets/hands-bar.jpg";
 import protocolImg from "@/assets/protocol.jpg";
-import phoneImg from "@/assets/peplog-phone-stack.png.asset.json";
+import phoneImg from "@/assets/peplog-phone-stack-cutout.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -77,11 +77,11 @@ function Hero() {
         <div className="relative mt-14 w-full max-w-sm sm:max-w-md">
           <div className="absolute inset-x-10 bottom-0 top-1/3 rounded-full bg-primary/20 blur-[100px]" aria-hidden="true" />
           <img
-            src={phoneImg.url}
+            src={phoneImg}
             alt="PepLog My Stack screen on a phone, showing a weekly dosing schedule with morning and evening injections"
-            className="relative z-10 w-full"
-            width={1025}
-            height={1536}
+            className="relative z-10 w-full drop-shadow-[0_30px_60px_rgba(26,184,214,0.25)]"
+            width={476}
+            height={1015}
             loading="lazy"
           />
         </div>
