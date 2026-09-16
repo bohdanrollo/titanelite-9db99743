@@ -126,6 +126,7 @@ function Platform() {
 function Method() {
   return (
     <section className="border-b border-border bg-secondary/30 py-20 sm:py-28">
+      <div className="container-edge">
         <div className="border border-border p-7 sm:p-12 lg:p-16">
           <div className="landing-kicker">Built around you</div><h2 className="mt-5 font-landing text-4xl font-semibold leading-tight sm:text-6xl">Data informs.<br />Coaching decides.</h2>
           <p className="mt-7 max-w-xl leading-relaxed text-muted-foreground">PepLog brings your goals, training history, body composition, health context, and research interests into a clear plan—not a generic download.</p>
@@ -134,7 +135,7 @@ function Method() {
           </div>
           <Link to="/how-it-works" className="landing-text-link mt-7">See how it works <ChevronRight size={15} /></Link>
         </div>
-
+      </div>
     </section>
   );
 }
