@@ -15,7 +15,7 @@ import { AvailabilityEditor, normalizeAvailability } from "@/components/coaching
 import { CalendarView } from "@/components/coaching/CalendarView";
 import { CallDetailModal, StatusBadge } from "@/components/coaching/CallDetail";
 import { DEFAULT_TZ, TIMEZONES, SPECIALTY_LABEL, CALL_TYPE_LABEL, dateKey, formatDate, formatTime } from "@/lib/tz";
-import pepLogMark from "@/assets/peplog-mark.png";
+import { PepLogWordmark } from "@/components/PepLogWordmark";
 
 export const Route = createFileRoute("/_authenticated/coach")({
   head: () => ({
@@ -78,9 +78,9 @@ function CoachPortal() {
     <div className="min-h-dvh bg-background">
       <header className="border-b border-foreground/10 bg-ink text-bone">
         <div className="container-edge h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-             <img src={pepLogMark} alt="" className="h-8 w-8 object-contain" width={1024} height={1024} />
-             <span className="font-landing text-xl font-semibold">PepLog / Coach</span>
+          <Link to="/" className="flex items-center gap-3" aria-label="PepLog home">
+             <PepLogWordmark className="h-6 w-auto" />
+             <span className="font-mono text-[10px] uppercase text-current/70">/ Coach</span>
           </Link>
           <button onClick={signOut} className="font-mono text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood">
             <LogOut size={14} /> Sign out
