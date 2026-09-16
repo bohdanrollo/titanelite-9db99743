@@ -113,7 +113,7 @@ function Dashboard() {
       <header className="border-b border-foreground/10">
         <div className="container-edge h-16 flex items-center justify-between gap-3">
           <Link to="/" className="flex min-w-0 items-center" aria-label="PepLog home">
-            <PepLogWordmark className="h-5 w-auto sm:h-6" />
+            <PepLogWordmark className="h-[18px] w-auto sm:h-5" />
           </Link>
           <div className="flex items-center gap-3 sm:gap-4 shrink-0">
             <AddToHomeScreenButton />

@@ -79,7 +79,7 @@ function CoachPortal() {
       <header className="border-b border-foreground/10 bg-ink text-bone">
         <div className="container-edge h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3" aria-label="PepLog home">
-             <PepLogWordmark className="h-6 w-auto" />
+             <PepLogWordmark className="h-5 w-auto" />
              <span className="font-mono text-[10px] uppercase text-current/70">/ Coach</span>
           </Link>
           <button onClick={signOut} className="font-mono text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood">
