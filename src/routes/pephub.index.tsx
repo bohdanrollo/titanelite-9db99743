@@ -191,7 +191,7 @@ function PepHub() {
   }
 
   return (
-    <div className="min-h-dvh bg-background text-foreground flex flex-col">
+    <div className="landing-light min-h-dvh bg-background text-foreground flex flex-col">
       <SiteHeader />
 
       <a
