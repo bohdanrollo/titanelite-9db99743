@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import handsBarImg from "@/assets/hands-bar.jpg";
+
 import protocolImg from "@/assets/protocol.jpg";
 import phoneImg from "@/assets/peplog-phone-stack-cutout.png";
 
@@ -126,9 +126,7 @@ function Platform() {
 function Method() {
   return (
     <section className="border-b border-border bg-secondary/30 py-20 sm:py-28">
-      <div className="container-edge grid items-stretch lg:grid-cols-2">
-        <div className="relative min-h-[30rem] overflow-hidden border border-border"><img src={handsBarImg} alt="Athlete gripping a loaded barbell" className="absolute inset-0 h-full w-full object-cover grayscale" width={1024} height={1024} loading="lazy" /><div className="absolute inset-0 bg-[linear-gradient(0deg,var(--background)_0%,transparent_65%)]" /><div className="absolute bottom-7 left-7 right-7 flex items-end justify-between border-t border-foreground/25 pt-4 text-[10px] uppercase text-foreground/70"><span>Training intelligence</span><Dumbbell size={17} /></div></div>
-        <div className="border border-l-0 border-border p-7 sm:p-12 lg:p-16">
+        <div className="border border-border p-7 sm:p-12 lg:p-16">
           <div className="landing-kicker">Built around you</div><h2 className="mt-5 font-landing text-4xl font-semibold leading-tight sm:text-6xl">Data informs.<br />Coaching decides.</h2>
           <p className="mt-7 max-w-xl leading-relaxed text-muted-foreground">PepLog brings your goals, training history, body composition, health context, and research interests into a clear plan—not a generic download.</p>
           <div className="mt-9 divide-y divide-border border-y border-border">
