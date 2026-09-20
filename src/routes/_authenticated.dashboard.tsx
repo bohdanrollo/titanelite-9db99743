@@ -107,6 +107,7 @@ function Dashboard() {
     supabase.from("intakes").select("id, status, submitted_at").eq("user_id", user.id).order("submitted_at", { ascending: false }).limit(1).maybeSingle().then(({ data }) => setIntake(data));
     supabase.from("affiliates").select("id", { count: "exact", head: true }).eq("email", user.email ?? "").then(({ count }) => setIsAffiliate(!!count && count > 0));
     checkTammyReferral({ data: { code: "TAMMY" } }).then((r) => setReferredByTammy(!!r)).catch(() => {});
+    checkTammyReferral({ data: { code: "AXIOLUME" } }).then((r) => setReferredByAxiolume(!!r)).catch(() => {});
   }, [user]);
 
   return (
