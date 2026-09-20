@@ -88,6 +88,7 @@ function Dashboard() {
   const [intake, setIntake] = useState<{ id: string; status: string; submitted_at: string } | null>(null);
   const [isAffiliate, setIsAffiliate] = useState(false);
   const [referredByTammy, setReferredByTammy] = useState(false);
+  const [referredByAxiolume, setReferredByAxiolume] = useState(false);
   const checkTammyReferral = useServerFn(wasReferredByCode);
 
   // If user has no access, keep them on paywall regardless of `tab` state.
