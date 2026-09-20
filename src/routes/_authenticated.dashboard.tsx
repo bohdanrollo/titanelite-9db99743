@@ -133,13 +133,15 @@ function Dashboard() {
           <p className="mt-3 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-2 text-blood font-medium">
               <CheckCircle size={14} />
-              {referredByTammy
-                 ? "Congrats! As a PepLog client you get 20% off of all peptides with code TITAN"
-                 : "Congrats! As a PepLog client you get 30% off of all peptides with code TITAN30"}
+              {referredByAxiolume
+                 ? "Congrats! As a PepLog client you get 10% off of all peptides with code AXIOLUME"
+                 : referredByTammy
+                   ? "Congrats! As a PepLog client you get 20% off of all peptides with code TITAN"
+                   : "Congrats! As a PepLog client you get 30% off of all peptides with code TITAN30"}
             </span>
             <span className="mx-2">·</span>
             Order through{" "}
-            <a href="https://powerbuiltlabs.com/us?ref=TITAN30" target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">
+            <a href={referredByAxiolume ? "https://powerbuiltlabs.com/us?ref=AXIOLUME" : "https://powerbuiltlabs.com/us?ref=TITAN30"} target="_blank" rel="noopener noreferrer" className="text-blood hover:underline">
               Powerbuilt Labs
             </a>.
           </p>
