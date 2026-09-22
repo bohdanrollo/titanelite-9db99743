@@ -24,7 +24,7 @@ interface Props {
   dashboardUrl?: string
 }
 
-const COACH_URL = 'https://titanelite.org/coach'
+const COACH_URL = 'https://peplog.io/coach'
 
 const CoachCallScheduledEmail = ({
   coachName,

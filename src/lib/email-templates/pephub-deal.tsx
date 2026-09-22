@@ -22,7 +22,7 @@ interface Props {
   promoCode?: string
 }
 
-const SITE_URL = 'https://titanelite.org'
+const SITE_URL = 'https://peplog.io'
 
 const PepHubDealEmail = ({ name, sourceName, sourceUrl, headline, details, promoCode }: Props) => (
   <Html lang="en" dir="ltr">

@@ -76,7 +76,7 @@ export const approveAffiliate = createServerFn({ method: "POST" })
         if (res.created) {
           // Send a password-setup link so they can sign in.
           await supabaseAdmin.auth.resetPasswordForEmail(app.email, {
-            redirectTo: "https://titanelite.org/reset-password",
+            redirectTo: "https://peplog.io/reset-password",
           });
         }
       } catch (e) {
@@ -100,7 +100,7 @@ export const approveAffiliate = createServerFn({ method: "POST" })
             { name: "Sub-affiliate", value: (app as any).full_name || app.email || "Unknown", inline: true },
             { name: "Email", value: app.email ?? "—", inline: true },
             { name: "Code", value: code, inline: true },
-            { name: "Referral link", value: `https://titanelite.org/?ref=${code}`, inline: false },
+            { name: "Referral link", value: `https://peplog.io/?ref=${code}`, inline: false },
             {
               name: "Recruited by",
               value: parent ? `${parent.full_name ?? parent.email ?? "Unknown"} (${parent.code ?? "—"})` : "Unknown",
@@ -131,7 +131,7 @@ export const approveAffiliate = createServerFn({ method: "POST" })
           templateData: {
             name: aff?.full_name || undefined,
             code,
-            referralUrl: `https://titanelite.org/?ref=${code}`,
+            referralUrl: `https://peplog.io/?ref=${code}`,
             mustSetPassword,
           },
         });
@@ -369,7 +369,7 @@ export const resendApprovedAffiliateEmails = createServerFn({ method: "POST" })
         templateData: {
           name: a.full_name || undefined,
           code: a.code,
-          referralUrl: `https://titanelite.org/?ref=${a.code}`,
+          referralUrl: `https://peplog.io/?ref=${a.code}`,
         },
       });
       sent++;

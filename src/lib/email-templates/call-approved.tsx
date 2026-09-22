@@ -23,7 +23,7 @@ interface Props {
   dashboardUrl?: string
 }
 
-const DASHBOARD_URL = 'https://titanelite.org/dashboard'
+const DASHBOARD_URL = 'https://peplog.io/dashboard'
 
 const CallApprovedEmail = ({
   name,
