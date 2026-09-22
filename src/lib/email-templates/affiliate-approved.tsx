@@ -20,7 +20,7 @@ interface Props {
   mustSetPassword?: boolean
 }
 
-const SITE_URL = 'https://titanelite.org'
+const SITE_URL = 'https://peplog.io'
 
 const AffiliateApprovedEmail = ({ name, code, referralUrl, mustSetPassword }: Props) => {
   const greeting = name ? `${name},` : 'Partner,'
@@ -86,7 +86,7 @@ export const template = {
   component: AffiliateApprovedEmail,
   subject: "You're approved — PepLog Affiliate",
   displayName: 'Affiliate Approved',
-  previewData: { name: 'Marcus', code: 'MARCUS', referralUrl: 'https://titanelite.org/?ref=MARCUS' },
+  previewData: { name: 'Marcus', code: 'MARCUS', referralUrl: 'https://peplog.io/?ref=MARCUS' },
 } satisfies TemplateEntry
 
 const main: React.CSSProperties = {

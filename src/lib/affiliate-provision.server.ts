@@ -45,7 +45,7 @@ export async function provisionAffiliateAccount(email: string, fullName?: string
   if (created) {
     try {
       await admin.auth.resetPasswordForEmail(clean, {
-        redirectTo: "https://titanelite.org/reset-password",
+        redirectTo: "https://peplog.io/reset-password",
       });
     } catch (e) {
       console.warn("[affiliate provision] set-password email failed", e);

@@ -25,7 +25,7 @@ interface Props {
   detection_date?: string
 }
 
-const SITE_URL = 'https://titanelite.org'
+const SITE_URL = 'https://peplog.io'
 
 const PepHubSaleEmail = ({
   vendor_name,

@@ -119,19 +119,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@graph": [
             {
               "@type": "Organization",
-              "@id": "https://titanelite.org/#organization",
+              "@id": "https://peplog.io/#organization",
                name: "PepLog",
-              url: "https://titanelite.org",
+              url: "https://peplog.io",
               email: "titanelitee@gmail.com",
               description:
                  "PepLog provides educational peptide research, custom protocols, performance tracking, and weightlifting programming in one private dashboard.",
             },
             {
               "@type": "WebSite",
-              "@id": "https://titanelite.org/#website",
+              "@id": "https://peplog.io/#website",
                name: "PepLog",
-              url: "https://titanelite.org",
-              publisher: { "@id": "https://titanelite.org/#organization" },
+              url: "https://peplog.io",
+              publisher: { "@id": "https://peplog.io/#organization" },
             },
           ],
         }),

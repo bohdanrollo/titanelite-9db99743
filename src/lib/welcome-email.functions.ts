@@ -43,9 +43,9 @@ async function unsubscribeUrl(supabaseAdmin: Admin, email: string) {
       token = crypto.randomUUID().replace(/-/g, "");
       await supabaseAdmin.from("email_unsubscribe_tokens").insert({ token, email });
     }
-    return `https://titanelite.org/email/unsubscribe?token=${token}`;
+    return `https://peplog.io/email/unsubscribe?token=${token}`;
   } catch {
-    return "https://titanelite.org/email/unsubscribe";
+    return "https://peplog.io/email/unsubscribe";
   }
 }
 
