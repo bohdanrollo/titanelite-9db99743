@@ -6,7 +6,7 @@
 import { generateText } from "ai";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 
-const SITE_URL = "https://titanelite.org";
+const SITE_URL = "https://peplog.io";
 const UA =
   "Mozilla/5.0 (compatible; TitanEliteSaleMonitor/1.0; +https://titanelite.org/pephub)";
 
