@@ -170,7 +170,7 @@ export const adminInvUpdateVendor = createServerFn({ method: "POST" })
   }).parse(d))
   .handler(async ({ data, context }) => {
     const db = await requireAdmin(context);
-    const patch: Record<string, unknown> = {};
+    const patch: { inventory_tracking_enabled?: boolean; inventory_feed_url?: string | null; inventory_sync_hours?: number } = {};
     if (data.tracking !== undefined) patch.inventory_tracking_enabled = data.tracking;
     if (data.feedUrl !== undefined) patch.inventory_feed_url = data.feedUrl || null;
     if (data.hours !== undefined) patch.inventory_sync_hours = data.hours;
