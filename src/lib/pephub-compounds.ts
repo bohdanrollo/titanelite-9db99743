@@ -22,7 +22,7 @@ export const COMPOUNDS: CompoundDef[] = [
   { name: "MK-677", category: "Growth hormone", aliases: ["mk677", "ibutamoren"] },
   { name: "Semaglutide", category: "Metabolic", aliases: ["semaglutide", "glp1s", "sema"] },
   { name: "Tirzepatide", category: "Metabolic", aliases: ["tirzepatide", "glp2t", "tirz"] },
-  { name: "Retatrutide", category: "Metabolic", aliases: ["retatrutide", "glp3r", "reta"] },
+  { name: "GLP3 RT", category: "Metabolic", aliases: ["glp3rt", "glp3", "rt", "retatrutide", "glp3r", "reta"] },
   { name: "Cagrilintide", category: "Metabolic", aliases: ["cagrilintide", "cagri"] },
   { name: "AOD-9604", category: "Metabolic", aliases: ["aod9604", "aod"] },
   { name: "MOTS-c", category: "Metabolic", aliases: ["motsc", "mots"] },
