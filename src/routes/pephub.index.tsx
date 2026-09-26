@@ -236,6 +236,11 @@ function PepHub() {
           We keep a short, vetted list of sources we actually trust. Sign up with your name and email
           and we'll let you know whenever one of them runs a sale or drops a discount code.
         </p>
+        {hasAccess && (
+          <Link to="/pephub/inventory" className="mt-6 inline-flex rounded-full bg-blood px-5 py-2.5 text-sm text-bone">
+            Compare prices across vendors →
+          </Link>
+        )}
 
         {checking && (
           <div className="mt-10 rounded-2xl border border-foreground/10 bg-card p-8 text-sm text-muted-foreground shadow-sm">

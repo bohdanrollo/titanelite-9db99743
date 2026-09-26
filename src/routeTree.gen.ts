@@ -32,7 +32,9 @@ import { Route as ApiPepTalkRouteImport } from './routes/api/pep-talk'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as PephubIndexRouteImport } from './routes/pephub.index'
+import { Route as PephubInventoryRouteImport } from './routes/pephub.inventory'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
+import { Route as PephubCompareSlugRouteImport } from './routes/pephub.compare.$slug'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicPephubMonitorRouteImport } from './routes/api/public/pephub/monitor'
 import { Route as ApiPublicResendWebhookRouteImport } from './routes/api/public/resend/webhook'
@@ -157,9 +159,19 @@ const PephubIndexRoute = PephubIndexRouteImport.update({
   path: '/pephub/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PephubInventoryRoute = PephubInventoryRouteImport.update({
+  id: '/pephub/inventory',
+  path: '/pephub/inventory',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
   id: '/lovable/email/suppression',
   path: '/lovable/email/suppression',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PephubCompareSlugRoute = PephubCompareSlugRouteImport.update({
+  id: '/pephub/compare/$slug',
+  path: '/pephub/compare/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicPaymentsWebhookRoute =
@@ -235,8 +247,10 @@ export interface FileRoutesByFullPath {
   '/api/pep-talk': typeof ApiPepTalkRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/pephub/inventory': typeof PephubInventoryRoute
   '/pephub/': typeof PephubIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/pephub/compare/$slug': typeof PephubCompareSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pephub/monitor': typeof ApiPublicPephubMonitorRoute
   '/api/public/resend/webhook': typeof ApiPublicResendWebhookRoute
@@ -269,8 +283,10 @@ export interface FileRoutesByTo {
   '/api/pep-talk': typeof ApiPepTalkRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/pephub/inventory': typeof PephubInventoryRoute
   '/pephub': typeof PephubIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/pephub/compare/$slug': typeof PephubCompareSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pephub/monitor': typeof ApiPublicPephubMonitorRoute
   '/api/public/resend/webhook': typeof ApiPublicResendWebhookRoute
@@ -305,8 +321,10 @@ export interface FileRoutesById {
   '/api/pep-talk': typeof ApiPepTalkRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/pephub/inventory': typeof PephubInventoryRoute
   '/pephub/': typeof PephubIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/pephub/compare/$slug': typeof PephubCompareSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pephub/monitor': typeof ApiPublicPephubMonitorRoute
   '/api/public/resend/webhook': typeof ApiPublicResendWebhookRoute
@@ -341,8 +359,10 @@ export interface FileRouteTypes {
     | '/api/pep-talk'
     | '/checkout/return'
     | '/email/unsubscribe'
+    | '/pephub/inventory'
     | '/pephub/'
     | '/lovable/email/suppression'
+    | '/pephub/compare/$slug'
     | '/api/public/payments/webhook'
     | '/api/public/pephub/monitor'
     | '/api/public/resend/webhook'
@@ -375,8 +395,10 @@ export interface FileRouteTypes {
     | '/api/pep-talk'
     | '/checkout/return'
     | '/email/unsubscribe'
+    | '/pephub/inventory'
     | '/pephub'
     | '/lovable/email/suppression'
+    | '/pephub/compare/$slug'
     | '/api/public/payments/webhook'
     | '/api/public/pephub/monitor'
     | '/api/public/resend/webhook'
@@ -410,8 +432,10 @@ export interface FileRouteTypes {
     | '/api/pep-talk'
     | '/checkout/return'
     | '/email/unsubscribe'
+    | '/pephub/inventory'
     | '/pephub/'
     | '/lovable/email/suppression'
+    | '/pephub/compare/$slug'
     | '/api/public/payments/webhook'
     | '/api/public/pephub/monitor'
     | '/api/public/resend/webhook'
@@ -442,8 +466,10 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   ApiPepTalkRoute: typeof ApiPepTalkRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
+  PephubInventoryRoute: typeof PephubInventoryRoute
   PephubIndexRoute: typeof PephubIndexRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
+  PephubCompareSlugRoute: typeof PephubCompareSlugRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   ApiPublicPephubMonitorRoute: typeof ApiPublicPephubMonitorRoute
   ApiPublicResendWebhookRoute: typeof ApiPublicResendWebhookRoute
@@ -618,11 +644,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PephubIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pephub/inventory': {
+      id: '/pephub/inventory'
+      path: '/pephub/inventory'
+      fullPath: '/pephub/inventory'
+      preLoaderRoute: typeof PephubInventoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/suppression': {
       id: '/lovable/email/suppression'
       path: '/lovable/email/suppression'
       fullPath: '/lovable/email/suppression'
       preLoaderRoute: typeof LovableEmailSuppressionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pephub/compare/$slug': {
+      id: '/pephub/compare/$slug'
+      path: '/pephub/compare/$slug'
+      fullPath: '/pephub/compare/$slug'
+      preLoaderRoute: typeof PephubCompareSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/payments/webhook': {
@@ -738,8 +778,10 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   ApiPepTalkRoute: ApiPepTalkRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
+  PephubInventoryRoute: PephubInventoryRoute,
   PephubIndexRoute: PephubIndexRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
+  PephubCompareSlugRoute: PephubCompareSlugRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   ApiPublicPephubMonitorRoute: ApiPublicPephubMonitorRoute,
   ApiPublicResendWebhookRoute: ApiPublicResendWebhookRoute,
