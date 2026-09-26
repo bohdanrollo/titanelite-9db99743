@@ -101,7 +101,7 @@ function InventoryPage() {
                 <div className="mt-10">
                   <div className="text-eyebrow">Popular compounds</div>
                   <div className="mt-4 flex flex-wrap gap-2">
-                    {compounds.slice(0, 16).map((c) => (
+                    {[...compounds].sort((a, b) => (a.slug === "glp3-rt" ? -1 : b.slug === "glp3-rt" ? 1 : 0)).slice(0, 16).map((c) => (
                       <Link key={c.id} to="/pephub/compare/$slug" params={{ slug: c.slug }} className="rounded-full border border-foreground/15 bg-card px-4 py-2 text-sm hover:border-blood">
                         {c.name} <span className="text-muted-foreground">· {c.listings}</span>
                       </Link>
