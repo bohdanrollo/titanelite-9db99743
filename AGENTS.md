@@ -1,0 +1,1 @@
+- PepHub inventory sync runs inside the existing hourly /api/public/pephub/monitor cron (per-vendor interval); why: no second scheduler.
