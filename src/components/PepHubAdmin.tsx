@@ -1,3 +1,4 @@
+import PepHubInventoryAdmin from "@/components/PepHubInventoryAdmin";
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -17,7 +18,7 @@ import {
 } from "@/lib/pephub.functions";
 import PepHubSaleMonitor from "@/components/PepHubSaleMonitor";
 
-type SubTab = "sources" | "monitor" | "members" | "alerts";
+type SubTab = "sources" | "monitor" | "members" | "alerts" | "inventory";
 
 const emptyForm = {
   id: "",
@@ -196,6 +197,7 @@ export default function PepHubAdmin() {
         {([
           { k: "sources", l: `Sources (${sources.length})` },
           { k: "monitor", l: "Sale monitor" },
+          { k: "inventory", l: "Inventory" },
           { k: "members", l: `Members (${members.length})` },
           { k: "alerts", l: "Sale alerts" },
         ] as const).map((t) => (
@@ -416,6 +418,7 @@ export default function PepHubAdmin() {
       )}
 
       {sub === "monitor" && <PepHubSaleMonitor />}
+      {sub === "inventory" && <PepHubInventoryAdmin />}
 
       {sub === "members" && (
         <div className="mt-6 overflow-x-auto rounded-2xl border border-foreground/10 bg-card shadow-sm">
