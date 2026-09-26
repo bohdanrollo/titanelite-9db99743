@@ -274,12 +274,8 @@ export const adminInvAnalytics = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     const db = await requireAdmin(context);
     const since = new Date(Date.now() - 30 * 86400000).toISOString();
-    const [{ data: ev }, { data: drops }] = await Promise.all([
-      db.from("pephub_inventory_events").select("event_type, query, product_id, source_id, pephub_products(product_name), pephub_sources(name)")
-        .gte("created_at", since).limit(20000),
-      db.from("pephub_price_history").select("id").gte("recorded_at", since).limit(1),
-    ]);
-    void drops;
+    const { data: ev } = await db.from("pephub_inventory_events").select("event_type, query, product_id, source_id, pephub_products(product_name), pephub_sources(name)")
+        .gte("created_at", since).limit(20000);
     const tally = (keys: string[]) => {
       const m = new Map<string, number>();
       for (const k of keys) m.set(k, (m.get(k) ?? 0) + 1);
