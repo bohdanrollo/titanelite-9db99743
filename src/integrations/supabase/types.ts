@@ -1069,6 +1069,62 @@ export type Database = {
           },
         ]
       }
+      pephub_compound_aliases: {
+        Row: {
+          alias_key: string
+          compound_id: string
+          id: string
+        }
+        Insert: {
+          alias_key: string
+          compound_id: string
+          id?: string
+        }
+        Update: {
+          alias_key?: string
+          compound_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pephub_compound_aliases_compound_id_fkey"
+            columns: ["compound_id"]
+            isOneToOne: false
+            referencedRelation: "pephub_compounds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pephub_compounds: {
+        Row: {
+          active: boolean
+          canonical_name: string
+          category: string | null
+          created_at: string
+          description: string | null
+          id: string
+          slug: string
+        }
+        Insert: {
+          active?: boolean
+          canonical_name: string
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          slug: string
+        }
+        Update: {
+          active?: boolean
+          canonical_name?: string
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          slug?: string
+        }
+        Relationships: []
+      }
       pephub_follows: {
         Row: {
           created_at: string
@@ -1143,6 +1199,59 @@ export type Database = {
           },
           {
             foreignKeyName: "pephub_inbox_messages_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "pephub_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pephub_inventory_syncs: {
+        Row: {
+          added: number
+          completed_at: string | null
+          deactivated: number
+          error_message: string | null
+          id: string
+          method: string | null
+          price_changes: number
+          source_id: string
+          started_at: string
+          status: string
+          triggered_by: string
+          updated: number
+        }
+        Insert: {
+          added?: number
+          completed_at?: string | null
+          deactivated?: number
+          error_message?: string | null
+          id?: string
+          method?: string | null
+          price_changes?: number
+          source_id: string
+          started_at?: string
+          status?: string
+          triggered_by?: string
+          updated?: number
+        }
+        Update: {
+          added?: number
+          completed_at?: string | null
+          deactivated?: number
+          error_message?: string | null
+          id?: string
+          method?: string | null
+          price_changes?: number
+          source_id?: string
+          started_at?: string
+          status?: string
+          triggered_by?: string
+          updated?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pephub_inventory_syncs_source_id_fkey"
             columns: ["source_id"]
             isOneToOne: false
             referencedRelation: "pephub_sources"
@@ -1306,6 +1415,138 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      pephub_price_history: {
+        Row: {
+          id: string
+          in_stock: boolean | null
+          original_price: number | null
+          price: number | null
+          product_id: string
+          recorded_at: string
+          source_id: string
+        }
+        Insert: {
+          id?: string
+          in_stock?: boolean | null
+          original_price?: number | null
+          price?: number | null
+          product_id: string
+          recorded_at?: string
+          source_id: string
+        }
+        Update: {
+          id?: string
+          in_stock?: boolean | null
+          original_price?: number | null
+          price?: number | null
+          product_id?: string
+          recorded_at?: string
+          source_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pephub_price_history_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "pephub_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pephub_price_history_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "pephub_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pephub_products: {
+        Row: {
+          active: boolean
+          compound_id: string | null
+          created_at: string
+          currency: string
+          data_source: string
+          external_id: string
+          id: string
+          in_stock: boolean | null
+          last_checked: string
+          match_confidence: string
+          missing_count: number
+          original_price: number | null
+          price: number | null
+          product_image: string | null
+          product_name: string
+          product_url: string | null
+          source_id: string
+          strength_text: string | null
+          total_mg: number | null
+          updated_at: string
+          variant_name: string | null
+        }
+        Insert: {
+          active?: boolean
+          compound_id?: string | null
+          created_at?: string
+          currency?: string
+          data_source?: string
+          external_id: string
+          id?: string
+          in_stock?: boolean | null
+          last_checked?: string
+          match_confidence?: string
+          missing_count?: number
+          original_price?: number | null
+          price?: number | null
+          product_image?: string | null
+          product_name: string
+          product_url?: string | null
+          source_id: string
+          strength_text?: string | null
+          total_mg?: number | null
+          updated_at?: string
+          variant_name?: string | null
+        }
+        Update: {
+          active?: boolean
+          compound_id?: string | null
+          created_at?: string
+          currency?: string
+          data_source?: string
+          external_id?: string
+          id?: string
+          in_stock?: boolean | null
+          last_checked?: string
+          match_confidence?: string
+          missing_count?: number
+          original_price?: number | null
+          price?: number | null
+          product_image?: string | null
+          product_name?: string
+          product_url?: string | null
+          source_id?: string
+          strength_text?: string | null
+          total_mg?: number | null
+          updated_at?: string
+          variant_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pephub_products_compound_id_fkey"
+            columns: ["compound_id"]
+            isOneToOne: false
+            referencedRelation: "pephub_compounds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pephub_products_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "pephub_sources"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       pephub_profiles: {
         Row: {
@@ -1527,8 +1768,15 @@ export type Database = {
           failure_count: number
           id: string
           instagram_url: string | null
+          inventory_data_source: string
+          inventory_feed_url: string | null
+          inventory_sync_error: string | null
+          inventory_sync_hours: number
+          inventory_sync_status: string
+          inventory_tracking_enabled: boolean
           is_active: boolean
           last_checked_at: string | null
+          last_inventory_sync: string | null
           last_sale_detected_at: string | null
           last_successful_check_at: string | null
           listing_category: string
@@ -1562,8 +1810,15 @@ export type Database = {
           failure_count?: number
           id?: string
           instagram_url?: string | null
+          inventory_data_source?: string
+          inventory_feed_url?: string | null
+          inventory_sync_error?: string | null
+          inventory_sync_hours?: number
+          inventory_sync_status?: string
+          inventory_tracking_enabled?: boolean
           is_active?: boolean
           last_checked_at?: string | null
+          last_inventory_sync?: string | null
           last_sale_detected_at?: string | null
           last_successful_check_at?: string | null
           listing_category?: string
@@ -1597,8 +1852,15 @@ export type Database = {
           failure_count?: number
           id?: string
           instagram_url?: string | null
+          inventory_data_source?: string
+          inventory_feed_url?: string | null
+          inventory_sync_error?: string | null
+          inventory_sync_hours?: number
+          inventory_sync_status?: string
+          inventory_tracking_enabled?: boolean
           is_active?: boolean
           last_checked_at?: string | null
+          last_inventory_sync?: string | null
           last_sale_detected_at?: string | null
           last_successful_check_at?: string | null
           listing_category?: string
