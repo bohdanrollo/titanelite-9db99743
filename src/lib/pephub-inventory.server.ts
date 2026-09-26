@@ -99,6 +99,60 @@ async function fetchFeed(url: string): Promise<RawItem[] | null> {
   })).filter((x: RawItem) => x.productName);
 }
 
+function htmlToText(html: string) {
+  return html
+    .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<svg[\s\S]*?<\/svg>/gi, " ")
+    .replace(/<a [^>]*href="([^"]+)"[^>]*>/gi, " [link:$1] ")
+    .replace(/<img [^>]*src="([^"]+)"[^>]*>/gi, " [img:$1] ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&amp;/g, "&").replace(/&#36;|&dollar;/g, "$").replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ");
+}
+
+/** Last resort: read the vendor's public shop pages with AI. Only returns products literally shown. */
+async function fetchWithAi(startUrl: string): Promise<RawItem[] | null> {
+  const key = process.env.LOVABLE_API_KEY;
+  if (!key) return null;
+  const origin = new URL(startUrl).origin;
+  const pages = [startUrl, `${origin}/shop`, `${origin}/products`, `${origin}/collections/all`, `${origin}/store`];
+  let text = "";
+  for (const u of pages) {
+    try {
+      const res = await fetch(u, { headers: { "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124 Safari/537.36" }, signal: AbortSignal.timeout(20000) });
+      if (!res.ok) continue;
+      const t = htmlToText(await res.text());
+      if (/\$\s?\d/.test(t)) text += `\n\n=== PAGE ${res.url} ===\n${t.slice(0, 30000)}`;
+    } catch { /* skip */ }
+    if (text.length > 60000) break;
+  }
+  if (!text) return null;
+  const { generateText } = await import("ai");
+  const { createLovableAiGatewayProvider } = await import("@/lib/ai-gateway.server");
+  const provider = createLovableAiGatewayProvider(key);
+  const { text: out } = await generateText({
+    model: provider("google/gemini-2.5-flash"),
+    prompt: `Extract every product listing from these store pages. Return ONLY a JSON array of objects: {"name": string, "variant": string|null, "price": number|null, "compare_at_price": number|null, "in_stock": boolean|null, "url": string|null, "image": string|null}.
+Rules: include only products literally shown with their name. Never guess: if a price, stock status, url or image is not explicitly present, use null. "in_stock" is false only if the page says sold out / out of stock. URLs must be absolute (base ${origin}). No duplicates.\n${text}`,
+  });
+  const m = out.match(/\[[\s\S]*\]/);
+  if (!m) return null;
+  let arr: any[];
+  try { arr = JSON.parse(m[0]); } catch { return null; }
+  const items = arr.filter((p) => p && typeof p.name === "string" && p.name.trim()).map((p) => {
+    let url: string | null = null;
+    try { url = p.url ? new URL(p.url, origin).toString() : null; } catch { url = null; }
+    const price = num(p.price), cmp = num(p.compare_at_price);
+    return {
+      externalId: `ai-${aliasKey((url ?? "") + p.name + (p.variant ?? ""))}`.slice(0, 200),
+      productName: String(p.name).trim(), variantName: p.variant ? String(p.variant) : null,
+      price, originalPrice: cmp && price && cmp > price ? cmp : null,
+      inStock: typeof p.in_stock === "boolean" ? p.in_stock : null, url,
+      image: typeof p.image === "string" ? p.image : null,
+    };
+  });
+  return items.length ? items : null;
+}
+
 async function admin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   return supabaseAdmin;
@@ -138,11 +192,12 @@ export async function syncSource(sourceId: string, triggeredBy: string): Promise
     if (src.inventory_feed_url) { items = await fetchFeed(src.inventory_feed_url); method = "feed"; }
     if (!items) { items = await fetchShopify(base); method = "shopify"; }
     if (!items) { items = await fetchWoo(base); method = "woocommerce"; }
+    if (!items) { items = await fetchWithAi(src.url); method = "ai"; }
   } catch { items = null; }
 
   const now = new Date().toISOString();
   if (!items || !items.length) {
-    const error = "Couldn't read this store's public catalog automatically. Add a product feed URL for this vendor.";
+    const error = "Couldn't read this store's catalog (the site may block automated visitors). Add a product feed URL for this vendor.";
     await db.from("pephub_inventory_syncs").update({ status: "failed", completed_at: now, error_message: error }).eq("id", run!.id);
     await db.from("pephub_sources").update({ inventory_sync_status: "failed", inventory_sync_error: error, last_inventory_sync: now }).eq("id", sourceId);
     return { status: "failed", method: null, added: 0, updated: 0, priceChanges: 0, deactivated: 0, error };
