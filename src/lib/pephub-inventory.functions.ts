@@ -51,7 +51,7 @@ function vendorLink(productUrl: string | null, affiliateUrl: string | null) {
   }
 }
 
-const LISTING_COLS = "id, product_name, variant_name, strength_text, total_mg, price, original_price, in_stock, product_url, product_image, last_checked, source_id, compound_id, pephub_sources!inner(id, name, logo_url, affiliate_url, is_active, inventory_tracking_enabled), pephub_compounds(canonical_name)";
+const LISTING_COLS = "id, product_name, variant_name, strength_text, total_mg, price, original_price, in_stock, product_url, product_image, last_checked, source_id, compound_id, pephub_sources!inner(id, name, url, logo_url, affiliate_url, is_active, inventory_tracking_enabled), pephub_compounds(canonical_name)";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toListing(r: any): InvListing {
@@ -62,7 +62,7 @@ function toListing(r: any): InvListing {
     id: r.id, productName: r.product_name, variantName: r.variant_name, strength: r.strength_text, totalMg: mg,
     price, originalPrice: r.original_price == null ? null : Number(r.original_price),
     pricePerMg: price && mg ? Math.round((price / mg) * 100) / 100 : null,
-    inStock: r.in_stock, url: vendorLink(r.product_url, s.affiliate_url), image: r.product_image,
+    inStock: r.in_stock, url: vendorLink(r.product_url, s.affiliate_url || s.url), image: r.product_image,
     lastChecked: r.last_checked, vendorId: s.id, vendorName: s.name, vendorLogo: s.logo_url,
     compoundName: r.pephub_compounds?.canonical_name ?? null,
   };
