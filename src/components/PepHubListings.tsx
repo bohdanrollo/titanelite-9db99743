@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ExternalLink } from "lucide-react";
-import type { InvListing } from "@/lib/pephub-inventory.functions";
+import { useServerFn } from "@tanstack/react-start";
+import { invTrackClick, type InvListing } from "@/lib/pephub-inventory.functions";
 
 type Sort = "price-asc" | "price-desc" | "ppm" | "vendor" | "stock" | "recent";
 
@@ -18,6 +19,8 @@ function Stock({ v }: { v: boolean | null }) {
 }
 
 export function PepHubListings({ listings }: { listings: InvListing[] }) {
+  const track = useServerFn(invTrackClick);
+  const onClick = (id: string) => { void track({ data: { productId: id } }).catch(() => {}); };
   const [sort, setSort] = useState<Sort>("price-asc");
   const [inStockOnly, setInStockOnly] = useState(false);
   const [vendor, setVendor] = useState("");
@@ -81,13 +84,14 @@ export function PepHubListings({ listings }: { listings: InvListing[] }) {
               </div>
               <div className="text-right">
                 <div className="text-lg font-medium">{money(l.price)}</div>
+                {l.previousPrice && <div className="text-[10px] uppercase text-blood">Dropped from {money(l.previousPrice)}</div>}
                 {l.originalPrice && <div className="text-xs text-muted-foreground line-through">{money(l.originalPrice)}</div>}
                 {l.pricePerMg && <div className="text-xs text-muted-foreground">${l.pricePerMg.toFixed(2)}/mg</div>}
               </div>
             </div>
             <div className="mt-3 flex items-center justify-between">
               <div className="flex flex-col"><Stock v={l.inStock} /><span className="text-[11px] text-muted-foreground">Last checked {timeAgo(l.lastChecked)}</span></div>
-              {l.url && <a href={l.url} target="_blank" rel="noopener noreferrer sponsored" className="inline-flex items-center gap-1.5 rounded-full bg-blood px-4 py-2 text-xs text-bone">View product <ExternalLink size={12} /></a>}
+              {l.url && <a onClick={() => onClick(l.id)} href={l.url} target="_blank" rel="noopener noreferrer sponsored" className="inline-flex items-center gap-1.5 rounded-full bg-blood px-4 py-2 text-xs text-bone">View product <ExternalLink size={12} /></a>}
             </div>
           </div>
         ))}
@@ -106,13 +110,13 @@ export function PepHubListings({ listings }: { listings: InvListing[] }) {
                 <td className="p-3">{name(l)}</td>
                 <td className="p-3 text-muted-foreground">{l.strength ?? "—"}</td>
                 <td className="p-3">
-                  <span className="font-medium">{money(l.price)}</span>
+                  <span className="font-medium">{money(l.price)}</span>{l.previousPrice && <span className="ml-2 rounded bg-blood/10 px-1.5 py-0.5 text-[10px] uppercase text-blood">Price drop from {money(l.previousPrice)}</span>}
                   {l.originalPrice && <><span className="ml-2 text-xs text-muted-foreground line-through">{money(l.originalPrice)}</span><span className="ml-2 rounded bg-blood/10 px-1.5 py-0.5 text-[10px] uppercase text-blood">Sale</span></>}
                 </td>
                 <td className="p-3 text-muted-foreground">{l.pricePerMg ? `$${l.pricePerMg.toFixed(2)}` : "—"}</td>
                 <td className="p-3"><Stock v={l.inStock} /></td>
                 <td className="p-3 text-xs text-muted-foreground">{timeAgo(l.lastChecked)}</td>
-                <td className="p-3 text-right">{l.url && <a href={l.url} target="_blank" rel="noopener noreferrer sponsored" className="inline-flex items-center gap-1.5 rounded-full bg-blood px-3 py-1.5 text-xs text-bone">View <ExternalLink size={11} /></a>}</td>
+                <td className="p-3 text-right">{l.url && <a onClick={() => onClick(l.id)} href={l.url} target="_blank" rel="noopener noreferrer sponsored" className="inline-flex items-center gap-1.5 rounded-full bg-blood px-3 py-1.5 text-xs text-bone">View <ExternalLink size={11} /></a>}</td>
               </tr>
             ))}
           </tbody>

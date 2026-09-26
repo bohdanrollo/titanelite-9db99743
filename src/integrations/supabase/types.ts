@@ -1206,6 +1206,51 @@ export type Database = {
           },
         ]
       }
+      pephub_inventory_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          product_id: string | null
+          query: string | null
+          source_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          product_id?: string | null
+          query?: string | null
+          source_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          product_id?: string | null
+          query?: string | null
+          source_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pephub_inventory_events_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "pephub_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pephub_inventory_events_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "pephub_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pephub_inventory_syncs: {
         Row: {
           added: number

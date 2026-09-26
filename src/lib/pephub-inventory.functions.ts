@@ -19,7 +19,10 @@ export type InvListing = {
   vendorName: string;
   vendorLogo: string | null;
   compoundName: string | null;
+  previousPrice?: number | null;
 };
+
+export type InvHistoryPoint = { day: string; low: number };
 
 export type InvCompound = { id: string; name: string; slug: string; category: string | null; listings: number };
 
@@ -108,6 +111,7 @@ export const invSearch = createServerFn({ method: "POST" })
     q = ids.length ? q.or(`compound_id.in.(${ids.join(",")}),product_name.ilike.%${safe}%`) : q.ilike("product_name", `%${safe}%`);
     const { data: rows, error } = await q.limit(300);
     if (error) throw new Error(error.message);
+    void db.from("pephub_inventory_events").insert({ event_type: "search", query: data.q.slice(0, 80), user_id: context.userId }).then(() => {});
     const { data: comps } = ids.length
       ? await db.from("pephub_compounds").select("id, canonical_name, slug, category").in("id", ids)
       : { data: [] };
@@ -124,12 +128,36 @@ export const invCompound = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const db = await requireMember(context);
     const { data: c } = await db.from("pephub_compounds").select("id, canonical_name, slug, category, description").eq("slug", data.slug).maybeSingle();
-    if (!c) return { compound: null, listings: [] as InvListing[] };
+    if (!c) return { compound: null, listings: [] as InvListing[], history: [] as InvHistoryPoint[] };
     const { data: rows, error } = await db.from("pephub_products").select(LISTING_COLS)
       .eq("compound_id", c.id).eq("active", true)
       .eq("pephub_sources.is_active", true).eq("pephub_sources.inventory_tracking_enabled", true).limit(500);
     if (error) throw new Error(error.message);
-    return { compound: { name: c.canonical_name, slug: c.slug, category: c.category, description: c.description }, listings: (rows ?? []).map(toListing) };
+    const listings = (rows ?? []).map(toListing);
+    const ids = listings.map((l) => l.id);
+    const since = new Date(Date.now() - 90 * 86400000).toISOString();
+    const { data: hist } = ids.length
+      ? await db.from("pephub_price_history").select("product_id, price, recorded_at").in("product_id", ids)
+          .gte("recorded_at", since).order("recorded_at", { ascending: true }).limit(5000)
+      : { data: [] };
+    const byDay = new Map<string, number>();
+    const perProduct = new Map<string, number[]>();
+    for (const h of hist ?? []) {
+      if (h.price == null) continue;
+      const p = Number(h.price);
+      const day = h.recorded_at.slice(0, 10);
+      byDay.set(day, Math.min(byDay.get(day) ?? Infinity, p));
+      const arr = perProduct.get(h.product_id) ?? [];
+      if (arr[arr.length - 1] !== p) arr.push(p);
+      perProduct.set(h.product_id, arr);
+    }
+    for (const l of listings) {
+      const arr = perProduct.get(l.id) ?? [];
+      const prev = arr.length >= 2 ? arr[arr.length - 2] : null;
+      l.previousPrice = prev != null && l.price != null && prev > l.price ? prev : null;
+    }
+    const history: InvHistoryPoint[] = [...byDay.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([day, low]) => ({ day, low }));
+    return { compound: { name: c.canonical_name, slug: c.slug, category: c.category, description: c.description }, listings, history };
   });
 
 // ---------------- Admin ----------------
@@ -186,4 +214,80 @@ export const adminInvSyncNow = createServerFn({ method: "POST" })
     await requireAdmin(context);
     const { syncSource } = await import("@/lib/pephub-inventory.server");
     return await syncSource(data.id, "manual");
+  });
+
+/** Record an outbound vendor click. */
+export const invTrackClick = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ productId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const db = await requireMember(context);
+    const { data: p } = await db.from("pephub_products").select("source_id").eq("id", data.productId).maybeSingle();
+    if (!p) return { ok: false };
+    await db.from("pephub_inventory_events").insert({ event_type: "click", product_id: data.productId, source_id: p.source_id, user_id: context.userId });
+    return { ok: true };
+  });
+
+export const adminInvUnmatched = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const db = await requireAdmin(context);
+    const [{ data: prods }, { data: comps }] = await Promise.all([
+      db.from("pephub_products").select("id, product_name, variant_name, strength_text, match_confidence, pephub_sources(name)")
+        .eq("active", true).is("compound_id", null).order("product_name").limit(500),
+      db.from("pephub_compounds").select("id, canonical_name").eq("active", true).order("canonical_name"),
+    ]);
+    return {
+      products: (prods ?? []).map((p) => ({ id: p.id, name: [p.product_name, p.variant_name].filter(Boolean).join(" — "), strength: p.strength_text, confidence: p.match_confidence, vendor: (p.pephub_sources as { name: string } | null)?.name ?? "" })),
+      compounds: (comps ?? []).map((c) => ({ id: c.id, name: c.canonical_name })),
+    };
+  });
+
+export const adminInvMap = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({
+    productId: z.string().uuid(),
+    compoundId: z.string().uuid().nullable().optional(),
+    newCompound: z.string().trim().min(2).max(80).optional(),
+  }).parse(d))
+  .handler(async ({ data, context }) => {
+    const db = await requireAdmin(context);
+    let compoundId = data.compoundId ?? null;
+    if (data.newCompound) {
+      const slug = data.newCompound.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      const { data: existing } = await db.from("pephub_compounds").select("id").eq("slug", slug).maybeSingle();
+      if (existing) compoundId = existing.id;
+      else {
+        const { data: created, error } = await db.from("pephub_compounds").insert({ canonical_name: data.newCompound, slug }).select("id").single();
+        if (error) throw new Error(error.message);
+        compoundId = created.id;
+        await db.from("pephub_compound_aliases").insert({ compound_id: created.id, alias_key: slug.replace(/-/g, "") });
+      }
+    }
+    const { error } = await db.from("pephub_products").update({ compound_id: compoundId, match_confidence: "manual" }).eq("id", data.productId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminInvAnalytics = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const db = await requireAdmin(context);
+    const since = new Date(Date.now() - 30 * 86400000).toISOString();
+    const { data: ev } = await db.from("pephub_inventory_events").select("event_type, query, product_id, source_id, pephub_products(product_name), pephub_sources(name)")
+        .gte("created_at", since).limit(20000);
+    const tally = (keys: string[]) => {
+      const m = new Map<string, number>();
+      for (const k of keys) m.set(k, (m.get(k) ?? 0) + 1);
+      return [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10).map(([label, count]) => ({ label, count }));
+    };
+    const searches = (ev ?? []).filter((e) => e.event_type === "search");
+    const clicks = (ev ?? []).filter((e) => e.event_type === "click");
+    return {
+      searchCount: searches.length,
+      clickCount: clicks.length,
+      topSearches: tally(searches.map((e) => (e.query ?? "").toLowerCase().trim()).filter(Boolean)),
+      topProducts: tally(clicks.map((e) => (e.pephub_products as { product_name: string } | null)?.product_name ?? "Removed product")),
+      topVendors: tally(clicks.map((e) => (e.pephub_sources as { name: string } | null)?.name ?? "Unknown")),
+    };
   });

@@ -155,6 +155,13 @@
       "when": 1790384869421,
       "tag": "0021_pephub_inventory_phase1",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1790386085292,
+      "tag": "0022_pephub_inventory_events",
+      "breakpoints": true
     }
   ]
 }

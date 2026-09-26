@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Loader2, RefreshCw } from "lucide-react";
+import PepHubInventoryInsights from "@/components/PepHubInventoryInsights";
 import { adminInvVendors, adminInvUpdateVendor, adminInvSyncNow } from "@/lib/pephub-inventory.functions";
 
 type Vendor = Awaited<ReturnType<typeof adminInvVendors>>["vendors"][number];
@@ -95,6 +96,7 @@ export default function PepHubInventoryAdmin() {
           </div>
         ))}
       </div>
+      <PepHubInventoryInsights />
     </div>
   );
 }
