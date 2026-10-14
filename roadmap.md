@@ -9,3 +9,8 @@
 - [x] Verify desktop and phone presentation and existing buttons; keep unpublished
 - [x] Verify the corrected hero image (blue outline removed) renders cleanly on the welcome page — no deploy
 - [x] Add Peptide Calculator button to top header
+
+## Dashboard redesign (phased, per uploaded brief)
+- [ ] Blocked: waiting on the user's reference videos
+- [ ] Phase 1: dashboard home, bottom/side navigation, design system
+- [ ] Phase 2+: redesign each dashboard tool page
