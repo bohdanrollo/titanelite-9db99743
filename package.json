@@ -107,6 +107,6 @@
     }
   },
   "overrides": {
-    "seroval": "^1.6.0"
+    "seroval": "1.6.9"
   }
 }
