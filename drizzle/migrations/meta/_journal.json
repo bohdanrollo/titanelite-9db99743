@@ -176,6 +176,13 @@
       "when": 1792009179634,
       "tag": "0024_reminder_settings",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1792009983258,
+      "tag": "0025_allow_basic_access_tier",
+      "breakpoints": true
     }
   ]
 }
