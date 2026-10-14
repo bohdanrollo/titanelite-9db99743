@@ -7,4 +7,4 @@
 ## Welcome page refresh
 - [x] Replace phone image and apply a scoped pale-blue welcome page theme
 - [x] Verify desktop and phone presentation and existing buttons; keep unpublished
-- [ ] Verify the corrected hero image (blue outline removed) renders cleanly on the welcome page — no deploy
+- [x] Verify the corrected hero image (blue outline removed) renders cleanly on the welcome page — no deploy
