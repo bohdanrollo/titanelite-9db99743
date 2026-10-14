@@ -414,6 +414,9 @@ function normalizeCode(raw: string) {
 async function attributeAffiliateFromSession(session: CheckoutSession, env: StripeEnv) {
   const userId = session.metadata?.userId;
   if (!userId) return;
+  // Basic ($2.99) signups don't count toward affiliate referral totals.
+  const priceLookup = await resolveSessionTier(session, env);
+  if (priceLookup && TIER_BY_PRICE[priceLookup] === "basic") return;
   try {
     const stripe = createStripeClient(env);
     const full = await stripe.checkout.sessions.retrieve(session.id, {
