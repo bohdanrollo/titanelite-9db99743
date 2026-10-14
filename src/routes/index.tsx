@@ -15,7 +15,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
 import protocolImg from "@/assets/protocol.jpg";
-import phoneAsset from "@/assets/peplog-iphone-dashboard-mockup.png.asset.json";
+import phoneImage from "@/assets/peplog-iphone-dashboard-clean.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -76,9 +76,9 @@ function Hero() {
         <p className="mt-5 text-xs text-muted-foreground">Track, Learn, Implement · Built for consistent use · Educational research only</p>
         <div className="relative mt-10 w-full max-w-3xl">
           <img
-            src={phoneAsset.url}
+            src={phoneImage}
             alt="PepLog My Stack screen on a phone, showing a weekly dosing schedule with morning and evening injections"
-            className="welcome-phone-image relative z-10 aspect-square w-full object-contain"
+            className="relative z-10 aspect-square w-full object-contain"
             width={768}
             height={768}
             loading="eager"
