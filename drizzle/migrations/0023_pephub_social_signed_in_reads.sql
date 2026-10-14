@@ -1,0 +1,11 @@
+DROP POLICY IF EXISTS "posts are public" ON public.pephub_posts;
+CREATE POLICY "signed-in can read posts" ON public.pephub_posts FOR SELECT TO authenticated USING (auth.uid() IS NOT NULL);
+DROP POLICY IF EXISTS "comments are public" ON public.pephub_comments;
+CREATE POLICY "signed-in can read comments" ON public.pephub_comments FOR SELECT TO authenticated USING (auth.uid() IS NOT NULL);
+DROP POLICY IF EXISTS "likes are public" ON public.pephub_likes;
+CREATE POLICY "signed-in can read likes" ON public.pephub_likes FOR SELECT TO authenticated USING (auth.uid() IS NOT NULL);
+DROP POLICY IF EXISTS "follows are public" ON public.pephub_follows;
+CREATE POLICY "signed-in can read follows" ON public.pephub_follows FOR SELECT TO authenticated USING (auth.uid() IS NOT NULL);
+DROP POLICY IF EXISTS "profiles are public" ON public.pephub_profiles;
+CREATE POLICY "signed-in can read profiles" ON public.pephub_profiles FOR SELECT TO authenticated USING (auth.uid() IS NOT NULL);
+REVOKE SELECT ON public.pephub_posts, public.pephub_comments, public.pephub_likes, public.pephub_follows, public.pephub_profiles FROM anon;
