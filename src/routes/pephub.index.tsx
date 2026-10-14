@@ -9,7 +9,6 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { type PepSource } from "@/lib/pephub.functions";
 import { pephubAccess, pephubSignup, pephubSubscribeCurrentUser } from "@/lib/pephub-access.functions";
 import { SignupAcknowledgements } from "@/components/SignupAcknowledgements";
-import zeerowLogoAsset from "@/assets/zeerow-logo.jpeg.asset.json";
 
 export const Route = createFileRoute("/pephub/")({
   head: () => ({
@@ -45,7 +44,6 @@ function PepHub() {
   const [hasAccess, setHasAccess] = useState(false);
   const [age21, setAge21] = useState(false);
   const [researchUse, setResearchUse] = useState(false);
-  const [showZeerowPopup, setShowZeerowPopup] = useState(false);
   const [showLegalShieldPopup, setShowLegalShieldPopup] = useState(false);
   const signup = useServerFn(pephubSignup);
   const checkAccess = useServerFn(pephubAccess);
@@ -90,12 +88,6 @@ function PepHub() {
     })();
   }, [hasAccess]);
 
-  useEffect(() => {
-    try {
-      if (localStorage.getItem("zeerow_popup_closed") === "1") return;
-    } catch { /* ignore */ }
-    setShowZeerowPopup(true);
-  }, []);
 
   useEffect(() => {
     try {
@@ -104,12 +96,6 @@ function PepHub() {
     setShowLegalShieldPopup(true);
   }, []);
 
-  function closeZeerowPopup() {
-    setShowZeerowPopup(false);
-    try {
-      localStorage.setItem("zeerow_popup_closed", "1");
-    } catch { /* ignore */ }
-  }
 
   function closeLegalShieldPopup() {
     setShowLegalShieldPopup(false);
