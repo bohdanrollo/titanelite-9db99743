@@ -15,7 +15,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
 import protocolImg from "@/assets/protocol.jpg";
-import phoneImg from "@/assets/peplog-phone-stack-cutout.png";
+import phoneAsset from "@/assets/peplog-iphone-dashboard-mockup.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -43,7 +43,7 @@ const platformTools = [
 
 function Home() {
   return (
-    <div className="landing-light min-h-dvh bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
+    <div className="landing-light welcome-blue min-h-dvh bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
       <SiteHeader />
       <main>
         <Hero />
@@ -74,14 +74,15 @@ function Hero() {
           <Link to="/pephub" className="landing-btn-secondary">Go to PepHub</Link>
         </div>
         <p className="mt-5 text-xs text-muted-foreground">Track, Learn, Implement · Built for consistent use · Educational research only</p>
-        <div className="relative mt-14 w-full max-w-sm sm:max-w-md">
+        <div className="relative mt-10 w-full max-w-3xl">
           <img
-            src={phoneImg}
+            src={phoneAsset.url}
             alt="PepLog My Stack screen on a phone, showing a weekly dosing schedule with morning and evening injections"
-            className="relative z-10 w-full"
-            width={476}
-            height={1015}
-            loading="lazy"
+            className="welcome-phone-image relative z-10 aspect-square w-full object-contain"
+            width={768}
+            height={768}
+            loading="eager"
+            fetchPriority="high"
           />
         </div>
       </div>
