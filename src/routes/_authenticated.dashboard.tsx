@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useAccess, isTabAllowed } from "@/lib/access";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, MessagesSquare, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, Check, CheckCircle, Activity, Apple, TrendingUp, HeartPulse, NotebookPen, Sparkles, CreditCard, Phone } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, MessagesSquare, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, Check, CheckCircle, Activity, Apple, TrendingUp, HeartPulse, NotebookPen, Sparkles, CreditCard, Phone, ArrowLeft } from "lucide-react";
 import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import ReactMarkdown from "react-markdown";
@@ -28,6 +28,7 @@ import { wasReferredByCode } from "@/lib/affiliates.functions";
 import CoachCalls from "@/components/CoachCalls";
 import { StripeEmbeddedCheckoutForm } from "@/components/StripeEmbeddedCheckout";
 import { PepLogWordmark } from "@/components/PepLogWordmark";
+import { DashboardHubView, DashboardDock, type Hub, type HubTile } from "@/components/DashboardHub";
 
 function ManageSubscriptionButton() {
   const openPortal = useServerFn(createPortalSession);
@@ -82,7 +83,8 @@ function Dashboard() {
   const { tier, loading: accessLoading, isAdmin } = useAccess();
   const nav = useNavigate();
   const routeSearch = Route.useSearch();
-  const [tab, setTab] = useState<Tab>(routeSearch.tab ?? "peptides");
+  const [tab, setTab] = useState<Tab | null>(routeSearch.tab ?? null);
+  const [hub, setHub] = useState<Hub>("coaching");
   const [navOpen, setNavOpen] = useState(false);
   const [showUpgrade, setShowUpgrade] = useState(false);
   const navRef = useRef<HTMLElement>(null);
@@ -112,7 +114,7 @@ function Dashboard() {
   }, [user]);
 
   return (
-    <div className="min-h-dvh bg-background">
+    <div className="landing-light dash-app min-h-dvh bg-background text-foreground">
       <header className="border-b border-foreground/10">
         <div className="container-edge h-16 flex items-center justify-between gap-3">
           <Link to="/" className="flex min-w-0 items-center" aria-label="PepLog home">
@@ -127,9 +129,10 @@ function Dashboard() {
         </div>
 
       </header>
-      <section className="container-edge py-8 sm:py-12">
+      <section className="container-edge max-w-5xl py-6 sm:py-10">
         <div className="text-eyebrow">Client Dashboard</div>
-        <h1 className="mt-4 text-3xl sm:text-5xl lg:text-6xl">Welcome back.</h1>
+        <h1 className="mt-2 text-2xl sm:text-3xl font-medium">Hello{user?.email ? `, ${user.email.split("@")[0]}` : ""}</h1>
+        <p className="text-sm text-muted-foreground">Today {new Date().toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" })}</p>
         {!isAffiliate && (
           <p className="mt-3 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-2 text-blood font-medium">
@@ -240,7 +243,7 @@ function Dashboard() {
           {tab === "wellness" && isTabAllowed("wellness", tier, isAdmin) && <WellnessTracker />}
           {tab === "workouts" && isTabAllowed("workouts", tier, isAdmin) && <WorkoutLogger />}
           {tab === "stackbuilder" && isTabAllowed("stackbuilder", tier, isAdmin) && <StackBuilder />}
-          {!accessLoading && hasAccess && !isTabAllowed(tab, tier, isAdmin) && <LockedTabCard tab={tab} onUpgrade={() => setShowUpgrade(true)} />}
+          {!accessLoading && hasAccess && tab !== null && !isTabAllowed(tab, tier, isAdmin) && <LockedTabCard tab={tab} onUpgrade={() => setShowUpgrade(true)} />}
           {hasAccess && (
             <div className="mt-16 pt-6 border-t border-foreground/5 flex items-center justify-center gap-5">
               {tier !== "elite" && (
