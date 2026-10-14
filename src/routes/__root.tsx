@@ -6,6 +6,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { Toaster } from "sonner";
@@ -42,7 +43,7 @@ function isLoadFailure(error: unknown) {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
 
@@ -69,7 +70,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         <h1 className="mt-4 text-4xl">Something Snapped</h1>
         <p className="mt-4 text-sm text-muted-foreground">Reload, or head home and try again.</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <button onClick={() => { router.invalidate(); reset(); }} className="btn-blood hover:btn-blood-hover">
+          <button onClick={() => { router.invalidate(); reset?.(); }} className="btn-blood hover:btn-blood-hover">
             Try again
           </button>
           <a href="/" className="btn-ghost">Go home</a>
