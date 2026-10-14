@@ -2222,6 +2222,48 @@ export type Database = {
         }
         Relationships: []
       }
+      reminder_settings: {
+        Row: {
+          checkin_enabled: boolean
+          checkin_hour: number
+          checkin_weekday: number
+          created_at: string
+          dose_enabled: boolean
+          dose_hour: number
+          last_checkin_sent_on: string | null
+          last_dose_sent_on: string | null
+          timezone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          checkin_enabled?: boolean
+          checkin_hour?: number
+          checkin_weekday?: number
+          created_at?: string
+          dose_enabled?: boolean
+          dose_hour?: number
+          last_checkin_sent_on?: string | null
+          last_dose_sent_on?: string | null
+          timezone?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          checkin_enabled?: boolean
+          checkin_hour?: number
+          checkin_weekday?: number
+          created_at?: string
+          dose_enabled?: boolean
+          dose_hour?: number
+          last_checkin_sent_on?: string | null
+          last_dose_sent_on?: string | null
+          timezone?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       suppressed_emails: {
         Row: {
           created_at: string

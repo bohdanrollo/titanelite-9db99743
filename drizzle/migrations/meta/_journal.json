@@ -169,6 +169,13 @@
       "when": 1791961545367,
       "tag": "0023_pephub_social_signed_in_reads",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1792009179634,
+      "tag": "0024_reminder_settings",
+      "breakpoints": true
     }
   ]
 }
