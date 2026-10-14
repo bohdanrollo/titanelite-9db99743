@@ -162,6 +162,13 @@
       "when": 1790386085292,
       "tag": "0022_pephub_inventory_events",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1791961545367,
+      "tag": "0023_pephub_social_signed_in_reads",
+      "breakpoints": true
     }
   ]
 }
