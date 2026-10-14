@@ -1,3 +1,4 @@
+# Roadmap
 
 ## PepHub Price Comparison
 - [x] Phase 1: vendor tracking toggle, auto sync (Shopify/Woo/feed/AI), compound matching, member search + comparison pages, admin Inventory tab
@@ -6,3 +7,4 @@
 ## Welcome page refresh
 - [x] Replace phone image and apply a scoped pale-blue welcome page theme
 - [x] Verify desktop and phone presentation and existing buttons; keep unpublished
+- [x] Verify the corrected hero image (blue outline removed) renders cleanly on the welcome page — no deploy
