@@ -15,6 +15,7 @@ export function SiteFooter() {
           <div className="text-eyebrow mb-4">Site</div>
           <ul className="space-y-2 text-sm">
             <li><Link to="/features" className="hover:text-primary">Features</Link></li>
+            <li><Link to="/peptide-calculator" className="hover:text-primary">Peptide Calculator</Link></li>
             <li><Link to="/about" className="hover:text-primary">About</Link></li>
             <li><Link to="/faq" className="hover:text-primary">FAQ</Link></li>
             <li><Link to="/contact" className="hover:text-primary">Contact</Link></li>
