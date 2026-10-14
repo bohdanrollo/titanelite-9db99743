@@ -36,13 +36,13 @@
   --color-bone: var(--bone);
   --color-blood: var(--blood);
   --color-ink: var(--ink);
-  --font-display: "Space Grotesk", system-ui, sans-serif;
-  --font-heavy: "Space Grotesk", system-ui, sans-serif;
-  --font-body: "DM Sans", system-ui, sans-serif;
+  --font-display: "Geist", system-ui, sans-serif;
+  --font-heavy: "Geist", system-ui, sans-serif;
+  --font-body: "Geist", system-ui, sans-serif;
   --font-serif: "Playfair Display", "Times New Roman", serif;
-  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-sans: "Geist", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
-  --font-landing: "Space Grotesk", system-ui, sans-serif;
+  --font-landing: "Geist", system-ui, sans-serif;
 }
 
 /* Midnight Signal — technical, calm, and high contrast */
@@ -233,7 +233,7 @@
   --blood: oklch(0.6 0.11 220);
   --landing-surface: oklch(0.975 0.005 255);
   --shadow-soft: 0 16px 40px -24px oklch(0.2 0.02 265 / 0.18);
-  font-family: "DM Sans", system-ui, sans-serif;
+  font-family: "Geist", system-ui, sans-serif;
 }
 
 .landing-light footer { margin-top: 0; }
