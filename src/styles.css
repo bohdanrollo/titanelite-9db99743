@@ -187,6 +187,16 @@
   cursor: pointer;
   transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
 }
+/* Header nav text — hero typeface (Geist), ink colour */
+@utility header-link {
+  font-family: var(--font-landing);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--foreground);
+  transition: opacity 180ms ease;
+  &:hover { opacity: 0.6; }
+}
 /* Header action buttons — black fill, hero typeface (Geist) */
 @utility btn-black {
   display: inline-flex;
