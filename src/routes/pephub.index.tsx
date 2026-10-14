@@ -9,7 +9,6 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { type PepSource } from "@/lib/pephub.functions";
 import { pephubAccess, pephubSignup, pephubSubscribeCurrentUser } from "@/lib/pephub-access.functions";
 import { SignupAcknowledgements } from "@/components/SignupAcknowledgements";
-import zeerowLogoAsset from "@/assets/zeerow-logo.jpeg.asset.json";
 
 export const Route = createFileRoute("/pephub/")({
   head: () => ({
@@ -45,7 +44,6 @@ function PepHub() {
   const [hasAccess, setHasAccess] = useState(false);
   const [age21, setAge21] = useState(false);
   const [researchUse, setResearchUse] = useState(false);
-  const [showZeerowPopup, setShowZeerowPopup] = useState(false);
   const [showLegalShieldPopup, setShowLegalShieldPopup] = useState(false);
   const signup = useServerFn(pephubSignup);
   const checkAccess = useServerFn(pephubAccess);
@@ -90,12 +88,6 @@ function PepHub() {
     })();
   }, [hasAccess]);
 
-  useEffect(() => {
-    try {
-      if (localStorage.getItem("zeerow_popup_closed") === "1") return;
-    } catch { /* ignore */ }
-    setShowZeerowPopup(true);
-  }, []);
 
   useEffect(() => {
     try {
@@ -104,12 +96,6 @@ function PepHub() {
     setShowLegalShieldPopup(true);
   }, []);
 
-  function closeZeerowPopup() {
-    setShowZeerowPopup(false);
-    try {
-      localStorage.setItem("zeerow_popup_closed", "1");
-    } catch { /* ignore */ }
-  }
 
   function closeLegalShieldPopup() {
     setShowLegalShieldPopup(false);
@@ -194,40 +180,6 @@ function PepHub() {
     <div className="landing-light min-h-dvh bg-background text-foreground flex flex-col">
       <SiteHeader />
 
-      <a
-        href="https://zeerow.io/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group block w-full border-b border-blood/30 bg-blood/10 px-4 py-2.5 text-center transition hover:bg-blood/15"
-      >
-        <span className="inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 font-mono text-[11px] uppercase tracking-[0.16em] text-blood">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-blood/30 bg-blood/10 px-2 py-0.5">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-blood" />
-            RUO Processor
-          </span>
-          <span className="text-foreground/80">
-            Zeerow is a payment processor for high-risk merchants.
-          </span>
-          <span className="inline-flex items-center gap-1 underline decoration-blood/50 underline-offset-2 transition group-hover:decoration-blood">
-            Put in an application today and get instant approval
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="opacity-70"
-            >
-              <path d="M7 7h10v10" />
-              <path d="M7 17 17 7" />
-            </svg>
-          </span>
-        </span>
-      </a>
 
       <section className="container-edge flex-1 py-10 lg:py-14">
         <div className="text-eyebrow">PepHub — Free</div>
@@ -410,53 +362,6 @@ function PepHub() {
 
           {/* Signup */}
           <div className="space-y-6">
-            {showZeerowPopup && (
-              <div className="animate-enter relative overflow-hidden rounded-2xl border border-blood/30 bg-card p-5 shadow-lg">
-                <button
-                  type="button"
-                  onClick={closeZeerowPopup}
-                  className="absolute right-3 top-3 z-10 rounded-full p-1.5 text-muted-foreground transition hover:bg-foreground/10 hover:text-foreground"
-                  aria-label="Close Zeerow promo"
-                >
-                  <X size={16} />
-                </button>
-
-                <div className="flex items-start gap-4">
-                  <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border border-foreground/10 shadow">
-                    <img
-                      src={zeerowLogoAsset.url}
-                      alt="Zeerow logo"
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-                    <div className="inline-flex items-center gap-1.5 rounded-full border border-blood/30 bg-blood/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em] text-blood">
-                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-blood" />
-                      RUO Processor
-                    </div>
-
-                    <h3 className="mt-2 text-lg font-semibold leading-tight">
-                      Payments made simple for high-risk merchants.
-                    </h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Zeerow is a payment processor built for high-risk businesses. Put in an application today and get instant approval.
-                    </p>
-
-                    <a
-                      href="https://zeerow.io/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-primary mt-4 inline-flex"
-                      onClick={closeZeerowPopup}
-                    >
-                      Apply now at Zeerow
-                      <ExternalLink size={14} className="ml-2" />
-                    </a>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {showLegalShieldPopup && (
               <div className="animate-enter relative overflow-hidden rounded-2xl border border-blood/30 bg-card p-5 shadow-lg">
