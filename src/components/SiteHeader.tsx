@@ -75,15 +75,15 @@ export function SiteHeader() {
         </nav>
         <div className="hidden md:flex items-center gap-3">
           {user ? (
-            <Link to={role === "admin" ? "/admin" : "/dashboard"} className="btn-blood hover:btn-blood-hover">
+            <Link to={role === "admin" ? "/admin" : "/dashboard"} className="btn-black">
               {role === "admin" ? "Admin" : "Dashboard"}
             </Link>
           ) : (
             <>
-               <Link to="/auth" className="font-mono text-[11px] uppercase hover:text-primary">
+               <Link to="/auth" className="font-landing text-sm font-medium text-foreground/80 transition hover:text-foreground">
                 Sign in
               </Link>
-              <Link to="/auth" className="btn-blood hover:btn-blood-hover">
+              <Link to="/auth" className="btn-black">
                 Apply
               </Link>
             </>
@@ -128,14 +128,14 @@ export function SiteHeader() {
                 <Link
                   to={role === "admin" ? "/admin" : "/dashboard"}
                   onClick={() => setOpen(false)}
-                  className="btn-blood hover:btn-blood-hover"
+                  className="btn-black"
                 >
                   {role === "admin" ? "Admin" : "Dashboard"}
                 </Link>
               ) : (
                 <>
-                  <Link to="/auth" onClick={() => setOpen(false)} className="btn-ghost">Sign in</Link>
-                  <Link to="/auth" onClick={() => setOpen(false)} className="btn-blood hover:btn-blood-hover">Apply</Link>
+                  <Link to="/auth" onClick={() => setOpen(false)} className="btn-ghost font-landing normal-case tracking-normal">Sign in</Link>
+                  <Link to="/auth" onClick={() => setOpen(false)} className="btn-black">Apply</Link>
                 </>
               )}
             </div>
