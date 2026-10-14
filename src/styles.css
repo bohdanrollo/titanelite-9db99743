@@ -187,7 +187,31 @@
   cursor: pointer;
   transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
 }
+/* Header action buttons — black fill, hero typeface (Geist) */
+@utility btn-black {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--ink);
+  color: var(--bone);
+  font-family: var(--font-landing);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  padding: 0.7rem 1.35rem;
+  border: 1px solid color-mix(in oklab, var(--foreground) 20%, transparent);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+  &:hover {
+    background: color-mix(in oklab, var(--ink) 82%, white);
+    border-color: color-mix(in oklab, var(--foreground) 34%, transparent);
+    transform: translateY(-1px);
+  }
+}
 @utility card-soft {
+
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
