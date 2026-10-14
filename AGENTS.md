@@ -1,2 +1,3 @@
 - PepHub inventory sync runs inside the existing hourly /api/public/pephub/monitor cron (per-vendor interval); why: no second scheduler.
 - Welcome-page-only visual changes use a scoped theme on the home page wrapper rather than modifying shared light-theme values; why: other pages must retain their existing appearance.
+- Member email reminders run inside the existing hourly /api/public/pephub/monitor cron; why: no second scheduler.
