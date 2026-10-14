@@ -125,7 +125,7 @@ function Admin() {
   );
 }
 
-type ClientTier = "elite" | "full" | "limited" | null;
+type ClientTier = "elite" | "full" | "limited" | "basic" | null;
 type ClientSubTab = "all" | "elite" | "full" | "limited" | "none";
 
 function Clients() {
@@ -147,16 +147,16 @@ function Clients() {
   const reload = async () => {
     const [{ data }, accessRes] = await Promise.all([
       supabase.from("profiles").select("id, full_name, email, created_at").order("created_at", { ascending: false }),
-      listFn({ data: { environment: env } }).catch(() => ({ rows: [] as { user_id: string; tier: "limited" | "full" | "elite"; stripe_price_id?: string | null }[] })),
+      listFn({ data: { environment: env } }).catch(() => ({ rows: [] as { user_id: string; tier: "basic" | "limited" | "full" | "elite"; stripe_price_id?: string | null }[] })),
     ]);
     setRows(data ?? []);
     const map: Record<string, ClientTier> = {};
     const paidMap: Record<string, boolean> = {};
     accessRes.rows.forEach((r) => {
       // A user can have rows in both environments (and both tiers) — keep the highest.
-      const rank = { limited: 1, full: 2, elite: 3 } as const;
+      const rank = { basic: 0, limited: 1, full: 2, elite: 3 } as const;
       const cur = map[r.user_id];
-      if (!cur || rank[r.tier] > rank[cur as "limited" | "full" | "elite"]) map[r.user_id] = r.tier;
+      if (!cur || rank[r.tier] > rank[cur as "basic" | "limited" | "full" | "elite"]) map[r.user_id] = r.tier;
       if (r.stripe_price_id) paidMap[r.user_id] = true;
     });
     setAccess(map);
@@ -165,7 +165,7 @@ function Clients() {
 
   useEffect(() => { reload(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, []);
 
-  const grant = async (userId: string, tier: "limited" | "full" | "elite") => {
+  const grant = async (userId: string, tier: "basic" | "limited" | "full" | "elite") => {
     setBusyId(userId);
     const prev = access[userId];
     setAccess((s) => ({ ...s, [userId]: tier })); // optimistic

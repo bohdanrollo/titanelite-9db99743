@@ -22,7 +22,7 @@ export const Route = createFileRoute("/checkout")({
   component: CheckoutPage,
 });
 
-type PlanId = "limited_monthly" | "full_monthly" | "elite_monthly";
+type PlanId = "basic_monthly" | "limited_monthly" | "full_monthly" | "elite_monthly";
 type Plan = {
   id: PlanId;
   name: string;
@@ -34,12 +34,32 @@ type Plan = {
 
 const PLANS: Plan[] = [
   {
+    id: "basic_monthly",
+    name: "Basic Access",
+    price: "$2.99",
+    tag: "Per month",
+    features: [
+      "Peptides research library",
+      "Dosing Guide with ranges & schedules",
+      "Combo Guides & Myths vs Evidence",
+      "Learning Center",
+      "My Stack log + daily Dose Tracker calendar",
+      "Peptide dose calculator",
+      "Calorie & macro tracker",
+      "Lifting programs & nutrition",
+      "Supplies, reconstitution & injection guides",
+      "Progress, workout & wellness trackers",
+    ],
+    disabled: "Does NOT include AI tools (Pep Talk AI, AI Stack Builder, Bloodwork Review) or coaching",
+  },
+  {
     id: "limited_monthly",
     name: "Limited Access",
     price: "$10.99",
     tag: "Per month",
     features: [
-      "Full client dashboard access",
+      "Everything in Basic Access",
+      "AI Stack Builder",
       "Peptides research library",
       "Dosing Guide with ranges & schedules",
       "Combo Guides & Myths vs Evidence",
@@ -53,7 +73,7 @@ const PLANS: Plan[] = [
       "Supplies, reconstitution & injection guides",
       "Progress, workout & wellness trackers",
     ],
-    disabled: "Does NOT include custom protocols or direct coach messaging",
+    disabled: "Does NOT include coaching (custom protocols, coach messaging, coach calls)",
   },
   {
     id: "full_monthly",
@@ -76,7 +96,9 @@ const PLANS: Plan[] = [
     price: "$250",
     tag: "Per month",
     features: [
-      "Everything in Full Access",
+      "Everything in Limited Access, including all AI tools",
+      "Custom peptide + training protocols",
+      "Direct messaging with your coach",
       "Coach calling & scheduling — book 30-minute calls",
       "Priority coach support",
       "Increased peptide discounts",
@@ -101,7 +123,8 @@ function CheckoutPage() {
   }, [accessLoading, tier, nav]);
 
   const visiblePlans = PLANS.filter((p) =>
-    tier === "full" ? p.id === "elite_monthly" : tier === "limited" ? p.id !== "limited_monthly" : true,
+    p.id !== "full_monthly" &&
+    (tier === "full" || tier === "limited" ? p.id === "elite_monthly" : tier === "basic" ? p.id !== "basic_monthly" : true),
   );
 
   if (loading || !user) {
@@ -115,13 +138,15 @@ function CheckoutPage() {
       <section className="container-edge py-12 sm:py-20 flex-1">
         <div className="text-eyebrow">Get Access</div>
         <h1 className="mt-4 text-4xl sm:text-6xl">
-          {tier === "limited" || tier === "full" ? "Upgrade your access." : "Unlock the dashboard."}
+          {tier === "basic" || tier === "limited" || tier === "full" ? "Upgrade your access." : "Unlock the dashboard."}
         </h1>
         <p className="mt-4 max-w-2xl text-muted-foreground">
           {tier === "full"
             ? "You currently have Full Access. Upgrade to Elite Access for coach calling — $250/month. Cancel anytime."
             : tier === "limited"
-              ? "You currently have Limited Access. Upgrade to Full Access for custom protocols — $40.99/month, or go Elite for coach calling. Cancel anytime."
+              ? "You currently have Limited Access. Upgrade to Elite Access for coaching — $250/month. Cancel anytime."
+              : tier === "basic"
+                ? "You currently have Basic Access. Upgrade to Limited Access for AI tools — $10.99/month, or go Elite for coaching. Cancel anytime."
               : "Choose your plan. Promo codes supported at checkout. Cancel anytime."}
         </p>
 

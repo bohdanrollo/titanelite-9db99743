@@ -56,7 +56,7 @@ export const buildStack = createServerFn({ method: "POST" })
       .from("user_access")
       .select("tier")
       .eq("user_id", userId)
-      .in("tier", ["full", "elite"])
+      .in("tier", ["limited", "full", "elite"])
       .limit(1);
     if (!accessRows || accessRows.length === 0) {
       const { data: roleRows } = await supabase
@@ -66,7 +66,7 @@ export const buildStack = createServerFn({ method: "POST" })
         .eq("role", "admin")
         .limit(1);
       if (!roleRows || roleRows.length === 0) {
-        throw new Error("Full Access required for the AI Stack Builder.");
+        throw new Error("A plan with AI tools is required for the AI Stack Builder.");
       }
     }
 

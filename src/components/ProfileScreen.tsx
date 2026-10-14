@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import ReminderSettings from "@/components/ReminderSettings";
 
-const TIER_LABEL: Record<string, string> = { limited: "Limited Access", full: "Full Access", elite: "Elite Access" };
+const TIER_LABEL: Record<string, string> = { basic: "Basic Access", limited: "Limited Access", full: "Full Access", elite: "Elite Access" };
 
 export default function ProfileScreen({ tier, isAdmin, intakeStatus, onBack, onUpgrade, billing }: {
   tier: string | null; isAdmin: boolean; intakeStatus?: string; onBack: () => void; onUpgrade: () => void; billing: ReactNode;
@@ -43,7 +43,7 @@ export default function ProfileScreen({ tier, isAdmin, intakeStatus, onBack, onU
       <div className="mt-6 rounded-3xl border border-border bg-card divide-y divide-border">
         {tier !== "elite" && (
           <button onClick={onUpgrade} className="w-full flex items-center gap-3 p-4 text-left hover:bg-muted">
-            <Sparkles size={18} /><span className="flex-1"><span className="block font-medium">Upgrade plan</span><span className="text-xs text-muted-foreground">Full or Elite Access</span></span><ChevronRight size={16} />
+            <Sparkles size={18} /><span className="flex-1"><span className="block font-medium">Upgrade plan</span><span className="text-xs text-muted-foreground">More tools or coaching</span></span><ChevronRight size={16} />
           </button>
         )}
         <div className="flex items-center gap-3 p-4">

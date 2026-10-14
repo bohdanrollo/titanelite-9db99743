@@ -97,7 +97,7 @@ function Dashboard() {
   const checkTammyReferral = useServerFn(wasReferredByCode);
 
   // If user has no access, keep them on paywall regardless of `tab` state.
-  const hasAccess = isAdmin || tier === "limited" || tier === "full" || tier === "elite";
+  const hasAccess = isAdmin || tier === "basic" || tier === "limited" || tier === "full" || tier === "elite";
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
@@ -273,24 +273,24 @@ function Dashboard() {
   );
 }
 
-type UpgradePlanId = "full_monthly" | "elite_monthly";
+type UpgradePlanId = "limited_monthly" | "elite_monthly";
 
-function UpgradeScreen({ tier, isAdmin, onClose }: { tier: "limited" | "full" | "elite" | null; isAdmin: boolean; onClose: () => void }) {
+function UpgradeScreen({ tier, isAdmin, onClose }: { tier: "basic" | "limited" | "full" | "elite" | null; isAdmin: boolean; onClose: () => void }) {
   const [selectedPlan, setSelectedPlan] = useState<UpgradePlanId | null>(null);
   const plans = [
     {
-      id: "full_monthly" as const,
-      name: "Full Access",
-      price: "$40.99",
-      features: ["Everything in Limited Access", "Custom peptide and training protocols", "Direct coach messaging", "AI Stack Builder"],
+      id: "limited_monthly" as const,
+      name: "Limited Access",
+      price: "$10.99",
+      features: ["Everything in Basic Access", "Pep Talk AI assistant", "AI Stack Builder", "Bloodwork Review"],
     },
     {
       id: "elite_monthly" as const,
       name: "Elite Access",
       price: "$250",
-      features: ["Everything in Full Access", "Coach calling and scheduling", "Priority coach support", "Increased peptide discounts", "All 21 dashboard tools"],
+      features: ["Every dashboard tool, including AI", "Custom peptide and training protocols", "Direct coach messaging", "Coach calling and scheduling", "Priority coach support", "Increased peptide discounts", "All 21 dashboard tools"],
     },
-  ].filter((plan) => isAdmin || tier !== "full" || plan.id === "elite_monthly");
+  ].filter((plan) => isAdmin || !tier || tier === "basic" || plan.id === "elite_monthly");
 
   return (
     <div className="mt-10">

@@ -64,6 +64,15 @@ export const saveAndAnalyzeLabs = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
+    const { data: accessRows } = await supabase
+      .from("user_access").select("tier").eq("user_id", userId)
+      .in("tier", ["limited", "full", "elite"]).limit(1);
+    if (!accessRows || accessRows.length === 0) {
+      const { data: roleRows } = await supabase
+        .from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").limit(1);
+      if (!roleRows || roleRows.length === 0) throw new Error("Bloodwork Review needs a plan with AI tools. Upgrade to unlock it.");
+    }
+
     const ageNum = data.age.trim() ? Number.parseInt(data.age, 10) : null;
 
     const { data: existing } = await supabase

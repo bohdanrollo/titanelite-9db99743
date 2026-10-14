@@ -3,13 +3,14 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { createStripeClient, getStripeErrorMessage } from "@/lib/stripe.server";
 
-type Tier = "limited" | "full" | "elite";
-const TIER_RANK: Record<Tier, number> = { limited: 1, full: 2, elite: 3 };
+type Tier = "basic" | "limited" | "full" | "elite";
+const TIER_RANK: Record<Tier, number> = { basic: 0, limited: 1, full: 2, elite: 3 };
 
 const TIER_BY_PRICE: Record<string, Tier> = {
   limited_access_onetime: "limited",
   full_access_lifetime: "full",
   full_access_upgrade: "full",
+  basic_monthly: "basic",
   limited_monthly: "limited",
   full_monthly: "full",
   elite_monthly: "elite",
