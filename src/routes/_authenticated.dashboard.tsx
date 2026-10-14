@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useAccess, isTabAllowed } from "@/lib/access";
-import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, MessagesSquare, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, Check, CheckCircle, Activity, Apple, TrendingUp, HeartPulse, NotebookPen, Sparkles, CreditCard, Phone } from "lucide-react";
+import { FileText, Droplets, LogOut, Download, Beaker, Package, FlaskConical, Syringe, Dumbbell, Calculator as CalculatorIcon, MessageCircle, MessagesSquare, Send, Loader2, ListChecks, Plus, Pencil, Trash2, X, BookOpen, ChevronDown, Lock, GraduationCap, Scale, XCircle, Check, CheckCircle, Activity, Apple, TrendingUp, HeartPulse, NotebookPen, Sparkles, CreditCard, Phone, ArrowLeft } from "lucide-react";
 import injectionSitesAsset from "@/assets/injection-sites.jpg.asset.json";
 import { getProtocolDownloadUrl } from "@/lib/protocols.functions";
 import ReactMarkdown from "react-markdown";
@@ -28,6 +28,7 @@ import { wasReferredByCode } from "@/lib/affiliates.functions";
 import CoachCalls from "@/components/CoachCalls";
 import { StripeEmbeddedCheckoutForm } from "@/components/StripeEmbeddedCheckout";
 import { PepLogWordmark } from "@/components/PepLogWordmark";
+import { DashboardHubView, DashboardDock, type Hub, type HubTile } from "@/components/DashboardHub";
 
 function ManageSubscriptionButton() {
   const openPortal = useServerFn(createPortalSession);
@@ -82,7 +83,8 @@ function Dashboard() {
   const { tier, loading: accessLoading, isAdmin } = useAccess();
   const nav = useNavigate();
   const routeSearch = Route.useSearch();
-  const [tab, setTab] = useState<Tab>(routeSearch.tab ?? "peptides");
+  const [tab, setTab] = useState<Tab | null>(routeSearch.tab ?? null);
+  const [hub, setHub] = useState<Hub>("coaching");
   const [navOpen, setNavOpen] = useState(false);
   const [showUpgrade, setShowUpgrade] = useState(false);
   const navRef = useRef<HTMLElement>(null);
@@ -112,7 +114,7 @@ function Dashboard() {
   }, [user]);
 
   return (
-    <div className="min-h-dvh bg-background">
+    <div className="landing-light dash-app min-h-dvh bg-background text-foreground">
       <header className="border-b border-foreground/10">
         <div className="container-edge h-16 flex items-center justify-between gap-3">
           <Link to="/" className="flex min-w-0 items-center" aria-label="PepLog home">
@@ -127,9 +129,10 @@ function Dashboard() {
         </div>
 
       </header>
-      <section className="container-edge py-8 sm:py-12">
+      <section className="container-edge max-w-5xl py-6 sm:py-10">
         <div className="text-eyebrow">Client Dashboard</div>
-        <h1 className="mt-4 text-3xl sm:text-5xl lg:text-6xl">Welcome back.</h1>
+        <h1 className="mt-2 text-2xl sm:text-3xl font-medium">Hello{user?.email ? `, ${user.email.split("@")[0]}` : ""}</h1>
+        <p className="text-sm text-muted-foreground">Today {new Date().toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" })}</p>
         {!isAffiliate && (
           <p className="mt-3 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-2 text-blood font-medium">
@@ -163,105 +166,60 @@ function Dashboard() {
           <PaywallCard />
         ) : (
         <>
-        <nav ref={navRef} className="mt-8 sm:mt-10 -mx-4 sm:mx-0 border-b border-foreground/15 px-4 sm:px-0 pb-3">
-          {(() => {
-            const allTabs = [
-              { k: "protocols", l: "Protocols", i: FileText, g: "Plan" },
-              { k: "messages", l: "Messages", i: MessagesSquare, g: "Plan" },
-              { k: "calls", l: "Coach Calls", i: Phone, g: "Plan" },
-              { k: "mystack", l: "My Stack", i: ListChecks, g: "Plan" },
-              { k: "progress", l: "Progress", i: TrendingUp, g: "Track" },
-              { k: "workouts", l: "Workouts", i: NotebookPen, g: "Track" },
-              { k: "wellness", l: "Wellness", i: HeartPulse, g: "Track" },
-              { k: "stackbuilder", l: "Stack Builder", i: Sparkles, g: "Assistant" },
-              { k: "peptides", l: "Peptides", i: Beaker, g: "Research" },
-              { k: "dosing", l: "Dosing Guide", i: Syringe, g: "Research" },
-              { k: "combos", l: "Combos", i: BookOpen, g: "Research" },
-
-              { k: "lifting", l: "Lifting", i: Dumbbell, g: "Research" },
-              { k: "learning", l: "Learning", i: GraduationCap, g: "Research" },
-              { k: "myths", l: "Myth vs Evidence", i: Scale, g: "Research" },
-              { k: "labs", l: "Lab Analysis", i: Activity, g: "Tools" },
-              { k: "nutrition", l: "Calorie Tracker", i: Apple, g: "Tools" },
-              { k: "calculator", l: "Calculator", i: CalculatorIcon, g: "Tools" },
-
-              { k: "supplies", l: "Supplies", i: Droplets, g: "Tools" },
-              { k: "reconstitution", l: "Reconstitution", i: FlaskConical, g: "Tools" },
-              { k: "injection", l: "Injection", i: Syringe, g: "Tools" },
-              { k: "peptalk", l: "Pep Talk", i: MessageCircle, g: "Assistant" },
-            ].map((t) => ({ ...t, locked: !isTabAllowed(t.k, tier, isAdmin) })) as Array<{ k: Tab; l: string; i: typeof FileText; g: string; locked: boolean }>;
-            const active = allTabs.find((t) => t.k === tab) ?? allTabs[0];
-            const groups = ["Plan", "Track", "Research", "Tools", "Assistant"] as const;
-            return (
-              <>
-                {/* Mobile: compact dropdown */}
-                <div className="sm:hidden relative">
-                  <button
-                    onClick={() => setNavOpen((v) => !v)}
-                    className="w-full flex items-center justify-between gap-3 border border-foreground/15 px-3 py-2.5 text-left"
-                  >
-                    <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em]">
-                      <active.i size={14} className="text-blood" /> {active.l}
-                    </span>
-                    <ChevronDown size={14} className={`transition ${navOpen ? "rotate-180" : ""}`} />
+        {(() => {
+          const T = (k: Tab, l: string, sub: string, color: HubTile["color"], icon: HubTile["icon"], tall?: boolean): HubTile => ({ k, l, sub, color, icon, tall, locked: !isTabAllowed(k, tier, isAdmin) });
+          const hubTiles: Record<Hub, HubTile[]> = {
+            coaching: [
+              T("protocols", "My Plan", "Your peptide + fitness protocol", "peach", FileText, true),
+              T("calls", "Book a Call", "Schedule with your coach", "sky", Phone),
+              T("messages", "Messages", "Chat with your coach", "pink", MessagesSquare),
+            ],
+            tracking: [
+              T("mystack", "My Stack", "Doses and schedule", "lilac", ListChecks, true),
+              T("workouts", "Workouts", "Log sets and sessions", "sky", NotebookPen),
+              T("progress", "Progress", "Weight and measurements", "mint", TrendingUp),
+              T("wellness", "Wellness", "Water, sleep and mood", "aqua", HeartPulse),
+              T("nutrition", "Nutrition", "Calories and macros", "peach", Apple),
+            ],
+            tools: [
+              T("peptalk", "Ask AI", "Questions about the peptide library", "lilac", MessageCircle, true),
+              T("stackbuilder", "Build My Stack", "Goal-based research picks", "sky", Sparkles),
+              T("combos", "Combos", "Grouped by focus", "mint", BookOpen),
+              T("labs", "Bloodwork Review", "Upload a lab report", "aqua", Activity),
+              T("calculator", "Dose Calculator", "Reconstitution math and syringe units", "peach", CalculatorIcon),
+            ],
+            learn: [
+              T("peptides", "Peptide Library", "Research focus and typical dose", "lilac", Beaker, true),
+              T("dosing", "Dosing Guide", "Typical research doses", "peach", Syringe),
+              T("supplies", "Getting Started", "Supplies you need", "pink", Droplets),
+              T("reconstitution", "Reconstitution", "Mixing step by step", "mint", FlaskConical),
+              T("injection", "Injection", "Sites and technique", "sky", Syringe),
+              T("learning", "Courses", "Short lessons + quizzes", "mint", GraduationCap),
+              T("lifting", "Lifting 101", "Form, sets, splits", "aqua", Dumbbell),
+              T("myths", "Myths vs Facts", "What the evidence says", "peach", Scale),
+            ],
+          };
+          const current = Object.values(hubTiles).flat().find((t) => t.k === tab);
+          return (
+            <>
+              {tab === null ? (
+                <div className="mt-6">
+                  <DashboardHubView hub={hub} tiles={hubTiles[hub]} onOpen={(k, locked) => { if (locked) { setShowUpgrade(true); return; } setTab(k as Tab); window.scrollTo({ top: 0 }); }} />
+                </div>
+              ) : (
+                <div className="mt-6 flex items-center gap-3">
+                  <button onClick={() => setTab(null)} aria-label="Back" className="h-10 w-10 rounded-full border border-border bg-card flex items-center justify-center hover:bg-muted">
+                    <ArrowLeft size={16} />
                   </button>
-                  {navOpen && (
-                    <div className="absolute z-20 mt-1 w-full border border-foreground/15 bg-card shadow-lg max-h-[70vh] overflow-y-auto">
-                      {groups.map((g) => (
-                        <div key={g}>
-                          <div className="px-3 py-2 text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground bg-muted/50">
-                            {g}
-                          </div>
-                          {allTabs.filter((t) => t.g === g).map((t) => (
-                            <button
-                              key={t.k}
-                              onClick={() => {
-                                setNavOpen(false);
-                                if (t.locked) { setShowUpgrade(true); return; }
-                                setTab(t.k);
-                              }}
-                              className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] transition ${tab === t.k && !t.locked ? "bg-blood/10 text-blood" : t.locked ? "text-muted-foreground/60 hover:bg-muted" : "hover:bg-muted"}`}
-                            >
-                              <span className="flex items-center gap-2"><t.i size={14} /> {t.l}</span>
-                              {t.locked && <Lock size={11} />}
-                            </button>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  <h2 className="text-xl font-medium">{current?.l ?? "Tool"}</h2>
                 </div>
-                {/* Desktop: grouped compact tabs */}
-                <div className="hidden sm:flex flex-wrap items-start gap-x-6 gap-y-4 lg:gap-x-8">
-                  {groups.map((g) => (
-                    <div key={g} className="flex flex-col gap-1 min-w-0">
-                      <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-muted-foreground px-1">
-                        {g}
-                      </span>
-                      <div className="flex flex-wrap items-center">
-                        {allTabs.filter((t) => t.g === g).map((t, idx, arr) => (
-                          <button
-                            key={t.k}
-                            onClick={() => {
-                              if (t.locked) { setShowUpgrade(true); return; }
-                              setTab(t.k);
-                            }}
-                            className={`shrink-0 px-3 lg:px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] flex items-center gap-1.5 border-b-2 transition ${tab === t.k && !t.locked ? "border-blood text-blood" : t.locked ? "border-transparent text-muted-foreground/50 hover:text-muted-foreground" : "border-transparent text-muted-foreground hover:text-foreground"} ${idx < arr.length - 1 ? "mr-1" : ""}`}
-                            title={t.locked ? `${t.l} — upgrade to unlock` : t.l}
-                          >
-                            <t.i size={14} /> {t.l}{t.locked && <Lock size={10} className="ml-0.5" />}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            );
-          })()}
-        </nav>
+              )}
+              <DashboardDock hub={hub} onSelect={(h) => { setHub(h); setTab(null); window.scrollTo({ top: 0 }); }} />
+            </>
+          );
+        })()}
 
-        <div className="mt-8">
+        <div className="mt-8 pb-24">
           {tab === "protocols" && isTabAllowed("protocols", tier, isAdmin) && <Protocols />}
           {tab === "messages" && isTabAllowed("messages", tier, isAdmin) && user && <ClientMessages myId={user.id} />}
           {tab === "calls" && isTabAllowed("calls", tier, isAdmin) && <CoachCalls />}
@@ -285,7 +243,7 @@ function Dashboard() {
           {tab === "wellness" && isTabAllowed("wellness", tier, isAdmin) && <WellnessTracker />}
           {tab === "workouts" && isTabAllowed("workouts", tier, isAdmin) && <WorkoutLogger />}
           {tab === "stackbuilder" && isTabAllowed("stackbuilder", tier, isAdmin) && <StackBuilder />}
-          {!accessLoading && hasAccess && !isTabAllowed(tab, tier, isAdmin) && <LockedTabCard tab={tab} onUpgrade={() => setShowUpgrade(true)} />}
+          {!accessLoading && hasAccess && tab !== null && !isTabAllowed(tab, tier, isAdmin) && <LockedTabCard tab={tab} onUpgrade={() => setShowUpgrade(true)} />}
           {hasAccess && (
             <div className="mt-16 pt-6 border-t border-foreground/5 flex items-center justify-center gap-5">
               {tier !== "elite" && (

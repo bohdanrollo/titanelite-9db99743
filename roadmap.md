@@ -11,6 +11,5 @@
 - [x] Add Peptide Calculator button to top header
 
 ## Dashboard redesign (phased, per uploaded brief)
-- [ ] Blocked: waiting on the user's reference videos
-- [ ] Phase 1: dashboard home, bottom/side navigation, design system
+- [x] Phase 1: dashboard home, bottom/side navigation, design system
 - [ ] Phase 2+: redesign each dashboard tool page

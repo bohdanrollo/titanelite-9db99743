@@ -431,3 +431,28 @@
   }
 }
 
+
+/* Member dashboard — light app shell with pastel tiles (scoped to dashboard). */
+.dash-app {
+  --tile-ink: oklch(0.16 0.02 265);
+  --tile-lilac: oklch(0.78 0.11 300);
+  --tile-peach: oklch(0.84 0.13 70);
+  --tile-sky: oklch(0.84 0.07 240);
+  --tile-mint: oklch(0.88 0.1 150);
+  --tile-pink: oklch(0.8 0.15 340);
+  --tile-aqua: oklch(0.9 0.06 200);
+  --dash-dock: oklch(0.14 0.01 265);
+  font-family: "Geist", system-ui, sans-serif;
+}
+.tile { color: var(--tile-ink); border-radius: 1.5rem; }
+.tile-lilac { background: var(--tile-lilac); }
+.tile-peach { background: var(--tile-peach); }
+.tile-sky { background: var(--tile-sky); }
+.tile-mint { background: var(--tile-mint); }
+.tile-pink { background: var(--tile-pink); }
+.tile-aqua { background: var(--tile-aqua); }
+.tile-chip { background: oklch(1 0 0 / 0.6); color: var(--tile-ink); }
+.dash-dock { background: var(--dash-dock); }
+.dash-dock-on { background: oklch(1 0 0); color: var(--dash-dock); }
+.dash-dock-off { color: oklch(1 0 0 / 0.7); }
+.dash-pill-on { background: var(--foreground); color: var(--background); }
