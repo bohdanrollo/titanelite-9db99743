@@ -13,8 +13,8 @@ function getSupabase() {
   return _supabase;
 }
 
-type Tier = "limited" | "full" | "elite";
-const TIER_RANK: Record<Tier, number> = { limited: 1, full: 2, elite: 3 };
+type Tier = "basic" | "limited" | "full" | "elite";
+const TIER_RANK: Record<Tier, number> = { basic: 0, limited: 1, full: 2, elite: 3 };
 
 const TIER_BY_PRICE: Record<string, Tier> = {
   // Legacy one-time products (kept so old webhooks + admin actions still work)
@@ -22,6 +22,7 @@ const TIER_BY_PRICE: Record<string, Tier> = {
   full_access_lifetime: "full",
   full_access_upgrade: "full",
   // Subscription products
+  basic_monthly: "basic",
   limited_monthly: "limited",
   full_monthly: "full",
   elite_monthly: "elite",

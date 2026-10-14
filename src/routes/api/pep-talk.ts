@@ -61,7 +61,7 @@ export const Route = createFileRoute("/api/pep-talk")({
           .from("user_access")
           .select("tier")
           .eq("user_id", userData.user.id)
-          .in("tier", ["full", "elite"])
+          .in("tier", ["limited", "full", "elite"])
           .limit(1);
         if (accErr) {
           console.error("[pep-talk] access check error", accErr);

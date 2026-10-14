@@ -22,8 +22,9 @@ export const Route = createFileRoute("/checkout/return")({
 });
 
 const MAX_TRIES = 10;
-const TIER_RANK: Record<string, number> = { limited: 1, full: 2, elite: 3 };
+const TIER_RANK: Record<string, number> = { basic: 0, limited: 1, full: 2, elite: 3 };
 const TIER_BY_PLAN: Record<string, string> = {
+  basic_monthly: "basic",
   limited_monthly: "limited",
   full_monthly: "full",
   elite_monthly: "elite",

@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { getStripeEnvironment } from "@/lib/stripe";
 
-export type AccessTier = "limited" | "full" | "elite" | null;
+export type AccessTier = "basic" | "limited" | "full" | "elite" | null;
 
 export const LIMITED_TABS = [
   "peptides",
@@ -27,7 +27,10 @@ export const LIMITED_TABS = [
 ] as const;
 
 
-export const FULL_ONLY_TABS = ["protocols", "messages", "stackbuilder"] as const;
+/** AI-powered tools — not included in Basic Access. */
+export const AI_TABS = ["peptalk", "labs", "stackbuilder"] as const;
+
+export const FULL_ONLY_TABS = ["protocols", "messages"] as const;
 
 /** Coach calling is reserved for Elite Access members. */
 export const ELITE_ONLY_TABS = ["calls"] as const;
@@ -36,7 +39,8 @@ export function isTabAllowed(tab: string, tier: AccessTier, isAdmin: boolean): b
   if (isAdmin || tier === "elite") return true;
   if ((ELITE_ONLY_TABS as readonly string[]).includes(tab)) return false;
   if (tier === "full") return true;
-  if (tier === "limited") return (LIMITED_TABS as readonly string[]).includes(tab);
+  if (tier === "limited") return (LIMITED_TABS as readonly string[]).includes(tab) || tab === "stackbuilder";
+  if (tier === "basic") return (LIMITED_TABS as readonly string[]).includes(tab) && !(AI_TABS as readonly string[]).includes(tab);
   return false;
 }
 
