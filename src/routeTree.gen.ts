@@ -21,6 +21,7 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as FeaturesRouteImport } from './routes/features'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as IntakeRouteImport } from './routes/intake'
+import { Route as PeptideCalculatorRouteImport } from './routes/peptide-calculator'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -102,6 +103,11 @@ const HowItWorksRoute = HowItWorksRouteImport.update({
 const IntakeRoute = IntakeRouteImport.update({
   id: '/intake',
   path: '/intake',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PeptideCalculatorRoute = PeptideCalculatorRouteImport.update({
+  id: '/peptide-calculator',
+  path: '/peptide-calculator',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -237,6 +243,7 @@ export interface FileRoutesByFullPath {
   '/features': typeof FeaturesRoute
   '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
+  '/peptide-calculator': typeof PeptideCalculatorRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -273,6 +280,7 @@ export interface FileRoutesByTo {
   '/features': typeof FeaturesRoute
   '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
+  '/peptide-calculator': typeof PeptideCalculatorRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -311,6 +319,7 @@ export interface FileRoutesById {
   '/features': typeof FeaturesRoute
   '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
+  '/peptide-calculator': typeof PeptideCalculatorRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -349,6 +358,7 @@ export interface FileRouteTypes {
     | '/features'
     | '/how-it-works'
     | '/intake'
+    | '/peptide-calculator'
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
@@ -385,6 +395,7 @@ export interface FileRouteTypes {
     | '/features'
     | '/how-it-works'
     | '/intake'
+    | '/peptide-calculator'
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
@@ -422,6 +433,7 @@ export interface FileRouteTypes {
     | '/features'
     | '/how-it-works'
     | '/intake'
+    | '/peptide-calculator'
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
@@ -460,6 +472,7 @@ export interface RootRouteChildren {
   FeaturesRoute: typeof FeaturesRoute
   HowItWorksRoute: typeof HowItWorksRoute
   IntakeRoute: typeof IntakeRoute
+  PeptideCalculatorRoute: typeof PeptideCalculatorRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -565,6 +578,13 @@ declare module '@tanstack/react-router' {
       path: '/intake'
       fullPath: '/intake'
       preLoaderRoute: typeof IntakeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/peptide-calculator': {
+      id: '/peptide-calculator'
+      path: '/peptide-calculator'
+      fullPath: '/peptide-calculator'
+      preLoaderRoute: typeof PeptideCalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -772,6 +792,7 @@ const rootRouteChildren: RootRouteChildren = {
   FeaturesRoute: FeaturesRoute,
   HowItWorksRoute: HowItWorksRoute,
   IntakeRoute: IntakeRoute,
+  PeptideCalculatorRoute: PeptideCalculatorRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,

@@ -71,6 +71,7 @@ function Hero() {
           <Link to="/auth" className="landing-btn-primary">Get dashboard access <ArrowRight size={16} /></Link>
           <Link to="/features" className="landing-btn-secondary">Explore the tools</Link>
           <Link to="/pephub" className="landing-btn-secondary">Go to PepHub</Link>
+          <Link to="/peptide-calculator" className="landing-btn-secondary">Free calculator</Link>
         </div>
         <p className="mt-5 text-xs text-muted-foreground">Track, Learn, Implement · Built for consistent use · Educational research only</p>
         <div className="relative mt-10 w-full max-w-3xl">
