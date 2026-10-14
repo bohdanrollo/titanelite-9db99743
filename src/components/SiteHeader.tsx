@@ -38,7 +38,7 @@ export function SiteHeader() {
             <button
               type="button"
               onClick={() => setExploreOpen((v) => !v)}
-               className="flex items-center gap-1 font-mono text-[11px] uppercase text-foreground/80 transition hover:text-primary"
+               className="flex items-center gap-1 header-link"
               aria-haspopup="true"
               aria-expanded={exploreOpen}
             >
@@ -52,8 +52,8 @@ export function SiteHeader() {
                       key={n.to}
                       to={n.to}
                       onClick={() => setExploreOpen(false)}
-                       className="block px-4 py-3 font-mono text-[11px] uppercase text-foreground/80 transition hover:bg-secondary hover:text-primary"
-                       activeProps={{ className: "text-primary" }}
+                       className="block px-4 py-3 header-link hover:bg-secondary"
+                       activeProps={{ className: "font-semibold" }}
                     >
                       {n.label}
                     </Link>
@@ -66,8 +66,8 @@ export function SiteHeader() {
             <Link
               key={n.to}
               to={n.to}
-               className="font-mono text-[11px] uppercase text-foreground/80 transition hover:text-primary"
-               activeProps={{ className: "text-primary" }}
+               className="header-link"
+               activeProps={{ className: "font-semibold" }}
             >
               {n.label}
             </Link>
@@ -80,7 +80,7 @@ export function SiteHeader() {
             </Link>
           ) : (
             <>
-               <Link to="/auth" className="font-landing text-sm font-medium text-foreground/80 transition hover:text-foreground">
+               <Link to="/auth" className="header-link">
                 Sign in
               </Link>
               <Link to="/auth" className="btn-black">
@@ -100,13 +100,13 @@ export function SiteHeader() {
       {open && (
         <div className="md:hidden border-t border-foreground/10 bg-background">
           <div className="container-edge py-4 flex flex-col gap-4">
-            <div className="text-eyebrow text-blood">Explore</div>
+            <div className="header-link font-semibold">Explore</div>
             {exploreNav.map((n) => (
               <Link
                 key={n.to}
                 to={n.to}
                 onClick={() => setOpen(false)}
-                className="font-mono text-xs uppercase tracking-[0.18em] pl-2"
+                className="header-link pl-2"
               >
                 {n.label}
               </Link>
@@ -117,7 +117,7 @@ export function SiteHeader() {
                   key={n.to}
                   to={n.to}
                   onClick={() => setOpen(false)}
-                  className="font-mono text-xs uppercase tracking-[0.18em]"
+                  className="header-link"
                 >
                   {n.label}
                 </Link>
