@@ -219,7 +219,7 @@ function Dashboard() {
           );
         })()}
 
-        <div className="mt-8 pb-24">
+        <div className="dash-tool mt-6 pb-28">
           {tab === "protocols" && isTabAllowed("protocols", tier, isAdmin) && <Protocols />}
           {tab === "messages" && isTabAllowed("messages", tier, isAdmin) && user && <ClientMessages myId={user.id} />}
           {tab === "calls" && isTabAllowed("calls", tier, isAdmin) && <CoachCalls />}

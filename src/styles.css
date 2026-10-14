@@ -456,3 +456,34 @@
 .dash-dock-on { background: oklch(1 0 0); color: var(--dash-dock); }
 .dash-dock-off { color: oklch(1 0 0 / 0.7); }
 .dash-pill-on { background: var(--foreground); color: var(--background); }
+
+/* Dashboard tool screens — app-style restyle (scoped, visual only). */
+.dash-tool [class*="border-foreground/1"],
+.dash-tool [class*="border-foreground/2"] {
+  border-radius: 1.25rem;
+  border-color: var(--border);
+  background-color: var(--card);
+}
+.dash-tool [class*="border-b"][class*="border-foreground/"],
+.dash-tool [class*="border-t"][class*="border-foreground/"],
+.dash-tool [class*="border-y"][class*="border-foreground/"],
+.dash-tool tr, .dash-tool li[class*="border-foreground/"] { border-radius: 0; background-color: transparent; }
+.dash-tool .font-mono { font-family: "Geist", system-ui, sans-serif; letter-spacing: 0.01em; text-transform: none; }
+.dash-tool .text-eyebrow {
+  font-family: "Geist", system-ui, sans-serif; text-transform: none; letter-spacing: 0;
+  font-size: 0.8rem; font-weight: 500; color: var(--muted-foreground);
+}
+.dash-tool h2, .dash-tool h3 { font-family: "Geist", system-ui, sans-serif; font-weight: 600; letter-spacing: -0.02em; }
+.dash-tool .btn-blood, .dash-tool .btn-ghost, .dash-tool [class*="btn-outline"] {
+  border-radius: 9999px; background: var(--foreground); color: var(--background);
+  border-color: var(--foreground); text-transform: none; letter-spacing: 0;
+  font-family: "Geist", system-ui, sans-serif; font-weight: 500;
+}
+.dash-tool .btn-ghost, .dash-tool [class*="btn-outline"] { background: var(--card); color: var(--foreground); border-color: var(--border); }
+.dash-tool input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.dash-tool select, .dash-tool textarea {
+  border-radius: 0.9rem; background-color: var(--muted); border-color: transparent;
+}
+.dash-tool .text-blood { color: var(--foreground); }
+.dash-tool [class*="bg-blood"] { border-radius: 9999px; }
+.dash-tool table { border-radius: 1rem; overflow: hidden; }
