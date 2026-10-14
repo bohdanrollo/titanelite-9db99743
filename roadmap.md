@@ -4,5 +4,5 @@
 - [x] Phase 2: compound mapping admin, price history view, price drops, click/search analytics, product detail stats
 
 ## Welcome page refresh
-- [ ] Replace phone image and apply a scoped pale-blue welcome page theme
-- [ ] Verify desktop and phone presentation and existing buttons; keep unpublished
+- [x] Replace phone image and apply a scoped pale-blue welcome page theme
+- [x] Verify desktop and phone presentation and existing buttons; keep unpublished
