@@ -166,6 +166,23 @@ export default function Nutrition() {
 
       {view === "today" ? (
         <>
+          <div className="tile tile-peach p-6">
+            <div className="text-5xl font-semibold tracking-tight">{Math.max(0, goals.calorie_goal - Math.round(totals.calories)).toLocaleString()}</div>
+            <div className="mt-1 text-sm opacity-75">{goals.calorie_goal.toLocaleString()} goal · {Math.round(totals.calories).toLocaleString()} food · kcal left</div>
+            <div className="mt-5 grid grid-cols-3 gap-3">
+              {([["Protein", totals.protein, targets.protein], ["Carbs", totals.carbs, targets.carbs], ["Fat", totals.fat, targets.fat]] as const).map(([l, v, t]) => {
+                const pct = Math.min(100, t ? (v / t) * 100 : 0);
+                return (
+                  <div key={l} className="flex flex-col items-center">
+                    <div className="h-16 w-16 rounded-full grid place-items-center" style={{ background: `conic-gradient(var(--tile-ink) ${pct}%, oklch(1 0 0 / 0.45) 0)` }}>
+                      <div className="h-12 w-12 rounded-full tile-peach grid place-items-center text-xs font-medium">{Math.round(v)}g</div>
+                    </div>
+                    <span className="mt-2 text-xs">{l} / {t}g</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
           {/* Goal */}
           <div className="border border-foreground/15 p-5">
             <div className="flex items-center gap-2 text-eyebrow"><Target size={13} className="text-blood" /> Daily Goal</div>
