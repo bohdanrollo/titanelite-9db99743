@@ -27,6 +27,7 @@ import { AddToHomeScreenButton } from "@/components/AddToHomeScreen";
 import { wasReferredByCode } from "@/lib/affiliates.functions";
 import CoachCalls from "@/components/CoachCalls";
 import { StripeEmbeddedCheckoutForm } from "@/components/StripeEmbeddedCheckout";
+import ProfileScreen from "@/components/ProfileScreen";
 import { PepLogWordmark } from "@/components/PepLogWordmark";
 import { DashboardHubView, DashboardDock, WeekStrip, type Hub, type HubTile } from "@/components/DashboardHub";
 
@@ -87,6 +88,7 @@ function Dashboard() {
   const [hub, setHub] = useState<Hub>("coaching");
   const [navOpen, setNavOpen] = useState(false);
   const [showUpgrade, setShowUpgrade] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const [intake, setIntake] = useState<{ id: string; status: string; submitted_at: string } | null>(null);
   const [isAffiliate, setIsAffiliate] = useState(false);
@@ -122,6 +124,9 @@ function Dashboard() {
           </Link>
           <div className="flex items-center gap-3 sm:gap-4 shrink-0">
             <AddToHomeScreenButton />
+            <button onClick={() => { setShowProfile(true); setShowUpgrade(false); }} aria-label="Profile" className="h-9 w-9 rounded-full tile tile-lilac grid place-items-center text-sm font-semibold">
+              {(user?.email?.[0] ?? "P").toUpperCase()}
+            </button>
             <button onClick={signOut} className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood">
               <LogOut size={14} /> <span className="hidden sm:inline">Sign out</span>
             </button>
@@ -160,6 +165,8 @@ function Dashboard() {
 
         {showUpgrade && hasAccess ? (
           <UpgradeScreen tier={tier} isAdmin={isAdmin} onClose={() => setShowUpgrade(false)} />
+        ) : showProfile && hasAccess ? (
+          <ProfileScreen tier={tier} isAdmin={isAdmin} intakeStatus={intake?.status} onBack={() => setShowProfile(false)} onUpgrade={() => { setShowProfile(false); setShowUpgrade(true); }} billing={<ManageSubscriptionButton />} />
         ) : accessLoading ? (
           <div className="mt-10 text-eyebrow">Loading access…</div>
         ) : !hasAccess ? (
