@@ -207,7 +207,7 @@
   transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
   &:hover {
     background: color-mix(in oklab, var(--ink) 82%, white);
-    border-color: color-mix(in oklab, var(--foreground) 34%, transparent);
+    border-color: color-mix(in oklab, var(--foreground) 44%, transparent);
     transform: translateY(-1px);
   }
 }
