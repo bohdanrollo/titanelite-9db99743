@@ -31,7 +31,14 @@ export const Route = createFileRoute("/api/public/pephub/monitor")({
           } catch (err) {
             console.error("[pephub-inventory] sync failed", err);
           }
-          return Response.json({ ok: true, ...result, inbox, inventory });
+          let reminders: unknown = null;
+          try {
+            const { runDueReminders } = await import("@/lib/reminders.server");
+            reminders = await runDueReminders();
+          } catch (err) {
+            console.error("[reminders] run failed", err);
+          }
+          return Response.json({ ok: true, ...result, inbox, inventory, reminders });
         } catch (err) {
           console.error("[pephub-monitor] run failed", err);
           return Response.json(

@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { ArrowLeft, Bell, CreditCard, LogOut, Sparkles, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import ReminderSettings from "@/components/ReminderSettings";
 
 const TIER_LABEL: Record<string, string> = { limited: "Limited Access", full: "Full Access", elite: "Elite Access" };
 
@@ -48,9 +49,7 @@ export default function ProfileScreen({ tier, isAdmin, intakeStatus, onBack, onU
         <div className="flex items-center gap-3 p-4">
           <CreditCard size={18} /><span className="flex-1"><span className="block font-medium">Plan & billing</span><span className="text-xs text-muted-foreground">Manage your subscription</span></span>{billing}
         </div>
-        <div className="flex items-center gap-3 p-4">
-          <Bell size={18} /><span className="flex-1"><span className="block font-medium">Reminders</span><span className="text-xs text-muted-foreground">Dose and check-in reminders are coming soon</span></span>
-        </div>
+        <div className="p-4"><div className="flex items-center gap-3"><Bell size={18} /><span className="font-medium">Reminders</span></div><ReminderSettings /></div>
         <button onClick={signOut} className="w-full flex items-center gap-3 p-4 text-left hover:bg-muted">
           <LogOut size={18} /><span className="flex-1 font-medium">Sign out</span>
         </button>
