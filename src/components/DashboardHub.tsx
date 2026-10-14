@@ -20,7 +20,7 @@ const HERO: Record<Hub, { title: string; sub: string; color: HubTile["color"]; s
   learn: { title: "Learn the basics", sub: "Peptides, mixing, training and more", color: "sky", section: "Your library" },
 };
 
-function WeekStrip() {
+export function WeekStrip() {
   const today = new Date();
   const start = new Date(today);
   start.setDate(today.getDate() - today.getDay());
