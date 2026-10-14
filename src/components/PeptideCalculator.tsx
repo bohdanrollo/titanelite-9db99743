@@ -182,3 +182,12 @@ export function PeptideCalculator() {
   );
 }
 
+function Stat({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
+  return (
+    <div className="border border-foreground/10 p-3">
+      <div className="text-eyebrow">{label}</div>
+      <div className={`font-display text-xl sm:text-2xl mt-1 ${accent ? "text-blood" : ""}`}>{value}</div>
+    </div>
+  );
+}
+
