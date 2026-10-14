@@ -73,9 +73,9 @@ export default function LabAnalysis() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h2 className="font-display text-2xl sm:text-3xl">Lab Analysis</h2>
-        <p className="mt-2 text-sm text-muted-foreground max-w-2xl">
+      <div className="tile tile-aqua p-6">
+        <h2 className="text-2xl sm:text-3xl font-semibold">Upload a lab report</h2>
+        <p className="mt-2 text-sm opacity-75 max-w-2xl">
           Upload your blood test panel and add your stats. You'll get a breakdown of what's outside optimal range and
           practical ways to improve it. Your results save here — update or re-upload anytime. Educational only, not medical advice.
         </p>
