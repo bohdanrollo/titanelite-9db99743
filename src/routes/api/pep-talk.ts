@@ -96,7 +96,7 @@ export const Route = createFileRoute("/api/pep-talk")({
 
         const gateway = createLovableAiGatewayProvider(key);
         const result = streamText({
-          model: gateway("google/gemini-3.6-flash"),
+          model: gateway("google/gemini-3.8-flash"),
           messages: modelMessages,
         });
 

@@ -77,7 +77,7 @@ export const buildStack = createServerFn({ method: "POST" })
       method: "POST",
       headers: { "Content-Type": "application/json", "Lovable-API-Key": apiKey },
       body: JSON.stringify({
-        model: "google/gemini-3.5-flash",
+        model: "google/gemini-3.8-flash",
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           {

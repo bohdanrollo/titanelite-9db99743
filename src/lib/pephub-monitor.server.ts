@@ -245,7 +245,7 @@ COLLECTED CONTENT:
 
 
   const { text } = await generateText({
-    model: provider("google/gemini-2.5-flash"),
+    model: provider("google/gemini-3.1-flash-lite"),
     prompt,
   });
 
