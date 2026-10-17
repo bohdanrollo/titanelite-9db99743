@@ -16,6 +16,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 
 import protocolImg from "@/assets/protocol.jpg";
 import phoneImage from "@/assets/peplog-iphone-dashboard-clean.png";
+import giveawayImage from "@/assets/peplog-golf-cart-giveaway.jpeg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -48,6 +49,7 @@ function Home() {
       <main>
         <Hero />
         <SignalStrip />
+        <Giveaway />
         <Platform />
         <Method />
         <Closing />
@@ -74,6 +76,7 @@ function Hero() {
           <Link to="/peptide-calculator" className="landing-btn-secondary">Free calculator</Link>
         </div>
         <p className="mt-5 text-xs text-muted-foreground">Track, Learn, Implement · Built for consistent use · Educational research only</p>
+        <a href="#golf-cart-giveaway" className="landing-text-link mt-4 text-sm">PepLog.io golf cart giveaway <ChevronRight size={15} /></a>
         <div className="relative mt-10 w-full max-w-3xl">
           <img
             src={phoneImage}
@@ -118,6 +121,30 @@ function Platform() {
               <h3 className="mt-14 font-landing text-2xl font-semibold normal-case leading-tight">{title}</h3><p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">{body}</p><ArrowRight size={16} className="mt-6 text-primary transition-transform group-hover:translate-x-1" />
             </Link>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Giveaway() {
+  return (
+    <section id="golf-cart-giveaway" aria-labelledby="giveaway-title" className="scroll-mt-20 border-b border-border py-16 sm:py-24">
+      <div className="container-edge grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+        <img src={giveawayImage.url} alt="PepLog-branded golf cart shown from the front, rear, side, and rear three-quarter view" className="aspect-square w-full rounded-lg object-contain" width={771} height={768} loading="lazy" />
+        <div>
+          <div className="landing-kicker">The PepLog.io giveaway</div>
+          <h2 id="giveaway-title" className="mt-5 font-landing text-4xl font-semibold leading-tight sm:text-5xl">Win a PepLog<br />golf cart.</h2>
+          <h3 className="mt-8 font-landing text-lg font-semibold normal-case">Entry requirements</h3>
+          <ol className="mt-4 divide-y divide-border border-y border-border">
+            <li className="flex gap-4 py-5"><span className="font-mono text-sm text-primary">01</span><p className="text-sm leading-relaxed">Be paying for a PepLog plan.</p></li>
+            <li className="flex gap-4 py-5"><span className="font-mono text-sm text-primary">02</span><p className="text-sm leading-relaxed">Be signed up to receive both emails and texts from PepHub.</p></li>
+            <li className="flex gap-4 py-5"><span className="font-mono text-sm text-primary">03</span><p className="text-sm leading-relaxed">Invite friends for extra entries. Extra entries count only after your invited friend enters the giveaway.</p></li>
+          </ol>
+          <div className="mt-7 flex flex-wrap gap-3">
+            <Link to="/checkout" className="landing-btn-primary">View plans <ArrowRight size={16} /></Link>
+            <Link to="/pephub" className="landing-btn-secondary">Visit PepHub</Link>
+          </div>
         </div>
       </div>
     </section>
