@@ -130,7 +130,7 @@ async function fetchWithAi(startUrl: string): Promise<RawItem[] | null> {
   const { createLovableAiGatewayProvider } = await import("@/lib/ai-gateway.server");
   const provider = createLovableAiGatewayProvider(key);
   const { text: out } = await generateText({
-    model: provider("google/gemini-2.5-flash"),
+    model: provider("google/gemini-3.1-flash-lite"),
     prompt: `Extract every product listing from these store pages. Return ONLY a JSON array of objects: {"name": string, "variant": string|null, "price": number|null, "compare_at_price": number|null, "in_stock": boolean|null, "url": string|null, "image": string|null}.
 Rules: include only products literally shown with their name. Never guess: if a price, stock status, url or image is not explicitly present, use null. "in_stock" is false only if the page says sold out / out of stock. URLs must be absolute (base ${origin}). No duplicates.\n${text}`,
   });

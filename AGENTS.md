@@ -1,3 +1,5 @@
 - PepHub inventory sync runs inside the existing hourly /api/public/pephub/monitor cron (per-vendor interval); why: no second scheduler.
 - Welcome-page-only visual changes use a scoped theme on the home page wrapper rather than modifying shared light-theme values; why: other pages must retain their existing appearance.
 - Member email reminders run inside the existing hourly /api/public/pephub/monitor cron; why: no second scheduler.
+- Checkout confirmation uses the shared checkout-activation predicate; why: distinguish missing access from the lowest paid tier and test upgrade activation independently.
+- The checkout parent renders an Outlet for child paths without mounting plan-selection effects; why: payment returns must render their own confirmation instead of the purchase screen.

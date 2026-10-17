@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Check } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -19,8 +19,13 @@ export const Route = createFileRoute("/checkout")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: CheckoutPage,
+  component: CheckoutLayout,
 });
+
+function CheckoutLayout() {
+  const { pathname } = useLocation();
+  return pathname === "/checkout" ? <CheckoutPage /> : <Outlet />;
+}
 
 type PlanId = "basic_monthly" | "limited_monthly" | "full_monthly" | "elite_monthly";
 type Plan = {

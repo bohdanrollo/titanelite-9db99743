@@ -1,5 +1,9 @@
 # Roadmap
 
+## Current monitoring fixes
+- [x] Correct Basic payment confirmation and test tier activation
+- [x] Verify deprecated model replacements and migrate only affected calls; do not publish
+
 ## PepHub Price Comparison
 - [x] Phase 1: vendor tracking toggle, auto sync (Shopify/Woo/feed/AI), compound matching, member search + comparison pages, admin Inventory tab
 - [x] Phase 2: compound mapping admin, price history view, price drops, click/search analytics, product detail stats

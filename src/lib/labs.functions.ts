@@ -128,7 +128,7 @@ Attached are the client's blood panel documents. Read every value you can and pr
       method: "POST",
       headers: { "Content-Type": "application/json", "Lovable-API-Key": apiKey },
       body: JSON.stringify({
-        model: "google/gemini-3.5-flash",
+        model: "google/gemini-3.8-flash",
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content },
