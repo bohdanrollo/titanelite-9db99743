@@ -4,6 +4,7 @@ import { AlertTriangle, CheckCircle2, Loader2, RotateCw } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useAccess } from "@/lib/access";
+import { isCheckoutActivated } from "@/lib/checkout-activation";
 
 export const Route = createFileRoute("/checkout/return")({
   head: () => ({ meta: [
@@ -22,23 +23,13 @@ export const Route = createFileRoute("/checkout/return")({
 });
 
 const MAX_TRIES = 10;
-const TIER_RANK: Record<string, number> = { basic: 0, limited: 1, full: 2, elite: 3 };
-const TIER_BY_PLAN: Record<string, string> = {
-  basic_monthly: "basic",
-  limited_monthly: "limited",
-  full_monthly: "full",
-  elite_monthly: "elite",
-};
 
 function ReturnPage() {
   const { session_id, plan } = Route.useSearch();
   const { tier, refresh } = useAccess();
   const [tries, setTries] = useState(0);
   const [round, setRound] = useState(0);
-  const purchasedTier = plan ? TIER_BY_PLAN[plan] : undefined;
-  const currentRank = tier ? (TIER_RANK[tier] ?? 0) : 0;
-  const requiredRank = purchasedTier ? (TIER_RANK[purchasedTier] ?? 1) : 1;
-  const activated = currentRank >= requiredRank && currentRank > 0;
+  const activated = isCheckoutActivated(tier, plan);
   const stalled = !activated && tries >= MAX_TRIES;
 
   // Poll for the webhook to activate access. Ceiling ~20s per round.
@@ -62,7 +53,7 @@ function ReturnPage() {
             <div className="text-eyebrow mt-6">Access activated</div>
             <h1 className="mt-4 text-4xl sm:text-6xl">You're in.</h1>
             <p className="mt-4 text-muted-foreground">
-              Your {tier === "elite" ? "Elite Access" : tier === "full" ? "Full Access" : "Limited Access"} is live. Head to the dashboard.
+              Your {tier === "elite" ? "Elite Access" : tier === "full" ? "Full Access" : tier === "basic" ? "Basic Access" : "Limited Access"} is live. Head to the dashboard.
             </p>
             <Link to="/dashboard" className="mt-8 inline-flex btn-blood hover:btn-blood-hover">
               Open dashboard
