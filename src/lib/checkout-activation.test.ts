@@ -1,24 +1,25 @@
-import { describe, expect, test } from "bun:test";
+import { describe, test } from "node:test";
+import { strict as assert } from "node:assert";
 import { isCheckoutActivated } from "./checkout-activation";
 
 describe("checkout activation", () => {
   test("$2.99 Basic purchase activates with Basic access", () => {
-    expect(isCheckoutActivated("basic", "basic_monthly")).toBe(true);
+    assert.equal(isCheckoutActivated("basic", "basic_monthly"), true);
   });
   test("a pending Basic purchase does not activate without access", () => {
-    expect(isCheckoutActivated(null, "basic_monthly")).toBe(false);
-    expect(isCheckoutActivated("unknown", "basic_monthly")).toBe(false);
+    assert.equal(isCheckoutActivated(null, "basic_monthly"), false);
+    assert.equal(isCheckoutActivated("unknown", "basic_monthly"), false);
   });
   test("existing Full access cannot confirm an Elite purchase early", () => {
-    expect(isCheckoutActivated("full", "elite_monthly")).toBe(false);
-    expect(isCheckoutActivated("elite", "elite_monthly")).toBe(true);
+    assert.equal(isCheckoutActivated("full", "elite_monthly"), false);
+    assert.equal(isCheckoutActivated("elite", "elite_monthly"), true);
   });
   test("Limited and legacy Full purchases still activate", () => {
-    expect(isCheckoutActivated("limited", "limited_monthly")).toBe(true);
-    expect(isCheckoutActivated("full", "full_monthly")).toBe(true);
+    assert.equal(isCheckoutActivated("limited", "limited_monthly"), true);
+    assert.equal(isCheckoutActivated("full", "full_monthly"), true);
   });
   test("legacy return links retain their Limited minimum", () => {
-    expect(isCheckoutActivated("basic")).toBe(false);
-    expect(isCheckoutActivated("limited")).toBe(true);
+    assert.equal(isCheckoutActivated("basic"), false);
+    assert.equal(isCheckoutActivated("limited"), true);
   });
 });
