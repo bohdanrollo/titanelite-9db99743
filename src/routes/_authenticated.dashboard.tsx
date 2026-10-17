@@ -123,6 +123,10 @@ function Dashboard() {
             <PepLogWordmark className="h-[18px] w-auto sm:h-5" />
           </Link>
           <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+            <Link to="/pephub" className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground transition-colors hover:text-primary">
+              <Beaker size={16} />
+              <span>PepHub</span>
+            </Link>
             <AddToHomeScreenButton />
             <button onClick={() => { setShowProfile(true); setShowUpgrade(false); }} aria-label="Profile" className="h-9 w-9 rounded-full tile tile-lilac grid place-items-center text-sm font-semibold">
               {(user?.email?.[0] ?? "P").toUpperCase()}
