@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { PepLogWordmark } from "@/components/PepLogWordmark";
+import { Button } from "@/components/ui/button";
 
 const exploreNav = [
   { to: "/how-it-works", label: "How It Works" },
@@ -36,15 +37,16 @@ export function SiteHeader() {
             onMouseEnter={() => setExploreOpen(true)}
             onMouseLeave={() => setExploreOpen(false)}
           >
-            <button
+            <Button
+              variant="ghost"
               type="button"
-              onClick={() => setExploreOpen((v) => !v)}
-               className="flex items-center gap-1 header-link"
+              onClick={() => setExploreOpen(true)}
+               className="h-auto gap-1 p-0 header-link hover:bg-transparent"
               aria-haspopup="true"
               aria-expanded={exploreOpen}
             >
               Explore <ChevronDown size={12} className={exploreOpen ? "rotate-180 transition" : "transition"} />
-            </button>
+            </Button>
             {exploreOpen && (
               <div className="absolute left-0 top-full pt-3">
                  <div className="min-w-[220px] border border-border bg-popover shadow-2xl">
