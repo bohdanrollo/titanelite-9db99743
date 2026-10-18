@@ -23,6 +23,7 @@ import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as IntakeRouteImport } from './routes/intake'
 import { Route as PeptideCalculatorRouteImport } from './routes/peptide-calculator'
 import { Route as PeptideDosageCalculatorRouteImport } from './routes/peptide-dosage-calculator'
+import { Route as PeptidePricesRouteImport } from './routes/peptide-prices'
 import { Route as PeptideReconstitutionCalculatorRouteImport } from './routes/peptide-reconstitution-calculator'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -116,6 +117,11 @@ const PeptideCalculatorRoute = PeptideCalculatorRouteImport.update({
 const PeptideDosageCalculatorRoute = PeptideDosageCalculatorRouteImport.update({
   id: '/peptide-dosage-calculator',
   path: '/peptide-dosage-calculator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PeptidePricesRoute = PeptidePricesRouteImport.update({
+  id: '/peptide-prices',
+  path: '/peptide-prices',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PeptideReconstitutionCalculatorRoute =
@@ -265,6 +271,7 @@ export interface FileRoutesByFullPath {
   '/intake': typeof IntakeRoute
   '/peptide-calculator': typeof PeptideCalculatorRoute
   '/peptide-dosage-calculator': typeof PeptideDosageCalculatorRoute
+  '/peptide-prices': typeof PeptidePricesRoute
   '/peptide-reconstitution-calculator': typeof PeptideReconstitutionCalculatorRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -305,6 +312,7 @@ export interface FileRoutesByTo {
   '/intake': typeof IntakeRoute
   '/peptide-calculator': typeof PeptideCalculatorRoute
   '/peptide-dosage-calculator': typeof PeptideDosageCalculatorRoute
+  '/peptide-prices': typeof PeptidePricesRoute
   '/peptide-reconstitution-calculator': typeof PeptideReconstitutionCalculatorRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -347,6 +355,7 @@ export interface FileRoutesById {
   '/intake': typeof IntakeRoute
   '/peptide-calculator': typeof PeptideCalculatorRoute
   '/peptide-dosage-calculator': typeof PeptideDosageCalculatorRoute
+  '/peptide-prices': typeof PeptidePricesRoute
   '/peptide-reconstitution-calculator': typeof PeptideReconstitutionCalculatorRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -389,6 +398,7 @@ export interface FileRouteTypes {
     | '/intake'
     | '/peptide-calculator'
     | '/peptide-dosage-calculator'
+    | '/peptide-prices'
     | '/peptide-reconstitution-calculator'
     | '/privacy'
     | '/reset-password'
@@ -429,6 +439,7 @@ export interface FileRouteTypes {
     | '/intake'
     | '/peptide-calculator'
     | '/peptide-dosage-calculator'
+    | '/peptide-prices'
     | '/peptide-reconstitution-calculator'
     | '/privacy'
     | '/reset-password'
@@ -470,6 +481,7 @@ export interface FileRouteTypes {
     | '/intake'
     | '/peptide-calculator'
     | '/peptide-dosage-calculator'
+    | '/peptide-prices'
     | '/peptide-reconstitution-calculator'
     | '/privacy'
     | '/reset-password'
@@ -512,6 +524,7 @@ export interface RootRouteChildren {
   IntakeRoute: typeof IntakeRoute
   PeptideCalculatorRoute: typeof PeptideCalculatorRoute
   PeptideDosageCalculatorRoute: typeof PeptideDosageCalculatorRoute
+  PeptidePricesRoute: typeof PeptidePricesRoute
   PeptideReconstitutionCalculatorRoute: typeof PeptideReconstitutionCalculatorRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -633,6 +646,13 @@ declare module '@tanstack/react-router' {
       path: '/peptide-dosage-calculator'
       fullPath: '/peptide-dosage-calculator'
       preLoaderRoute: typeof PeptideDosageCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/peptide-prices': {
+      id: '/peptide-prices'
+      path: '/peptide-prices'
+      fullPath: '/peptide-prices'
+      preLoaderRoute: typeof PeptidePricesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/peptide-reconstitution-calculator': {
@@ -856,6 +876,7 @@ const rootRouteChildren: RootRouteChildren = {
   IntakeRoute: IntakeRoute,
   PeptideCalculatorRoute: PeptideCalculatorRoute,
   PeptideDosageCalculatorRoute: PeptideDosageCalculatorRoute,
+  PeptidePricesRoute: PeptidePricesRoute,
   PeptideReconstitutionCalculatorRoute: PeptideReconstitutionCalculatorRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
