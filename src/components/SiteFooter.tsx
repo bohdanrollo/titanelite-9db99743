@@ -16,6 +16,9 @@ export function SiteFooter() {
           <ul className="space-y-2 text-sm">
             <li><Link to="/features" className="hover:text-primary">Features</Link></li>
             <li><Link to="/peptide-calculator" className="hover:text-primary">Peptide Calculator</Link></li>
+            <li><Link to="/retatrutide-dosage-calculator" className="hover:text-primary">Retatrutide Dosage Calculator</Link></li>
+            <li><Link to="/peptide-reconstitution-calculator" className="hover:text-primary">Reconstitution Calculator</Link></li>
+            <li><Link to="/peptide-dosage-calculator" className="hover:text-primary">Peptide Dosage Calculator</Link></li>
             <li><Link to="/about" className="hover:text-primary">About</Link></li>
             <li><Link to="/faq" className="hover:text-primary">FAQ</Link></li>
             <li><Link to="/contact" className="hover:text-primary">Contact</Link></li>
