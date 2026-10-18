@@ -51,9 +51,9 @@ function Home() {
         <SignalStrip />
         <Giveaway />
         <Platform />
-        <Pricing />
         <Method />
         <Closing />
+        <Pricing />
       </main>
       <SiteFooter />
     </div>
@@ -172,7 +172,7 @@ function Pricing() {
   ];
 
   return (
-    <section id="plans" aria-labelledby="plans-title" className="scroll-mt-20 border-b border-border py-20 sm:py-28">
+    <section id="plans" aria-labelledby="plans-title" className="scroll-mt-20 py-20 sm:py-28">
       <div className="container-edge">
         <div className="landing-kicker">Plans & pricing</div>
         <h2 id="plans-title" className="mt-5 font-landing text-4xl font-semibold leading-tight sm:text-5xl">Start free. Go further.</h2>
