@@ -9,7 +9,7 @@ async function canRunIntegration(): Promise<boolean> {
   if (!connection) return false;
   const db = postgres(connection, { max: 1, prepare: false });
   try {
-    const [permissions] = await db`select has_table_privilege(current_user, 'public.coaches', 'UPDATE') and has_table_privilege(current_user, 'public.coach_appointments', 'UPDATE') as allowed`;
+    const [permissions] = await db`select rolsuper as allowed from pg_roles where rolname = current_user`;
     return permissions?.allowed === true;
   } finally { await db.end(); }
 }
