@@ -1,5 +1,8 @@
 # Roadmap
 
+## Peptide-stack phone notifications
+- [ ] Replace stack reminder emails with phone push notifications — blocked: Firebase notification connection was declined; delivery approach needs user decision
+
 ## Free Basic accounts
 - [x] Make Basic access free for accounts while preserving higher-tier access and existing Basic billing
 - [x] Require email, phone, and recorded email/SMS consent across signup forms
