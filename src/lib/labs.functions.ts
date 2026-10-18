@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { configuredPaymentEnvironment } from "@/lib/payment-environment";
 
 export type LabAnalysisRow = {
   id: string;

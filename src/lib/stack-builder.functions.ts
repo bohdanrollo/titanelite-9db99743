@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { configuredPaymentEnvironment } from "@/lib/payment-environment";
 
 // Compounds stocked by Powerbuilt Labs (the PepLog partner supplier) — the
 // stack builder must only recommend from this list.
