@@ -35,6 +35,12 @@ function Privacy() {
             To build your custom protocols, communicate with you about coaching, and
             improve our services. We do not sell your data.
           </P>
+          <P t="Email & SMS Offers">
+            Account signup collects your email address, phone number, and agreement to
+            receive PepLog deals and offers, including PepHub offers. We store the date
+            and version of your consent. Message frequency varies; message and data rates
+            may apply. Unsubscribe using the link in an email or reply STOP to promotional texts.
+          </P>
           <P t="Health Information">
             We apply HIPAA-inspired safeguards to sensitive health data even where not
             legally required. Data is encrypted in transit and at rest. Access is

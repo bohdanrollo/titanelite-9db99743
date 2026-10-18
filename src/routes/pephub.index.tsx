@@ -9,6 +9,8 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { type PepSource } from "@/lib/pephub.functions";
 import { pephubAccess, pephubSignup, pephubSubscribeCurrentUser } from "@/lib/pephub-access.functions";
 import { SignupAcknowledgements } from "@/components/SignupAcknowledgements";
+import { SignupContactConsent } from "@/components/SignupContactConsent";
+import { signupSchema, phoneSchema } from "@/lib/signup-schema";
 
 export const Route = createFileRoute("/pephub/")({
   head: () => ({
@@ -44,6 +46,9 @@ function PepHub() {
   const [hasAccess, setHasAccess] = useState(false);
   const [age21, setAge21] = useState(false);
   const [researchUse, setResearchUse] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [marketingConsent, setMarketingConsent] = useState(false);
+  const [confirmationSent, setConfirmationSent] = useState(false);
   const [showLegalShieldPopup, setShowLegalShieldPopup] = useState(false);
   const signup = useServerFn(pephubSignup);
   const checkAccess = useServerFn(pephubAccess);
@@ -122,8 +127,13 @@ function PepHub() {
           return;
         }
         const res = await signup({
-          data: { name: name.trim(), email: email.trim(), password, age21: true, researchUse: true },
+          data: signupSchema.parse({ name, email, password, phone, marketingConsent, age21, researchUse }),
         });
+        if (res.confirmationRequired) {
+          setConfirmationSent(true);
+          toast.success("Check your email to confirm your account, then sign in.");
+          return;
+        }
         const { error } = await supabase.auth.signInWithPassword({
           email: email.trim().toLowerCase(),
           password,
@@ -165,7 +175,7 @@ function PepHub() {
     setBusy(true);
     try {
       await subscribeMe({
-        data: { name: name.trim() || undefined, age21: true, researchUse: true },
+        data: { name: name.trim() || undefined, phone: phoneSchema.parse(phone), marketingConsent: true, age21: true, researchUse: true },
       });
       toast.success("You're on the PepHub list.");
       await refreshAccess();
@@ -211,6 +221,7 @@ function PepHub() {
                   to unlock the full list of trusted sources.
                 </p>
                 <div className="mt-6">
+                  <SignupContactConsent idPrefix="ph-optin" phone={phone} onPhone={setPhone} consent={marketingConsent} onConsent={setMarketingConsent} />
                   <SignupAcknowledgements
                     idPrefix="ph-optin"
                     age21={age21}
@@ -222,7 +233,7 @@ function PepHub() {
                 <button
                   type="button"
                   onClick={optIn}
-                  disabled={busy || !age21 || !researchUse}
+                  disabled={busy || !age21 || !researchUse || !marketingConsent}
                   className="btn-primary mt-6 w-full justify-center disabled:opacity-50"
                 >
                   {busy ? "Turning on alerts…" : "Turn on sale alerts & unlock PepHub"}
@@ -236,7 +247,7 @@ function PepHub() {
                 </h2>
                 <p className="mt-2 text-sm text-muted-foreground">
                   {mode === "signup"
-                    ? "Sign up with your name, email and a password. You'll join our sale-alert emails and get instant access to the trusted source list."
+                    ? "Sign up with your name, email, phone number and password for free Basic access and PepHub offers."
                     : "Sign in to see the trusted source list."}
                 </p>
                 <form onSubmit={submit} className="mt-6 space-y-4">
@@ -282,6 +293,10 @@ function PepHub() {
                     />
                   </div>
                   {mode === "signup" && (
+                    <SignupContactConsent idPrefix="ph-signup" phone={phone} onPhone={setPhone} consent={marketingConsent} onConsent={setMarketingConsent} />
+                  )}
+                  {confirmationSent && <p role="status" className="text-sm text-primary">Check your email to confirm your account, then sign in.</p>}
+                  {mode === "signup" && (
                     <SignupAcknowledgements
                       idPrefix="ph-signup"
                       age21={age21}
@@ -292,7 +307,7 @@ function PepHub() {
                   )}
                   <button
                     type="submit"
-                    disabled={busy || (mode === "signup" && (!age21 || !researchUse))}
+                    disabled={busy || (mode === "signup" && (!age21 || !researchUse || !marketingConsent))}
                     className="btn-primary w-full justify-center disabled:opacity-50"
                   >
                     {busy
@@ -312,8 +327,7 @@ function PepHub() {
                     : "New here? Create a free account"}
                 </button>
                 <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-                  By creating an account you agree to receive PepHub sale-alert emails. You can
-                  unsubscribe at any time from any email.
+                  Email and SMS offers include PepLog and PepHub. You can unsubscribe from emails or reply STOP to texts.
                 </p>
               </>
             )}

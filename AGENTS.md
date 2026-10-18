@@ -3,3 +3,5 @@
 - Member email reminders run inside the existing hourly /api/public/pephub/monitor cron; why: no second scheduler.
 - Checkout confirmation uses the shared checkout-activation predicate; why: distinguish missing access from the lowest paid tier and test upgrade activation independently.
 - The checkout parent renders an Outlet for child paths without mounting plan-selection effects; why: payment returns must render their own confirmation instead of the purchase screen.
+- Account signup validates shared contact/consent schemas in forms and enforces them through the auth lifecycle trigger; why: direct auth calls must not bypass signup requirements.
+- New accounts receive Basic access through the existing auth lifecycle trigger, with an account-only fallback for older members; why: free membership must not depend on Stripe, and higher access stays intact.

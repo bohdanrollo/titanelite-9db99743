@@ -69,12 +69,12 @@ function Hero() {
           PepLog brings peptide research, custom protocols, training, nutrition, labs, and coaching into one precise performance record.
         </p>
         <div className="mt-8 flex w-full max-w-2xl flex-col justify-center gap-3 sm:flex-row">
-          <Link to="/auth" className="landing-btn-primary">Get dashboard access <ArrowRight size={16} /></Link>
+          <Link to="/auth" className="landing-btn-primary">Get free Basic access <ArrowRight size={16} /></Link>
           <Link to="/features" className="landing-btn-secondary">Explore the tools</Link>
           <Link to="/pephub" className="landing-btn-secondary">Go to PepHub</Link>
           <Link to="/peptide-calculator" className="landing-btn-secondary">Free calculator</Link>
         </div>
-        <p className="mt-5 text-xs text-muted-foreground">Track, Learn, Implement · Built for consistent use · Educational research only</p>
+        <p className="mt-5 text-xs text-muted-foreground">Basic Access is free with an account · AI and coaching available on paid plans</p>
         <a href="#rolex-giveaway" className="landing-text-link mt-4 text-sm">PepLog.io Rolex giveaway <ChevronRight size={15} /></a>
         <div className="relative mt-10 w-full max-w-3xl">
           <img

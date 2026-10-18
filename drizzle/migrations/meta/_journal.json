@@ -183,6 +183,13 @@
       "when": 1792009983258,
       "tag": "0025_allow_basic_access_tier",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1792296357383,
+      "tag": "0026_free_basic_signup_contact_consent",
+      "breakpoints": true
     }
   ]
 }

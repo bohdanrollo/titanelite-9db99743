@@ -7,6 +7,7 @@ import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { StripeEmbeddedCheckoutForm } from "@/components/StripeEmbeddedCheckout";
 import { useAuth } from "@/lib/auth";
 import { useAccess } from "@/lib/access";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -41,8 +42,8 @@ const PLANS: Plan[] = [
   {
     id: "basic_monthly",
     name: "Basic Access",
-    price: "$2.99",
-    tag: "Per month",
+    price: "Free",
+    tag: "Included with your account",
     features: [
       "Peptides research library",
       "Dosing Guide with ranges & schedules",
@@ -172,12 +173,12 @@ function CheckoutPage() {
                     <li className="text-muted-foreground text-xs mt-3 italic">{p.disabled}</li>
                   )}
                 </ul>
-                <button
-                  onClick={() => setSelected(p.id)}
+                <Button
+                  onClick={() => p.id === "basic_monthly" ? nav({ to: "/dashboard" }) : setSelected(p.id)}
                   className="mt-6 btn-blood hover:btn-blood-hover"
                 >
-                  Select {p.name}
-                </button>
+                  {p.id === "basic_monthly" ? "Open free dashboard" : `Select ${p.name}`}
+                </Button>
               </div>
             ))}
           </div>

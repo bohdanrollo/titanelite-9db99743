@@ -1,9 +1,9 @@
 # Roadmap
 
 ## Free Basic accounts
-- [ ] Make Basic access free for accounts while preserving higher-tier access
-- [ ] Require email, phone, and recorded email/SMS consent across signup forms
-- [ ] Update pricing and verify signup/access rules
+- [x] Make Basic access free for accounts while preserving higher-tier access and existing Basic billing
+- [x] Require email, phone, and recorded email/SMS consent across signup forms
+- [x] Update pricing and verify signup/access rules (13 tests; signup reached free dashboard and PepHub)
 
 ## Current monitoring fixes
 - [x] Correct Basic payment confirmation and test tier activation

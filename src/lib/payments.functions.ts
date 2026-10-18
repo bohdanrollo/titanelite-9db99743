@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { isPaidCheckoutPrice } from "@/lib/free-access";
 import {
   type StripeEnv,
   createStripeClient,
@@ -50,6 +51,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }): Promise<CheckoutSessionResult> => {
     try {
+      if (!isPaidCheckoutPrice(data.priceId)) return { error: "Basic Access is free with your account. No checkout is needed." };
       const { userId, supabase } = context;
       const { data: userRes } = await supabase.auth.getUser();
       const email = userRes.user?.email ?? undefined;

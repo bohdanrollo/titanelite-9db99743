@@ -826,6 +826,7 @@ export type Database = {
           id: string
           last_name: string | null
           legacy_pephub_member_id: string | null
+          marketing_consent_version: string | null
           migrated_to_resend: boolean
           pephub_welcome_attempts: number
           pephub_welcome_error: string | null
@@ -833,11 +834,14 @@ export type Database = {
           pephub_welcome_last_attempt_at: string | null
           pephub_welcome_status: string
           pephub_welcome_triggered_at: string | null
+          phone: string | null
           research_use_confirmed: boolean
           resend_contact_id: string | null
           resend_last_synced_at: string | null
           resend_sync_error: string | null
           resend_sync_status: string
+          sms_consent_at: string | null
+          sms_subscribed: boolean
           source: string
           subscribed: boolean
           titanelite_welcome_attempts: number
@@ -864,6 +868,7 @@ export type Database = {
           id?: string
           last_name?: string | null
           legacy_pephub_member_id?: string | null
+          marketing_consent_version?: string | null
           migrated_to_resend?: boolean
           pephub_welcome_attempts?: number
           pephub_welcome_error?: string | null
@@ -871,11 +876,14 @@ export type Database = {
           pephub_welcome_last_attempt_at?: string | null
           pephub_welcome_status?: string
           pephub_welcome_triggered_at?: string | null
+          phone?: string | null
           research_use_confirmed?: boolean
           resend_contact_id?: string | null
           resend_last_synced_at?: string | null
           resend_sync_error?: string | null
           resend_sync_status?: string
+          sms_consent_at?: string | null
+          sms_subscribed?: boolean
           source?: string
           subscribed?: boolean
           titanelite_welcome_attempts?: number
@@ -902,6 +910,7 @@ export type Database = {
           id?: string
           last_name?: string | null
           legacy_pephub_member_id?: string | null
+          marketing_consent_version?: string | null
           migrated_to_resend?: boolean
           pephub_welcome_attempts?: number
           pephub_welcome_error?: string | null
@@ -909,11 +918,14 @@ export type Database = {
           pephub_welcome_last_attempt_at?: string | null
           pephub_welcome_status?: string
           pephub_welcome_triggered_at?: string | null
+          phone?: string | null
           research_use_confirmed?: boolean
           resend_contact_id?: string | null
           resend_last_synced_at?: string | null
           resend_sync_error?: string | null
           resend_sync_status?: string
+          sms_consent_at?: string | null
+          sms_subscribed?: boolean
           source?: string
           subscribed?: boolean
           titanelite_welcome_attempts?: number
@@ -2059,25 +2071,37 @@ export type Database = {
         Row: {
           created_at: string
           email: string | null
+          email_marketing_consent: boolean
           full_name: string | null
           id: string
+          marketing_consent_at: string | null
+          marketing_consent_version: string | null
           phone: string | null
+          sms_marketing_consent: boolean
           updated_at: string
         }
         Insert: {
           created_at?: string
           email?: string | null
+          email_marketing_consent?: boolean
           full_name?: string | null
           id: string
+          marketing_consent_at?: string | null
+          marketing_consent_version?: string | null
           phone?: string | null
+          sms_marketing_consent?: boolean
           updated_at?: string
         }
         Update: {
           created_at?: string
           email?: string | null
+          email_marketing_consent?: boolean
           full_name?: string | null
           id?: string
+          marketing_consent_at?: string | null
+          marketing_consent_version?: string | null
           phone?: string | null
+          sms_marketing_consent?: boolean
           updated_at?: string
         }
         Relationships: []
