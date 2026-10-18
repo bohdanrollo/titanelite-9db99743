@@ -51,9 +51,9 @@ function Home() {
         <SignalStrip />
         <Giveaway />
         <Platform />
-        <Pricing />
         <Method />
         <Closing />
+        <Pricing />
       </main>
       <SiteFooter />
     </div>
