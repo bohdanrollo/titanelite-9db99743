@@ -16,7 +16,6 @@ import { SiteFooter } from "@/components/SiteFooter";
 
 import protocolImg from "@/assets/protocol.jpg";
 import phoneImage from "@/assets/peplog-iphone-dashboard-clean.png";
-import giveawayImage from "@/assets/peplog-gmt-giveaway.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -130,9 +129,8 @@ function Platform() {
 function Giveaway() {
   return (
     <section id="rolex-giveaway" aria-labelledby="giveaway-title" className="scroll-mt-20 border-b border-border py-16 sm:py-24">
-      <div className="container-edge grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-        <img src={giveawayImage} alt="Stainless steel GMT wristwatch with a blue and black bezel, black dial, and steel bracelet" className="aspect-square w-full rounded-lg object-contain" width={1024} height={1024} loading="lazy" />
-        <div>
+      <div className="container-edge">
+        <div className="max-w-3xl">
           <div className="landing-kicker">The PepLog.io giveaway</div>
           <h2 id="giveaway-title" className="mt-5 font-landing text-4xl font-semibold leading-tight sm:text-5xl">Win a Rolex<br />GMT-Master.</h2>
           <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground">A stainless steel GMT-Master with the blue and black Batman bezel.</p>
