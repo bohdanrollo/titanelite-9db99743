@@ -193,7 +193,7 @@ function Pricing() {
             </article>
           ))}
         </div>
-        <p className="mt-6 text-sm text-muted-foreground">Prices in USD. Paid plans billed monthly; cancel anytime. Existing members keep their current pricing and access.</p>
+        <p className="mt-6 text-sm text-muted-foreground">Prices in USD. Paid plans billed monthly; cancel anytime. Find an affiliate code for a discount!</p>
       </div>
     </section>
   );
