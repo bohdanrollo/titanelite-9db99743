@@ -50,15 +50,16 @@ async function checkCoachChange(change: "approve" | "profile" | "appointment" | 
 }
 
 const integrationAvailable = await canRunIntegration();
-test("members cannot self-approve as coaches", { skip: !integrationAvailable }, async () => {
+const integrationTest = integrationAvailable ? test : test.skip;
+integrationTest("members cannot self-approve as coaches", async () => {
   await assert.rejects(checkCoachChange("approve"), { code: "42501", message: "Only administrators can change coach approval or ownership" });
 });
-test("coaches retain normal profile editing", { skip: !integrationAvailable }, async () => {
+integrationTest("coaches retain normal profile editing", async () => {
   await checkCoachChange("profile");
 });
-test("coaches cannot rewrite appointment durations", { skip: !integrationAvailable }, async () => {
+integrationTest("coaches cannot rewrite appointment durations", async () => {
   await assert.rejects(checkCoachChange("appointment"), { code: "42501", message: "Coaches can only update appointment status" });
 });
-test("existing admins retain coach approval", { skip: !integrationAvailable }, async () => {
+integrationTest("existing admins retain coach approval", async () => {
   await checkCoachChange("admin");
 });
