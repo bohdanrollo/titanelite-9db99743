@@ -80,15 +80,25 @@ export const subscribeMarketing = createServerFn({ method: "POST" })
     const { first, last } = splitName(data.name);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { data: existing } = await supabaseAdmin
+    const { data: existing, error: lookupError } = await supabaseAdmin
       .from("marketing_subscribers")
       .select("id, subscribed, resend_contact_id")
       .ilike("email", email)
       .maybeSingle();
 
-    // Respect an existing opt-out: signing up again re-subscribes only if the
-    // person is submitting the form themselves, which is an explicit consent
-    // action — so we do set subscribed true here, but never elsewhere.
+    if (lookupError) throw new Error("Could not verify subscription status.");
+    // A public form cannot prove ownership of an existing address. Only its
+    // confirmed account may change the subscriber or reverse an opt-out.
+    if (existing) {
+      const { getRequestHeader } = await import("@tanstack/react-start/server");
+      const authorization = getRequestHeader("authorization");
+      const token = authorization?.match(/^Bearer\s+(.+)$/i)?.[1];
+      if (!token) return { ok: true };
+      const { data: identity, error: identityError } = await supabaseAdmin.auth.getUser(token);
+      if (identityError || !identity.user?.email_confirmed_at || identity.user.email?.toLowerCase() !== email) {
+        return { ok: true };
+      }
+    }
     let rowId = existing?.id as string | undefined;
     if (rowId) {
       await supabaseAdmin

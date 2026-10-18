@@ -2,6 +2,15 @@ import { createStart, createMiddleware } from "@tanstack/react-start";
 
 import { renderErrorPage } from "./lib/error-page";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
+import { isPrivateFileRequest, secureResponse } from "@/lib/request-security";
+
+const securityMiddleware = createMiddleware().server(async ({ request, next }) => {
+  if (isPrivateFileRequest(new URL(request.url).pathname)) {
+    return secureResponse(new Response("Not found", { status: 404 }));
+  }
+  const result = await next();
+  return { ...result, response: secureResponse(result.response) };
+});
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
@@ -20,5 +29,5 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
 
 export const startInstance = createStart(() => ({
   functionMiddleware: [attachSupabaseAuth],
-  requestMiddleware: [errorMiddleware],
+  requestMiddleware: [securityMiddleware, errorMiddleware],
 }));

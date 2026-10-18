@@ -1,5 +1,10 @@
 # Roadmap
 
+## Security hardening
+- [x] Review private source exposure and privileged API authorization; preserve existing admins
+- [x] Add private-file blocking, security headers, payment-environment isolation, admin-only email sending, subscriber ownership checks, and coaching field protections
+- [x] Verify anonymous denial and signed-in dashboard; regression tests pass; coaching integration tests remain unavailable with restricted test connection
+
 ## Home page plans and buttons
 - [x] Show Free Basic, Limited $10.99/month, and Elite $250/month on the home page
 - [x] Verify home page buttons, header menus, and footer links; fix Explore click behavior; verify signed-in plan links and mobile layout

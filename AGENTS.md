@@ -5,3 +5,8 @@
 - The checkout parent renders an Outlet for child paths without mounting plan-selection effects; why: payment returns must render their own confirmation instead of the purchase screen.
 - Account signup validates shared contact/consent schemas in forms and enforces them through the auth lifecycle trigger; why: direct auth calls must not bypass signup requirements.
 - New accounts receive Basic access through the existing auth lifecycle trigger, with an account-only fallback for older members; why: free membership must not depend on Stripe, and higher access stays intact.
+- Payment creation and paid feature authorization use the build-configured payment environment; why: caller-selected sandbox credentials must not grant production access.
+- The server entry denies private-file requests and applies non-disruptive security headers, with production source maps disabled; why: private artifacts should never be served publicly.
+- Arbitrary transactional email sending requires a verified administrator role, while internal server delivery remains unchanged; why: members must not use branded templates to send arbitrary email.
+- Coach approval/ownership and appointment schedule fields are protected by database triggers as well as server validation; why: direct database requests must not bypass coaching controls.
+- Public newsletter requests may not alter existing subscriber records without a confirmed matching account; why: an arbitrary submitted email is not proof of consent or ownership.
