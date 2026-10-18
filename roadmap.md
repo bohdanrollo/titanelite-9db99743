@@ -1,5 +1,9 @@
 # Roadmap
 
+## Security hardening
+- [ ] Review private source exposure and privileged API authorization without changing existing features or admin access
+- [ ] Apply behavior-preserving protections and verify unauthorized requests are blocked
+
 ## Home page plans and buttons
 - [x] Show Free Basic, Limited $10.99/month, and Elite $250/month on the home page
 - [x] Verify home page buttons, header menus, and footer links; fix Explore click behavior; verify signed-in plan links and mobile layout
