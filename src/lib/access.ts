@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { getStripeEnvironment } from "@/lib/stripe";
+import { accountAccessTier } from "@/lib/free-access";
 
 export type AccessTier = "basic" | "limited" | "full" | "elite" | null;
 
@@ -70,7 +71,7 @@ export function useAccess() {
     if (env) q = q.eq("environment", env);
     q = q.order("created_at", { ascending: false }).limit(1).maybeSingle();
     const { data } = await q;
-    setTier((data?.tier as AccessTier) ?? null);
+    setTier(accountAccessTier((data?.tier as AccessTier) ?? null, true));
     setLoading(false);
   }, [user]);
 

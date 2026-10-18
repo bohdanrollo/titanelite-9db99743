@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,9 @@ import { sendWelcomeEmail } from "@/lib/welcome-email.functions";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SignupAcknowledgements } from "@/components/SignupAcknowledgements";
+import { SignupContactConsent } from "@/components/SignupContactConsent";
+import { signupSchema, signupMetadata } from "@/lib/signup-schema";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [
@@ -29,13 +32,16 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
   const [age21, setAge21] = useState(false);
   const [researchUse, setResearchUse] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [marketingConsent, setMarketingConsent] = useState(false);
+  const [confirmationSent, setConfirmationSent] = useState(false);
   const nav = useNavigate();
   const { user, role } = useAuth();
   const sendWelcome = useServerFn(sendWelcomeEmail);
 
-  if (user) {
-    nav({ to: role === "admin" ? "/admin" : "/dashboard" });
-  }
+  useEffect(() => {
+    if (user) void nav({ to: role === "admin" ? "/admin" : "/dashboard" });
+  }, [user, role, nav]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -46,15 +52,21 @@ function AuthPage() {
     setBusy(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
+        const parsed = signupSchema.parse({ name, email, password, phone, marketingConsent, age21, researchUse });
+        const { data, error } = await supabase.auth.signUp({
+          email: parsed.email,
+          password: parsed.password,
           options: {
-            data: { full_name: name, age_21_confirmed: true, research_use_confirmed: true },
-            emailRedirectTo: `${window.location.origin}/dashboard`,
+            data: signupMetadata(parsed),
+            emailRedirectTo: `${window.location.origin}/auth`,
           },
         });
         if (error) throw error;
+        if (!data.session) {
+          setConfirmationSent(true);
+          toast.success("Check your email to confirm your account. Basic Access is free.");
+          return;
+        }
         // Referral codes are kept in localStorage and only credited to the
         // affiliate once the client actually pays for a plan (at checkout).
         try {
@@ -97,7 +109,7 @@ function AuthPage() {
           <p className="mt-4 text-muted-foreground max-w-md">
             {mode === "signin"
               ? "Access your client dashboard, protocols and coach messaging."
-              : "Set up your account to submit intake and receive your custom protocols."}
+              : "Create your free Basic account for research, tracking and calculators. AI tools and coaching are available with paid upgrades."}
           </p>
           <p className="mt-6 text-sm">
             {mode === "signin" ? "New here?" : "Already have an account?"}{" "}
@@ -115,7 +127,8 @@ function AuthPage() {
             <Field label="Full Name" value={name} onChange={setName} required />
           )}
           <Field label="Email" type="email" value={email} onChange={setEmail} required />
-          <Field label="Password" type="password" value={password} onChange={setPassword} required minLength={6} />
+          <Field label="Password" type="password" value={password} onChange={setPassword} required minLength={mode === "signup" ? 8 : 6} />
+          {mode === "signup" && <SignupContactConsent idPrefix="auth-signup" phone={phone} onPhone={setPhone} consent={marketingConsent} onConsent={setMarketingConsent} />}
           {mode === "signup" && (
             <SignupAcknowledgements
               idPrefix="auth-signup"
@@ -125,12 +138,13 @@ function AuthPage() {
               onResearchUse={setResearchUse}
             />
           )}
-          <button
-            disabled={busy || (mode === "signup" && (!age21 || !researchUse))}
+          {confirmationSent && <p role="status" className="text-sm text-primary">Check your email to confirm your account, then sign in for free Basic Access.</p>}
+          <Button
+            disabled={busy || (mode === "signup" && (!age21 || !researchUse || !marketingConsent))}
             className="btn-blood hover:btn-blood-hover w-full disabled:opacity-50"
           >
             {busy ? "Working…" : mode === "signin" ? "Sign in" : "Create account"}
-          </button>
+          </Button>
           {mode === "signin" && (
             <button
               type="button"
@@ -171,8 +185,9 @@ function AuthPage() {
 function Field({ label, value, onChange, type = "text", required, minLength }: { label: string; value: string; onChange: (v: string) => void; type?: string; required?: boolean; minLength?: number }) {
   return (
     <div>
-      <label className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground block mb-2">{label}{required && " *"}</label>
+      <label htmlFor={`auth-${type}-${label.replace(/\s/g, "").toLowerCase()}`} className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground block mb-2">{label}{required && " *"}</label>
       <input
+        id={`auth-${type}-${label.replace(/\s/g, "").toLowerCase()}`}
         type={type}
         value={value}
         required={required}
