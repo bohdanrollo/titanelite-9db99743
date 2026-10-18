@@ -16,7 +16,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 
 import protocolImg from "@/assets/protocol.jpg";
 import phoneImage from "@/assets/peplog-iphone-dashboard-clean.png";
-import giveawayImage from "@/assets/peplog-golf-cart-giveaway.jpeg.asset.json";
+import giveawayImage from "@/assets/peplog-gmt-giveaway.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -76,7 +76,7 @@ function Hero() {
           <Link to="/peptide-calculator" className="landing-btn-secondary">Free calculator</Link>
         </div>
         <p className="mt-5 text-xs text-muted-foreground">Track, Learn, Implement · Built for consistent use · Educational research only</p>
-        <a href="#golf-cart-giveaway" className="landing-text-link mt-4 text-sm">PepLog.io golf cart giveaway <ChevronRight size={15} /></a>
+        <a href="#rolex-giveaway" className="landing-text-link mt-4 text-sm">PepLog.io Rolex giveaway <ChevronRight size={15} /></a>
         <div className="relative mt-10 w-full max-w-3xl">
           <img
             src={phoneImage}
@@ -129,12 +129,13 @@ function Platform() {
 
 function Giveaway() {
   return (
-    <section id="golf-cart-giveaway" aria-labelledby="giveaway-title" className="scroll-mt-20 border-b border-border py-16 sm:py-24">
+    <section id="rolex-giveaway" aria-labelledby="giveaway-title" className="scroll-mt-20 border-b border-border py-16 sm:py-24">
       <div className="container-edge grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-        <img src={giveawayImage.url} alt="PepLog-branded golf cart shown from the front, rear, side, and rear three-quarter view" className="aspect-square w-full rounded-lg object-contain" width={771} height={768} loading="lazy" />
+        <img src={giveawayImage} alt="Stainless steel GMT wristwatch with a blue and black bezel, black dial, and steel bracelet" className="aspect-square w-full rounded-lg object-contain" width={1024} height={1024} loading="lazy" />
         <div>
           <div className="landing-kicker">The PepLog.io giveaway</div>
-          <h2 id="giveaway-title" className="mt-5 font-landing text-4xl font-semibold leading-tight sm:text-5xl">Win a PepLog<br />golf cart.</h2>
+          <h2 id="giveaway-title" className="mt-5 font-landing text-4xl font-semibold leading-tight sm:text-5xl">Win a Rolex<br />GMT-Master.</h2>
+          <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground">A stainless steel GMT-Master with the blue and black Batman bezel.</p>
           <h3 className="mt-8 font-landing text-lg font-semibold normal-case">Entry requirements</h3>
           <ol className="mt-4 divide-y divide-border border-y border-border">
             <li className="flex gap-4 py-5"><span className="font-mono text-sm text-primary">01</span><p className="text-sm leading-relaxed">Be paying for a PepLog plan.</p></li>
