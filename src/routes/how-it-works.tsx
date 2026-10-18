@@ -30,7 +30,7 @@ function Page() {
         <div className="grid lg:grid-cols-12 gap-12 items-end mb-16">
           <div className="lg:col-span-7">
             <div className="text-eyebrow">How It Works</div>
-            <h1 className="mt-4 text-5xl lg:text-7xl">Four steps. <br />One dashboard.</h1>
+            <h1 className="mt-4 text-5xl lg:text-7xl">How PepLog works: <br />four steps, one dashboard.</h1>
           </div>
           <p className="lg:col-span-5 text-muted-foreground">
             The dashboard is the product. Apply, get reviewed, receive your 100% custom educational peptide protocol and weight programming, use the tools every day, and message your coach directly from the dashboard.

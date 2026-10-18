@@ -65,7 +65,7 @@ function InventoryPage() {
       <SiteHeader />
       <section className="container-edge flex-1 py-10 lg:py-14">
         <Link to="/pephub" className="text-eyebrow">← PepHub</Link>
-        <h1 className="mt-4 text-4xl sm:text-5xl">PepHub Inventory</h1>
+        <h1 className="mt-4 text-4xl sm:text-5xl">PepHub peptide price comparison</h1>
         <p className="mt-4 max-w-2xl text-muted-foreground">Compare prices, strengths and stock across our trusted vendors. Prices are pulled from each vendor's store and refreshed throughout the day.</p>
 
         {state === "loading" && <div className="mt-10 text-sm text-muted-foreground">Loading inventory…</div>}

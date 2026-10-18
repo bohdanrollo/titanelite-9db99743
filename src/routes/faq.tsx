@@ -43,7 +43,7 @@ function FAQ() {
       <SiteHeader />
       <section className="container-edge py-20">
         <div className="text-eyebrow">FAQ</div>
-        <h1 className="mt-4 text-6xl lg:text-8xl">Questions.</h1>
+        <h1 className="mt-4 text-6xl lg:text-8xl">PepLog FAQ.</h1>
       </section>
       <section className="container-edge pb-24">
         <div className="divide-y divide-foreground/10 border-y border-foreground/10">
