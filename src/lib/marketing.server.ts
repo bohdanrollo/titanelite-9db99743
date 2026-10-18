@@ -16,6 +16,8 @@ export async function saveSubscriber(input: {
   name?: string | null;
   source?: string;
   userId?: string | null;
+  phone?: string;
+  marketingConsent?: boolean;
   /** Both must be true when the person is confirming at signup / opt-in. */
   acknowledgements?: { age21: boolean; researchUse: boolean } | null;
 }) {
@@ -29,6 +31,10 @@ export async function saveSubscriber(input: {
           acknowledgements_confirmed_at: new Date().toISOString(),
         }
       : {};
+  const contact = input.phone && input.marketingConsent ? {
+    phone: input.phone, sms_subscribed: true, sms_consent_at: new Date().toISOString(),
+    marketing_consent_version: "peplog-offers-2026-10-18",
+  } : {};
 
   const { data: existing } = await supabaseAdmin
     .from("marketing_subscribers")
@@ -48,6 +54,7 @@ export async function saveSubscriber(input: {
         resend_sync_status: "pending",
         ...(input.userId ? { user_id: input.userId } : {}),
         ...ack,
+        ...contact,
       })
       .eq("id", rowId);
   } else {
@@ -62,6 +69,7 @@ export async function saveSubscriber(input: {
         resend_sync_status: "pending",
         ...(input.userId ? { user_id: input.userId } : {}),
         ...ack,
+        ...contact,
       })
       .select("id")
       .maybeSingle();

@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { signupSchema, signupMetadata, phoneSchema } from "@/lib/signup-schema";
 
 /**
  * PepHub access requires two things: a real site account, and an active email
@@ -71,7 +72,7 @@ export const pephubSubscribeCurrentUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
     z
-      .object({ name: z.string().trim().max(120).optional(), ...acknowledgementsSchema })
+      .object({ name: z.string().trim().max(120).optional(), phone: phoneSchema, marketingConsent: z.literal(true), ...acknowledgementsSchema })
       .parse(d ?? {}),
   )
   .handler(async ({ data, context }) => {
@@ -84,6 +85,8 @@ export const pephubSubscribeCurrentUser = createServerFn({ method: "POST" })
       source: "pephub",
       userId: context.userId,
       acknowledgements: { age21: data.age21, researchUse: data.researchUse },
+      phone: data.phone,
+      marketingConsent: data.marketingConsent,
     });
 
     // Opting in from an existing account is still a PepHub signup. The trigger
@@ -105,62 +108,16 @@ export const pephubSubscribeCurrentUser = createServerFn({ method: "POST" })
  * Returns whether the account already existed so the UI can ask them to log in.
  */
 export const pephubSignup = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
-    z
-      .object({
-        name: z.string().trim().min(1).max(120),
-        email: z.string().trim().email().max(200),
-        password: z.string().min(8).max(200),
-        website: z.string().max(0).optional(), // honeypot
-        ...acknowledgementsSchema,
-      })
-      .parse(d),
-  )
+  .inputValidator((d: unknown) => signupSchema.parse(d))
   .handler(async ({ data }) => {
-    if (data.website) return { ok: true, existingAccount: false };
-
-    const email = data.email.trim().toLowerCase();
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-    let userId: string | null = null;
-    let existingAccount = false;
-
-    const created = await supabaseAdmin.auth.admin.createUser({
-      email,
-      password: data.password,
-      email_confirm: true,
-      user_metadata: {
-        full_name: data.name.trim(),
-        age_21_confirmed: true,
-        research_use_confirmed: true,
-      },
-    });
-
-    if (created.error) {
-      const msg = created.error.message ?? "";
-      if (/already|exists|registered/i.test(msg)) {
-        existingAccount = true;
-      } else {
-        throw new Error(msg || "Could not create your account.");
-      }
-    } else {
-      userId = created.data.user?.id ?? null;
-    }
-
-    const { saveSubscriber } = await import("@/lib/marketing.server");
-    const subscriber = await saveSubscriber({
-      email,
-      name: data.name,
-      source: "pephub",
-      userId,
-      acknowledgements: { age21: data.age21, researchUse: data.researchUse },
-    });
-
-    if (!existingAccount && userId && subscriber.id) {
-      console.info("[pephub signup] account created", { userId, subscriberId: subscriber.id });
-      const { triggerPepHubWelcome } = await import("@/lib/pephub-welcome.server");
-      await triggerPepHubWelcome({ subscriberId: subscriber.id, userId, isNewSignup: true });
-    }
-
-    return { ok: true, existingAccount };
+    const { createClient } = await import("@supabase/supabase-js");
+    const url = process.env["SUPABASE_URL"];
+    const key = process.env["SUPABASE_PUBLISHABLE_KEY"];
+    if (!url || !key) throw new Error("Account creation is temporarily unavailable.");
+    const auth = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+    const created = await auth.auth.signUp({ email: data.email.toLowerCase(), password: data.password,
+      options: { data: signupMetadata(data), emailRedirectTo: "https://peplog.io/auth" } });
+    if (created.error) throw new Error(created.error.message);
+    // Contact consent is stored by the lifecycle trigger only once the email is confirmed.
+    return { ok: true, existingAccount: false, confirmationRequired: !created.data.session };
   });
