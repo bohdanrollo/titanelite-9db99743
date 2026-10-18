@@ -48,6 +48,10 @@ export const pephubAccess = createServerFn({ method: "POST" })
     }
 
     const acknowledged = Boolean(row?.age_21_confirmed && row?.research_use_confirmed);
+    if (row?.subscribed && acknowledged) {
+      const { triggerPepHubWelcome } = await import("@/lib/pephub-welcome.server");
+      await triggerPepHubWelcome({ subscriberId: row.id, userId: context.userId });
+    }
     return {
       hasAccount: true,
       subscribed: Boolean(row?.subscribed) && acknowledged,
