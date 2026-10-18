@@ -49,19 +49,16 @@ async function checkCoachChange(change: "approve" | "profile" | "appointment" | 
   assert.equal(passed, true);
 }
 
-test("members cannot self-approve as coaches", { skip: !connection }, async (t) => {
-  if (!(await canRunIntegration())) { t.skip("Restricted test connection cannot update coaching fixtures"); return; }
+const integrationAvailable = await canRunIntegration();
+test("members cannot self-approve as coaches", { skip: !integrationAvailable }, async () => {
   await assert.rejects(checkCoachChange("approve"), { code: "42501", message: "Only administrators can change coach approval or ownership" });
 });
-test("coaches retain normal profile editing", { skip: !connection }, async (t) => {
-  if (!(await canRunIntegration())) { t.skip("Restricted test connection cannot update coaching fixtures"); return; }
+test("coaches retain normal profile editing", { skip: !integrationAvailable }, async () => {
   await checkCoachChange("profile");
 });
-test("coaches cannot rewrite appointment durations", { skip: !connection }, async (t) => {
-  if (!(await canRunIntegration())) { t.skip("Restricted test connection cannot update coaching fixtures"); return; }
+test("coaches cannot rewrite appointment durations", { skip: !integrationAvailable }, async () => {
   await assert.rejects(checkCoachChange("appointment"), { code: "42501", message: "Coaches can only update appointment status" });
 });
-test("existing admins retain coach approval", { skip: !connection }, async (t) => {
-  if (!(await canRunIntegration())) { t.skip("Restricted test connection cannot update coaching fixtures"); return; }
+test("existing admins retain coach approval", { skip: !integrationAvailable }, async () => {
   await checkCoachChange("admin");
 });
