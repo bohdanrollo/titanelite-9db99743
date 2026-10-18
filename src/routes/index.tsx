@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { Button } from "@/components/ui/button";
 
 import protocolImg from "@/assets/protocol.jpg";
 import phoneImage from "@/assets/peplog-iphone-dashboard-clean.png";
@@ -50,6 +51,7 @@ function Home() {
         <SignalStrip />
         <Giveaway />
         <Platform />
+        <Pricing />
         <Method />
         <Closing />
       </main>
@@ -68,7 +70,7 @@ function Hero() {
         <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-xl">
           PepLog brings peptide research, custom protocols, training, nutrition, labs, and coaching into one precise performance record.
         </p>
-        <div className="mt-8 flex w-full max-w-2xl flex-col justify-center gap-3 sm:flex-row">
+        <div className="mt-8 flex w-full max-w-3xl flex-col justify-center gap-3 sm:flex-row sm:flex-wrap">
           <Link to="/auth" className="landing-btn-primary">Get free Basic access <ArrowRight size={16} /></Link>
           <Link to="/features" className="landing-btn-secondary">Explore the tools</Link>
           <Link to="/pephub" className="landing-btn-secondary">Go to PepHub</Link>
@@ -145,6 +147,53 @@ function Giveaway() {
             <Link to="/pephub" className="landing-btn-secondary">Visit PepHub</Link>
           </div>
         </div>
+      </div>
+    </section>
+  );
+}
+
+function Pricing() {
+  const plans = [
+    {
+      name: "Basic Access", price: "Free", period: "Included with your account",
+      features: ["Peptide research library & learning guides", "My Stack, dose tracking & calculator", "Nutrition, workouts, progress & wellness logs"],
+      note: "No AI tools or coaching.", action: "Get free Basic access", to: "/auth" as const,
+    },
+    {
+      name: "Limited Access", price: "$10.99", period: "per month",
+      features: ["Everything in Basic Access", "Pep Talk AI & AI Stack Builder", "Blood panel Lab Analysis"],
+      note: "All AI tools included. No coaching.", action: "Choose Limited Access", to: "/checkout" as const,
+    },
+    {
+      name: "Elite Access", price: "$250", period: "per month",
+      features: ["Everything in Limited Access", "Custom peptide & training protocols", "Coach messaging, calls & scheduling", "Priority coach support", "Increased peptide discounts"],
+      note: "All tools, AI and coaching included.", action: "Choose Elite Access", to: "/checkout" as const,
+    },
+  ];
+
+  return (
+    <section id="plans" aria-labelledby="plans-title" className="scroll-mt-20 border-b border-border py-20 sm:py-28">
+      <div className="container-edge">
+        <div className="landing-kicker">Plans & pricing</div>
+        <h2 id="plans-title" className="mt-5 font-landing text-4xl font-semibold leading-tight sm:text-5xl">Start free. Go further.</h2>
+        <p className="mt-5 max-w-2xl leading-relaxed text-muted-foreground">Free tracking and research. Add AI insights or personal coaching when you need them.</p>
+        <div className="mt-10 grid gap-5 lg:grid-cols-3">
+          {plans.map((plan) => (
+            <article key={plan.name} className="flex min-w-0 flex-col rounded-lg border border-border bg-card p-6 sm:p-8">
+              <h3 className="font-landing text-xl font-semibold normal-case">{plan.name}</h3>
+              <p className="mt-5 font-landing text-4xl font-semibold">{plan.price}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{plan.period}</p>
+              <ul className="mt-7 space-y-4 text-sm">
+                {plan.features.map((feature) => <li key={feature} className="flex gap-3"><Check size={17} className="mt-0.5 shrink-0 text-primary" /><span>{feature}</span></li>)}
+              </ul>
+              <p className="mb-7 mt-5 text-xs leading-relaxed text-muted-foreground">{plan.note}</p>
+              <Button asChild variant="outline" className="landing-btn-secondary mt-auto h-auto w-full whitespace-normal text-center">
+                <Link to={plan.to}>{plan.action}<ArrowRight size={16} /></Link>
+              </Button>
+            </article>
+          ))}
+        </div>
+        <p className="mt-6 text-sm text-muted-foreground">Prices in USD. Paid plans billed monthly; cancel anytime. Existing members keep their current pricing and access.</p>
       </div>
     </section>
   );

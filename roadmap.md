@@ -1,5 +1,9 @@
 # Roadmap
 
+## Home page plans and buttons
+- [ ] Show Free Basic, Limited $10.99/month, and Elite $250/month on the home page
+- [ ] Verify home page buttons, header menus, and footer links
+
 ## Peptide-stack phone notifications
 - [ ] Replace stack reminder emails with phone push notifications — blocked: Firebase notification connection was declined; delivery approach needs user decision
 
