@@ -133,7 +133,7 @@ function Giveaway() {
     <section id="rolex-giveaway" aria-labelledby="giveaway-title" className="scroll-mt-20 border-b border-border py-16 sm:py-24">
       <div className="container-edge">
         <div className="max-w-3xl">
-          <div className="landing-kicker">The PepLog.io giveaway</div>
+          <div className="landing-kicker">THE PEPLOG.IO GIVEAWAY- ENDING SOON!</div>
           <h2 id="giveaway-title" className="mt-5 font-landing text-4xl font-semibold leading-tight sm:text-5xl">Win a Rolex<br />GMT-Master.</h2>
           <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground">A stainless steel GMT-Master with the blue and black Batman bezel.</p>
           <h3 className="mt-8 font-landing text-lg font-semibold normal-case">Entry requirements</h3>
