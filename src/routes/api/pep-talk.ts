@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { streamText, type ModelMessage } from "ai";
 import { createClient } from "@supabase/supabase-js";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
+import { configuredPaymentEnvironment } from "@/lib/payment-environment";
 
 const SYSTEM_PROMPT = `You are "Pep Talk," PepLog's peptide research assistant.
 
@@ -61,6 +62,7 @@ export const Route = createFileRoute("/api/pep-talk")({
           .from("user_access")
           .select("tier")
           .eq("user_id", userData.user.id)
+          .eq("environment", configuredPaymentEnvironment())
           .in("tier", ["limited", "full", "elite"])
           .limit(1);
         if (accErr) {

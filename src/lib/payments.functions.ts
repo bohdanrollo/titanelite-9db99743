@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { isPaidCheckoutPrice } from "@/lib/free-access";
+import { configuredPaymentEnvironment, validatePaymentEnvironment } from "@/lib/payment-environment";
 import {
   type StripeEnv,
   createStripeClient,
@@ -51,6 +52,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }): Promise<CheckoutSessionResult> => {
     try {
+      validatePaymentEnvironment(data.environment, configuredPaymentEnvironment());
       if (!isPaidCheckoutPrice(data.priceId)) return { error: "Basic Access is free with your account. No checkout is needed." };
       const { userId, supabase } = context;
       const { data: userRes } = await supabase.auth.getUser();
@@ -102,6 +104,7 @@ export const createPortalSession = createServerFn({ method: "POST" })
   .inputValidator((data: { returnUrl?: string; environment: StripeEnv }) => data)
   .handler(async ({ data, context }): Promise<PortalSessionResult> => {
     try {
+      validatePaymentEnvironment(data.environment, configuredPaymentEnvironment());
       const { supabase, userId } = context;
 
       const { data: access } = await supabase

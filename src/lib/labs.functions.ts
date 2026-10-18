@@ -66,6 +66,7 @@ export const saveAndAnalyzeLabs = createServerFn({ method: "POST" })
 
     const { data: accessRows } = await supabase
       .from("user_access").select("tier").eq("user_id", userId)
+      .eq("environment", configuredPaymentEnvironment())
       .in("tier", ["limited", "full", "elite"]).limit(1);
     if (!accessRows || accessRows.length === 0) {
       const { data: roleRows } = await supabase

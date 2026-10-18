@@ -33,7 +33,7 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+        const supabaseUrl = process.env.SUPABASE_URL
         const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
         if (!supabaseUrl || !supabaseServiceKey) {
@@ -57,6 +57,13 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
 
         if (authError || !user) {
           return Response.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
+        // Arbitrary branded email sending is an administrator privilege.
+        const { data: role, error: roleError } = await supabase
+          .from('user_roles').select('id').eq('user_id', user.id).eq('role', 'admin').maybeSingle()
+        if (roleError || !role) {
+          return Response.json({ error: 'Forbidden' }, { status: 403 })
         }
 
         // Parse request body
