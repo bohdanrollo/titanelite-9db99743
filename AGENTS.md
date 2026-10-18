@@ -8,3 +8,5 @@
 - Payment creation and paid feature authorization use the build-configured payment environment; why: caller-selected sandbox credentials must not grant production access.
 - The server entry denies private-file requests and applies non-disruptive security headers, with production source maps disabled; why: private artifacts should never be served publicly.
 - Arbitrary transactional email sending requires a verified administrator role, while internal server delivery remains unchanged; why: members must not use branded templates to send arbitrary email.
+- Coach approval/ownership and appointment schedule fields are protected by database triggers as well as server validation; why: direct database requests must not bypass coaching controls.
+- Public newsletter requests may not alter existing subscriber records without a confirmed matching account; why: an arbitrary submitted email is not proof of consent or ownership.
