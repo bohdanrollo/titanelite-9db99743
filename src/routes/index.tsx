@@ -176,7 +176,7 @@ function Pricing() {
       <div className="container-edge">
         <div className="landing-kicker">Plans & pricing</div>
         <h2 id="plans-title" className="mt-5 font-landing text-4xl font-semibold leading-tight sm:text-5xl">Start free. Go further.</h2>
-        <p className="mt-5 max-w-2xl leading-relaxed text-muted-foreground">Free tracking and research. Add AI insights or personal coaching when you need them.</p>
+        <p className="mt-5 max-w-2xl leading-relaxed text-muted-foreground">Free tracking and research. Add AI insights or personal coaching when you need them. Every plan comes with a personal peptide discount code!</p>
         <div className="mt-10 grid gap-5 lg:grid-cols-3">
           {plans.map((plan) => (
             <article key={plan.name} className="flex min-w-0 flex-col rounded-lg border border-border bg-card p-6 sm:p-8">
