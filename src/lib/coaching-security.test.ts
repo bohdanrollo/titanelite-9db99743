@@ -5,6 +5,14 @@ import postgres from "postgres";
 // Integration checks are rolled back, never changing real coaching records.
 const connection = process.env.SUPABASE_DB_URL;
 const rollback = new Error("security test rollback");
+async function canRunIntegration(): Promise<boolean> {
+  if (!connection) return false;
+  const db = postgres(connection, { max: 1, prepare: false });
+  try {
+    const [permissions] = await db`select has_table_privilege(current_user, 'public.coaches', 'UPDATE') and has_table_privilege(current_user, 'public.coach_appointments', 'UPDATE') as allowed`;
+    return permissions?.allowed === true;
+  } finally { await db.end(); }
+}
 async function checkCoachChange(change: "approve" | "profile" | "appointment" | "admin") {
   if (!connection) throw new Error("Database test connection is required");
   const db = postgres(connection, { max: 1, prepare: false });
@@ -41,15 +49,19 @@ async function checkCoachChange(change: "approve" | "profile" | "appointment" | 
   assert.equal(passed, true);
 }
 
-test("members cannot self-approve as coaches", { skip: !connection }, async () => {
+test("members cannot self-approve as coaches", { skip: !connection }, async (t) => {
+  if (!(await canRunIntegration())) { t.skip("Restricted test connection cannot update coaching fixtures"); return; }
   await assert.rejects(checkCoachChange("approve"), { code: "42501", message: "Only administrators can change coach approval or ownership" });
 });
-test("coaches retain normal profile editing", { skip: !connection }, async () => {
+test("coaches retain normal profile editing", { skip: !connection }, async (t) => {
+  if (!(await canRunIntegration())) { t.skip("Restricted test connection cannot update coaching fixtures"); return; }
   await checkCoachChange("profile");
 });
-test("coaches cannot rewrite appointment durations", { skip: !connection }, async () => {
+test("coaches cannot rewrite appointment durations", { skip: !connection }, async (t) => {
+  if (!(await canRunIntegration())) { t.skip("Restricted test connection cannot update coaching fixtures"); return; }
   await assert.rejects(checkCoachChange("appointment"), { code: "42501", message: "Coaches can only update appointment status" });
 });
-test("existing admins retain coach approval", { skip: !connection }, async () => {
+test("existing admins retain coach approval", { skip: !connection }, async (t) => {
+  if (!(await canRunIntegration())) { t.skip("Restricted test connection cannot update coaching fixtures"); return; }
   await checkCoachChange("admin");
 });
