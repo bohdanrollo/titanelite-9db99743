@@ -11,6 +11,9 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/", priority: "1.0", changefreq: "weekly" as const },
           { path: "/features", priority: "0.9", changefreq: "monthly" as const },
           { path: "/peptide-calculator", priority: "0.9", changefreq: "monthly" as const },
+          { path: "/retatrutide-dosage-calculator", priority: "0.8", changefreq: "monthly" as const },
+          { path: "/peptide-reconstitution-calculator", priority: "0.8", changefreq: "monthly" as const },
+          { path: "/peptide-dosage-calculator", priority: "0.8", changefreq: "monthly" as const },
           { path: "/how-it-works", priority: "0.8", changefreq: "monthly" as const },
 
           

@@ -22,8 +22,11 @@ import { Route as FeaturesRouteImport } from './routes/features'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as IntakeRouteImport } from './routes/intake'
 import { Route as PeptideCalculatorRouteImport } from './routes/peptide-calculator'
+import { Route as PeptideDosageCalculatorRouteImport } from './routes/peptide-dosage-calculator'
+import { Route as PeptideReconstitutionCalculatorRouteImport } from './routes/peptide-reconstitution-calculator'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as RetatrutideDosageCalculatorRouteImport } from './routes/retatrutide-dosage-calculator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
@@ -110,6 +113,17 @@ const PeptideCalculatorRoute = PeptideCalculatorRouteImport.update({
   path: '/peptide-calculator',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PeptideDosageCalculatorRoute = PeptideDosageCalculatorRouteImport.update({
+  id: '/peptide-dosage-calculator',
+  path: '/peptide-dosage-calculator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PeptideReconstitutionCalculatorRoute =
+  PeptideReconstitutionCalculatorRouteImport.update({
+    id: '/peptide-reconstitution-calculator',
+    path: '/peptide-reconstitution-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -120,6 +134,12 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RetatrutideDosageCalculatorRoute =
+  RetatrutideDosageCalculatorRouteImport.update({
+    id: '/retatrutide-dosage-calculator',
+    path: '/retatrutide-dosage-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -244,8 +264,11 @@ export interface FileRoutesByFullPath {
   '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
   '/peptide-calculator': typeof PeptideCalculatorRoute
+  '/peptide-dosage-calculator': typeof PeptideDosageCalculatorRoute
+  '/peptide-reconstitution-calculator': typeof PeptideReconstitutionCalculatorRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/retatrutide-dosage-calculator': typeof RetatrutideDosageCalculatorRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -281,8 +304,11 @@ export interface FileRoutesByTo {
   '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
   '/peptide-calculator': typeof PeptideCalculatorRoute
+  '/peptide-dosage-calculator': typeof PeptideDosageCalculatorRoute
+  '/peptide-reconstitution-calculator': typeof PeptideReconstitutionCalculatorRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/retatrutide-dosage-calculator': typeof RetatrutideDosageCalculatorRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -320,8 +346,11 @@ export interface FileRoutesById {
   '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
   '/peptide-calculator': typeof PeptideCalculatorRoute
+  '/peptide-dosage-calculator': typeof PeptideDosageCalculatorRoute
+  '/peptide-reconstitution-calculator': typeof PeptideReconstitutionCalculatorRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/retatrutide-dosage-calculator': typeof RetatrutideDosageCalculatorRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
@@ -359,8 +388,11 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/intake'
     | '/peptide-calculator'
+    | '/peptide-dosage-calculator'
+    | '/peptide-reconstitution-calculator'
     | '/privacy'
     | '/reset-password'
+    | '/retatrutide-dosage-calculator'
     | '/sitemap.xml'
     | '/terms'
     | '/admin'
@@ -396,8 +428,11 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/intake'
     | '/peptide-calculator'
+    | '/peptide-dosage-calculator'
+    | '/peptide-reconstitution-calculator'
     | '/privacy'
     | '/reset-password'
+    | '/retatrutide-dosage-calculator'
     | '/sitemap.xml'
     | '/terms'
     | '/admin'
@@ -434,8 +469,11 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/intake'
     | '/peptide-calculator'
+    | '/peptide-dosage-calculator'
+    | '/peptide-reconstitution-calculator'
     | '/privacy'
     | '/reset-password'
+    | '/retatrutide-dosage-calculator'
     | '/sitemap.xml'
     | '/terms'
     | '/_authenticated/admin'
@@ -473,8 +511,11 @@ export interface RootRouteChildren {
   HowItWorksRoute: typeof HowItWorksRoute
   IntakeRoute: typeof IntakeRoute
   PeptideCalculatorRoute: typeof PeptideCalculatorRoute
+  PeptideDosageCalculatorRoute: typeof PeptideDosageCalculatorRoute
+  PeptideReconstitutionCalculatorRoute: typeof PeptideReconstitutionCalculatorRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  RetatrutideDosageCalculatorRoute: typeof RetatrutideDosageCalculatorRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   ApiPepTalkRoute: typeof ApiPepTalkRoute
@@ -587,6 +628,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PeptideCalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/peptide-dosage-calculator': {
+      id: '/peptide-dosage-calculator'
+      path: '/peptide-dosage-calculator'
+      fullPath: '/peptide-dosage-calculator'
+      preLoaderRoute: typeof PeptideDosageCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/peptide-reconstitution-calculator': {
+      id: '/peptide-reconstitution-calculator'
+      path: '/peptide-reconstitution-calculator'
+      fullPath: '/peptide-reconstitution-calculator'
+      preLoaderRoute: typeof PeptideReconstitutionCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -599,6 +654,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/retatrutide-dosage-calculator': {
+      id: '/retatrutide-dosage-calculator'
+      path: '/retatrutide-dosage-calculator'
+      fullPath: '/retatrutide-dosage-calculator'
+      preLoaderRoute: typeof RetatrutideDosageCalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -793,8 +855,11 @@ const rootRouteChildren: RootRouteChildren = {
   HowItWorksRoute: HowItWorksRoute,
   IntakeRoute: IntakeRoute,
   PeptideCalculatorRoute: PeptideCalculatorRoute,
+  PeptideDosageCalculatorRoute: PeptideDosageCalculatorRoute,
+  PeptideReconstitutionCalculatorRoute: PeptideReconstitutionCalculatorRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  RetatrutideDosageCalculatorRoute: RetatrutideDosageCalculatorRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   ApiPepTalkRoute: ApiPepTalkRoute,
