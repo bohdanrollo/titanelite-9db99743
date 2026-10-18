@@ -17,3 +17,6 @@
 ## Dashboard redesign (phased, per uploaded brief)
 - [x] Phase 1: dashboard home, bottom/side navigation, design system
 - [ ] Phase 2+: redesign each dashboard tool page
+
+## Giveaway
+- [x] Replace the golf cart prize with a Rolex GMT-Master "Batman" giveaway; entry rules unchanged
