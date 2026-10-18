@@ -291,3 +291,25 @@ export const adminInvAnalytics = createServerFn({ method: "POST" })
       topVendors: tally(clicks.map((e) => (e.pephub_sources as { name: string } | null)?.name ?? "Unknown")),
     };
   });
+
+export type PublicPriceSample = { compound: string; vendor: string; strength: string | null; price: number; vendorCount: number };
+
+/** Public teaser: lowest in-stock price for a handful of compounds. No links or full listings. */
+export const publicPriceSamples = createServerFn({ method: "GET" }).handler(async (): Promise<PublicPriceSample[]> => {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data } = await supabaseAdmin.from("pephub_products")
+    .select("price, strength_text, source_id, pephub_sources!inner(name, is_active), pephub_compounds!inner(canonical_name)")
+    .eq("active", true).eq("in_stock", true).eq("pephub_sources.is_active", true).not("price", "is", null).limit(1000);
+  const by = new Map<string, { best: PublicPriceSample; vendors: Set<string> }>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  for (const r of (data ?? []) as any[]) {
+    const name = r.pephub_compounds.canonical_name as string;
+    const price = Number(r.price);
+    const cur = by.get(name) ?? { best: { compound: name, vendor: r.pephub_sources.name, strength: r.strength_text, price, vendorCount: 0 }, vendors: new Set<string>() };
+    cur.vendors.add(r.source_id);
+    if (price < cur.best.price) cur.best = { ...cur.best, vendor: r.pephub_sources.name, strength: r.strength_text, price };
+    by.set(name, cur);
+  }
+  return [...by.values()].map((v) => ({ ...v.best, vendorCount: v.vendors.size }))
+    .sort((a, b) => b.vendorCount - a.vendorCount).slice(0, 6);
+});
