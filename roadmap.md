@@ -1,5 +1,10 @@
 # Roadmap
 
+## Free Basic accounts
+- [ ] Make Basic access free for accounts while preserving higher-tier access
+- [ ] Require email, phone, and recorded email/SMS consent across signup forms
+- [ ] Update pricing and verify signup/access rules
+
 ## Current monitoring fixes
 - [x] Correct Basic payment confirmation and test tier activation
 - [x] Verify deprecated model replacements and migrate only affected calls; do not publish
