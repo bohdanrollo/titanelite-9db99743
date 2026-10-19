@@ -89,15 +89,20 @@ function Table({ head, rows, empty = "Nothing here yet." }: { head: string[]; ro
 
 /* ---------------- Members ---------------- */
 
-type MemberFilter = "all" | "paid" | "free" | "none" | "staff";
+type MemberFilter = "all" | "paying" | "billing" | "nobilling" | "staff";
 export function MembersPanel({ onManageAccess }: { onManageAccess: () => void }) {
   const fn = useServerFn(listMembers);
   const { data, err } = useLoad(() => fn());
   const [q, setQ] = useState("");
   const [f, setF] = useState<MemberFilter>("all");
   const rows = useMemo(() => (data ?? []).filter((m) => !q || `${m.name ?? ""} ${m.email ?? ""} ${m.phone ?? ""}`.toLowerCase().includes(q.toLowerCase())), [data, q]);
+  const counts = data ? {
+    paying: data.filter((m) => m.billing === "paying").length,
+    billing: data.filter((m) => m.billing === "account").length,
+    nobilling: data.filter((m) => m.billing === "none").length,
+  } : null;
   const groups: Record<MemberFilter, MemberRow[]> = {
-    all: rows, paid: rows.filter((m) => m.paid), free: rows.filter((m) => m.tier && !m.paid), none: rows.filter((m) => !m.tier), staff: rows.filter((m) => m.staff.length),
+    all: rows, paying: rows.filter((m) => m.billing === "paying"), billing: rows.filter((m) => m.billing === "account"), nobilling: rows.filter((m) => m.billing === "none"), staff: rows.filter((m) => m.staff.length),
   };
   return (
     <div>
@@ -110,14 +115,14 @@ export function MembersPanel({ onManageAccess }: { onManageAccess: () => void })
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by name, email or phone" className="flex-1 bg-transparent outline-none text-sm" />
           </label>
           <div className="mt-4 mb-6 flex flex-wrap gap-2">
-            {([["all", "All"], ["paid", "Paid"], ["free", "Free / complimentary"], ["none", "No plan"], ["staff", "Staff"]] as const).map(([k, l]) => (
+            {([["all", "All"], ["paying", "Paying"], ["billing", "Billing account"], ["nobilling", "No billing account"], ["staff", "Staff"]] as const).map(([k, l]) => (
               <Pill key={k} active={f === k} onClick={() => setF(k)}>{l} <span className="ml-1 font-mono text-xs opacity-60">{groups[k].length}</span></Pill>
             ))}
           </div>
-          <Table head={["Member", "Plan", "Status", "Joined", "Last active"]} rows={groups[f].slice(0, 500).map((m) => [
+          <Table head={["Member", "Plan", "Billing", "Joined", "Last active"]} rows={groups[f].slice(0, 500).map((m) => [
             <div key="m"><div className="flex items-center gap-2">{m.name || "—"}{m.staff.map((s) => <span key={s} className="rounded-full border border-border px-2 text-[11px] text-muted-foreground">{s}</span>)}</div><div className="text-xs text-muted-foreground">{m.email}</div></div>,
             m.tier ? tierLabel[m.tier] : <span className="text-muted-foreground">No plan</span>,
-            <Status key="s" s={m.paid ? "Paid" : m.tier ? "Free" : "No plan"} />,
+            <Status key="s" s={m.billing === "paying" ? "Paying" : m.billing === "account" ? "Billing account" : "No billing account"} />,
             <span key="j" className="text-muted-foreground">{date(m.created)}</span>,
             <span key="l" className="text-muted-foreground">{ago(m.lastActive)}</span>,
           ])} />
