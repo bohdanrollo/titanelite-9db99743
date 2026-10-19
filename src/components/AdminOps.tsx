@@ -8,6 +8,8 @@ import {
   type StripeMetrics, type MemberRow, type TrafficReport, type SiteSettings,
 } from "@/lib/admin-ops.functions";
 import { tierLabel, tierMonthlyPrice } from "@/lib/admin-overview";
+import { DEFAULT_HOMEPAGE, type HomepageContent } from "@/lib/homepage-content";
+import { supabase } from "@/integrations/supabase/client";
 
 const money = (n: number) => `$${n.toLocaleString(undefined, { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 })}`;
 const date = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : "—");
@@ -263,9 +265,12 @@ export function SitePanel() {
     catch (e) { toast.error(e instanceof Error ? e.message : "Couldn't save"); }
     finally { setBusy(false); }
   };
+  const h = s.homepage;
+  const setH = <K extends keyof HomepageContent>(k: K, v: Partial<HomepageContent[K]>) => setS({ ...s, homepage: { ...h, [k]: Array.isArray(h[k]) ? v : { ...(h[k] as object), ...v } } });
   return (
     <div>
-      <PageHead title="Site" sub="Announcement banner and contact details on the public site. Saves go live straight away." />
+      <PageHead title="Site" sub="Edit the homepage, colors, banner and contact details. Saves go live straight away."
+        action={<div className="flex gap-3 items-center"><a href="/" target="_blank" rel="noreferrer" className="text-sm text-muted-foreground hover:text-foreground">View homepage ↗</a><button disabled={busy} onClick={save} className="inline-flex items-center gap-2 rounded-full bg-foreground text-background px-5 py-2.5 text-sm disabled:opacity-50">{busy && <Loader2 size={14} className="animate-spin" />} Save and publish</button></div>} />
       <div className="grid lg:grid-cols-2 gap-4">
         <Panel title="Announcement banner" sub="A thin bar across the top of every public page.">
           <div className="mt-4 space-y-3">
@@ -280,8 +285,130 @@ export function SitePanel() {
         <Panel title="Contact" sub="Support email shown to members.">
           <input className={`${input} mt-4`} value={s.supportEmail} onChange={(e) => setS({ ...s, supportEmail: e.target.value })} />
         </Panel>
+
+        <Panel title="Homepage colors" sub="Leave blank to keep the current look.">
+          <div className="mt-4 grid grid-cols-3 gap-3">
+            {([["accent", "Accent (buttons, highlights)"], ["background", "Background"], ["text", "Text"]] as const).map(([k, l]) => (
+              <label key={k} className="block text-xs text-muted-foreground">{l}
+                <div className="mt-1.5 flex items-center gap-2">
+                  <input type="color" value={h.colors[k] || "#ffffff"} onChange={(e) => setH("colors", { [k]: e.target.value })} className="h-10 w-10 shrink-0 rounded-lg border border-border bg-transparent" />
+                  <input className={`${input} font-mono text-foreground`} placeholder="Default" value={h.colors[k]} onChange={(e) => setH("colors", { [k]: e.target.value })} />
+                </div>
+              </label>
+            ))}
+          </div>
+          <button onClick={() => setH("colors", { accent: "", background: "", text: "" })} className="mt-3 text-xs text-muted-foreground hover:text-foreground">Reset to default colors</button>
+        </Panel>
+
+        <Panel title="Top of homepage">
+          <div className="mt-4 space-y-3">
+            <div className="grid grid-cols-2 gap-3"><T label="Headline line 1" value={h.hero.line1} onChange={(v) => setH("hero", { line1: v })} /><T label="Headline line 2 (colored)" value={h.hero.line2} onChange={(v) => setH("hero", { line2: v })} /></div>
+            <T long label="Intro text" value={h.hero.sub} onChange={(v) => setH("hero", { sub: v })} />
+            <T label="Small note under the buttons" value={h.hero.note} onChange={(v) => setH("hero", { note: v })} />
+            <ImageField label="Main picture (phone)" value={h.hero.image} onChange={(v) => setH("hero", { image: v })} />
+          </div>
+        </Panel>
+
+        <Panel title="Numbers strip">
+          <div className="mt-4 space-y-3">
+            {h.stats.map((st, i) => (
+              <div key={i} className="grid grid-cols-[6rem_1fr] gap-3">
+                <T label="Number" value={st.value} onChange={(v) => setH("stats", h.stats.map((x, j) => j === i ? { ...x, value: v } : x))} />
+                <T label="Label" value={st.label} onChange={(v) => setH("stats", h.stats.map((x, j) => j === i ? { ...x, label: v } : x))} />
+              </div>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel title="Giveaway">
+          <div className="mt-4 space-y-3">
+            <label className="flex items-center gap-3 text-sm"><input type="checkbox" checked={h.giveaway.show} onChange={(e) => setH("giveaway", { show: e.target.checked })} /> Show the giveaway section</label>
+            <T label="Small heading" value={h.giveaway.kicker} onChange={(v) => setH("giveaway", { kicker: v })} />
+            <T label="Title" value={h.giveaway.title} onChange={(v) => setH("giveaway", { title: v })} />
+            <T long label="Description" value={h.giveaway.body} onChange={(v) => setH("giveaway", { body: v })} />
+            {h.giveaway.rules.map((r, i) => <T key={i} label={`Rule ${i + 1}`} value={r} onChange={(v) => setH("giveaway", { rules: h.giveaway.rules.map((x, j) => j === i ? v : x) })} />)}
+          </div>
+        </Panel>
+
+        <Panel title="“Every signal” section">
+          <div className="mt-4 space-y-3">
+            <div className="grid grid-cols-2 gap-3"><T label="Title line 1" value={h.platform.title1} onChange={(v) => setH("platform", { title1: v })} /><T label="Title line 2" value={h.platform.title2} onChange={(v) => setH("platform", { title2: v })} /></div>
+            <T long label="Text" value={h.platform.body} onChange={(v) => setH("platform", { body: v })} />
+          </div>
+        </Panel>
+
+        <Panel title="“Built around you” section">
+          <div className="mt-4 space-y-3">
+            <T label="Small heading" value={h.method.kicker} onChange={(v) => setH("method", { kicker: v })} />
+            <div className="grid grid-cols-2 gap-3"><T label="Title line 1" value={h.method.title1} onChange={(v) => setH("method", { title1: v })} /><T label="Title line 2" value={h.method.title2} onChange={(v) => setH("method", { title2: v })} /></div>
+            <T long label="Text" value={h.method.body} onChange={(v) => setH("method", { body: v })} />
+          </div>
+        </Panel>
+
+        <Panel title="“Less guesswork” section">
+          <div className="mt-4 space-y-3">
+            <T label="Small heading" value={h.closing.kicker} onChange={(v) => setH("closing", { kicker: v })} />
+            <div className="grid grid-cols-2 gap-3"><T label="Title line 1" value={h.closing.title1} onChange={(v) => setH("closing", { title1: v })} /><T label="Title line 2 (colored)" value={h.closing.title2} onChange={(v) => setH("closing", { title2: v })} /></div>
+            <T long label="Text" value={h.closing.body} onChange={(v) => setH("closing", { body: v })} />
+            <ImageField label="Background picture" value={h.closing.image} onChange={(v) => setH("closing", { image: v })} />
+          </div>
+        </Panel>
+
+        <Panel title="Plans & pricing section" sub="Plan prices themselves come from billing and aren't edited here.">
+          <div className="mt-4 space-y-3">
+            <T label="Title" value={h.pricing.title} onChange={(v) => setH("pricing", { title: v })} />
+            <T long label="Intro text" value={h.pricing.sub} onChange={(v) => setH("pricing", { sub: v })} />
+            <T label="Note under the plans" value={h.pricing.note} onChange={(v) => setH("pricing", { note: v })} />
+          </div>
+        </Panel>
       </div>
-      <button disabled={busy} onClick={save} className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground text-background px-6 py-2.5 text-sm disabled:opacity-50">{busy && <Loader2 size={14} className="animate-spin" />} Save and publish</button>
+      <div className="mt-6 flex gap-4 items-center">
+        <button disabled={busy} onClick={save} className="inline-flex items-center gap-2 rounded-full bg-foreground text-background px-6 py-2.5 text-sm disabled:opacity-50">{busy && <Loader2 size={14} className="animate-spin" />} Save and publish</button>
+        <button onClick={() => confirm("Put all homepage text, pictures and colors back to the original? (Not saved until you press Save.)") && setS({ ...s, homepage: structuredClone(DEFAULT_HOMEPAGE) })} className="text-sm text-muted-foreground hover:text-foreground">Restore original homepage</button>
+      </div>
+    </div>
+  );
+}
+
+function T({ label, value, onChange, long }: { label: string; value: string; onChange: (v: string) => void; long?: boolean }) {
+  const input = "w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-foreground/40";
+  return (
+    <label className="block text-xs text-muted-foreground">{label}
+      {long ? <textarea rows={3} className={`${input} mt-1.5 text-foreground`} value={value} onChange={(e) => onChange(e.target.value)} />
+        : <input className={`${input} mt-1.5 text-foreground`} value={value} onChange={(e) => onChange(e.target.value)} />}
+    </label>
+    );
+}
+
+
+function ImageField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  const [busy, setBusy] = useState(false);
+  const upload = async (file: File) => {
+    if (!/^image\/(png|jpe?g|webp|gif)$/.test(file.type)) return toast.error("Use a PNG, JPG, WebP or GIF image.");
+    if (file.size > 8 * 1024 * 1024) return toast.error("Image must be under 8 MB.");
+    setBusy(true);
+    try {
+      const ext = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+      const path = `homepage/${crypto.randomUUID()}.${ext}`;
+      const { error } = await supabase.storage.from("site-media").upload(path, file, { contentType: file.type });
+      if (error) throw error;
+      onChange(`/api/public/site-media/${path}`);
+      toast.success("Uploaded — press Save to publish it.");
+    } catch (e) { toast.error(e instanceof Error ? e.message : "Upload failed"); }
+    finally { setBusy(false); }
+  };
+  return (
+    <div className="text-xs text-muted-foreground">{label}
+      <div className="mt-1.5 flex items-center gap-3">
+        <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-border bg-muted flex items-center justify-center">
+          {value ? <img src={value} alt="" className="h-full w-full object-cover" /> : <span className="text-[10px]">Default</span>}
+        </div>
+        <label className="cursor-pointer rounded-full border border-border px-4 py-2 text-sm text-foreground hover:bg-muted/50">
+          {busy ? "Uploading…" : "Upload picture"}
+          <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" className="hidden" disabled={busy} onChange={(e) => { const f = e.target.files?.[0]; if (f) upload(f); e.target.value = ""; }} />
+        </label>
+        {value && <button onClick={() => onChange("")} className="text-sm hover:text-foreground">Use default</button>}
+      </div>
     </div>
   );
 }

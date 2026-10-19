@@ -43,6 +43,7 @@ import { Route as PephubCompareSlugRouteImport } from './routes/pephub.compare.$
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicPephubMonitorRouteImport } from './routes/api/public/pephub/monitor'
 import { Route as ApiPublicResendWebhookRouteImport } from './routes/api/public/resend/webhook'
+import { Route as ApiPublicSiteMediaSplatRouteImport } from './routes/api/public/site-media.$'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -222,6 +223,11 @@ const ApiPublicResendWebhookRoute = ApiPublicResendWebhookRouteImport.update({
   path: '/api/public/resend/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicSiteMediaSplatRoute = ApiPublicSiteMediaSplatRouteImport.update({
+  id: '/api/public/site-media/$',
+  path: '/api/public/site-media/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
   id: '/lovable/email/auth/preview',
   path: '/lovable/email/auth/preview',
@@ -291,6 +297,7 @@ export interface FileRoutesByFullPath {
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pephub/monitor': typeof ApiPublicPephubMonitorRoute
   '/api/public/resend/webhook': typeof ApiPublicResendWebhookRoute
+  '/api/public/site-media/$': typeof ApiPublicSiteMediaSplatRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -332,6 +339,7 @@ export interface FileRoutesByTo {
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pephub/monitor': typeof ApiPublicPephubMonitorRoute
   '/api/public/resend/webhook': typeof ApiPublicResendWebhookRoute
+  '/api/public/site-media/$': typeof ApiPublicSiteMediaSplatRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -375,6 +383,7 @@ export interface FileRoutesById {
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pephub/monitor': typeof ApiPublicPephubMonitorRoute
   '/api/public/resend/webhook': typeof ApiPublicResendWebhookRoute
+  '/api/public/site-media/$': typeof ApiPublicSiteMediaSplatRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -418,6 +427,7 @@ export interface FileRouteTypes {
     | '/api/public/payments/webhook'
     | '/api/public/pephub/monitor'
     | '/api/public/resend/webhook'
+    | '/api/public/site-media/$'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
@@ -459,6 +469,7 @@ export interface FileRouteTypes {
     | '/api/public/payments/webhook'
     | '/api/public/pephub/monitor'
     | '/api/public/resend/webhook'
+    | '/api/public/site-media/$'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
@@ -501,6 +512,7 @@ export interface FileRouteTypes {
     | '/api/public/payments/webhook'
     | '/api/public/pephub/monitor'
     | '/api/public/resend/webhook'
+    | '/api/public/site-media/$'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
@@ -540,6 +552,7 @@ export interface RootRouteChildren {
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   ApiPublicPephubMonitorRoute: typeof ApiPublicPephubMonitorRoute
   ApiPublicResendWebhookRoute: typeof ApiPublicResendWebhookRoute
+  ApiPublicSiteMediaSplatRoute: typeof ApiPublicSiteMediaSplatRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
@@ -788,6 +801,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicResendWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/site-media/$': {
+      id: '/api/public/site-media/$'
+      path: '/api/public/site-media/$'
+      fullPath: '/api/public/site-media/$'
+      preLoaderRoute: typeof ApiPublicSiteMediaSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/auth/preview': {
       id: '/lovable/email/auth/preview'
       path: '/lovable/email/auth/preview'
@@ -892,6 +912,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   ApiPublicPephubMonitorRoute: ApiPublicPephubMonitorRoute,
   ApiPublicResendWebhookRoute: ApiPublicResendWebhookRoute,
+  ApiPublicSiteMediaSplatRoute: ApiPublicSiteMediaSplatRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
