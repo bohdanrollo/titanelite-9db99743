@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { ArrowUpRight, Loader2 } from "lucide-react";
 import { getAdminOverview, type AdminOverview as Data } from "@/lib/admin-overview.functions";
 import { tierLabel } from "@/lib/admin-overview";
+import { useStripeMetrics } from "@/components/AdminOps";
 
 const money = (n: number) => `$${n.toLocaleString(undefined, { maximumFractionDigits: n % 1 ? 2 : 0 })}`;
 const ago = (iso: string) => {
@@ -13,6 +14,8 @@ const ago = (iso: string) => {
 export default function AdminOverview({ onOpen }: { onOpen: (tab: string) => void }) {
   const fn = useServerFn(getAdminOverview);
   const [d, setD] = useState<Data | null>(null);
+  const { data: sm } = useStripeMetrics();
+  const stripe = sm && !("error" in sm) ? sm : null;
   const [err, setErr] = useState<string | null>(null);
   useEffect(() => { fn().then(setD).catch((e) => setErr(e instanceof Error ? e.message : "Failed to load")); }, [fn]);
 
@@ -24,11 +27,11 @@ export default function AdminOverview({ onOpen }: { onOpen: (tab: string) => voi
   const maxMix = Math.max(1, ...d.planMix.map((p) => p.members));
   const stats = [
     { v: d.members, l: "Members", s: `${d.activeThisWeek} active this week` },
-    { v: d.paidMembers, l: "Paid members" },
-    { v: `$${Math.round(d.mrr).toLocaleString()}`, l: "MRR", s: "list prices, before discounts" },
+    { v: stripe ? stripe.activeSubscriptions : d.paidMembers, l: "Paid subscriptions", s: stripe ? "from Stripe" : "loading Stripe…" },
+    { v: `$${Math.round(stripe ? stripe.mrr : d.mrr).toLocaleString()}`, l: "MRR", s: stripe ? "Stripe, after discounts" : "list prices, estimate" },
+    { v: stripe ? `$${Math.round(stripe.collected30).toLocaleString()}` : "…", l: "Collected", s: "last 30 days" },
     { v: d.signupsToday, l: "New signups today" },
-    { v: d.affiliates.active, l: "Active affiliates" },
-    { v: d.attention.length, l: "Needs attention" },
+    { v: stripe ? stripe.failed7 : "…", l: "Failed payments", s: "last 7 days" },
   ];
 
   return (
@@ -76,6 +79,10 @@ export default function AdminOverview({ onOpen }: { onOpen: (tab: string) => voi
 
         <Card title="Needs attention">
           <ul className="mt-4 divide-y divide-border">
+            {stripe && stripe.failed7 > 0 && (
+              <li><button onClick={() => onOpen("plans")} className="w-full py-3 flex items-start gap-3 text-left group"><span className="mt-1.5 h-2 w-2 rounded-full bg-destructive" /><span className="flex-1"><span className="block text-sm">{stripe.failed7} failed payment{stripe.failed7 > 1 ? "s" : ""} this week</span><span className="block text-xs text-muted-foreground">Check subscribers in Plans.</span></span><ArrowUpRight size={14} className="text-muted-foreground" /></button></li>
+            )}
+            {sm && "error" in sm && <li className="py-3 text-xs text-muted-foreground">Stripe unavailable: {sm.error}</li>}
             {d.attention.length === 0 && <li className="py-3 text-sm text-muted-foreground">All clear.</li>}
             {d.attention.map((a) => (
               <li key={a.key}>
