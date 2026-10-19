@@ -81,42 +81,59 @@ function Admin() {
           </div>
         </div>
       </header>
-      <section className="container-edge pb-16">
+      <section className="container-edge pb-16 lg:flex lg:gap-10">
         <h1 className="sr-only">PepLog admin</h1>
-        <nav className="flex gap-1 overflow-x-auto pb-1">
+        <nav aria-label="Admin sections" className="lg:w-56 lg:shrink-0 lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100dvh-3rem)] lg:overflow-y-auto space-y-5">
           {([
-            { k: "overview", l: "Dashboard", i: Sparkles },
-            { k: "members", l: "Members", i: Users },
-            { k: "traffic", l: "Traffic", i: Users },
-            { k: "plans", l: "Plans", i: DollarSign },
-            { k: "clients", l: "Access", i: Lock },
-            { k: "intakes", l: "Intakes", i: Inbox },
-            { k: "protocols", l: "Protocols", i: FileText },
-            { k: "messages", l: "Messages", i: MessagesSquare },
-            { k: "affiliates", l: "Affiliates", i: DollarSign },
-            { k: "videos", l: "Video incentives", i: Video },
-            { k: "product", l: "Free product", i: Gift },
-            { k: "peptide-requests", l: "Peptide requests", i: FlaskConical },
-            { k: "calls", l: "Coach calls", i: Phone },
-            { k: "contact", l: "Contact form", i: Mail },
-            { k: "pephub", l: "PepHub", i: Users },
-            { k: "email", l: "Email marketing", i: Mail },
-            { k: "site", l: "Site", i: Sparkles },
-            { k: "team", l: "Team & security", i: Lock },
-            { k: "settings", l: "Settings", i: Sparkles },
-            { k: "logs", l: "Activity & logs", i: FileText },
-          ] as const).map((t) => (
-            <button
-              key={t.k}
-              onClick={() => setTab(t.k)}
-              className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm transition ${tab === t.k ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
-            >
-              {t.l}
-            </button>
+            ["Overview", [
+              { k: "overview", l: "Dashboard", i: Sparkles },
+              { k: "traffic", l: "Traffic", i: Users },
+              { k: "plans", l: "Plans & revenue", i: DollarSign },
+            ]],
+            ["Members", [
+              { k: "members", l: "Members", i: Users },
+              { k: "clients", l: "Access", i: Lock },
+              { k: "intakes", l: "Intakes", i: Inbox },
+              { k: "protocols", l: "Protocols", i: FileText },
+              { k: "messages", l: "Messages", i: MessagesSquare },
+              { k: "calls", l: "Coach calls", i: Phone },
+            ]],
+            ["Growth", [
+              { k: "affiliates", l: "Affiliates", i: DollarSign },
+              { k: "videos", l: "Video incentives", i: Video },
+              { k: "product", l: "Free product", i: Gift },
+              { k: "email", l: "Email marketing", i: Mail },
+            ]],
+            ["PepHub & requests", [
+              { k: "pephub", l: "PepHub", i: Users },
+              { k: "peptide-requests", l: "Peptide requests", i: FlaskConical },
+              { k: "contact", l: "Contact form", i: Mail },
+            ]],
+            ["System", [
+              { k: "site", l: "Site", i: Sparkles },
+              { k: "team", l: "Team & security", i: Lock },
+              { k: "settings", l: "Settings", i: Sparkles },
+              { k: "logs", l: "Activity & logs", i: FileText },
+            ]],
+          ] as const).map(([group, items]) => (
+            <div key={group}>
+              <div className="px-3 mb-1.5 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">{group}</div>
+              <div className="flex flex-wrap gap-1 lg:flex-col">
+                {items.map((t) => (
+                  <button
+                    key={t.k}
+                    onClick={() => setTab(t.k)}
+                    className={`flex items-center gap-2.5 whitespace-nowrap rounded-full px-3 py-2 text-sm text-left transition ${tab === t.k ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"}`}
+                  >
+                    <t.i size={15} /> {t.l}
+                  </button>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
 
-        <div className="mt-10">
+        <div className="mt-10 lg:mt-0 min-w-0 flex-1">
           {tab === "overview" && <AdminOverview onOpen={(k) => setTab(k as Tab)} />}
           {tab === "members" && <MembersPanel onManageAccess={() => setTab("clients")} />}
           {tab === "traffic" && <TrafficPanel />}
