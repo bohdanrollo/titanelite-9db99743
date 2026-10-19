@@ -972,6 +972,39 @@ export type Database = {
         }
         Relationships: []
       }
+      member_billing_records: {
+        Row: {
+          billing_data: Json
+          environment: string
+          id: string
+          record_type: string
+          stripe_customer_id: string
+          stripe_id: string
+          synced_at: string
+          user_id: string
+        }
+        Insert: {
+          billing_data?: Json
+          environment: string
+          id?: string
+          record_type: string
+          stripe_customer_id: string
+          stripe_id: string
+          synced_at?: string
+          user_id: string
+        }
+        Update: {
+          billing_data?: Json
+          environment?: string
+          id?: string
+          record_type?: string
+          stripe_customer_id?: string
+          stripe_id?: string
+          synced_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           body: string

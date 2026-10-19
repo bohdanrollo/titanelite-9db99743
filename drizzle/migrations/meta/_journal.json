@@ -225,6 +225,13 @@
       "when": 1792445861995,
       "tag": "0031_pin_email_function_search_path",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1792449380996,
+      "tag": "0032_store_member_stripe_billing_records",
+      "breakpoints": true
     }
   ]
 }
