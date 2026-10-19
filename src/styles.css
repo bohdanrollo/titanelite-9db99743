@@ -487,3 +487,27 @@
 .dash-tool .text-blood { color: var(--foreground); }
 .dash-tool [class*="bg-blood"] { border-radius: 9999px; }
 .dash-tool table { border-radius: 1rem; overflow: hidden; }
+
+/* Admin ops theme — scoped to the admin dashboard only */
+.admin-ops {
+  color-scheme: dark;
+  --background: oklch(0.13 0.004 270);
+  --foreground: oklch(0.95 0.004 270);
+  --card: oklch(0.16 0.005 270);
+  --card-foreground: oklch(0.95 0.004 270);
+  --popover: oklch(0.17 0.005 270);
+  --popover-foreground: oklch(0.95 0.004 270);
+  --muted: oklch(0.22 0.005 270);
+  --muted-foreground: oklch(0.66 0.01 270);
+  --secondary: oklch(0.2 0.005 270);
+  --accent: oklch(0.22 0.01 280);
+  --border: oklch(1 0 0 / 0.08);
+  --input: oklch(1 0 0 / 0.12);
+  --blood: oklch(0.76 0.12 290);
+  --primary: oklch(0.76 0.12 290);
+  --primary-foreground: oklch(0.13 0.004 270);
+  --ring: oklch(0.76 0.12 290);
+  --admin-accent: oklch(0.62 0.12 290);
+  --admin-warn: oklch(0.78 0.15 70);
+  --admin-info: oklch(0.7 0.13 250);
+}
