@@ -64,25 +64,27 @@ function Admin() {
   }
 
   return (
-    <div className="min-h-dvh bg-background">
-      <header className="border-b border-foreground/10 bg-ink text-bone">
-        <div className="container-edge h-16 flex items-center justify-between">
+    <div className="admin-ops min-h-dvh bg-background text-foreground">
+      <header>
+        <div className="container-edge h-20 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3" aria-label="PepLog home">
              <PepLogWordmark className="h-5 w-auto" />
-             <span className="font-mono text-[10px] uppercase text-current/70">/ Admin</span>
+             <span className="rounded-full border border-border px-2 py-0.5 text-[11px] text-muted-foreground">admin</span>
           </Link>
-          <button onClick={signOut} className="font-mono text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 hover:text-blood">
-            <LogOut size={14} /> Sign out
-          </button>
+          <div className="flex items-center gap-5 text-sm">
+            <a href="https://peplog.io" target="_blank" rel="noreferrer" className="hidden sm:inline text-muted-foreground hover:text-foreground">peplog.io ↗</a>
+            <button onClick={signOut} className="flex items-center gap-2 hover:text-muted-foreground">
+              <LogOut size={14} /> Sign out
+            </button>
+          </div>
         </div>
       </header>
-      <section className="container-edge py-12">
-        <div className="text-eyebrow">Admin Dashboard</div>
-        <h1 className="mt-4 text-5xl lg:text-6xl">Roster.</h1>
-
-        <nav className="mt-10 flex flex-wrap gap-1 border-b border-foreground/15">
+      <section className="container-edge pb-16">
+        <h1 className="sr-only">PepLog admin</h1>
+        <nav className="flex gap-1 overflow-x-auto pb-1">
           {([
-            { k: "clients", l: "Clients", i: Users },
+            { k: "overview", l: "Dashboard", i: Sparkles },
+            { k: "clients", l: "Members", i: Users },
             { k: "intakes", l: "Intakes", i: Inbox },
             { k: "protocols", l: "Protocols", i: FileText },
             { k: "messages", l: "Messages", i: MessagesSquare },
@@ -98,14 +100,15 @@ function Admin() {
             <button
               key={t.k}
               onClick={() => setTab(t.k)}
-              className={`px-5 py-3 font-mono text-[11px] uppercase tracking-[0.18em] flex items-center gap-2 border-b-2 transition ${tab === t.k ? "border-blood text-blood" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+              className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm transition ${tab === t.k ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
             >
-              <t.i size={14} /> {t.l}
+              {t.l}
             </button>
           ))}
         </nav>
 
-        <div className="mt-8">
+        <div className="mt-10">
+          {tab === "overview" && <AdminOverview onOpen={(k) => setTab(k as Tab)} />}
           {tab === "clients" && <Clients />}
           {tab === "intakes" && <Intakes />}
           {tab === "protocols" && <ProtocolsAdmin />}
