@@ -153,7 +153,7 @@ async function readStripeBilling(): Promise<Map<string, { account: boolean; acti
     if (cust.email) touch(cust.email).account = true;
   }
   seen = 0;
-  for await (const sub of stripe.subscriptions.list({ status: "all", limit: 100 }) as any) {
+  for await (const sub of stripe.subscriptions.list({ status: "all", limit: 100, expand: ["data.customer"] }) as any) {
     if (seen++ >= 2000) break;
     const email = typeof sub.customer === "object" ? sub.customer?.email : null;
     if (email) touch(email).active = ACTIVE.has(sub.status);
