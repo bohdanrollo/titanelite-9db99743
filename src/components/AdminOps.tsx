@@ -59,7 +59,7 @@ function Pill({ active, onClick, children }: { active: boolean; onClick: () => v
   return <button onClick={onClick} className={`rounded-full border px-3.5 py-1.5 text-sm transition ${active ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground hover:text-foreground"}`}>{children}</button>;
 }
 function Status({ s }: { s: string }) {
-  const tone = /paid|active|approved|live|connected/i.test(s) ? "bg-[var(--admin-ok)]" : /past|ending|pending|test/i.test(s) ? "bg-[var(--admin-warn)]" : /suspend|cancel|fail|unpaid|not set|incomplete/i.test(s) ? "bg-destructive" : "bg-muted-foreground";
+  const tone = /paying|paid|active|approved|live|connected/i.test(s) ? "bg-[var(--admin-ok)]" : /past|ending|pending|billing|test/i.test(s) ? "bg-[var(--admin-warn)]" : /suspend|cancel|fail|unpaid|not set|incomplete/i.test(s) ? "bg-destructive" : "bg-muted-foreground";
   return <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-xs"><span className={`h-1.5 w-1.5 rounded-full ${tone}`} />{s}</span>;
 }
 function Bars({ values, labels, format = String }: { values: number[]; labels: [string, string]; format?: (n: number) => string }) {
@@ -106,7 +106,7 @@ export function MembersPanel({ onManageAccess }: { onManageAccess: () => void })
   };
   return (
     <div>
-      <PageHead title="Members" sub={data ? `${data.length} accounts, most recently active first.` : undefined}
+      <PageHead title="Members" sub={data && counts ? `${data.length} accounts · ${counts.paying} paying · ${counts.billing} with a billing account (not paying) · ${counts.nobilling} without billing.` : undefined}
         action={<button onClick={onManageAccess} className="inline-flex items-center gap-2 rounded-full bg-foreground text-background px-5 py-2.5 text-sm"><UserPlus size={15} /> Grant or change access</button>} />
       {!data ? <Loading err={err} /> : (
         <>
