@@ -1,5 +1,9 @@
 # Roadmap
 
+## Stripe member billing import
+- [ ] Import matching live Stripe customer, subscription, and invoice records without changing access, prices, or consent
+- [ ] Verify imported counts and unmatched records
+
 ## Security hardening
 - [x] Review private source exposure and privileged API authorization; preserve existing admins
 - [x] Add private-file blocking, security headers, payment-environment isolation, admin-only email sending, subscriber ownership checks, and coaching field protections
