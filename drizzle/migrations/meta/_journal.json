@@ -218,6 +218,13 @@
       "when": 1792442366333,
       "tag": "0030_site_media_admin_upload",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1792445861995,
+      "tag": "0031_pin_email_function_search_path",
+      "breakpoints": true
     }
   ]
 }
