@@ -3,6 +3,7 @@ import { getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { configuredPaymentEnvironment } from "@/lib/payment-environment";
+import { homepageSchema, DEFAULT_HOMEPAGE, mergeHomepage } from "@/lib/homepage-content";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
