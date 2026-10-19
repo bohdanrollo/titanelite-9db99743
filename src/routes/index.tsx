@@ -184,7 +184,7 @@ function Pricing() {
       note: "All AI tools included. No coaching.", action: "Choose Limited Access", to: "/checkout" as const,
     },
     {
-      name: "Elite Access", price: "$250", period: "per month",
+      name: "Elite Access", price: "$250", period: "per month- Limited spots available",
       features: ["Everything in Limited Access", "Custom peptide & training protocols", "Coach messaging, calls & scheduling", "Priority coach support", "Increased peptide discounts"],
       note: "All tools, AI and coaching included.", action: "Choose Elite Access", to: "/checkout" as const,
     },
