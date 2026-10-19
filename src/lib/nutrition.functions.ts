@@ -99,7 +99,7 @@ async function searchOff(q: string): Promise<FoodResult[]> {
     "https://search.openfoodfacts.org/search?" +
     new URLSearchParams({ q, page_size: "20" }).toString();
   try {
-    const res = await fetch(url, { headers: { "User-Agent": "TitanElite/1.0 (nutrition tracker)" } });
+    const res = await fetch(url, { headers: { "User-Agent": "PepLog/1.0 (nutrition tracker)" } });
     if (!res.ok) return [];
     const json = (await res.json()) as { hits?: OffProduct[] };
     const out: FoodResult[] = [];
