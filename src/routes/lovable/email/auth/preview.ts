@@ -18,7 +18,7 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 }
 
 // Configuration
-const SITE_NAME = "Titan Elite"
+const SITE_NAME = "PepLog"
 const ROOT_DOMAIN = "peplog.io"
 
 // Sample data for preview mode ONLY (not used in actual email sending).

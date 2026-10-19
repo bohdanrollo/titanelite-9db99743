@@ -9,7 +9,7 @@ import { EmailChangeEmail } from '@/lib/email-templates/email-change'
 import { ReauthenticationEmail } from '@/lib/email-templates/reauthentication'
 
 // Configuration
-const SITE_NAME = "Titan Elite"
+const SITE_NAME = "PepLog"
 const SENDER_DOMAIN = "notify.peplog.io"
 const ROOT_DOMAIN = "peplog.io"
 const FROM_DOMAIN = "peplog.io"
