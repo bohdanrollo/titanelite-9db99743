@@ -21,3 +21,14 @@ export function signupMetadata(data: z.infer<typeof signupSchema>) {
   return { full_name: data.name, phone: data.phone, marketing_consent: true,
     marketing_consent_version: MARKETING_CONSENT_VERSION, age_21_confirmed: true, research_use_confirmed: true };
 }
+
+/**
+ * Turn a thrown error into a short human-readable message. Zod 4's
+ * ZodError.message is the issues array serialized as JSON, which must never
+ * be shown to visitors — surface the first issue's message instead.
+ */
+export function friendlyErrorMessage(err: unknown, fallback = "Something went wrong. Please try again."): string {
+  if (err instanceof z.ZodError) return err.issues[0]?.message ?? fallback;
+  if (err instanceof Error && err.message) return err.message;
+  return fallback;
+}
