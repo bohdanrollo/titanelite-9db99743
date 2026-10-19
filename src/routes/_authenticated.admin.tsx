@@ -21,6 +21,7 @@ import CoachingAdmin, { type SchedulePrefill } from "@/components/coaching/Coach
 import PepHubAdmin from "@/components/PepHubAdmin";
 import EmailMarketing from "@/components/EmailMarketing";
 import { PepLogWordmark } from "@/components/PepLogWordmark";
+import AdminOverview from "@/components/AdminOverview";
 
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -35,13 +36,13 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: Admin,
 });
 
-type Tab = "clients" | "intakes" | "protocols" | "messages" | "affiliates" | "videos" | "product" | "peptide-requests" | "contact" | "calls" | "pephub" | "email";
+type Tab = "overview" | "clients" | "intakes" | "protocols" | "messages" | "affiliates" | "videos" | "product" | "peptide-requests" | "contact" | "calls" | "pephub" | "email";
 
 
 function Admin() {
   const { user, role, loading, signOut } = useAuth();
   const nav = useNavigate();
-  const [tab, setTab] = useState<Tab>("clients");
+  const [tab, setTab] = useState<Tab>("overview");
 
   useEffect(() => {
     if (!loading && role && role !== "admin") nav({ to: "/dashboard" });
