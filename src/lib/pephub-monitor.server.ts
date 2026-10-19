@@ -8,7 +8,7 @@ import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 
 const SITE_URL = "https://peplog.io";
 const UA =
-  "Mozilla/5.0 (compatible; TitanEliteSaleMonitor/1.0; +https://titanelite.org/pephub)";
+  "Mozilla/5.0 (compatible; PepLogSaleMonitor/1.0; +https://peplog.io/pephub)";
 
 export type Frequency = "1h" | "6h" | "12h" | "24h" | "disabled";
 

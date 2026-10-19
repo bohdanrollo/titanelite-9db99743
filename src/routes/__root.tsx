@@ -125,7 +125,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               "@id": "https://peplog.io/#organization",
                name: "PepLog",
               url: "https://peplog.io",
-              email: "titanelitee@gmail.com",
+              email: "support@peplog.com",
               description:
                  "PepLog provides educational peptide research, custom protocols, performance tracking, and weightlifting programming in one private dashboard.",
             },

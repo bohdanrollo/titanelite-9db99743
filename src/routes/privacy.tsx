@@ -58,14 +58,14 @@ function Privacy() {
           </P>
           <P t="Your Rights">
             You may request access, correction, or deletion of your data by emailing
-            titanelitee@gmail.com. We will respond within 30 days.
+            support@peplog.com. We will respond within 30 days.
           </P>
           <P t="Cookies">
             We use functional cookies for authentication and session management. No
             advertising cookies.
           </P>
           <P t="Contact">
-            Questions: titanelitee@gmail.com.
+            Questions: support@peplog.com.
           </P>
         </div>
       </section>
