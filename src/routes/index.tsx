@@ -185,7 +185,7 @@ function Pricing() {
     },
     {
       name: "Elite Access", price: "$250", period: "per month- Limited spots available",
-      features: ["Everything in Limited Access", "Custom peptide & training protocols", "Coach messaging, calls & scheduling", "Priority coach support", "Increased peptide discounts"],
+      features: ["Everything in Limited Access", "Custom peptide & training protocols", "1on1 Calls and messaging with coaches", "Priority support", "Increased peptide discounts"],
       note: "All tools, AI and coaching included.", action: "Choose Elite Access", to: "/checkout" as const,
     },
   ];
