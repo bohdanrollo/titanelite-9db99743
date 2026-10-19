@@ -14,6 +14,7 @@ import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "../lib/auth";
+import { SiteTracker, SiteBanner } from "../components/SiteTracker";
 
 function NotFoundComponent() {
   return (
@@ -223,6 +224,8 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <SiteTracker />
+        <SiteBanner />
         <main>
           <Outlet />
         </main>

@@ -22,6 +22,7 @@ import PepHubAdmin from "@/components/PepHubAdmin";
 import EmailMarketing from "@/components/EmailMarketing";
 import { PepLogWordmark } from "@/components/PepLogWordmark";
 import AdminOverview from "@/components/AdminOverview";
+import { MembersPanel, PlansPanel, TrafficPanel, SitePanel, TeamPanel, SettingsPanel, LogsPanel } from "@/components/AdminOps";
 
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -36,7 +37,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: Admin,
 });
 
-type Tab = "overview" | "clients" | "intakes" | "protocols" | "messages" | "affiliates" | "videos" | "product" | "peptide-requests" | "contact" | "calls" | "pephub" | "email";
+type Tab = "overview" | "members" | "traffic" | "plans" | "site" | "team" | "settings" | "logs" | "clients" | "intakes" | "protocols" | "messages" | "affiliates" | "videos" | "product" | "peptide-requests" | "contact" | "calls" | "pephub" | "email";
 
 
 function Admin() {
@@ -85,7 +86,10 @@ function Admin() {
         <nav className="flex gap-1 overflow-x-auto pb-1">
           {([
             { k: "overview", l: "Dashboard", i: Sparkles },
-            { k: "clients", l: "Members", i: Users },
+            { k: "members", l: "Members", i: Users },
+            { k: "traffic", l: "Traffic", i: Users },
+            { k: "plans", l: "Plans", i: DollarSign },
+            { k: "clients", l: "Access", i: Lock },
             { k: "intakes", l: "Intakes", i: Inbox },
             { k: "protocols", l: "Protocols", i: FileText },
             { k: "messages", l: "Messages", i: MessagesSquare },
@@ -97,6 +101,10 @@ function Admin() {
             { k: "contact", l: "Contact form", i: Mail },
             { k: "pephub", l: "PepHub", i: Users },
             { k: "email", l: "Email marketing", i: Mail },
+            { k: "site", l: "Site", i: Sparkles },
+            { k: "team", l: "Team & security", i: Lock },
+            { k: "settings", l: "Settings", i: Sparkles },
+            { k: "logs", l: "Activity & logs", i: FileText },
           ] as const).map((t) => (
             <button
               key={t.k}
@@ -110,6 +118,13 @@ function Admin() {
 
         <div className="mt-10">
           {tab === "overview" && <AdminOverview onOpen={(k) => setTab(k as Tab)} />}
+          {tab === "members" && <MembersPanel onManageAccess={() => setTab("clients")} />}
+          {tab === "traffic" && <TrafficPanel />}
+          {tab === "plans" && <PlansPanel />}
+          {tab === "site" && <SitePanel />}
+          {tab === "team" && <TeamPanel />}
+          {tab === "settings" && <SettingsPanel />}
+          {tab === "logs" && <LogsPanel />}
           {tab === "clients" && <Clients />}
           {tab === "intakes" && <Intakes />}
           {tab === "protocols" && <ProtocolsAdmin />}

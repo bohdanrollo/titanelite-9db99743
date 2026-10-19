@@ -510,4 +510,5 @@
   --admin-accent: oklch(0.62 0.12 290);
   --admin-warn: oklch(0.78 0.15 70);
   --admin-info: oklch(0.7 0.13 250);
+  --admin-ok: oklch(0.72 0.15 155);
 }
