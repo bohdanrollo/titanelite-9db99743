@@ -65,7 +65,8 @@ export const getStripeMetrics = createServerFn({ method: "POST" })
     await requireAdmin(context);
     try {
       const { createStripeClient } = await import("@/lib/stripe.server");
-      const env = configuredPaymentEnvironment();
+      // Read-only reporting: always prefer real (live) Stripe data when it is connected.
+      const env: "sandbox" | "live" = process.env.STRIPE_LIVE_API_KEY ? "live" : configuredPaymentEnvironment();
       const stripe = createStripeClient(env);
       const now = Math.floor(Date.now() / 1000);
       const since30 = now - 30 * 86400;
