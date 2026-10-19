@@ -12,3 +12,4 @@
 - Public newsletter requests may not alter existing subscriber records without a confirmed matching account; why: an arbitrary submitted email is not proof of consent or ownership.
 - Admin revenue/subscription figures are read live from Stripe (live account when connected) in admin-ops server functions, while member counts come from the database; why: database access rows include complimentary grants and are not billing truth.
 - Public page views are recorded through an unauthenticated server function into a service-role-only table, excluding admin/private paths; why: traffic reporting without exposing visitor data or a public table policy.
+- Stripe billing imports store allowlisted snapshots separately from entitlements and consent, matching verified account IDs or unique exact emails; why: importing billing history must not change access or infer marketing permission.
