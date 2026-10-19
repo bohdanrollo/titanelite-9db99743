@@ -131,7 +131,35 @@ export const getStripeMetrics = createServerFn({ method: "POST" })
 export type MemberRow = {
   id: string; name: string | null; email: string | null; phone: string | null; created: string; lastActive: string;
   tier: "basic" | "limited" | "full" | "elite" | null; paid: boolean; staff: string[];
+  /** "paying" = active subscription, "account" = Stripe billing account but not paying, "none" = no billing account. */
+  billing: "paying" | "account" | "none";
 };
+
+/** Email-keyed billing facts from Stripe: has a customer record, and has an active subscription. */
+async function readStripeBilling(): Promise<Map<string, { account: boolean; active: boolean }>> {
+  const { createStripeClient } = await import("@/lib/stripe.server");
+  const env: "sandbox" | "live" = process.env.STRIPE_LIVE_API_KEY ? "live" : configuredPaymentEnvironment();
+  const stripe = createStripeClient(env);
+  const map = new Map<string, { account: boolean; active: boolean }>();
+  const touch = (email: string) => {
+    const k = email.trim().toLowerCase();
+    const v = map.get(k) ?? { account: false, active: false };
+    map.set(k, v);
+    return v;
+  };
+  let seen = 0;
+  for await (const cust of stripe.customers.list({ limit: 100 }) as any) {
+    if (seen++ >= 2000) break;
+    if (cust.email) touch(cust.email).account = true;
+  }
+  seen = 0;
+  for await (const sub of stripe.subscriptions.list({ status: "all", limit: 100 }) as any) {
+    if (seen++ >= 2000) break;
+    const email = typeof sub.customer === "object" ? sub.customer?.email : null;
+    if (email) touch(email).active = ACTIVE.has(sub.status);
+  }
+  return map;
+}
 
 export const listMembers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -139,25 +167,45 @@ export const listMembers = createServerFn({ method: "POST" })
     const admin = await requireAdmin(context);
     const [profiles, access, roles, coaches] = await Promise.all([
       admin.from("profiles").select("id, full_name, email, phone, created_at, updated_at").order("updated_at", { ascending: false }).limit(5000),
-      admin.from("user_access").select("user_id, tier, stripe_price_id"),
+      admin.from("user_access").select("user_id, tier, stripe_price_id, stripe_customer_id"),
       admin.from("user_roles").select("user_id, role").neq("role", "client"),
       admin.from("coaches").select("user_id, status"),
     ]);
     const rank = { basic: 0, limited: 1, full: 2, elite: 3 } as const;
-    const acc = new Map<string, { tier: keyof typeof rank; paid: boolean }>();
+    const acc = new Map<string, { tier: keyof typeof rank; paid: boolean; customer: boolean }>();
     for (const r of access.data ?? []) {
       const cur = acc.get(r.user_id);
       const paid = !!r.stripe_price_id && !/^(admin_|affiliate_comp|comp_)/.test(r.stripe_price_id);
-      if (!cur || rank[r.tier as keyof typeof rank] > rank[cur.tier]) acc.set(r.user_id, { tier: r.tier, paid: paid || !!cur?.paid });
-      else if (paid) cur.paid = true;
+      const customer = !!r.stripe_customer_id;
+      if (!cur) acc.set(r.user_id, { tier: r.tier, paid, customer });
+      else {
+        if (rank[r.tier as keyof typeof rank] > rank[cur.tier]) cur.tier = r.tier;
+        cur.paid = cur.paid || paid;
+        cur.customer = cur.customer || customer;
+      }
     }
+    // Live Stripe is the billing truth; fall back to stored billing records if Stripe isn't connected.
+    let stripeBilling: Map<string, { account: boolean; active: boolean }> | null = null;
+    try { stripeBilling = await readStripeBilling(); } catch { /* fall back below */ }
+    const billingFor = (email: string | null, fallback: { paid: boolean; customer: boolean }): "paying" | "account" | "none" => {
+      if (stripeBilling) {
+        const hit = email ? stripeBilling.get(email.trim().toLowerCase()) : undefined;
+        if (hit) return hit.active ? "paying" : "account";
+        return "none";
+      }
+      return fallback.paid ? "paying" : fallback.customer ? "account" : "none";
+    };
     const staff = new Map<string, string[]>();
     for (const r of roles.data ?? []) staff.set(r.user_id, [...(staff.get(r.user_id) ?? []), r.role]);
     for (const c of coaches.data ?? []) if (c.user_id && c.status === "approved") staff.set(c.user_id, [...(staff.get(c.user_id) ?? []), "coach"]);
-    return (profiles.data ?? []).map((p: any) => ({
-      id: p.id, name: p.full_name, email: p.email, phone: p.phone, created: p.created_at, lastActive: p.updated_at,
-      tier: acc.get(p.id)?.tier ?? null, paid: acc.get(p.id)?.paid ?? false, staff: staff.get(p.id) ?? [],
-    }));
+    return (profiles.data ?? []).map((p: any) => {
+      const a = acc.get(p.id);
+      return {
+        id: p.id, name: p.full_name, email: p.email, phone: p.phone, created: p.created_at, lastActive: p.updated_at,
+        tier: a?.tier ?? null, paid: a?.paid ?? false, staff: staff.get(p.id) ?? [],
+        billing: billingFor(p.email, { paid: a?.paid ?? false, customer: a?.customer ?? false }),
+      };
+    });
   });
 
 /* ---------------- Traffic ---------------- */
