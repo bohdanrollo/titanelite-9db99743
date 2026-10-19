@@ -267,12 +267,6 @@ export function SitePanel() {
   };
   const h = s.homepage;
   const setH = <K extends keyof HomepageContent>(k: K, v: Partial<HomepageContent[K]>) => setS({ ...s, homepage: { ...h, [k]: Array.isArray(h[k]) ? v : { ...(h[k] as object), ...v } } });
-  const T = ({ label, value, onChange, long }: { label: string; value: string; onChange: (v: string) => void; long?: boolean }) => (
-    <label className="block text-xs text-muted-foreground">{label}
-      {long ? <textarea rows={3} className={`${input} mt-1.5 text-foreground`} value={value} onChange={(e) => onChange(e.target.value)} />
-        : <input className={`${input} mt-1.5 text-foreground`} value={value} onChange={(e) => onChange(e.target.value)} />}
-    </label>
-  );
   return (
     <div>
       <PageHead title="Site" sub="Edit the homepage, colors, banner and contact details. Saves go live straight away."
@@ -375,6 +369,17 @@ export function SitePanel() {
     </div>
   );
 }
+
+function T({ label, value, onChange, long }: { label: string; value: string; onChange: (v: string) => void; long?: boolean }) {
+  const input = "w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-foreground/40";
+  return (
+    <label className="block text-xs text-muted-foreground">{label}
+      {long ? <textarea rows={3} className={`${input} mt-1.5 text-foreground`} value={value} onChange={(e) => onChange(e.target.value)} />
+        : <input className={`${input} mt-1.5 text-foreground`} value={value} onChange={(e) => onChange(e.target.value)} />}
+    </label>
+    );
+}
+
 
 function ImageField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   const [busy, setBusy] = useState(false);
