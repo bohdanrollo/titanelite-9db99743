@@ -37,3 +37,4 @@
 
 ## Giveaway
 - [x] Replace the golf cart prize with a Rolex GMT-Master "Batman" giveaway; entry rules unchanged
+- [x] Admin dashboard rebuilt (overview, members, traffic, plans from Stripe, site banner, team, settings, activity)

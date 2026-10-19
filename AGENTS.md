@@ -10,3 +10,5 @@
 - Arbitrary transactional email sending requires a verified administrator role, while internal server delivery remains unchanged; why: members must not use branded templates to send arbitrary email.
 - Coach approval/ownership and appointment schedule fields are protected by database triggers as well as server validation; why: direct database requests must not bypass coaching controls.
 - Public newsletter requests may not alter existing subscriber records without a confirmed matching account; why: an arbitrary submitted email is not proof of consent or ownership.
+- Admin revenue/subscription figures are read live from Stripe (live account when connected) in admin-ops server functions, while member counts come from the database; why: database access rows include complimentary grants and are not billing truth.
+- Public page views are recorded through an unauthenticated server function into a service-role-only table, excluding admin/private paths; why: traffic reporting without exposing visitor data or a public table policy.
