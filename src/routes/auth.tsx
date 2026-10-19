@@ -9,7 +9,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SignupAcknowledgements } from "@/components/SignupAcknowledgements";
 import { SignupContactConsent } from "@/components/SignupContactConsent";
-import { signupSchema, signupMetadata } from "@/lib/signup-schema";
+import { signupSchema, signupMetadata, friendlyErrorMessage } from "@/lib/signup-schema";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/auth")({
@@ -83,7 +83,7 @@ function AuthPage() {
         nav({ to: "/dashboard" });
       }
     } catch (err: unknown) {
-      const raw = err instanceof Error ? err.message : "Auth failed";
+      const raw = friendlyErrorMessage(err, "Auth failed");
       const lower = raw.toLowerCase();
       let msg = raw;
       if (lower.includes("email not confirmed")) {

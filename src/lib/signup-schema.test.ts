@@ -1,6 +1,6 @@
 import { describe, test } from "node:test";
 import { strict as assert } from "node:assert";
-import { signupSchema } from "./signup-schema";
+import { signupSchema, friendlyErrorMessage } from "./signup-schema";
 
 const valid = { name: "Test Member", email: "member@example.com", password: "test-password-only", phone: "+1 317 555 0123", marketingConsent: true, age21: true, researchUse: true };
 describe("account contact and consent requirements", () => {
@@ -14,5 +14,13 @@ describe("account contact and consent requirements", () => {
   test("still requires age and research confirmations", () => {
     assert.equal(signupSchema.safeParse({ ...valid, age21: false }).success, false);
     assert.equal(signupSchema.safeParse({ ...valid, researchUse: false }).success, false);
+  });
+  test("shows a clear message instead of raw JSON for a bad phone number", () => {
+    const result = signupSchema.safeParse({ ...valid, phone: "317-555-0123" });
+    assert.equal(result.success, false);
+    if (result.success) return;
+    const message = friendlyErrorMessage(result.error);
+    assert.equal(message, "Enter a phone number with country code, such as +1 317 555 0123.");
+    assert.equal(message.includes("["), false);
   });
 });
