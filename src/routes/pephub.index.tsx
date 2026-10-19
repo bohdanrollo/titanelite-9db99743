@@ -10,7 +10,7 @@ import { type PepSource } from "@/lib/pephub.functions";
 import { pephubAccess, pephubSignup, pephubSubscribeCurrentUser } from "@/lib/pephub-access.functions";
 import { SignupAcknowledgements } from "@/components/SignupAcknowledgements";
 import { SignupContactConsent } from "@/components/SignupContactConsent";
-import { signupSchema, phoneSchema } from "@/lib/signup-schema";
+import { signupSchema, phoneSchema, friendlyErrorMessage } from "@/lib/signup-schema";
 
 export const Route = createFileRoute("/pephub/")({
   head: () => ({
@@ -161,7 +161,7 @@ function PepHub() {
       setPassword("");
       await refreshAccess();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong");
+      toast.error(friendlyErrorMessage(err));
     } finally {
       setBusy(false);
     }
@@ -180,7 +180,7 @@ function PepHub() {
       toast.success("You're on the PepHub list.");
       await refreshAccess();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong");
+      toast.error(friendlyErrorMessage(err));
     } finally {
       setBusy(false);
     }
