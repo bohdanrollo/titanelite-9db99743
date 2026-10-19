@@ -35,10 +35,9 @@ import { Route as AuthenticatedCoachRouteImport } from './routes/_authenticated.
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
 import { Route as ApiPepTalkRouteImport } from './routes/api/pep-talk'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
-import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as PephubIndexRouteImport } from './routes/pephub.index'
 import { Route as PephubInventoryRouteImport } from './routes/pephub.inventory'
-import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
+import { Route as LovableEmailEventsRouteImport } from './routes/lovable/email/events'
 import { Route as PephubCompareSlugRouteImport } from './routes/pephub.compare.$slug'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicPephubMonitorRouteImport } from './routes/api/public/pephub/monitor'
@@ -46,9 +45,7 @@ import { Route as ApiPublicResendWebhookRouteImport } from './routes/api/public/
 import { Route as ApiPublicSiteMediaSplatRouteImport } from './routes/api/public/site-media.$'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
-import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
-import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as ApiPublicPephubLogoSplatRouteImport } from './routes/api/public/pephub/logo.$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -182,11 +179,6 @@ const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
   path: '/return',
   getParentRoute: () => CheckoutRoute,
 } as any)
-const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
-  id: '/email/unsubscribe',
-  path: '/email/unsubscribe',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const PephubIndexRoute = PephubIndexRouteImport.update({
   id: '/pephub/',
   path: '/pephub/',
@@ -197,9 +189,9 @@ const PephubInventoryRoute = PephubInventoryRouteImport.update({
   path: '/pephub/inventory',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
-  id: '/lovable/email/suppression',
-  path: '/lovable/email/suppression',
+const LovableEmailEventsRoute = LovableEmailEventsRouteImport.update({
+  id: '/lovable/email/events',
+  path: '/lovable/email/events',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PephubCompareSlugRoute = PephubCompareSlugRouteImport.update({
@@ -238,22 +230,10 @@ const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
   path: '/lovable/email/auth/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LovableEmailQueueProcessRoute =
-  LovableEmailQueueProcessRouteImport.update({
-    id: '/lovable/email/queue/process',
-    path: '/lovable/email/queue/process',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const LovableEmailTransactionalPreviewRoute =
   LovableEmailTransactionalPreviewRouteImport.update({
     id: '/lovable/email/transactional/preview',
     path: '/lovable/email/transactional/preview',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const LovableEmailTransactionalSendRoute =
-  LovableEmailTransactionalSendRouteImport.update({
-    id: '/lovable/email/transactional/send',
-    path: '/lovable/email/transactional/send',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicPephubLogoSplatRoute =
@@ -289,10 +269,9 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/api/pep-talk': typeof ApiPepTalkRoute
   '/checkout/return': typeof CheckoutReturnRoute
-  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/pephub/inventory': typeof PephubInventoryRoute
   '/pephub/': typeof PephubIndexRoute
-  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/lovable/email/events': typeof LovableEmailEventsRoute
   '/pephub/compare/$slug': typeof PephubCompareSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pephub/monitor': typeof ApiPublicPephubMonitorRoute
@@ -300,9 +279,7 @@ export interface FileRoutesByFullPath {
   '/api/public/site-media/$': typeof ApiPublicSiteMediaSplatRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
-  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
-  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/api/public/pephub/logo/$': typeof ApiPublicPephubLogoSplatRoute
 }
 export interface FileRoutesByTo {
@@ -331,10 +308,9 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/api/pep-talk': typeof ApiPepTalkRoute
   '/checkout/return': typeof CheckoutReturnRoute
-  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/pephub/inventory': typeof PephubInventoryRoute
   '/pephub': typeof PephubIndexRoute
-  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/lovable/email/events': typeof LovableEmailEventsRoute
   '/pephub/compare/$slug': typeof PephubCompareSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pephub/monitor': typeof ApiPublicPephubMonitorRoute
@@ -342,9 +318,7 @@ export interface FileRoutesByTo {
   '/api/public/site-media/$': typeof ApiPublicSiteMediaSplatRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
-  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
-  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/api/public/pephub/logo/$': typeof ApiPublicPephubLogoSplatRoute
 }
 export interface FileRoutesById {
@@ -375,10 +349,9 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/api/pep-talk': typeof ApiPepTalkRoute
   '/checkout/return': typeof CheckoutReturnRoute
-  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/pephub/inventory': typeof PephubInventoryRoute
   '/pephub/': typeof PephubIndexRoute
-  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/lovable/email/events': typeof LovableEmailEventsRoute
   '/pephub/compare/$slug': typeof PephubCompareSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pephub/monitor': typeof ApiPublicPephubMonitorRoute
@@ -386,9 +359,7 @@ export interface FileRoutesById {
   '/api/public/site-media/$': typeof ApiPublicSiteMediaSplatRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
-  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
-  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/api/public/pephub/logo/$': typeof ApiPublicPephubLogoSplatRoute
 }
 export interface FileRouteTypes {
@@ -419,10 +390,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/api/pep-talk'
     | '/checkout/return'
-    | '/email/unsubscribe'
     | '/pephub/inventory'
     | '/pephub/'
-    | '/lovable/email/suppression'
+    | '/lovable/email/events'
     | '/pephub/compare/$slug'
     | '/api/public/payments/webhook'
     | '/api/public/pephub/monitor'
@@ -430,9 +400,7 @@ export interface FileRouteTypes {
     | '/api/public/site-media/$'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
-    | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
-    | '/lovable/email/transactional/send'
     | '/api/public/pephub/logo/$'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -461,10 +429,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/api/pep-talk'
     | '/checkout/return'
-    | '/email/unsubscribe'
     | '/pephub/inventory'
     | '/pephub'
-    | '/lovable/email/suppression'
+    | '/lovable/email/events'
     | '/pephub/compare/$slug'
     | '/api/public/payments/webhook'
     | '/api/public/pephub/monitor'
@@ -472,9 +439,7 @@ export interface FileRouteTypes {
     | '/api/public/site-media/$'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
-    | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
-    | '/lovable/email/transactional/send'
     | '/api/public/pephub/logo/$'
   id:
     | '__root__'
@@ -504,10 +469,9 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/api/pep-talk'
     | '/checkout/return'
-    | '/email/unsubscribe'
     | '/pephub/inventory'
     | '/pephub/'
-    | '/lovable/email/suppression'
+    | '/lovable/email/events'
     | '/pephub/compare/$slug'
     | '/api/public/payments/webhook'
     | '/api/public/pephub/monitor'
@@ -515,9 +479,7 @@ export interface FileRouteTypes {
     | '/api/public/site-media/$'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
-    | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
-    | '/lovable/email/transactional/send'
     | '/api/public/pephub/logo/$'
   fileRoutesById: FileRoutesById
 }
@@ -544,10 +506,9 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   ApiPepTalkRoute: typeof ApiPepTalkRoute
-  EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   PephubInventoryRoute: typeof PephubInventoryRoute
   PephubIndexRoute: typeof PephubIndexRoute
-  LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
+  LovableEmailEventsRoute: typeof LovableEmailEventsRoute
   PephubCompareSlugRoute: typeof PephubCompareSlugRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   ApiPublicPephubMonitorRoute: typeof ApiPublicPephubMonitorRoute
@@ -555,9 +516,7 @@ export interface RootRouteChildren {
   ApiPublicSiteMediaSplatRoute: typeof ApiPublicSiteMediaSplatRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
-  LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
-  LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
   ApiPublicPephubLogoSplatRoute: typeof ApiPublicPephubLogoSplatRoute
 }
 
@@ -745,13 +704,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutReturnRouteImport
       parentRoute: typeof CheckoutRoute
     }
-    '/email/unsubscribe': {
-      id: '/email/unsubscribe'
-      path: '/email/unsubscribe'
-      fullPath: '/email/unsubscribe'
-      preLoaderRoute: typeof EmailUnsubscribeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/pephub/': {
       id: '/pephub/'
       path: '/pephub'
@@ -766,11 +718,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PephubInventoryRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/suppression': {
-      id: '/lovable/email/suppression'
-      path: '/lovable/email/suppression'
-      fullPath: '/lovable/email/suppression'
-      preLoaderRoute: typeof LovableEmailSuppressionRouteImport
+    '/lovable/email/events': {
+      id: '/lovable/email/events'
+      path: '/lovable/email/events'
+      fullPath: '/lovable/email/events'
+      preLoaderRoute: typeof LovableEmailEventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pephub/compare/$slug': {
@@ -822,25 +774,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/queue/process': {
-      id: '/lovable/email/queue/process'
-      path: '/lovable/email/queue/process'
-      fullPath: '/lovable/email/queue/process'
-      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/lovable/email/transactional/preview': {
       id: '/lovable/email/transactional/preview'
       path: '/lovable/email/transactional/preview'
       fullPath: '/lovable/email/transactional/preview'
       preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lovable/email/transactional/send': {
-      id: '/lovable/email/transactional/send'
-      path: '/lovable/email/transactional/send'
-      fullPath: '/lovable/email/transactional/send'
-      preLoaderRoute: typeof LovableEmailTransactionalSendRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/pephub/logo/$': {
@@ -904,10 +842,9 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   ApiPepTalkRoute: ApiPepTalkRoute,
-  EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   PephubInventoryRoute: PephubInventoryRoute,
   PephubIndexRoute: PephubIndexRoute,
-  LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
+  LovableEmailEventsRoute: LovableEmailEventsRoute,
   PephubCompareSlugRoute: PephubCompareSlugRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   ApiPublicPephubMonitorRoute: ApiPublicPephubMonitorRoute,
@@ -915,9 +852,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicSiteMediaSplatRoute: ApiPublicSiteMediaSplatRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
-  LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
-  LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
   ApiPublicPephubLogoSplatRoute: ApiPublicPephubLogoSplatRoute,
 }
 export const routeTree = rootRouteImport
