@@ -7,9 +7,9 @@ import * as React from "react";
 import { render } from "@react-email/render";
 import { TEMPLATES } from "@/lib/email-templates/registry";
 
-const SITE_NAME = "titanelite";
-const SENDER_DOMAIN = "notify.titanelite.org";
-const FROM_DOMAIN = "notify.titanelite.org";
+const SITE_NAME = "PepLog";
+const SENDER_DOMAIN = "notify.peplog.io";
+const FROM_DOMAIN = "notify.peplog.io";
 
 type SendArgs = {
   templateName: string;

@@ -56,7 +56,7 @@ async function moveToDlq(
     payload,
   })
   if (error) {
-    console.error('Failed to move message to DLQ', { queue, msg_id: msg.msg_id, reason, error })
+    console.error('Failed to move message to DLQ', { queue, msg_id: msg.msg_id, reason, code: error.code, message: error.message })
   }
 }
 
@@ -64,9 +64,9 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const apiKey = process.env.LOVABLE_API_KEY
-        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-        const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+        const apiKey = process.env['LOVABLE_API_KEY']
+        const supabaseUrl = import.meta.env['VITE_SUPABASE_URL']
+        const supabaseServiceKey = process.env['SUPABASE_SERVICE_ROLE_KEY']
 
         if (!apiKey || !supabaseUrl || !supabaseServiceKey) {
           console.error('Missing required environment variables')
@@ -118,7 +118,7 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
           })
 
           if (readError) {
-            console.error('Failed to read email batch', { queue, error: readError })
+            console.error('Failed to read email batch', { queue, code: readError.code, message: readError.message })
             continue
           }
 
@@ -147,7 +147,8 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
             if (failedRowsError) {
               console.error('Failed to load failed-attempt counters', {
                 queue,
-                error: failedRowsError,
+                code: failedRowsError.code,
+                message: failedRowsError.message,
               })
             } else {
               for (const row of failedRows ?? []) {
@@ -214,7 +215,7 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
                   message_id: msg.msg_id,
                 })
                 if (dupDelError) {
-                  console.error('Failed to delete duplicate message from queue', { queue, msg_id: msg.msg_id, error: dupDelError })
+                  console.error('Failed to delete duplicate message from queue', { queue, msg_id: msg.msg_id, code: dupDelError.code, message: dupDelError.message })
                 }
                 continue
               }
@@ -236,7 +237,7 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
                   unsubscribe_token: payload.unsubscribe_token,
                   message_id: payload.message_id,
                 },
-                { apiKey, sendUrl: process.env.LOVABLE_SEND_URL }
+                { apiKey, sendUrl: process.env['LOVABLE_SEND_URL'] }
               )
 
               // Log success
@@ -253,7 +254,7 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
                 message_id: msg.msg_id,
               })
               if (delError) {
-                console.error('Failed to delete sent message from queue', { queue, msg_id: msg.msg_id, error: delError })
+                console.error('Failed to delete sent message from queue', { queue, msg_id: msg.msg_id, code: delError.code, message: delError.message })
               }
               totalProcessed++
             } catch (error) {
@@ -267,11 +268,15 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
               })
 
               if (isRateLimited(error)) {
-                // Provider rate limits are transient and not this message's fault.
-                // Do NOT log a 'failed' attempt here: the retry budget is derived
-                // from failed rows, so counting 429s would DLQ deliverable emails.
-                const retryAfterSecs = getRetryAfterSeconds(error)
+                await supabase.from('email_send_log').insert({
+                  message_id: payload.message_id,
+                  template_name: payload.label || queue,
+                  recipient_email: payload.to,
+                  status: 'failed',
+                  error_message: errorMsg.slice(0, 1000),
+                })
 
+                const retryAfterSecs = getRetryAfterSeconds(error)
                 await supabase
                   .from('email_send_state')
                   .update({
