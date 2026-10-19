@@ -310,26 +310,39 @@ export const siteSettingsSchema = z.object({
   banner: z.object({ enabled: z.boolean(), text: z.string().max(200), linkLabel: z.string().max(40), linkUrl: z.string().max(300) }),
   supportEmail: z.string().max(200),
   maintenance: z.object({ enabled: z.boolean(), message: z.string().max(300) }),
+  homepage: homepageSchema,
 });
 export type SiteSettings = z.infer<typeof siteSettingsSchema>;
 const DEFAULT_SETTINGS: SiteSettings = {
   banner: { enabled: false, text: "", linkLabel: "", linkUrl: "" },
   supportEmail: "support@peplog.com",
   maintenance: { enabled: false, message: "We'll be right back." },
+  homepage: DEFAULT_HOMEPAGE,
 };
 
 async function readSettings(admin: any): Promise<SiteSettings> {
-  const { data } = await admin.from("site_settings").select("key, value").in("key", ["banner", "supportEmail", "maintenance"]);
+  const { data } = await admin.from("site_settings").select("key, value").in("key", ["banner", "supportEmail", "maintenance", "homepage"]);
   const out: any = structuredClone(DEFAULT_SETTINGS);
-  for (const r of data ?? []) out[r.key] = r.key === "supportEmail" ? r.value?.value ?? out.supportEmail : { ...out[r.key], ...r.value };
+  for (const r of data ?? []) {
+    if (r.key === "supportEmail") out.supportEmail = r.value?.value ?? out.supportEmail;
+    else if (r.key === "homepage") out.homepage = mergeHomepage(r.value);
+    else out[r.key] = { ...out[r.key], ...r.value };
+  }
   return siteSettingsSchema.parse(out);
 }
 
-/** Public: only the banner and support email are exposed. */
+/** Public: only the banner, support email and homepage content are exposed. */
 export const getPublicSiteSettings = createServerFn({ method: "GET" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const s = await readSettings(supabaseAdmin);
   return { banner: s.banner.enabled ? s.banner : null, supportEmail: s.supportEmail };
+});
+
+export const getPublicHomepage = createServerFn({ method: "GET" }).handler(async () => {
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    return (await readSettings(supabaseAdmin)).homepage;
+  } catch { return DEFAULT_HOMEPAGE; }
 });
 
 export const getSiteSettings = createServerFn({ method: "POST" })
@@ -343,12 +356,14 @@ export const saveSiteSettings = createServerFn({ method: "POST" })
     const admin = await requireAdmin(context);
     if (data.banner.linkUrl && !/^(https:\/\/|\/)/.test(data.banner.linkUrl)) throw new Error("Banner link must start with https:// or /");
     const now = new Date().toISOString();
-    await admin.from("site_settings").upsert([
+    const { error } = await admin.from("site_settings").upsert([
       { key: "banner", value: data.banner, updated_by: context.userId, updated_at: now },
       { key: "supportEmail", value: { value: data.supportEmail }, updated_by: context.userId, updated_at: now },
       { key: "maintenance", value: data.maintenance, updated_by: context.userId, updated_at: now },
+      { key: "homepage", value: data.homepage, updated_by: context.userId, updated_at: now },
     ]);
-    await logActivity(admin, context.userId, "Site settings updated", data.banner.enabled ? `Banner on: ${data.banner.text}` : "Banner off");
+    if (error) throw new Error("Couldn't save site settings");
+    await logActivity(admin, context.userId, "Site settings updated", data.banner.enabled ? `Banner on: ${data.banner.text} · homepage saved` : "Banner off · homepage saved");
     return { ok: true };
   });
 
