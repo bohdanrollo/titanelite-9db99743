@@ -25,7 +25,7 @@ export default function AdminOverview({ onOpen }: { onOpen: (tab: string) => voi
   const stats = [
     { v: d.members, l: "Members", s: `${d.activeThisWeek} active this week` },
     { v: d.paidMembers, l: "Paid members" },
-    { v: money(d.mrr), l: "MRR", s: "list prices, before discounts" },
+    { v: `$${Math.round(d.mrr).toLocaleString()}`, l: "MRR", s: "list prices, before discounts" },
     { v: d.signupsToday, l: "New signups today" },
     { v: d.affiliates.active, l: "Active affiliates" },
     { v: d.attention.length, l: "Needs attention" },
